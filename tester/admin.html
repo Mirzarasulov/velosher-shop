@@ -56,128 +56,74 @@
   .badge.approved,.badge.completed,.badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
   .badge.cancelled,.badge.rejected{background:rgba(255,92,92,.15);color:var(--err)}
   .badge.pending{background:rgba(245,181,71,.15);color:var(--warn)}
-  .order-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
-  .order-card .on{font-size:15px;font-weight:700;color:var(--accent);margin-bottom:8px}
-  .order-card .meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:7px;margin-bottom:11px}
-  .meta-item{background:var(--card2);border-radius:8px;padding:8px 10px}
-  .meta-item .l{font-size:9.5px;color:var(--muted);text-transform:uppercase;font-weight:600;margin-bottom:2px}
-  .meta-item .v{font-size:12.5px;font-weight:600;word-break:break-word}
-  .meta-item .v.ok{color:var(--ok)} .meta-item .v.accent{color:var(--accent)}
-  .flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
-  .muted{color:var(--muted);font-size:12px}
-  .muted-sm{color:var(--muted);font-size:11px}
-  .tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
-  .tabs::-webkit-scrollbar{display:none}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:10px 0}
+  .cell{background:var(--card2);border-radius:8px;padding:8px 10px}
+  .cell b{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;margin-bottom:2px;font-weight:600}
+  .cell span{font-size:13px;font-weight:600;color:var(--text)}
+  .cell span.ok{color:var(--ok)} .cell span.accent{color:var(--accent)}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .form-row{margin-bottom:11px}
+  .form-row label{display:block;font-size:10.5px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;font-weight:600}
+  .input{width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);
+    color:var(--text);font-size:13px;outline:none}
+  .input:focus{border-color:var(--accent)}
+  .tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
   .tab{padding:7px 13px;border-radius:18px;background:var(--card2);border:1px solid var(--border);color:var(--text2);
     font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
   .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
   .toast{position:fixed;top:16px;right:16px;background:var(--card2);border:1px solid var(--border2);padding:12px 18px;
-    border-radius:10px;z-index:9999;font-size:13px;max-width:300px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
-  .toast.ok{border-color:rgba(57,217,138,.4);background:#13281f}
-  .toast.err{border-color:rgba(255,92,92,.4);background:#2a1618}
+    border-radius:10px;z-index:9999;font-size:13px;font-weight:500;max-width:340px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+  .toast.err{border-color:#ff5c5c;color:#ffb3b3}
+  .toast.ok{border-color:#39d98a;color:#a8f0cc}
+  .login-box{max-width:360px;margin:60px auto;background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:24px}
   .empty{padding:50px 20px;text-align:center;color:var(--muted)}
-  .empty .ic{font-size:44px;margin-bottom:10px;opacity:.4}
-  .hidden{display:none !important}
-  .input{width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);
-    color:var(--text);font-size:13px;outline:none}
-  .input:focus{border-color:var(--accent)}
-  .form-row{margin-bottom:11px}
-  .form-row label{display:block;font-size:10.5px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;font-weight:600}
-  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
-  .modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
-  .modal-head{padding:18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-  .modal-head h2{font-size:17px;font-weight:700}
-  .modal-body{padding:18px}
-  .modal-foot{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+  .empty .ic{font-size:44px;margin-bottom:10px;opacity:.5}
+  .muted{color:var(--muted);font-size:12px}
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
+  .modal{background:var(--card);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:560px;
+    max-height:90vh;overflow-y:auto;padding:0}
+  .modal-h{padding:18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+  .modal-b{padding:18px}
+  .modal-f{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
   .close-x{width:32px;height:32px;border-radius:50%;background:var(--card2);border:1px solid var(--border2);color:var(--text2);
-    font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .loading{text-align:center;padding:40px;color:var(--muted)}
-  @media(max-width:768px){
-    .layout{flex-direction:column}
-    .side{width:100%;height:auto;position:relative;padding:10px;border-right:0;border-bottom:1px solid var(--border);
-      display:flex;flex-wrap:wrap;gap:4px}
-    .side .logo{width:100%;padding-bottom:10px;margin-bottom:8px}
-    .side .section{display:none}
-    .side .nav-item{width:auto;padding:8px 12px;font-size:12px;margin-bottom:0}
-    .main{padding:14px}
-    .grid2{grid-template-columns:1fr}
-  }
+    font-size:16px;cursor:pointer}
 </style>
 </head>
 <body>
 
-<div id="root"></div>
+<div id="app"></div>
 <div id="toast" class="toast hidden"></div>
 <div id="modal-root"></div>
 
 <script>
 const FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app';
-const PAGE = 20;
+const ADMIN_PASSWORD = 'admin123';
+const LOG_CHANNEL_URL = 'https://t.me/c/4305451466';
 
-const $ = id => document.getElementById(id);
+let AUTHED = sessionStorage.getItem('admin_auth') === '1';
 let TAB = 'dashboard';
-const DATA = { purchases: null, payouts: null, eras: null, users: null };
-let FILTER = { purchases: 'all', payouts: 'all', search: '' };
-let LIM = { purchases: PAGE, payouts: PAGE, users: PAGE };
-const BUSY = new Set();
-let SEARCH_TIMER;
+let DATA = { purchases: null, payouts: null, users: null, eras: null };
+const $ = id => document.getElementById(id);
 
-function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function q(v){ return esc(JSON.stringify(v ?? '')); }
-const num = v => { const n = Number(v); return isFinite(n) ? n : 0; };
-function fmt(n){ return num(n).toLocaleString('ru-RU') + ' ₽'; }
+function esc(s){ return String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmt(n){ return Number(n||0).toLocaleString('ru-RU') + ' ₽'; }
 function fmtDate(s){
   if (!s) return '—';
-  const d = new Date(s); if (isNaN(d)) return String(s);
-  return d.toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric'});
-}
-function fmtDT(s){
-  if (!s) return '—';
-  const d = new Date(s); if (isNaN(d)) return String(s);
-  return d.toLocaleString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  try { return new Date(s).toLocaleString('ru-RU',
+    {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+  catch { return s; }
 }
 function statusLabel(s){
-  return ({created:'Создан', in_progress:'В процессе', approved:'Одобрен',
+  return ({created:'Ожидает', in_progress:'В процессе', approved:'Активен',
     completed:'Завершён', paid:'Выплачен', cancelled:'Отменён',
     pending:'Ожидает', rejected:'Отклонён'})[s] || s;
 }
-function toast(msg, type='ok', ms=2500){
+function toast(msg, type){
   const t = $('toast');
   t.textContent = msg;
-  t.className = 'toast ' + type;
+  t.className = 'toast ' + (type || '');
   clearTimeout(t._t);
-  t._t = setTimeout(() => t.className = 'toast hidden', ms);
-}
-function showModal(html){ $('modal-root').innerHTML = `<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`; }
-function closeModal(){ $('modal-root').innerHTML = ''; }
-async function once(key, fn){
-  if (BUSY.has(key)) return;
-  BUSY.add(key);
-  try { await fn(); } catch(e){ toast(e.message, 'err'); }
-  finally { BUSY.delete(key); }
-}
-
-async function fbGet(path){
-  const r = await fetch(`${FIREBASE}/${path}.json`);
-  if (!r.ok) throw new Error('Firebase ' + r.status);
-  return r.json();
-}
-async function fbPatch(path, data){
-  const r = await fetch(`${FIREBASE}/${path}.json`, {method:'PATCH', body: JSON.stringify(data)});
-  if (!r.ok) throw new Error('Firebase ' + r.status);
-  return r.json();
-}
-async function fbPut(path, data){
-  const r = await fetch(`${FIREBASE}/${path}.json`, {method:'PUT', body: JSON.stringify(data)});
-  if (!r.ok) throw new Error('Firebase ' + r.status);
-  return r.json();
-}
-async function fbDelete(path){
-  const r = await fetch(`${FIREBASE}/${path}.json`, {method:'DELETE'});
-  if (!r.ok) throw new Error('Firebase ' + r.status);
-  return r.json();
+  t._t = setTimeout(() => t.classList.add('hidden'), 2600);
 }
 function toList(raw){
   if (Array.isArray(raw)) return raw.filter(x => x && typeof x === 'object').map((v, i) => ({...v, _key: String(i)}));
@@ -185,525 +131,569 @@ function toList(raw){
     return Object.entries(raw).filter(([, v]) => v && typeof v === 'object').map(([k, v]) => ({...v, _key: k}));
   return [];
 }
+async function fbGet(path){
+  const r = await fetch(`${FIREBASE}/${path}.json`);
+  if (!r.ok) throw new Error('Firebase ' + r.status);
+  return r.json();
+}
+async function fbPut(path, data){
+  const r = await fetch(`${FIREBASE}/${path}.json`, {method:'PUT', body: JSON.stringify(data)});
+  return r.ok;
+}
+async function fbPatch(path, data){
+  const r = await fetch(`${FIREBASE}/${path}.json`, {method:'PATCH', body: JSON.stringify(data)});
+  return r.ok;
+}
+async function fbPost(path, data){
+  const r = await fetch(`${FIREBASE}/${path}.json`, {method:'POST', body: JSON.stringify(data)});
+  return r.ok ? r.json() : null;
+}
+async function fbDelete(path){
+  const r = await fetch(`${FIREBASE}/${path}.json`, {method:'DELETE'});
+  return r.ok;
+}
 
-// ============================================================
-function shell(){
-  const nav = (tab, emo, label, cnt) => `
-    <button class="nav-item" data-tab="${tab}" onclick="setTab('${tab}')">
-      <span class="emo">${emo}</span>${label}${cnt ? `<span class="count hidden" id="cnt-${tab}"></span>` : ''}
-    </button>`;
-  $('root').innerHTML = `
+// LOGIN
+function renderLogin(){
+  $('app').innerHTML = `
+    <div class="login-box">
+      <h1 style="text-align:center;margin-bottom:20px">⚡ Era Admin</h1>
+      <div class="form-row"><label>Пароль</label>
+        <input class="input" id="pw" type="password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn" style="width:100%;justify-content:center;padding:11px" onclick="doLogin()">Войти</button>
+      <div class="muted" style="margin-top:12px;text-align:center;font-size:11px">
+        Firebase: velosher-f82b5
+      </div>
+    </div>`;
+}
+function doLogin(){
+  const pw = $('pw').value;
+  if (pw === ADMIN_PASSWORD){
+    AUTHED = true;
+    sessionStorage.setItem('admin_auth', '1');
+    render();
+  } else toast('Неверный пароль', 'err');
+}
+window.doLogin = doLogin;
+
+// LAYOUT
+function layout(content){
+  const c = {
+    new: (DATA.purchases || []).filter(p => p.status === 'created').length,
+    payouts: (DATA.payouts || []).filter(p => p.status === 'pending').length,
+    users: (DATA.users || []).length,
+    eras: (DATA.eras || []).length,
+  };
+  $('app').innerHTML = `
     <div class="layout">
       <aside class="side">
         <div class="logo"><div class="ic">⚡</div><div class="t">Era Admin</div></div>
         <div class="section">Обзор</div>
-        ${nav('dashboard','📊','Дашборд')}
+        <button class="nav-item ${TAB==='dashboard'?'active':''}" onclick="setTab('dashboard')">
+          <span class="emo">📊</span>Дашборд</button>
         <div class="section">Операции</div>
-        ${nav('purchases','📩','Заявки',1)}
-        ${nav('payouts','💸','Выплаты',1)}
+        <button class="nav-item ${TAB==='purchases'?'active':''}" onclick="setTab('purchases')">
+          <span class="emo">📩</span>Заявки ${c.new?`<span class="count">${c.new}</span>`:''}</button>
+        <button class="nav-item ${TAB==='payouts'?'active':''}" onclick="setTab('payouts')">
+          <span class="emo">💸</span>Выплаты ${c.payouts?`<span class="count">${c.payouts}</span>`:''}</button>
         <div class="section">Управление</div>
-        ${nav('users','👥','Пользователи')}
-        ${nav('eras','🧩','Товары')}
-        <div class="section"></div>
-        <button class="nav-item" onclick="location.reload()"><span class="emo">🔄</span>Обновить</button>
+        <button class="nav-item ${TAB==='users'?'active':''}" onclick="setTab('users')">
+          <span class="emo">👥</span>Пользователи ${c.users?`<span class="count">${c.users}</span>`:''}</button>
+        <button class="nav-item ${TAB==='eras'?'active':''}" onclick="setTab('eras')">
+          <span class="emo">🧩</span>Товары ${c.eras?`<span class="count">${c.eras}</span>`:''}</button>
+        <button class="nav-item ${TAB==='refs'?'active':''}" onclick="setTab('refs')">
+          <span class="emo">👥</span>Рефералы</button>
+        <div class="section">Система</div>
+        <button class="nav-item" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">
+          <span class="emo">📢</span>Канал</button>
+        <button class="nav-item" onclick="logout()" style="color:var(--err)">
+          <span class="emo">🚪</span>Выйти</button>
       </aside>
-      <main class="main" id="main"></main>
+      <main class="main">
+        <div class="header"><div><h1>⚡ Era Admin</h1><div class="sub">@VideoSaver12_Bot · velosher-f82b5</div></div></div>
+        <div id="content">${content}</div>
+      </main>
     </div>`;
 }
-function setMain(html){ $('main').innerHTML = html; }
-function emptyBlock(icon, title, text='', extra=''){
-  return `<div class="empty"><div class="ic">${icon}</div><h3>${title}</h3>
-    ${text ? `<p class="muted" style="margin:8px 0">${text}</p>` : ''}${extra}</div>`;
-}
-
-// ============================================================
-const LOADERS = {
-  dashboard: async () => {
-    const [p, po, e, u] = await Promise.all([fbGet('purchases'), fbGet('payouts'), fbGet('eras'), fbGet('users')]);
-    DATA.purchases = toList(p).sort((a,b) => num(b.id) - num(a.id));
-    DATA.payouts = toList(po).sort((a,b) => num(b.id) - num(a.id));
-    DATA.eras = toList(e);
-    DATA.users = toList(u);
-    return drawDashboard;
-  },
-  purchases: async () => {
-    DATA.purchases = toList(await fbGet('purchases')).sort((a,b) => num(b.id) - num(a.id));
-    return drawPurchases;
-  },
-  payouts: async () => {
-    DATA.payouts = toList(await fbGet('payouts')).sort((a,b) => num(b.id) - num(a.id));
-    return drawPayouts;
-  },
-  users: async () => {
-    const [u, p] = await Promise.all([fbGet('users'), fbGet('purchases')]);
-    DATA.users = toList(u);
-    DATA.purchases = toList(p);
-    return drawUsers;
-  },
-  eras: async () => {
-    DATA.eras = toList(await fbGet('eras')).sort((a,b) => (num(a.sort_order) - num(b.sort_order)) || (num(a.id) - num(b.id)));
-    return drawEras;
-  },
-};
-
-async function render(){
-  const target = TAB;
-  setMain('<div class="loading">Загрузка…</div>');
-  document.querySelectorAll('.nav-item[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === target));
-  try {
-    const draw = await LOADERS[target]();
-    if (TAB !== target) return;
-    draw();
-    updateCounts();
-  } catch(e){
-    setMain(emptyBlock('⚠️', 'Ошибка', esc(e.message), `<button class="btn" onclick="render()">🔄</button>`));
-  }
-}
-function updateCounts(){
-  if (DATA.purchases){
-    const c = DATA.purchases.filter(p => p.status === 'created').length;
-    const el = $('cnt-purchases');
-    if (el){ el.textContent = c; el.classList.toggle('hidden', !c); }
-  }
-  if (DATA.payouts){
-    const c = DATA.payouts.filter(p => p.status === 'pending').length;
-    const el = $('cnt-payouts');
-    if (el){ el.textContent = c; el.classList.toggle('hidden', !c); }
-  }
-}
-function setTab(t){
-  TAB = t;
-  FILTER.search = '';
-  LIM = { purchases: PAGE, payouts: PAGE, users: PAGE };
-  render();
-}
+function logout(){ sessionStorage.removeItem('admin_auth'); AUTHED = false; render(); }
+window.logout = logout;
+function setTab(t){ TAB = t; render(); }
 window.setTab = setTab;
-window.closeModal = closeModal;
 
-// ============================================================
-function drawDashboard(){
-  const P = DATA.purchases, PO = DATA.payouts;
-  const byStatus = k => P.filter(p => p.status === k).length;
-  const totalSum = P.filter(p => p.status !== 'cancelled').reduce((s,p) => s + num(p.purchase_price), 0);
-  const pending = PO.filter(p => p.status === 'pending');
-  const pendingSum = pending.reduce((s,p) => s + num(p.amount), 0);
-  setMain(`
-    <div class="header">
-      <div><h1>📊 Дашборд</h1><div class="sub">Общая статистика проекта</div></div>
-      <button class="btn secondary sm" onclick="render()">🔄 Обновить</button>
-    </div>
-    <div class="stats">
-      <div class="stat"><div class="ic">👥</div><div class="l">Пользователей</div><div class="v">${DATA.users.length}</div></div>
-      <div class="stat"><div class="ic">📩</div><div class="l">Всего заявок</div><div class="v">${P.length}</div></div>
-      <div class="stat"><div class="ic">🔵</div><div class="l">Созданные</div><div class="v info">${byStatus('created')}</div></div>
-      <div class="stat"><div class="ic">🟡</div><div class="l">В процессе</div><div class="v warn">${byStatus('in_progress')}</div></div>
-      <div class="stat"><div class="ic">🟢</div><div class="l">Одобрено</div><div class="v ok">${byStatus('approved')}</div></div>
-      <div class="stat"><div class="ic">🏁</div><div class="l">Завершено</div><div class="v ok">${byStatus('completed')}</div></div>
-      <div class="stat"><div class="ic">💰</div><div class="l">Выплачено</div><div class="v ok">${byStatus('paid')}</div></div>
-      <div class="stat"><div class="ic">❌</div><div class="l">Отменено</div><div class="v">${byStatus('cancelled')}</div></div>
-      <div class="stat"><div class="ic">💸</div><div class="l">Ждут выплату</div><div class="v warn">${pending.length}</div></div>
-      <div class="stat"><div class="ic">💵</div><div class="l">Сумма покупок</div><div class="v accent">${fmt(totalSum)}</div></div>
-      <div class="stat"><div class="ic">💰</div><div class="l">К выплате</div><div class="v warn">${fmt(pendingSum)}</div></div>
-    </div>`);
-}
+// DASHBOARD
+async function renderDashboard(){
+  layout('<div class="empty">Загрузка…</div>');
+  try {
+    const [purchases, payouts, users, eras] = await Promise.all([
+      fbGet('purchases').then(toList).catch(() => []),
+      fbGet('payouts').then(toList).catch(() => []),
+      fbGet('users').then(toList).catch(() => []),
+      fbGet('eras').then(toList).catch(() => []),
+    ]);
+    DATA.purchases = purchases; DATA.payouts = payouts; DATA.users = users; DATA.eras = eras;
 
-// ============================================================
-function drawPurchases(){
-  const P = DATA.purchases;
-  const c = { all: P.length };
-  ['created','in_progress','approved','completed','paid','cancelled'].forEach(k => c[k] = P.filter(p => p.status === k).length);
-  const tabs = [
-    ['all','📋 Все'],['created','🔵 Созданные'],['in_progress','🟡 В процессе'],
-    ['approved','🟢 Одобренные'],['completed','🏁 Завершённые'],
-    ['paid','💰 Выплаченные'],['cancelled','❌ Отменённые']
-  ];
-  setMain(`
-    <div class="header">
-      <div><h1>📩 Заявки</h1><div class="sub" id="sub"></div></div>
-      <button class="btn secondary sm" onclick="render()">🔄 Обновить</button>
-    </div>
-    <div class="tabs">${tabs.map(([k, l]) =>
-      `<button class="tab ${FILTER.purchases === k ? 'active' : ''}" onclick="setFilter('${k}')">${l} (${c[k]})</button>`).join('')}</div>
-    <div class="card" style="padding:10px">
-      <input class="input" placeholder="🔍 Поиск: имя, @username, ID…" value="${esc(FILTER.search)}"
-        oninput="onSearch(this.value)">
-    </div>
-    <div id="list"></div>`);
-  fillPurchases();
+    const active = purchases.filter(p => p.status === 'approved').length;
+    const completed = purchases.filter(p => p.status === 'completed').length;
+    const created = purchases.filter(p => p.status === 'created').length;
+    const pendingPO = payouts.filter(p => p.status === 'pending').length;
+    const totalPurch = purchases.filter(p => p.status !== 'cancelled')
+      .reduce((s, p) => s + Number(p.purchase_price || 0), 0);
+    const totalProfit = purchases.filter(p => ['approved','completed','paid'].includes(p.status))
+      .reduce((s, p) => s + Number(p.profit_amount || 0), 0);
+    const totalPaid = payouts.filter(p => p.status === 'paid')
+      .reduce((s, p) => s + Number(p.amount || 0), 0);
+
+    layout(`
+      <div class="stats">
+        <div class="stat"><div class="ic">👥</div><div class="l">Пользователей</div><div class="v">${users.length}</div></div>
+        <div class="stat"><div class="ic">🟢</div><div class="l">Активных</div><div class="v ok">${active}</div></div>
+        <div class="stat"><div class="ic">🏁</div><div class="l">Завершено</div><div class="v info">${completed}</div></div>
+        <div class="stat"><div class="ic">⏳</div><div class="l">Новых заявок</div><div class="v warn">${created}</div></div>
+        <div class="stat"><div class="ic">💸</div><div class="l">Выплат ждут</div><div class="v warn">${pendingPO}</div></div>
+        <div class="stat"><div class="ic">💵</div><div class="l">Куплено</div><div class="v accent">${fmt(totalPurch)}</div></div>
+        <div class="stat"><div class="ic">📈</div><div class="l">Начислено</div><div class="v ok">${fmt(totalProfit)}</div></div>
+        <div class="stat"><div class="ic">💰</div><div class="l">Выплачено</div><div class="v">${fmt(totalPaid)}</div></div>
+      </div>
+      <button class="btn ghost" onclick="renderDashboard()">🔄 Обновить</button>
+    `);
+  } catch(e){ layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`); }
 }
-function purchaseFiltered(){
-  const f = FILTER.purchases, s = FILTER.search.trim().toLowerCase();
-  return DATA.purchases.filter(p => {
-    if (f !== 'all' && p.status !== f) return false;
-    if (!s) return true;
-    return (p.user_first_name || '').toLowerCase().includes(s) ||
-           (p.user_username || '').toLowerCase().includes(s) ||
-           String(p.id).includes(s) ||
-           String(p.user_telegram_id || '').includes(s);
-  });
+window.renderDashboard = renderDashboard;
+
+// PURCHASES
+let purchaseFilter = 'created';
+async function renderPurchases(){
+  layout('<div class="empty">Загрузка…</div>');
+  try {
+    const list = await fbGet('purchases').then(toList).catch(() => []);
+    DATA.purchases = list;
+    list.sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
+
+    const counts = {
+      created: list.filter(p => p.status === 'created').length,
+      in_progress: list.filter(p => p.status === 'in_progress').length,
+      approved: list.filter(p => p.status === 'approved').length,
+      completed: list.filter(p => p.status === 'completed').length,
+      all: list.length,
+    };
+    const filtered = purchaseFilter === 'all' ? list : list.filter(p => p.status === purchaseFilter);
+
+    layout(`
+      <div class="tabs">
+        <button class="tab ${purchaseFilter==='created'?'active':''}" onclick="purchaseFilter='created';renderPurchases()">⏳ Ждут (${counts.created})</button>
+        <button class="tab ${purchaseFilter==='in_progress'?'active':''}" onclick="purchaseFilter='in_progress';renderPurchases()">🟡 В работе (${counts.in_progress})</button>
+        <button class="tab ${purchaseFilter==='approved'?'active':''}" onclick="purchaseFilter='approved';renderPurchases()">🟢 Активные (${counts.approved})</button>
+        <button class="tab ${purchaseFilter==='completed'?'active':''}" onclick="purchaseFilter='completed';renderPurchases()">🏁 Завершено (${counts.completed})</button>
+        <button class="tab ${purchaseFilter==='all'?'active':''}" onclick="purchaseFilter='all';renderPurchases()">📋 Все (${counts.all})</button>
+      </div>
+      ${filtered.length ? filtered.map(orderCard).join('') : '<div class="empty"><div class="ic">📭</div><p>Нет заявок</p></div>'}
+    `);
+  } catch(e){ layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`); }
 }
-function fillPurchases(){
-  const list = purchaseFiltered();
-  const lim = LIM.purchases;
-  $('sub').textContent = `Всего: ${DATA.purchases.length} · Показано: ${list.length}`;
-  $('list').innerHTML = list.length
-    ? list.slice(0, lim).map(orderCard).join('') + moreBtn('purchases', list.length - lim)
-    : emptyBlock('📭', 'Заявок нет');
-}
-function moreBtn(name, left){
-  return left > 0 ? `<div style="text-align:center;margin:14px 0">
-    <button class="btn secondary" onclick="more('${name}')">Показать ещё (${left})</button></div>` : '';
-}
-function more(name){
-  LIM[name] += PAGE;
-  if (name === 'purchases') fillPurchases();
-  else if (name === 'payouts') fillPayouts();
-  else fillUsers();
-}
-function setFilter(v){ FILTER.purchases = v; LIM.purchases = PAGE; drawPurchases(); }
-function onSearch(v){
-  FILTER.search = v; LIM.purchases = PAGE;
-  clearTimeout(SEARCH_TIMER);
-  SEARCH_TIMER = setTimeout(fillPurchases, 150);
-}
-window.setFilter = setFilter; window.onSearch = onSearch; window.more = more;
+window.renderPurchases = renderPurchases;
 
 function orderCard(p){
-  const canApprove = p.status === 'created' || p.status === 'in_progress';
+  const isNew = p.status === 'created';
+  const k = p._key;
+  const canConfirm = ['created','in_progress'].includes(p.status);
+  const canCancel = ['created','in_progress'].includes(p.status);
   return `
-    <div class="order-card">
-      <div class="row" style="align-items:flex-start;margin-bottom:10px">
-        <div class="on">📩 Заявка #${esc(p.id)}</div>
+    <div class="card">
+      <div class="row" style="margin-bottom:10px">
+        <b style="color:#4f8cff;font-size:15px">📩 Заявка #${esc(p.id)}</b>
         <span class="badge ${esc(p.status)}">${esc(statusLabel(p.status))}</span>
       </div>
-      <div class="meta">
-        <div class="meta-item"><div class="l">👤 Имя</div><div class="v">${esc(p.user_first_name || '—')}</div></div>
-        <div class="meta-item"><div class="l">🔗 Username</div><div class="v">@${esc(p.user_username || '—')}</div></div>
-        <div class="meta-item"><div class="l">🆔 TG ID</div><div class="v">${esc(p.user_telegram_id || '—')}</div></div>
-        <div class="meta-item"><div class="l">💳 Эра</div><div class="v">${esc(p.era_title)}</div></div>
-        <div class="meta-item"><div class="l">💵 Цена</div><div class="v accent">${fmt(p.purchase_price)}</div></div>
-        <div class="meta-item"><div class="l">💰 Начисл.</div><div class="v ok">+${fmt(p.profit_amount)}</div></div>
-        <div class="meta-item"><div class="l">🏆 Итого</div><div class="v ok">${fmt(p.total_amount)}</div></div>
-        <div class="meta-item"><div class="l">📅 Срок</div><div class="v">${num(p.duration_days)} дней</div></div>
+      <div class="grid">
+        <div class="cell"><b>👤 Участник</b><span>${esc(p.user_first_name||'—')}</span></div>
+        <div class="cell"><b>🔗 Никнейм</b><span>@${esc(p.user_username||'—')}</span></div>
+        <div class="cell"><b>🆔 TG ID</b><span>${esc(p.user_telegram_id||'—')}</span></div>
+        <div class="cell"><b>💳 Эра</b><span>${esc(p.era_title||'—')}</span></div>
+        <div class="cell"><b>💵 Номинал</b><span class="accent">${fmt(p.purchase_price)}</span></div>
+        <div class="cell"><b>💰 Начисл.</b><span class="ok">+${fmt(p.profit_amount)}</span></div>
+        <div class="cell"><b>🏆 Итого</b><span class="ok">${fmt(p.total_amount)}</span></div>
+        <div class="cell"><b>📅 Срок</b><span>${Number(p.duration_days||0)} дн.</span></div>
       </div>
-      <div class="muted-sm" style="margin-bottom:10px;line-height:1.7">
-        🕐 Создано: ${fmtDT(p.created_at)}
-        ${p.activated_at ? '<br>✅ Подтверждено: ' + fmtDT(p.activated_at) : ''}
-        ${p.start_date ? '<br>📅 Начало: ' + fmtDate(p.start_date) : ''}
-        ${p.last_day ? ' · 🏁 Последний: ' + fmtDate(p.last_day) : ''}
-        ${p.expires_at ? ' · ⏰ Завершение: ' + fmtDate(p.expires_at) : ''}
-        ${p.paid_at ? '<br>💰 Выплачено: ' + fmtDT(p.paid_at) : ''}
+      <div class="muted" style="margin-bottom:10px">
+        🕐 ${fmtDate(p.created_at)}
+        ${p.activated_at ? ' · ✅ ' + fmtDate(p.activated_at) : ''}
       </div>
-      <div class="flex">
-        ${canApprove ? `
-          ${p.status === 'created' ? `<button class="btn warn sm" onclick="setStatus(${q(p._key)}, 'in_progress')">🟡 В процессе</button>` : ''}
-          <button class="btn ok sm" onclick="approvePurchase(${q(p._key)})">🟢 Одобрить</button>
-          <button class="btn danger sm" onclick="setStatus(${q(p._key)}, 'cancelled')">❌ Отменить</button>
-        ` : ''}
-        ${p.status === 'approved' ? `
-          <button class="btn sm" onclick="setStatus(${q(p._key)}, 'completed')">🏁 Завершить</button>
-          <button class="btn danger sm" onclick="setStatus(${q(p._key)}, 'cancelled')">❌ Отменить</button>
-        ` : ''}
-        ${p.user_username ? `<a class="btn ghost sm" href="https://t.me/${esc(p.user_username)}" target="_blank">💬 Написать</a>` : ''}
+      <div class="row">
+        <div>
+          ${canConfirm ? `<button class="btn ok sm" onclick="admConfirm('${esc(k)}')">✅ Подтвердить</button>` : ''}
+          ${canCancel ? `<button class="btn danger sm" onclick="admCancel('${esc(k)}')">❌ Отменить</button>` : ''}
+          <button class="btn ghost sm" onclick="admContact('${esc(p.user_telegram_id||'')}')">💬 Написать</button>
+        </div>
       </div>
     </div>`;
 }
 
-window.setStatus = (key, status) => once('p' + key + status, async () => {
-  if (!confirm(`Изменить статус на "${statusLabel(status)}"?`)) return;
-  await fbPatch(`purchases/${key}`, {status, status_changed_at: new Date().toISOString()});
-  const p = DATA.purchases.find(x => x._key === key);
-  if (p){ p.status = status; p.status_changed_at = new Date().toISOString(); }
-  toast(`✅ → ${statusLabel(status)}`);
-  drawPurchases();
-  updateCounts();
-});
+async function admConfirm(k){
+  if (!confirm('Подтвердить заявку? Это активирует эру.')) return;
+  try {
+    const p = DATA.purchases.find(x => x._key === k);
+    const now = new Date();
+    // Первый день = следующий день
+    const d0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    d0.setDate(d0.getDate() + 1);
+    const days = Number(p.duration_days || 20);
+    const last = new Date(d0); last.setDate(d0.getDate() + days - 1);
+    const exp = new Date(d0); exp.setDate(d0.getDate() + days);
 
-window.approvePurchase = key => once('ap' + key, async () => {
-  if (!confirm('Одобрить заявку?\n\nУчастник получит уведомление с датами и стартом периода.')) return;
-  const p = DATA.purchases.find(x => x._key === key);
-  if (!p) return;
-  const now = new Date();
-  const tzNow = new Date(now.getTime() + 5*3600*1000);
-  const y = tzNow.getUTCFullYear(), m = tzNow.getUTCMonth(), d = tzNow.getUTCDate();
-  const first = new Date(Date.UTC(y, m, d+1, 0, 0, 0) - 5*3600*1000);
-  const days = num(p.duration_days);
-  const last = new Date(first.getTime() + (days - 1) * 86400000);
-  const expires = new Date(last.getTime() + 86400000);
-  const patch = {
-    status: 'approved',
-    activated_at: now.toISOString(),
-    start_date: first.toISOString(),
-    last_day: last.toISOString(),
-    expires_at: expires.toISOString(),
-    status_changed_at: now.toISOString(),
-    notified_1d: 0,
-    completed_notified: 0,
-  };
-  await fbPatch(`purchases/${key}`, patch);
-  Object.assign(p, patch);
-  toast('🟢 Одобрено');
-  drawPurchases();
-  updateCounts();
-});
+    await fbPatch(`purchases/${k}`, {
+      status: 'approved',
+      activated_at: now.toISOString(),
+      start_date: d0.toISOString(),
+      last_day: last.toISOString(),
+      expires_at: exp.toISOString(),
+      status_changed_at: now.toISOString(),
+      notified_1d: 0, notified_2d: 0, completed_notified: 0,
+    });
+    toast('✅ Заявка подтверждена', 'ok');
+    renderPurchases();
+  } catch(e){ toast(e.message, 'err'); }
+}
+window.admConfirm = admConfirm;
 
-// ============================================================
-function drawPayouts(){
-  const P = DATA.payouts;
-  const c = { all: P.length };
-  ['pending','paid','rejected'].forEach(k => c[k] = P.filter(p => p.status === k).length);
-  const tabs = [['all','📋 Все'],['pending','⏳ Ожидают'],['paid','✅ Выплачено'],['rejected','❌ Отклонено']];
-  const f = FILTER.payouts;
-  setMain(`
-    <div class="header">
-      <div><h1>💸 Выплаты</h1><div class="sub">Всего: ${c.all}</div></div>
-      <button class="btn secondary sm" onclick="render()">🔄 Обновить</button>
-    </div>
-    <div class="tabs">${tabs.map(([k, l]) =>
-      `<button class="tab ${f === k ? 'active' : ''}" onclick="setPayFilter('${k}')">${l} (${c[k]})</button>`).join('')}</div>
-    <div id="list"></div>`);
-  fillPayouts();
+async function admCancel(k){
+  if (!confirm('Отменить заявку?')) return;
+  try {
+    await fbPatch(`purchases/${k}`, { status: 'cancelled', status_changed_at: new Date().toISOString() });
+    toast('❌ Отменено');
+    renderPurchases();
+  } catch(e){ toast(e.message, 'err'); }
 }
-function fillPayouts(){
-  const f = FILTER.payouts;
-  const list = f === 'all' ? DATA.payouts : DATA.payouts.filter(p => p.status === f);
-  const lim = LIM.payouts;
-  $('list').innerHTML = list.length
-    ? list.slice(0, lim).map(payoutCard).join('') + moreBtn('payouts', list.length - lim)
-    : emptyBlock('📭', 'Заявок нет');
+window.admCancel = admCancel;
+
+async function admContact(uid){
+  if (!uid) return;
+  try {
+    const u = await fbGet(`users/${uid}`);
+    if (!u) return toast('Не найден', 'err');
+    const url = u.username ? `https://t.me/${u.username}` : `tg://user?id=${uid}`;
+    window.open(url, '_blank');
+  } catch(e){ toast(e.message, 'err'); }
 }
-function setPayFilter(v){ FILTER.payouts = v; LIM.payouts = PAGE; drawPayouts(); }
-window.setPayFilter = setPayFilter;
+window.admContact = admContact;
+
+// PAYOUTS
+async function renderPayouts(){
+  layout('<div class="empty">Загрузка…</div>');
+  try {
+    const list = await fbGet('payouts').then(toList).catch(() => []);
+    DATA.payouts = list;
+    list.sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
+
+    const pending = list.filter(p => p.status === 'pending');
+    const paid = list.filter(p => p.status === 'paid');
+
+    layout(`
+      <div class="tabs">
+        <button class="tab active">⏳ Ожидают (${pending.length})</button>
+        <button class="tab">✅ Выплачено (${paid.length})</button>
+      </div>
+      ${pending.length ? pending.map(payoutCard).join('') : '<div class="empty"><div class="ic">📭</div><p>Нет заявок на вывод</p></div>'}
+    `);
+  } catch(e){ layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`); }
+}
+window.renderPayouts = renderPayouts;
 
 function payoutCard(po){
+  const k = po._key;
   return `
-    <div class="order-card">
-      <div class="row" style="align-items:flex-start;margin-bottom:10px">
-        <div class="on">💸 Вывод #${esc(po.id)}</div>
+    <div class="card">
+      <div class="row" style="margin-bottom:10px">
+        <b style="color:#4f8cff;font-size:15px">💸 Выплата #${esc(po.id)}</b>
         <span class="badge ${esc(po.status)}">${esc(statusLabel(po.status))}</span>
       </div>
-      <div class="meta">
-        <div class="meta-item"><div class="l">📄 Покупка</div><div class="v">#${esc(po.purchase_id)}</div></div>
-        <div class="meta-item"><div class="l">👤 Участник</div><div class="v">${esc(po.user_first_name || '—')}</div></div>
-        <div class="meta-item"><div class="l">🔗 Никнейм</div><div class="v">@${esc(po.user_username || '—')}</div></div>
-        <div class="meta-item"><div class="l">🆔 TG ID</div><div class="v">${esc(po.user_telegram_id || '—')}</div></div>
-        <div class="meta-item"><div class="l">💳 Эра</div><div class="v">${esc(po.era_title || '—')}</div></div>
-        <div class="meta-item"><div class="l">💵 Куплено</div><div class="v">${fmt(po.purchase_price)}</div></div>
-        <div class="meta-item"><div class="l">💰 К выводу</div><div class="v ok">${fmt(po.amount)}</div></div>
+      <div class="grid">
+        <div class="cell"><b>👤 Участник</b><span>${esc(po.user_first_name||'—')}</span></div>
+        <div class="cell"><b>🔗 Никнейм</b><span>@${esc(po.user_username||'—')}</span></div>
+        <div class="cell"><b>🆔 TG ID</b><span>${esc(po.user_telegram_id||'—')}</span></div>
+        <div class="cell"><b>💳 Эра</b><span>${esc(po.era_title||'—')}</span></div>
+        <div class="cell"><b>💰 Сумма</b><span class="ok">${fmt(po.amount)}</span></div>
+        <div class="cell"><b>📄 Покупка</b><span>#${esc(po.purchase_id||'—')}</span></div>
       </div>
-      <div class="muted-sm" style="margin-bottom:10px;line-height:1.7">
-        📅 Подано: ${fmtDT(po.requested_at)}
-        ${po.paid_at ? '<br>✅ Выплачено: ' + fmtDT(po.paid_at) : ''}
-        ${po.rejected_at ? '<br>❌ Отклонено: ' + fmtDT(po.rejected_at) + ' — ' + esc(po.reject_reason || '') : ''}
-      </div>
-      <div class="flex">
-        ${po.status === 'pending' ? `
-          <button class="btn ok sm" onclick="markPayoutPaid(${q(po._key)}, ${q(po.id)})">✅ Подтвердить выплату</button>
-          <button class="btn danger sm" onclick="rejectPayout(${q(po._key)}, ${q(po.id)})">❌ Отклонить</button>
-        ` : ''}
-        ${po.user_username ? `<a class="btn ghost sm" href="https://t.me/${esc(po.user_username)}" target="_blank">👤 Связаться</a>` : ''}
+      <div class="muted" style="margin-bottom:10px">🕐 ${fmtDate(po.requested_at)}</div>
+      <div class="row">
+        <div>
+          <button class="btn ok sm" onclick="admMarkPaid('${esc(k)}')">✅ Выплачено</button>
+          <button class="btn ghost sm" onclick="admContact('${esc(po.user_telegram_id||'')}')">💬 Написать</button>
+        </div>
       </div>
     </div>`;
 }
 
-window.markPayoutPaid = (key, id) => once('po' + key, async () => {
-  if (!confirm(`Подтвердить выплату #${id}?\n\nНажимайте только после фактического перевода.`)) return;
-  const po = DATA.payouts.find(x => x._key === key);
-  if (!po) return;
-  const now = new Date().toISOString();
-  await fbPatch(`payouts/${key}`, {status: 'paid', paid_at: now});
-  po.status = 'paid'; po.paid_at = now;
-  const pk = DATA.purchases?.find(p => String(p.id) === String(po.purchase_id))?._key;
-  if (pk) await fbPatch(`purchases/${pk}`, {status: 'paid', paid_at: now});
-  toast('✅ Выплата подтверждена');
-  drawPayouts();
-  updateCounts();
-});
+async function admMarkPaid(k){
+  if (!confirm('Отметить выплату как выполненную?')) return;
+  try {
+    const po = DATA.payouts.find(x => x._key === k);
+    await fbPatch(`payouts/${k}`, { status: 'paid', paid_at: new Date().toISOString() });
 
-window.rejectPayout = (key, id) => once('por' + key, async () => {
-  const reason = prompt('Причина отклонения:', 'Не указана');
-  if (reason === null) return;
-  const now = new Date().toISOString();
-  await fbPatch(`payouts/${key}`, {
-    status: 'rejected',
-    rejected_at: now,
-    reject_reason: reason || 'Не указана',
-  });
-  const po = DATA.payouts.find(x => x._key === key);
-  if (po){ po.status = 'rejected'; po.rejected_at = now; po.reject_reason = reason; }
-  toast('❌ Отклонено');
-  drawPayouts();
-  updateCounts();
-});
+    // Находим purchase по purchase_id и помечаем paid
+    const purchases = DATA.purchases || [];
+    const p = purchases.find(x => String(x.id) === String(po.purchase_id));
+    if (p){
+      await fbPatch(`purchases/${p._key}`, { status: 'paid', paid_at: new Date().toISOString() });
+    }
+    toast('💰 Выплата отмечена', 'ok');
+    renderPayouts();
+  } catch(e){ toast(e.message, 'err'); }
+}
+window.admMarkPaid = admMarkPaid;
 
-// ============================================================
-function drawUsers(){
-  setMain(`
-    <div class="header">
-      <div><h1>👥 Пользователи</h1><div class="sub" id="sub"></div></div>
-      <button class="btn secondary sm" onclick="render()">🔄 Обновить</button>
-    </div>
-    <div class="card" style="padding:10px">
-      <input class="input" placeholder="🔍 Поиск: имя, @username, ID…" value="${esc(FILTER.search)}"
-        oninput="onUserSearch(this.value)">
-    </div>
-    <div id="list"></div>`);
-  fillUsers();
-}
-function userFiltered(){
-  const s = FILTER.search.trim().toLowerCase();
-  if (!s) return DATA.users;
-  return DATA.users.filter(u =>
-    (u.first_name || '').toLowerCase().includes(s) ||
-    (u.username || '').toLowerCase().includes(s) ||
-    String(u.telegram_id || '').includes(s));
-}
-function fillUsers(){
-  const list = userFiltered();
-  const lim = LIM.users;
-  $('sub').textContent = `Всего: ${DATA.users.length} · Показано: ${list.length}`;
-  $('list').innerHTML = list.length
-    ? list.slice(0, lim).map(userCard).join('') + moreBtn('users', list.length - lim)
-    : emptyBlock('👤', 'Пользователей нет');
-}
-function onUserSearch(v){
-  FILTER.search = v; LIM.users = PAGE;
-  clearTimeout(SEARCH_TIMER);
-  SEARCH_TIMER = setTimeout(fillUsers, 150);
-}
-window.onUserSearch = onUserSearch;
+// USERS
+async function renderUsers(){
+  layout('<div class="empty">Загрузка…</div>');
+  try {
+    const users = await fbGet('users').then(toList).catch(() => []);
+    const purchases = await fbGet('purchases').then(toList).catch(() => []);
+    DATA.users = users; DATA.purchases = purchases;
+    users.sort((a, b) => new Date(b.registered_at || 0) - new Date(a.registered_at || 0));
 
-function userCard(u){
-  const ps = (DATA.purchases || []).filter(p => String(p.user_telegram_id) === String(u.telegram_id));
-  const invested = ps.filter(p => p.status !== 'cancelled').reduce((s,p) => s + num(p.purchase_price), 0);
-  const earned = ps.filter(p => ['completed','paid'].includes(p.status)).reduce((s,p) => s + num(p.total_amount), 0);
-  const invited = (DATA.users || []).filter(x => String(x.referrer_uid || '') === String(u.telegram_id)).length;
-  const initial = (u.first_name || u.username || '?')[0].toUpperCase();
-  return `
-    <div class="order-card">
-      <div class="flex" style="margin-bottom:10px">
-        <div style="width:44px;height:44px;border-radius:50%;background:var(--card3);display:flex;align-items:center;
-          justify-content:center;font-size:17px;font-weight:700;color:var(--accent);overflow:hidden;flex-shrink:0">
-          ${u.photo_url ? `<img src="${esc(u.photo_url)}" style="width:100%;height:100%;object-fit:cover">` : esc(initial)}
-        </div>
-        <div style="flex:1;min-width:0">
-          <div style="font-weight:700;font-size:14px">${esc(u.first_name || 'Без имени')}</div>
-          <div class="muted-sm">@${esc(u.username || '—')} · ID ${esc(u.telegram_id || '—')}</div>
-        </div>
+    layout(`
+      ${users.length ? users.map(u => {
+        const myP = purchases.filter(p => String(p.user_telegram_id) === String(u.telegram_id));
+        const invested = myP.filter(p => p.status !== 'cancelled').reduce((s, p) => s + Number(p.purchase_price || 0), 0);
+        const earned = myP.filter(p => ['completed','paid'].includes(p.status)).reduce((s, p) => s + Number(p.total_amount || 0), 0);
+        const refs = users.filter(x => String(x.referrer_uid || '') === String(u.telegram_id)).length;
+        return `
+          <div class="card">
+            <div class="row" style="margin-bottom:10px">
+              <div><b>${esc(u.first_name||'Пользователь')} ${esc(u.last_name||'')}</b>
+                <div class="muted">@${esc(u.username||'—')} · ID ${esc(u.telegram_id)}</div></div>
+              <span class="badge ${u.referrer_uid?'approved':'created'}">${u.referrer_uid?'реферал':'прямой'}</span>
+            </div>
+            <div class="grid">
+              <div class="cell"><b>Вложено</b><span class="accent">${fmt(invested)}</span></div>
+              <div class="cell"><b>Получено</b><span class="ok">${fmt(earned)}</span></div>
+              <div class="cell"><b>Заявок</b><span>${myP.length}</span></div>
+              <div class="cell"><b>Пригласил</b><span>${refs}</span></div>
+            </div>
+            <div class="row" style="margin-top:10px">
+              <div class="muted">📅 ${fmtDate(u.registered_at)}</div>
+              <button class="btn ghost sm" onclick="admContact('${esc(u.telegram_id||'')}')">💬 Написать</button>
+            </div>
+          </div>`;
+      }).join('') : '<div class="empty"><div class="ic">👤</div><p>Нет пользователей</p></div>'}
+    `);
+  } catch(e){ layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`); }
+}
+window.renderUsers = renderUsers;
+
+// ERAS
+async function renderEras(){
+  layout('<div class="empty">Загрузка…</div>');
+  try {
+    const eras = await fbGet('eras').then(toList).catch(() => []);
+    DATA.eras = eras;
+    eras.sort((a, b) => Number(a.sort_order || a.id || 0) - Number(b.sort_order || b.id || 0));
+
+    layout(`
+      <div class="row" style="margin-bottom:14px">
+        <h2 style="font-size:16px">🧩 Товары (${eras.length})</h2>
+        <button class="btn" onclick="createEra()">➕ Создать эру</button>
       </div>
-      <div class="meta">
-        <div class="meta-item"><div class="l">Вложено</div><div class="v accent">${fmt(invested)}</div></div>
-        <div class="meta-item"><div class="l">Выплачено</div><div class="v ok">${fmt(earned)}</div></div>
-        <div class="meta-item"><div class="l">Заявок</div><div class="v">${ps.length}</div></div>
-        <div class="meta-item"><div class="l">Рефералов</div><div class="v">${invited}</div></div>
-      </div>
-      <div class="muted-sm">📅 ${fmtDT(u.registered_at)}</div>
-      ${u.username ? `<div class="flex" style="margin-top:10px">
-        <a class="btn ghost sm" href="https://t.me/${esc(u.username)}" target="_blank">💬 Написать</a>
-      </div>` : ''}
-    </div>`;
+      ${eras.map(eraCard).join('')}
+    `);
+  } catch(e){ layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`); }
 }
+window.renderEras = renderEras;
 
-// ============================================================
-function drawEras(){
-  const E = DATA.eras;
-  setMain(`
-    <div class="header">
-      <div><h1>🧩 Товары (Эры)</h1><div class="sub">Всего: ${E.length}</div></div>
-      <div class="flex">
-        <button class="btn secondary sm" onclick="render()">🔄 Обновить</button>
-        <button class="btn" onclick="openEraModal()">➕ Создать</button>
-      </div>
-    </div>
-    ${E.length ? E.map(eraCard).join('') : emptyBlock('📦', 'Товаров нет',
-      'Создайте первую эру', `<button class="btn" onclick="openEraModal()" style="margin-top:12px">➕ Создать</button>`)}`);
-}
 function eraCard(e){
-  const roi = e.price > 0 ? Math.round((e.profit_amount / e.price) * 100) : 0;
+  const roi = Number(e.price || 0) > 0 ? Math.round((Number(e.profit_amount) / Number(e.price)) * 100) : 0;
   return `
-    <div class="order-card">
-      <div class="row" style="align-items:flex-start;margin-bottom:10px">
-        <div><div class="on">🧩 ${esc(e.title)}</div><div class="muted-sm">ID ${esc(e.id)}</div></div>
-        <span class="badge ${e.is_active ? 'approved' : 'cancelled'}">${e.is_active ? '🟢 Активна' : '⚫ Отключена'}</span>
+    <div class="card">
+      <div class="row" style="margin-bottom:10px">
+        <div><b style="color:#4f8cff">🧩 ${esc(e.title||'Без названия')}</b>
+          <div class="muted">ID #${esc(e.id||e._key)}</div></div>
+        <span class="badge ${e.is_active?'approved':'cancelled'}">${e.is_active?'🟢 Активна':'⚫ Отключена'}</span>
       </div>
-      <div class="meta">
-        <div class="meta-item"><div class="l">💵 Цена</div><div class="v accent">${fmt(e.price)}</div></div>
-        <div class="meta-item"><div class="l">💰 Начисл.</div><div class="v ok">+${fmt(e.profit_amount)}</div></div>
-        <div class="meta-item"><div class="l">🏆 Итого</div><div class="v ok">${fmt(e.price + e.profit_amount)}</div></div>
-        <div class="meta-item"><div class="l">📅 Срок</div><div class="v">${num(e.duration_days)} дней</div></div>
-        <div class="meta-item"><div class="l">📈 ROI</div><div class="v ok">+${roi}%</div></div>
+      <div class="grid">
+        <div class="cell"><b>💵 Стоимость</b><span class="accent">${fmt(e.price)}</span></div>
+        <div class="cell"><b>💰 Начисл.</b><span class="ok">+${fmt(e.profit_amount)}</span></div>
+        <div class="cell"><b>🏆 Итого</b><span class="ok">${fmt(e.total_amount)}</span></div>
+        <div class="cell"><b>📅 Срок</b><span>${Number(e.duration_days||0)} дн.</span></div>
+        <div class="cell"><b>📈 ROI</b><span class="ok">+${roi}%</span></div>
       </div>
-      <div class="flex">
-        <button class="btn sm" onclick="openEraModal(${q(e._key)})">✏️ Изменить</button>
-        <button class="btn danger sm" onclick="deleteEra(${q(e._key)}, ${q(e.title)})">🗑 Удалить</button>
+      <div class="row" style="margin-top:10px">
+        <div>
+          <button class="btn sm" onclick="editEra('${esc(e._key)}')">✏️ Изменить</button>
+          <button class="btn ${e.is_active?'warn':'ok'} sm" onclick="toggleEra('${esc(e._key)}',${e.is_active?0:1})">${e.is_active?'⚫ Отключить':'🟢 Включить'}</button>
+          <button class="btn danger sm" onclick="deleteEra('${esc(e._key)}')">🗑 Удалить</button>
+        </div>
       </div>
     </div>`;
 }
-window.openEraModal = function(key){
-  const e = key ? DATA.eras.find(x => x._key === key) : null;
-  showModal(`
-    <div class="modal-head"><h2>${e ? '✏️ Изменить' : '➕ Создать'} эру</h2>
-      <button class="close-x" onclick="closeModal()">✕</button></div>
-    <div class="modal-body">
-      <div class="form-row"><label>Название</label>
-        <input class="input" id="f_title" value="${esc(e?.title || 'Новая эра')}"></div>
-      <div class="grid2">
-        <div class="form-row"><label>Цена (₽)</label>
-          <input class="input" id="f_price" type="number" value="${e?.price || 1500}"></div>
-        <div class="form-row"><label>Срок (дней)</label>
-          <input class="input" id="f_duration" type="number" value="${e?.duration_days || 20}"></div>
-      </div>
-      <div class="form-row"><label>Начисление (₽)</label>
-        <input class="input" id="f_profit" type="number" value="${e?.profit_amount || 1000}"></div>
-      <div class="form-row"><label>Описание</label>
-        <textarea class="input" id="f_description" rows="3">${esc(e?.description || '')}</textarea></div>
-      <div class="form-row"><label>Активна</label>
-        <select class="input" id="f_active">
-          <option value="1" ${(!e || e.is_active) ? 'selected' : ''}>Да</option>
-          <option value="0" ${(e && !e.is_active) ? 'selected' : ''}>Нет</option>
-        </select></div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn ghost" onclick="closeModal()">Отмена</button>
-      <button class="btn" onclick="saveEra(${q(key || '')})">💾 Сохранить</button>
-    </div>`);
-};
-window.saveEra = key => once('save' + (key || 'new'), async () => {
-  const title = $('f_title').value.trim();
-  if (!title){ toast('Введите название', 'err'); return; }
-  const body = {
-    title,
-    price: num($('f_price').value),
-    duration_days: Math.round(num($('f_duration').value)),
-    profit_amount: num($('f_profit').value),
-    total_amount: num($('f_price').value) + num($('f_profit').value),
-    description: $('f_description').value,
-    is_active: $('f_active').value === '0' ? 0 : 1,
-  };
-  if (key){
-    const old = DATA.eras.find(x => x._key === key);
-    body.id = old?.id || num(key);
-    body.sort_order = old?.sort_order || body.id;
-    await fbPut(`eras/${key}`, body);
-    toast('💾 Обновлено');
-  } else {
-    const newId = DATA.eras.length ? Math.max(...DATA.eras.map(x => num(x.id))) + 1 : 1;
-    body.id = newId; body.sort_order = newId;
-    await fbPut(`eras/${newId}`, body);
-    toast(`✅ Эра #${newId} создана`);
-  }
-  closeModal();
-  render();
-});
-window.deleteEra = (key, title) => once('del' + key, async () => {
-  if (!confirm(`🗑 Удалить "${title}"?`)) return;
-  await fbDelete(`eras/${key}`);
-  toast('🗑 Удалено');
-  render();
-});
 
-// ============================================================
-shell();
+function eraForm(e){
+  return `
+    <div class="modal-bg" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <div class="modal-h"><h2>${e?'✏️ Изменить':'➕ Создать'} эру</h2>
+          <button class="close-x" onclick="closeModal()">✕</button></div>
+        <div class="modal-b">
+          <div class="form-row"><label>Название</label>
+            <input class="input" id="f_title" value="${esc(e?.title||'Новая эра')}"></div>
+          <div class="form-row"><label>Стоимость (₽)</label>
+            <input class="input" id="f_price" type="number" value="${e?.price||1500}"></div>
+          <div class="form-row"><label>Начисление (₽)</label>
+            <input class="input" id="f_profit" type="number" value="${e?.profit_amount||1000}"></div>
+          <div class="form-row"><label>Срок (дней)</label>
+            <input class="input" id="f_days" type="number" value="${e?.duration_days||20}"></div>
+          <div class="form-row"><label>Описание</label>
+            <textarea class="input" id="f_desc" rows="2">${esc(e?.description||'')}</textarea></div>
+          <div class="form-row"><label>Активна</label>
+            <select class="input" id="f_active">
+              <option value="1" ${(!e||e.is_active)?'selected':''}>Да</option>
+              <option value="0" ${(e&&!e.is_active)?'selected':''}>Нет</option>
+            </select></div>
+        </div>
+        <div class="modal-f">
+          <button class="btn ghost" onclick="closeModal()">Отмена</button>
+          <button class="btn" id="f_save" onclick="saveEra('${e?e._key:''}')">${e?'💾 Сохранить':'✅ Создать'}</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function closeModal(){ $('modal-root').innerHTML = ''; }
+window.closeModal = closeModal;
+
+function createEra(){
+  $('modal-root').innerHTML = eraForm(null);
+}
+window.createEra = createEra;
+
+function editEra(key){
+  const e = (DATA.eras || []).find(x => x._key === key);
+  if (!e) return;
+  $('modal-root').innerHTML = eraForm(e);
+}
+window.editEra = editEra;
+
+async function saveEra(key){
+  const title = $('f_title').value.trim();
+  const price = Number($('f_price').value) || 0;
+  const profit = Number($('f_profit').value) || 0;
+  const days = Number($('f_days').value) || 20;
+  const desc = $('f_desc').value.trim();
+  const active = Number($('f_active').value);
+
+  if (!title){ toast('Введите название', 'err'); return; }
+
+  const btn = $('f_save');
+  btn.disabled = true; btn.textContent = '⏳...';
+
+  try {
+    const data = {
+      title, price, profit_amount: profit, total_amount: price + profit,
+      duration_days: days, description: desc, is_active: active,
+    };
+    if (key){
+      // Обновить
+      const e = (DATA.eras || []).find(x => x._key === key);
+      data.id = e?.id || key;
+      data.sort_order = e?.sort_order || data.id;
+      await fbPut(`eras/${key}`, data);
+      toast('💾 Сохранено', 'ok');
+    } else {
+      // Создать с новым ID
+      const eras = DATA.eras || [];
+      const usedIds = eras.map(e => Number(e.id || 0)).filter(Boolean);
+      const newId = usedIds.length ? Math.max(...usedIds) + 1 : 1;
+      data.id = newId;
+      data.sort_order = newId;
+      await fbPut(`eras/${newId}`, data);
+      toast(`✅ Эра #${newId} создана`, 'ok');
+    }
+    closeModal();
+    renderEras();
+  } catch(e){
+    toast(e.message, 'err');
+    btn.disabled = false;
+    btn.textContent = key ? '💾 Сохранить' : '✅ Создать';
+  }
+}
+window.saveEra = saveEra;
+
+async function toggleEra(key, newActive){
+  try {
+    const e = (DATA.eras || []).find(x => x._key === key);
+    if (!e) return;
+    await fbPatch(`eras/${key}`, { is_active: newActive });
+    toast(newActive ? '🟢 Включена' : '⚫ Отключена', 'ok');
+    renderEras();
+  } catch(e){ toast(e.message, 'err'); }
+}
+window.toggleEra = toggleEra;
+
+async function deleteEra(key){
+  if (!confirm('Удалить эру? Существующие заказы не пострадают.')) return;
+  try {
+    await fbDelete(`eras/${key}`);
+    toast('🗑 Удалено', 'ok');
+    renderEras();
+  } catch(e){ toast(e.message, 'err'); }
+}
+window.deleteEra = deleteEra;
+
+// REFS
+async function renderRefs(){
+  layout('<div class="empty">Загрузка…</div>');
+  try {
+    const users = await fbGet('users').then(toList).catch(() => []);
+    DATA.users = users;
+    const refs = users.filter(u => u.referrer_uid);
+    const tree = {};
+    refs.forEach(u => {
+      const r = u.referrer_uid;
+      if (!tree[r]) tree[r] = [];
+      tree[r].push(u);
+    });
+
+    layout(`
+      <h2 style="font-size:16px;margin-bottom:12px">👥 Реферальная система</h2>
+      <div class="stats" style="margin-bottom:16px">
+        <div class="stat"><div class="ic">👥</div><div class="l">Всего юзеров</div><div class="v">${users.length}</div></div>
+        <div class="stat"><div class="ic">🎁</div><div class="l">С реферером</div><div class="v ok">${refs.length}</div></div>
+        <div class="stat"><div class="ic">📊</div><div class="l">Пригласивших</div><div class="v accent">${Object.keys(tree).length}</div></div>
+      </div>
+      ${Object.keys(tree).length ? Object.entries(tree).map(([uid, list]) => {
+        const inviter = users.find(u => String(u.telegram_id) === String(uid));
+        return `
+          <div class="card">
+            <div class="row" style="margin-bottom:10px">
+              <b>🎁 ${esc(inviter?.first_name || 'ID ' + uid)}</b>
+              <span class="badge approved">${list.length} реферал(ов)</span>
+            </div>
+            ${list.map(r => `
+              <div class="row" style="padding:8px 0;border-bottom:1px solid var(--border)">
+                <div><b>${esc(r.first_name||'—')}</b>
+                  <div class="muted">@${esc(r.username||'—')} · ID ${esc(r.telegram_id)}</div></div>
+                <div class="muted">${fmtDate(r.registered_at)}</div>
+              </div>
+            `).join('')}
+          </div>`;
+      }).join('') : '<div class="empty"><div class="ic">👥</div><p>Пока нет рефералов</p></div>'}
+    `);
+  } catch(e){ layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`); }
+}
+window.renderRefs = renderRefs;
+
+// MAIN
+async function render(){
+  if (!AUTHED){ renderLogin(); return; }
+  const tabs = {
+    dashboard: renderDashboard,
+    purchases: renderPurchases,
+    payouts: renderPayouts,
+    users: renderUsers,
+    eras: renderEras,
+    refs: renderRefs,
+  };
+  await (tabs[TAB] || renderDashboard)();
+}
+
 render();
 </script>
 </body>

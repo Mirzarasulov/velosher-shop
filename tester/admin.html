@@ -3,121 +3,104 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>👑 Era Admin — God Panel</title>
+<title>Era Admin</title>
 <style>
   :root{
-    --bg:#080b11; --card:#0f141c; --card2:#161d28; --card3:#1e2735;
-    --border:#1f2937; --border2:#2d3947;
-    --text:#e6edf3; --text2:#c4ccd6; --muted:#7a8595;
-    --accent:#4f8cff; --accent2:#356fd8; --accent-glow:rgba(79,140,255,.3);
+    --bg:#0d1117; --card:#161b22; --card2:#1c2330; --card3:#232b38;
+    --border:#252e3a; --border2:#2f3a48;
+    --text:#e6edf3; --text2:#c4ccd6; --muted:#8b949e;
+    --accent:#4f8cff; --accent2:#356fd8;
     --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c; --info:#63a9ff;
-    --gold:#ffd166; --purple:#a78bfa;
-    --r:12px; --r2:10px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{background:var(--bg);color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
   button,input,textarea,select{font-family:inherit}
   .layout{display:flex;min-height:100vh}
 
   /* SIDEBAR */
-  .side{width:240px;background:var(--card);border-right:1px solid var(--border);
-    padding:20px 12px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
-  .side .logo{display:flex;align-items:center;gap:10px;padding:0 8px 20px;
-    border-bottom:1px solid var(--border);margin-bottom:16px}
-  .side .logo .ic{width:36px;height:36px;border-radius:10px;
-    background:linear-gradient(135deg,var(--accent),#7b5cff);display:flex;
-    align-items:center;justify-content:center;font-size:18px;
-    box-shadow:0 4px 14px var(--accent-glow)}
-  .side .logo .t{font-weight:800;font-size:15px;letter-spacing:-.01em}
+  .side{width:220px;background:var(--card);border-right:1px solid var(--border);
+    padding:16px 10px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .side .logo{display:flex;align-items:center;gap:10px;padding:0 8px 16px;
+    border-bottom:1px solid var(--border);margin-bottom:12px}
+  .side .logo .ic{width:34px;height:34px;border-radius:9px;
+    background:var(--accent);display:flex;align-items:center;
+    justify-content:center;font-size:16px;color:#fff}
+  .side .logo .t{font-weight:700;font-size:14px}
   .side .logo .s{font-size:10px;color:var(--muted);text-transform:uppercase;
-    letter-spacing:.08em;font-weight:600}
-  .side .nav-item{display:flex;align-items:center;gap:10px;width:100%;
+    letter-spacing:.06em;font-weight:600}
+  .side .nav-item{display:flex;align-items:center;gap:9px;width:100%;
     text-align:left;background:none;border:0;color:var(--text2);
-    padding:11px 12px;border-radius:10px;cursor:pointer;font-size:13.5px;
-    margin-bottom:2px;font-weight:500;transition:all .15s}
-  .side .nav-item:hover{background:var(--card2);color:var(--text)}
-  .side .nav-item.active{background:linear-gradient(135deg,var(--accent),var(--accent2));
-    color:#fff;box-shadow:0 3px 12px var(--accent-glow)}
-  .side .nav-item .emo{font-size:16px;width:20px;text-align:center}
-  .side .nav-item .count{margin-left:auto;padding:2px 7px;border-radius:10px;
-    background:rgba(255,255,255,.1);font-size:10px;font-weight:700;min-width:20px;
+    padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;
+    margin-bottom:1px;font-weight:500}
+  .side .nav-item.active{background:var(--accent);color:#fff}
+  .side .nav-item .emo{font-size:15px;width:18px;text-align:center}
+  .side .nav-item .count{margin-left:auto;padding:1px 7px;border-radius:9px;
+    background:rgba(255,255,255,.12);font-size:10px;font-weight:700;min-width:18px;
     text-align:center}
-  .side .nav-item.active .count{background:rgba(255,255,255,.25)}
   .side .section{font-size:10px;color:var(--muted);text-transform:uppercase;
-    letter-spacing:.08em;font-weight:700;padding:14px 12px 6px}
+    letter-spacing:.06em;font-weight:700;padding:12px 12px 4px}
 
   /* MAIN */
-  .main{flex:1;padding:24px 28px;max-width:100%;overflow-x:hidden}
+  .main{flex:1;padding:20px 24px;max-width:100%;overflow-x:hidden}
   .header{display:flex;justify-content:space-between;align-items:flex-start;
-    gap:16px;margin-bottom:24px;flex-wrap:wrap}
-  .header h1{font-size:26px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
-  .header .sub{font-size:13px;color:var(--muted)}
+    gap:16px;margin-bottom:20px;flex-wrap:wrap}
+  .header h1{font-size:22px;font-weight:700;margin-bottom:2px}
+  .header .sub{font-size:12px;color:var(--muted)}
 
   /* STATS */
-  .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-    gap:12px;margin-bottom:24px}
-  .stat{background:var(--card);border:1px solid var(--border);border-radius:14px;
-    padding:16px;position:relative;overflow:hidden;transition:border-color .15s}
-  .stat:hover{border-color:var(--border2)}
-  .stat .ic{width:38px;height:38px;border-radius:10px;display:flex;
-    align-items:center;justify-content:center;font-size:18px;margin-bottom:10px;
-    background:var(--card2);border:1px solid var(--border2)}
-  .stat .l{font-size:11px;color:var(--muted);text-transform:uppercase;
-    letter-spacing:.05em;font-weight:600;margin-bottom:4px}
-  .stat .v{font-size:22px;font-weight:800;letter-spacing:-.02em}
+  .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+    gap:10px;margin-bottom:20px}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:11px;
+    padding:14px}
+  .stat .ic{font-size:22px;margin-bottom:6px}
+  .stat .l{font-size:10px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.05em;font-weight:600;margin-bottom:3px}
+  .stat .v{font-size:20px;font-weight:700}
   .stat .v.ok{color:var(--ok)}
   .stat .v.warn{color:var(--warn)}
   .stat .v.info{color:var(--info)}
   .stat .v.accent{color:var(--accent)}
-  .stat .v.gold{color:var(--gold)}
 
-  /* CARD */
-  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;
-    padding:18px;margin-bottom:16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+    padding:16px;margin-bottom:14px}
 
   /* BUTTONS */
-  .btn{padding:9px 15px;border-radius:9px;border:0;
-    background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;
-    font-size:13px;font-weight:600;cursor:pointer;
-    display:inline-flex;align-items:center;gap:6px;transition:all .15s;
-    box-shadow:0 2px 8px var(--accent-glow);font-family:inherit}
-  .btn:active{transform:scale(.97)}
+  .btn{padding:8px 14px;border-radius:8px;border:0;
+    background:var(--accent);color:#fff;
+    font-size:12.5px;font-weight:600;cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;font-family:inherit}
   .btn:disabled{opacity:.5;cursor:not-allowed}
-  .btn.secondary{background:var(--card2);border:1px solid var(--border2);color:var(--text);box-shadow:none}
-  .btn.secondary:hover{background:var(--card3)}
-  .btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text2);box-shadow:none}
-  .btn.danger{background:linear-gradient(135deg,#ff5c5c,#d63a3a);box-shadow:0 2px 8px rgba(255,92,92,.3)}
-  .btn.ok{background:linear-gradient(135deg,#39d98a,#22a86b);box-shadow:0 2px 8px rgba(57,217,138,.3)}
-  .btn.gold{background:linear-gradient(135deg,#ffd166,#f0a020);color:#1a1300;
-    box-shadow:0 2px 8px rgba(255,209,102,.3)}
-  .btn.sm{padding:6px 11px;font-size:12px;border-radius:8px}
-  .btn.xs{padding:4px 9px;font-size:11px;border-radius:7px}
+  .btn.secondary{background:var(--card2);border:1px solid var(--border2);color:var(--text)}
+  .btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+  .btn.danger{background:var(--err)}
+  .btn.ok{background:var(--ok);color:#04241a}
+  .btn.sm{padding:5px 10px;font-size:11.5px}
+  .btn.xs{padding:4px 8px;font-size:11px}
 
   /* INPUTS */
-  .input{width:100%;padding:10px 12px;border-radius:9px;
+  .input{width:100%;padding:9px 11px;border-radius:8px;
     border:1px solid var(--border);background:var(--card2);color:var(--text);
-    font-size:13px;outline:none;transition:border-color .15s;font-family:inherit}
+    font-size:13px;outline:none}
   .input:focus{border-color:var(--accent)}
-  .form-row{margin-bottom:12px}
-  .form-row label{display:block;font-size:11px;color:var(--muted);
-    margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+  .form-row{margin-bottom:11px}
+  .form-row label{display:block;font-size:10.5px;color:var(--muted);
+    margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
 
   /* GRIDS */
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .flex{display:flex;gap:8px;align-items:center}
-  .flex-wrap{flex-wrap:wrap}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
   .muted{color:var(--muted);font-size:12px}
   .muted-sm{color:var(--muted);font-size:11px}
 
   /* BADGES */
-  .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;
-    border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.02em;
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;
+    border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:.02em;
     text-transform:uppercase;white-space:nowrap}
-  .badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
+  .badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
   .badge.awaiting_payment{background:rgba(245,181,71,.15);color:var(--warn)}
   .badge.active{background:rgba(57,217,138,.15);color:var(--ok)}
   .badge.completed{background:rgba(99,169,255,.15);color:var(--info)}
@@ -125,123 +108,123 @@
   .badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
   .badge.cancelled{background:rgba(255,92,92,.15);color:var(--err)}
   .badge.pending{background:rgba(245,181,71,.15);color:var(--warn)}
-  .badge.info{background:rgba(79,140,255,.15);color:var(--accent)}
 
-  /* USER CARDS */
+  /* USER CARD */
   .user-card{background:var(--card);border:1px solid var(--border);
-    border-radius:14px;padding:16px;margin-bottom:12px;transition:border-color .15s}
-  .user-card:hover{border-color:var(--border2)}
-  .user-head{display:flex;gap:14px;align-items:center;margin-bottom:14px}
-  .avatar{width:48px;height:48px;border-radius:50%;background:var(--card3);
-    display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:700;
+    border-radius:12px;padding:14px;margin-bottom:10px}
+  .user-head{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+  .avatar{width:44px;height:44px;border-radius:50%;background:var(--card3);
+    display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;
     color:var(--accent);border:2px solid var(--border2);overflow:hidden;flex-shrink:0}
   .avatar img{width:100%;height:100%;object-fit:cover}
   .user-info{min-width:0;flex:1}
-  .user-info .n{font-size:15px;font-weight:700;margin-bottom:2px}
-  .user-info .u{font-size:12px;color:var(--muted)}
-  .user-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
-    gap:8px;margin-bottom:12px}
-  .user-stat{background:var(--card2);border-radius:9px;padding:9px 11px;
+  .user-info .n{font-size:14px;font-weight:700;margin-bottom:1px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .user-info .u{font-size:11.5px;color:var(--muted);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .user-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));
+    gap:7px;margin-bottom:11px}
+  .user-stat{background:var(--card2);border-radius:8px;padding:8px 10px;
     border:1px solid var(--border)}
-  .user-stat .l{font-size:10px;color:var(--muted);text-transform:uppercase;
-    letter-spacing:.05em;font-weight:600;margin-bottom:2px}
-  .user-stat .v{font-size:15px;font-weight:700}
+  .user-stat .l{font-size:9.5px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.04em;font-weight:600;margin-bottom:2px}
+  .user-stat .v{font-size:14px;font-weight:700}
   .user-stat .v.ok{color:var(--ok)}
   .user-stat .v.accent{color:var(--accent)}
   .user-stat .v.warn{color:var(--warn)}
 
-  /* ORDER CARDS */
+  /* ORDER CARD */
   .order-card{background:var(--card);border:1px solid var(--border);
-    border-radius:14px;padding:16px;margin-bottom:12px}
+    border-radius:12px;padding:14px;margin-bottom:10px}
   .order-card.processed{background:var(--card2)}
-  .order-card .on{font-size:17px;font-weight:800;color:var(--accent);
-    margin-bottom:10px;display:flex;align-items:center;gap:6px}
-  .order-card .meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
-    gap:8px;margin-bottom:12px}
-  .meta-item{background:var(--card2);border-radius:9px;padding:9px 11px}
-  .meta-item .l{font-size:10px;color:var(--muted);text-transform:uppercase;
-    letter-spacing:.05em;font-weight:600;margin-bottom:2px}
-  .meta-item .v{font-size:13px;font-weight:600}
+  .order-card .on{font-size:15px;font-weight:700;color:var(--accent);
+    margin-bottom:8px}
+  .order-card .meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+    gap:7px;margin-bottom:11px}
+  .meta-item{background:var(--card2);border-radius:8px;padding:8px 10px}
+  .meta-item .l{font-size:9.5px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.04em;font-weight:600;margin-bottom:2px}
+  .meta-item .v{font-size:12.5px;font-weight:600}
   .meta-item .v.ok{color:var(--ok)}
   .meta-item .v.warn{color:var(--warn)}
   .meta-item .v.accent{color:var(--accent)}
 
   /* MODAL */
   .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.8);
-    backdrop-filter:blur(8px);z-index:999;display:flex;
-    align-items:center;justify-content:center;padding:20px;
-    animation:fadeIn .18s ease;overflow-y:auto}
+    z-index:999;display:flex;align-items:center;justify-content:center;
+    padding:20px;overflow-y:auto}
   .modal{background:var(--card);border:1px solid var(--border2);
-    border-radius:18px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;
-    animation:slideUp .22s cubic-bezier(.2,.8,.3,1);box-shadow:0 20px 60px rgba(0,0,0,.5)}
-  .modal-head{padding:20px;border-bottom:1px solid var(--border);
+    border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;
+    box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .modal-head{padding:18px;border-bottom:1px solid var(--border);
     display:flex;justify-content:space-between;align-items:center;
     position:sticky;top:0;background:var(--card);z-index:1}
-  .modal-head h2{font-size:18px;font-weight:700}
-  .modal-body{padding:20px}
-  .modal-foot{padding:16px 20px;border-top:1px solid var(--border);
-    display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;
+  .modal-head h2{font-size:17px;font-weight:700}
+  .modal-body{padding:18px}
+  .modal-foot{padding:14px 18px;border-top:1px solid var(--border);
+    display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;
     background:var(--card)}
-  .close-x{width:34px;height:34px;border-radius:50%;background:var(--card2);
-    border:1px solid var(--border2);color:var(--text2);font-size:17px;
+  .close-x{width:32px;height:32px;border-radius:50%;background:var(--card2);
+    border:1px solid var(--border2);color:var(--text2);font-size:16px;
     cursor:pointer;display:flex;align-items:center;justify-content:center}
-  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-  @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 
   /* LOGIN */
   .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;
-    padding:20px;background:radial-gradient(circle at 50% 0%,rgba(79,140,255,.1),transparent 50%)}
+    padding:20px}
   .login-box{background:var(--card);border:1px solid var(--border2);
-    border-radius:20px;padding:36px;width:100%;max-width:400px;
-    box-shadow:0 20px 60px rgba(0,0,0,.5)}
-  .login-box .ic{width:64px;height:64px;border-radius:16px;margin:0 auto 20px;
-    background:linear-gradient(135deg,var(--accent),#7b5cff);
-    display:flex;align-items:center;justify-content:center;font-size:30px;
-    box-shadow:0 8px 24px var(--accent-glow)}
-  .login-box h1{font-size:22px;margin-bottom:6px;text-align:center}
-  .login-box .s{font-size:13px;color:var(--muted);text-align:center;margin-bottom:24px}
+    border-radius:16px;padding:32px;width:100%;max-width:380px}
+  .login-box .ic{width:56px;height:56px;border-radius:14px;margin:0 auto 16px;
+    background:var(--accent);display:flex;align-items:center;justify-content:center;
+    font-size:26px;color:#fff}
+  .login-box h1{font-size:20px;margin-bottom:4px;text-align:center}
+  .login-box .s{font-size:12px;color:var(--muted);text-align:center;margin-bottom:20px}
 
   /* TABS */
-  .tabs{display:flex;gap:6px;margin-bottom:18px;overflow-x:auto;padding-bottom:4px;
-    -webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;
+    scrollbar-width:none}
   .tabs::-webkit-scrollbar{display:none}
-  .tab{padding:8px 14px;border-radius:20px;background:var(--card2);
-    border:1px solid var(--border);color:var(--text2);font-size:12.5px;
-    font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;
-    transition:all .15s}
-  .tab:hover{background:var(--card3)}
-  .tab.active{background:var(--accent);color:#fff;border-color:var(--accent);
-    box-shadow:0 3px 10px var(--accent-glow)}
+  .tab{padding:7px 13px;border-radius:18px;background:var(--card2);
+    border:1px solid var(--border);color:var(--text2);font-size:12px;
+    font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit}
+  .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 
   /* TOAST */
-  .toast{position:fixed;top:20px;right:20px;background:var(--card2);
-    border:1px solid var(--border2);padding:14px 20px;border-radius:12px;
-    z-index:9999;font-size:13px;font-weight:500;
-    box-shadow:0 8px 24px rgba(0,0,0,.5);animation:toastIn .2s ease;
-    max-width:320px}
+  .toast{position:fixed;top:16px;right:16px;background:var(--card2);
+    border:1px solid var(--border2);padding:12px 18px;border-radius:10px;
+    z-index:9999;font-size:13px;font-weight:500;max-width:300px;
+    box-shadow:0 8px 24px rgba(0,0,0,.4)}
   .toast.ok{border-color:rgba(57,217,138,.4);background:rgba(57,217,138,.1)}
   .toast.err{border-color:rgba(255,92,92,.4);background:rgba(255,92,92,.1)}
-  @keyframes toastIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 
-  .empty{padding:60px 20px;text-align:center;color:var(--muted)}
-  .empty .ic{font-size:52px;margin-bottom:12px;opacity:.4}
+  .empty{padding:50px 20px;text-align:center;color:var(--muted)}
+  .empty .ic{font-size:44px;margin-bottom:10px;opacity:.4}
   .hidden{display:none !important}
-  .search-bar{position:relative;margin-bottom:16px}
-  .search-bar input{padding-left:38px}
-  .search-bar::before{content:'🔍';position:absolute;left:13px;top:50%;
-    transform:translateY(-50%);font-size:14px;opacity:.6;pointer-events:none}
+  .search-bar{position:relative;margin-bottom:14px}
+  .search-bar input{padding-left:34px}
+  .search-bar::before{content:'🔍';position:absolute;left:11px;top:50%;
+    transform:translateY(-50%);font-size:13px;opacity:.6;pointer-events:none}
+
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.25);
+    border-top-color:#fff;border-radius:50%;animation:sp .65s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .loading-box{padding:40px 20px;text-align:center;color:var(--muted)}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--border)}
+  th{color:var(--muted);font-weight:600;font-size:10.5px;text-transform:uppercase;
+    letter-spacing:.04em}
 
   @media(max-width:768px){
     .layout{flex-direction:column}
-    .side{width:100%;height:auto;position:relative;padding:12px;
-      border-right:0;border-bottom:1px solid var(--border)}
-    .side .logo{padding-bottom:12px;margin-bottom:12px}
+    .side{width:100%;height:auto;position:relative;padding:10px;
+      border-right:0;border-bottom:1px solid var(--border);
+      display:flex;flex-wrap:wrap;gap:4px}
+    .side .logo{width:100%;padding-bottom:10px;margin-bottom:8px}
     .side .section{display:none}
-    .side .nav-item{width:auto;padding:9px 13px;font-size:12.5px}
-    .main{padding:16px}
-    .header h1{font-size:22px}
+    .side .nav-item{width:auto;padding:8px 12px;font-size:12px;margin-bottom:0}
+    .main{padding:14px}
+    .header h1{font-size:19px}
     .grid2{grid-template-columns:1fr}
-    .modal{max-height:95vh}
   }
 </style>
 </head>
@@ -256,13 +239,14 @@
 // КОНФИГ
 // ============================================================
 const API = localStorage.getItem('admin_api') || 'http://localhost:8000';
-const LOG_CHANNEL_URL = 'https://t.me/c/4305451466';  // ссылка на канал логов
+const LOG_CHANNEL_URL = 'https://t.me/c/4305451466';
 // ============================================================
 
 let TOKEN = localStorage.getItem('admin_token') || '';
 let TAB = 'dashboard';
 let CACHE = { users: [], purchases: [], payouts: [], eras: [], logs: [] };
 let FILTER = { purchases: 'pending', payouts: 'pending', search: '' };
+let REFRESH_TIMER = null;
 
 // ---------- TOAST ----------
 function toast(msg, type='ok', ms=2500){
@@ -310,9 +294,9 @@ function renderLogin(){
   document.getElementById('root').innerHTML = `
     <div class="login-wrap">
       <div class="login-box">
-        <div class="ic">👑</div>
-        <h1>God Panel</h1>
-        <div class="s">Админ-панель проекта «Эры»</div>
+        <div class="ic">⚡</div>
+        <h1>Era Admin</h1>
+        <div class="s">Панель управления проектом</div>
         <div class="form-row">
           <label>Логин</label>
           <input class="input" id="login" value="admin">
@@ -322,9 +306,9 @@ function renderLogin(){
           <input class="input" id="password" type="password"
             onkeydown="if(event.key==='Enter')doLogin()">
         </div>
-        <button class="btn" style="width:100%;justify-content:center;padding:12px;font-size:14px"
-          onclick="doLogin()">🔓 Войти</button>
-        <div class="form-row" style="margin-top:16px">
+        <button class="btn" style="width:100%;justify-content:center;padding:11px;font-size:13.5px"
+          onclick="doLogin()">Войти</button>
+        <div class="form-row" style="margin-top:14px">
           <label>API URL</label>
           <input class="input" id="api_url" value="${esc(API)}"
             onchange="localStorage.setItem('admin_api',this.value);toast('API сохранён');">
@@ -337,10 +321,12 @@ function renderLogin(){
 async function doLogin(){
   const login = document.getElementById('login').value;
   const password = document.getElementById('password').value;
+  const apiUrl = document.getElementById('api_url').value.trim();
+  if (apiUrl){ localStorage.setItem('admin_api', apiUrl); }
   try {
     const res = await api('/api/admin/login', {method:'POST', body:{login, password}});
     TOKEN = res.token; localStorage.setItem('admin_token', TOKEN);
-    toast('👑 Добро пожаловать, бог');
+    toast('Добро пожаловать');
     render();
   } catch(e){ toast(e.message, 'err'); }
 }
@@ -358,10 +344,10 @@ function layout(content){
     <div class="layout">
       <aside class="side">
         <div class="logo">
-          <div class="ic">👑</div>
+          <div class="ic">⚡</div>
           <div>
             <div class="t">Era Admin</div>
-            <div class="s">God Mode</div>
+            <div class="s">Панель</div>
           </div>
         </div>
 
@@ -386,7 +372,7 @@ function layout(content){
           ${counts.users ? `<span class="count">${counts.users}</span>` : ''}
         </button>
         <button class="nav-item ${TAB==='eras'?'active':''}" onclick="setTab('eras')">
-          <span class="emo">🧩</span>Товары (Эры)
+          <span class="emo">🧩</span>Товары
         </button>
         <button class="nav-item ${TAB==='content'?'active':''}" onclick="setTab('content')">
           <span class="emo">📝</span>Контент
@@ -414,6 +400,16 @@ async function setTab(t){
   await render();
 }
 
+function stopRefresh(){
+  if (REFRESH_TIMER){ clearInterval(REFRESH_TIMER); REFRESH_TIMER = null; }
+}
+function startRefresh(){
+  stopRefresh();
+  if (TAB === 'dashboard'){
+    REFRESH_TIMER = setInterval(()=>{ if (TAB === 'dashboard') tabDashboard(); }, 30000);
+  }
+}
+
 // ============================================================
 // DASHBOARD
 // ============================================================
@@ -422,64 +418,34 @@ async function tabDashboard(){
   layout(`
     <div class="header">
       <div>
-        <h1>👑 Дашборд</h1>
-        <div class="sub">Общая статистика проекта · ${new Date().toLocaleString('ru-RU')}</div>
+        <h1>📊 Дашборд</h1>
+        <div class="sub">Общая статистика проекта</div>
       </div>
       <div class="flex">
-        <button class="btn secondary" onclick="render()">🔄 Обновить</button>
-        <button class="btn" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">📢 Канал логов</button>
+        <button class="btn secondary sm" onclick="tabDashboard()">🔄 Обновить</button>
+        <button class="btn sm" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">📢 Канал</button>
       </div>
     </div>
 
     <div class="stats">
-      <div class="stat">
-        <div class="ic">👥</div>
-        <div class="l">Пользователей</div>
-        <div class="v">${d.users}</div>
-      </div>
-      <div class="stat">
-        <div class="ic">🟢</div>
-        <div class="l">Активных эр</div>
-        <div class="v ok">${d.active_eras}</div>
-      </div>
-      <div class="stat">
-        <div class="ic">🏁</div>
-        <div class="l">Завершённых</div>
-        <div class="v info">${d.completed_eras}</div>
-      </div>
-      <div class="stat">
-        <div class="ic">⏳</div>
-        <div class="l">Заявок ждут</div>
-        <div class="v warn">${d.purchase_requests}</div>
-      </div>
-      <div class="stat">
-        <div class="ic">💸</div>
-        <div class="l">Выплат ждут</div>
-        <div class="v warn">${d.payout_requests}</div>
-      </div>
-      <div class="stat">
-        <div class="ic">💵</div>
-        <div class="l">Сумма покупок</div>
-        <div class="v accent">${fmt(d.total_purchases_sum)}</div>
-      </div>
-      <div class="stat">
-        <div class="ic">📈</div>
-        <div class="l">Начислено</div>
-        <div class="v ok">${fmt(d.total_profit_sum)}</div>
-      </div>
-      <div class="stat">
-        <div class="ic">💰</div>
-        <div class="l">Выплачено</div>
-        <div class="v gold">${fmt(d.total_paid_sum)}</div>
-      </div>
+      <div class="stat"><div class="ic">👥</div><div class="l">Пользователей</div><div class="v">${d.users}</div></div>
+      <div class="stat"><div class="ic">🟢</div><div class="l">Активных эр</div><div class="v ok">${d.active_eras}</div></div>
+      <div class="stat"><div class="ic">🏁</div><div class="l">Завершённых</div><div class="v info">${d.completed_eras}</div></div>
+      <div class="stat"><div class="ic">⏳</div><div class="l">Заявок ждут</div><div class="v warn">${d.purchase_requests}</div></div>
+      <div class="stat"><div class="ic">💸</div><div class="l">Выплат ждут</div><div class="v warn">${d.payout_requests}</div></div>
+      <div class="stat"><div class="ic">💵</div><div class="l">Сумма покупок</div><div class="v accent">${fmt(d.total_purchases_sum)}</div></div>
+      <div class="stat"><div class="ic">📈</div><div class="l">Начислено</div><div class="v ok">${fmt(d.total_profit_sum)}</div></div>
+      <div class="stat"><div class="ic">💰</div><div class="l">Выплачено</div><div class="v">${fmt(d.total_paid_sum)}</div></div>
     </div>
   `);
+  startRefresh();
 }
 
 // ============================================================
 // PURCHASES
 // ============================================================
 async function tabPurchases(){
+  stopRefresh();
   CACHE.purchases = await api('/api/admin/purchases');
 
   const filtered = CACHE.purchases.filter(p=>{
@@ -508,45 +474,37 @@ async function tabPurchases(){
   layout(`
     <div class="header">
       <div>
-        <h1>📩 Заявки на покупку</h1>
-        <div class="sub">Всего: ${counts.all} · Найдено: ${filtered.length}</div>
+        <h1>📩 Заявки</h1>
+        <div class="sub">Всего: ${counts.all} · Показано: ${filtered.length}</div>
       </div>
     </div>
 
     <div class="search-bar">
-      <input class="input" placeholder="Поиск по имени, @username, ID заявки…"
+      <input class="input" placeholder="Поиск: имя, @username, ID…"
         value="${esc(FILTER.search)}"
         oninput="FILTER.search=this.value;tabPurchases()">
     </div>
 
     <div class="tabs">
-      <button class="tab ${FILTER.purchases==='pending'?'active':''}"
-        onclick="FILTER.purchases='pending';tabPurchases()">
+      <button class="tab ${FILTER.purchases==='pending'?'active':''}" onclick="FILTER.purchases='pending';tabPurchases()">
         ⏳ Ждут (${counts.pending})
       </button>
-      <button class="tab ${FILTER.purchases==='active'?'active':''}"
-        onclick="FILTER.purchases='active';tabPurchases()">
+      <button class="tab ${FILTER.purchases==='active'?'active':''}" onclick="FILTER.purchases='active';tabPurchases()">
         🟢 Активные (${counts.active})
       </button>
-      <button class="tab ${FILTER.purchases==='completed'?'active':''}"
-        onclick="FILTER.purchases='completed';tabPurchases()">
+      <button class="tab ${FILTER.purchases==='completed'?'active':''}" onclick="FILTER.purchases='completed';tabPurchases()">
         ✅ Завершённые (${counts.completed})
       </button>
-      <button class="tab ${FILTER.purchases==='cancelled'?'active':''}"
-        onclick="FILTER.purchases='cancelled';tabPurchases()">
+      <button class="tab ${FILTER.purchases==='cancelled'?'active':''}" onclick="FILTER.purchases='cancelled';tabPurchases()">
         ❌ Отменённые (${counts.cancelled})
       </button>
-      <button class="tab ${FILTER.purchases==='all'?'active':''}"
-        onclick="FILTER.purchases='all';tabPurchases()">
+      <button class="tab ${FILTER.purchases==='all'?'active':''}" onclick="FILTER.purchases='all';tabPurchases()">
         📋 Все (${counts.all})
       </button>
     </div>
 
     ${filtered.length ? filtered.map(p=>orderCard(p)).join('') : `
-      <div class="empty"><div class="ic">📭</div>
-        <h3>Заявок нет</h3>
-        <p class="muted">В этой категории ничего не найдено</p>
-      </div>
+      <div class="empty"><div class="ic">📭</div><h3>Заявок нет</h3></div>
     `}
   `);
 }
@@ -555,59 +513,43 @@ function orderCard(p){
   const processed = p.status !== 'awaiting_payment';
   return `
     <div class="order-card ${processed?'processed':''}">
-      <div class="row" style="align-items:flex-start;margin-bottom:12px">
+      <div class="row" style="align-items:flex-start;margin-bottom:10px">
         <div class="on">📩 Заявка #${p.id}</div>
         <span class="badge ${p.status}">${statusLabel(p.status)}</span>
       </div>
 
       <div class="meta">
-        <div class="meta-item">
-          <div class="l">👤 Участник</div>
-          <div class="v">${esc(p.first_name||'')} ${esc(p.last_name||'')}</div>
-        </div>
-        <div class="meta-item">
-          <div class="l">🔗 Никнейм</div>
-          <div class="v">@${esc(p.telegram_username||'—')}</div>
-        </div>
-        <div class="meta-item">
-          <div class="l">🆔 Telegram ID</div>
-          <div class="v">${p.telegram_id}</div>
-        </div>
-        <div class="meta-item">
-          <div class="l">💳 Эра</div>
-          <div class="v">${esc(p.era_title)}</div>
-        </div>
-        <div class="meta-item">
-          <div class="l">💵 Номинал</div>
-          <div class="v accent">${fmt(p.purchase_price)}</div>
-        </div>
-        <div class="meta-item">
-          <div class="l">💰 Начисление</div>
-          <div class="v ok">+${fmt(p.profit_amount)}</div>
-        </div>
-        <div class="meta-item">
-          <div class="l">🏆 Итого</div>
-          <div class="v ok">${fmt(p.total_amount)}</div>
-        </div>
-        <div class="meta-item">
-          <div class="l">📅 Срок</div>
-          <div class="v">${p.duration_days} дней</div>
-        </div>
+        <div class="meta-item"><div class="l">👤 Участник</div>
+          <div class="v">${esc(p.first_name||'')} ${esc(p.last_name||'')}</div></div>
+        <div class="meta-item"><div class="l">🔗 Никнейм</div>
+          <div class="v">@${esc(p.telegram_username||'—')}</div></div>
+        <div class="meta-item"><div class="l">🆔 TG ID</div>
+          <div class="v">${p.telegram_id||'—'}</div></div>
+        <div class="meta-item"><div class="l">💳 Эра</div>
+          <div class="v">${esc(p.era_title)}</div></div>
+        <div class="meta-item"><div class="l">💵 Номинал</div>
+          <div class="v accent">${fmt(p.purchase_price)}</div></div>
+        <div class="meta-item"><div class="l">💰 Начисление</div>
+          <div class="v ok">+${fmt(p.profit_amount)}</div></div>
+        <div class="meta-item"><div class="l">🏆 Итого</div>
+          <div class="v ok">${fmt(p.total_amount)}</div></div>
+        <div class="meta-item"><div class="l">📅 Срок</div>
+          <div class="v">${p.duration_days} дней</div></div>
       </div>
 
-      <div class="muted-sm" style="margin-bottom:12px">
-        🕐 Создана: ${fmtDate(p.created_at)}
-        ${p.activated_at ? ` · ✅ Активирована: ${fmtDate(p.activated_at)}` : ''}
-        ${p.last_day ? ` · 🏁 Последний день: ${fmtDate(p.last_day)}` : ''}
-        ${p.cancelled_at ? ` · ❌ Отменена: ${fmtDate(p.cancelled_at)}` : ''}
+      <div class="muted-sm" style="margin-bottom:10px">
+        🕐 ${fmtDate(p.created_at)}
+        ${p.activated_at ? ' · ✅ '+fmtDate(p.activated_at) : ''}
+        ${p.last_day ? ' · 🏁 '+fmtDate(p.last_day) : ''}
+        ${p.cancelled_at ? ' · ❌ '+fmtDate(p.cancelled_at) : ''}
       </div>
 
-      <div class="flex flex-wrap">
+      <div class="flex">
         ${!processed ? `
-          <button class="btn ok" onclick="confirmPurchase(${p.id})">✅ Подтвердить покупку</button>
-          <button class="btn danger" onclick="cancelPurchase(${p.id})">❌ Отменить заявку</button>
+          <button class="btn ok sm" onclick="confirmPurchase(${p.id})">✅ Подтвердить</button>
+          <button class="btn danger sm" onclick="cancelPurchase(${p.id})">❌ Отменить</button>
         ` : ''}
-        <button class="btn ghost sm" onclick="writeUser('${p.telegram_username||''}', ${p.telegram_id})">
+        <button class="btn ghost sm" onclick="writeUser('${p.telegram_username||''}', ${p.telegram_id||0})">
           💬 Написать
         </button>
       </div>
@@ -616,7 +558,7 @@ function orderCard(p){
 }
 
 async function confirmPurchase(id){
-  if (!confirm(`✅ Подтвердить оплату заявки #${id}?\n\nЭра активируется, участник получит уведомление.`)) return;
+  if (!confirm(`✅ Подтвердить заявку #${id}?`)) return;
   try {
     await api(`/api/admin/purchases/${id}/confirm`, {method:'POST'});
     toast(`✅ Заявка #${id} подтверждена`);
@@ -625,7 +567,7 @@ async function confirmPurchase(id){
 }
 
 async function cancelPurchase(id){
-  if (!confirm(`❌ Отменить заявку #${id}?\n\nДействие необратимо.`)) return;
+  if (!confirm(`❌ Отменить заявку #${id}?`)) return;
   try {
     await api(`/api/admin/purchases/${id}/cancel`, {method:'POST'});
     toast(`❌ Заявка #${id} отменена`);
@@ -637,6 +579,7 @@ async function cancelPurchase(id){
 // PAYOUTS
 // ============================================================
 async function tabPayouts(){
+  stopRefresh();
   CACHE.payouts = await api('/api/admin/payouts');
 
   const filtered = CACHE.payouts.filter(p=>{
@@ -654,31 +597,25 @@ async function tabPayouts(){
   layout(`
     <div class="header">
       <div>
-        <h1>💸 Заявки на вывод</h1>
+        <h1>💸 Выплаты</h1>
         <div class="sub">Всего: ${counts.all}</div>
       </div>
     </div>
 
     <div class="tabs">
-      <button class="tab ${FILTER.payouts==='pending'?'active':''}"
-        onclick="FILTER.payouts='pending';tabPayouts()">
-        ⏳ Ждут выплаты (${counts.pending})
+      <button class="tab ${FILTER.payouts==='pending'?'active':''}" onclick="FILTER.payouts='pending';tabPayouts()">
+        ⏳ Ждут (${counts.pending})
       </button>
-      <button class="tab ${FILTER.payouts==='paid'?'active':''}"
-        onclick="FILTER.payouts='paid';tabPayouts()">
+      <button class="tab ${FILTER.payouts==='paid'?'active':''}" onclick="FILTER.payouts='paid';tabPayouts()">
         ✅ Выплачено (${counts.paid})
       </button>
-      <button class="tab ${FILTER.payouts==='all'?'active':''}"
-        onclick="FILTER.payouts='all';tabPayouts()">
+      <button class="tab ${FILTER.payouts==='all'?'active':''}" onclick="FILTER.payouts='all';tabPayouts()">
         📋 Все (${counts.all})
       </button>
     </div>
 
     ${filtered.length ? filtered.map(po=>payoutCard(po)).join('') : `
-      <div class="empty"><div class="ic">📭</div>
-        <h3>Заявок нет</h3>
-        <p class="muted">В этой категории пусто</p>
-      </div>
+      <div class="empty"><div class="ic">📭</div><h3>Заявок нет</h3></div>
     `}
   `);
 }
@@ -687,47 +624,35 @@ function payoutCard(po){
   const processed = po.status === 'paid';
   return `
     <div class="order-card ${processed?'processed':''}">
-      <div class="row" style="align-items:flex-start;margin-bottom:12px">
+      <div class="row" style="align-items:flex-start;margin-bottom:10px">
         <div class="on">💸 Выплата #${po.id}</div>
-        <span class="badge ${po.status}">${po.status === 'paid' ? '✅ Выплачено' : '⏳ Ожидает'}</span>
+        <span class="badge ${po.status}">${processed ? '✅ Выплачено' : '⏳ Ожидает'}</span>
       </div>
 
       <div class="meta">
-        <div class="meta-item">
-          <div class="l">👤 Участник</div>
-          <div class="v">${esc(po.first_name||'')}</div>
-        </div>
-        <div class="meta-item">
-          <div class="l">🔗 Никнейм</div>
-          <div class="v">@${esc(po.telegram_username||'—')}</div>
-        </div>
-        <div class="meta-item">
-          <div class="l">🆔 Telegram ID</div>
-          <div class="v">${po.telegram_id||'—'}</div>
-        </div>
-        <div class="meta-item">
-          <div class="l">💳 Эра</div>
-          <div class="v">${esc(po.era_title||'')}</div>
-        </div>
-        <div class="meta-item">
-          <div class="l">💰 Сумма к выплате</div>
-          <div class="v ok">${fmt(po.amount)}</div>
-        </div>
-        <div class="meta-item">
-          <div class="l">📄 Покупка</div>
-          <div class="v">#${po.purchase_id}</div>
-        </div>
+        <div class="meta-item"><div class="l">👤 Участник</div>
+          <div class="v">${esc(po.first_name||'')}</div></div>
+        <div class="meta-item"><div class="l">🔗 Никнейм</div>
+          <div class="v">@${esc(po.telegram_username||'—')}</div></div>
+        <div class="meta-item"><div class="l">🆔 TG ID</div>
+          <div class="v">${po.telegram_id||'—'}</div></div>
+        <div class="meta-item"><div class="l">💳 Эра</div>
+          <div class="v">${esc(po.era_title||'')}</div></div>
+        <div class="meta-item"><div class="l">💰 Сумма</div>
+          <div class="v ok">${fmt(po.amount)}</div></div>
+        <div class="meta-item"><div class="l">📄 Покупка</div>
+          <div class="v">#${po.purchase_id}</div></div>
       </div>
 
-      <div class="muted-sm" style="margin-bottom:12px">
-        🕐 Заявка: ${fmtDate(po.requested_at)}
-        ${po.paid_at ? ` · 💰 Выплачено: ${fmtDate(po.paid_at)}` : ''}
+      <div class="muted-sm" style="margin-bottom:10px">
+        🕐 ${fmtDate(po.requested_at)}
+        ${po.paid_at ? ' · 💰 '+fmtDate(po.paid_at) : ''}
       </div>
 
-      <div class="flex flex-wrap">
+      <div class="flex">
         ${!processed ? `
-          <button class="btn ok" onclick="markPaid(${po.id})">✅ Отметить как выплачено</button>
-          <button class="btn danger" onclick="cancelPayout(${po.id})">❌ Отменить</button>
+          <button class="btn ok sm" onclick="markPaid(${po.id})">✅ Выплачено</button>
+          <button class="btn danger sm" onclick="cancelPayout(${po.id})">❌ Отменить</button>
         ` : ''}
         <button class="btn ghost sm" onclick="writeUser('${po.telegram_username||''}', ${po.telegram_id||0})">
           💬 Написать
@@ -738,7 +663,7 @@ function payoutCard(po){
 }
 
 async function markPaid(id){
-  if (!confirm(`💰 Отметить выплату #${id} как выполненную?\n\nУчастник получит уведомление.`)) return;
+  if (!confirm(`💰 Отметить выплату #${id} как выполненную?`)) return;
   try {
     await api(`/api/admin/payouts/${id}/mark_paid`, {method:'POST'});
     toast('💰 Выплата отмечена');
@@ -747,7 +672,7 @@ async function markPaid(id){
 }
 
 async function cancelPayout(id){
-  if (!confirm(`❌ Отменить заявку на вывод #${id}?`)) return;
+  if (!confirm(`❌ Отменить заявку #${id}?`)) return;
   try {
     await api(`/api/admin/payouts/${id}/cancel`, {method:'POST'});
     toast('Отменено');
@@ -756,12 +681,22 @@ async function cancelPayout(id){
 }
 
 // ============================================================
-// USERS — детально
+// USERS
 // ============================================================
 async function tabUsers(){
-  CACHE.users = await api('/api/admin/users');
-  // Загружаем ещё покупки для подсчётов
-  if (!CACHE.purchases.length) CACHE.purchases = await api('/api/admin/purchases');
+  stopRefresh();
+
+  // Загружаем ВСЕ данные одновременно — так быстрее и надёжнее
+  const [users, purchases, payouts] = await Promise.all([
+    api('/api/admin/users'),
+    api('/api/admin/purchases'),
+    api('/api/admin/payouts').catch(()=>[])
+  ]);
+  CACHE.users = users;
+  CACHE.purchases = purchases;
+  CACHE.payouts = payouts;
+
+  console.log('[Users] загружено:', users.length);
 
   const filtered = CACHE.users.filter(u=>{
     if (!FILTER.search) return true;
@@ -775,35 +710,43 @@ async function tabUsers(){
     <div class="header">
       <div>
         <h1>👥 Пользователи</h1>
-        <div class="sub">Всего: ${CACHE.users.length} · Найдено: ${filtered.length}</div>
+        <div class="sub">Всего: ${CACHE.users.length} · Показано: ${filtered.length}</div>
       </div>
     </div>
 
     <div class="search-bar">
-      <input class="input" placeholder="Поиск по имени, @username, Telegram ID…"
+      <input class="input" placeholder="Поиск: имя, @username, Telegram ID…"
         value="${esc(FILTER.search)}"
         oninput="FILTER.search=this.value;tabUsers()">
     </div>
 
     ${filtered.length ? filtered.map(u=>userCard(u)).join('') : `
-      <div class="empty"><div class="ic">👤</div>
-        <h3>Никого не найдено</h3>
+      <div class="empty">
+        <div class="ic">👤</div>
+        <h3>${CACHE.users.length ? 'Никого не найдено' : 'Пользователей пока нет'}</h3>
+        <p class="muted">${CACHE.users.length ? 'Измените поиск' : 'Зарегистрируйтесь через бота'}</p>
       </div>
     `}
   `);
 }
 
 function userCard(u){
-  const userPurchases = CACHE.purchases.filter(p => p.user_uid === u.id);
+  // ⚠️ ID пользователя — строка (Firebase). Приводим оба к строке для сравнения
+  const uid = String(u.id || u._id || '');
+  const userPurchases = CACHE.purchases.filter(p => String(p.user_uid) === uid);
   const active = userPurchases.filter(p => p.status === 'active');
   const completed = userPurchases.filter(p => p.status === 'completed');
   const paid = userPurchases.filter(p => p.status === 'paid');
+
   const invested = userPurchases
     .filter(p => !['awaiting_payment','cancelled'].includes(p.status))
     .reduce((s,p) => s + Number(p.purchase_price||0), 0);
   const toPayout = completed.reduce((s,p) => s + Number(p.total_amount||0), 0);
   const paidSum = paid.reduce((s,p) => s + Number(p.total_amount||0), 0);
-  const initial = (u.first_name || '👤')[0].toUpperCase();
+  const referrals = CACHE.users.filter(x => String(x.referrer_uid||'') === uid);
+
+  const initial = (u.first_name || u.telegram_username || '👤')[0].toUpperCase();
+  const displayName = [u.first_name, u.last_name].filter(Boolean).join(' ') || 'Без имени';
 
   return `
     <div class="user-card">
@@ -812,80 +755,70 @@ function userCard(u){
           ${u.photo_url ? `<img src="${esc(u.photo_url)}" alt="">` : initial}
         </div>
         <div class="user-info">
-          <div class="n">${esc(u.first_name||'')} ${esc(u.last_name||'')}</div>
-          <div class="u">@${esc(u.telegram_username||'—')} · ID ${u.telegram_id} · #${u.id}</div>
+          <div class="n">${esc(displayName)}</div>
+          <div class="u">@${esc(u.telegram_username||'—')} · ID ${u.telegram_id||'—'}</div>
         </div>
         <span class="badge ${u.status === 'active' ? 'active' : 'cancelled'}">${esc(u.status||'active')}</span>
       </div>
 
       <div class="user-stats">
-        <div class="user-stat">
-          <div class="l">Вложено</div>
-          <div class="v accent">${fmt(invested)}</div>
-        </div>
-        <div class="user-stat">
-          <div class="l">К выводу</div>
-          <div class="v ok">${fmt(toPayout)}</div>
-        </div>
-        <div class="user-stat">
-          <div class="l">Выплачено</div>
-          <div class="v ok">${fmt(paidSum)}</div>
-        </div>
-        <div class="user-stat">
-          <div class="l">Активных</div>
-          <div class="v">${active.length}</div>
-        </div>
-        <div class="user-stat">
-          <div class="l">Покупок</div>
-          <div class="v">${userPurchases.length}</div>
-        </div>
-        <div class="user-stat">
-          <div class="l">Рефералов</div>
-          <div class="v">${CACHE.users.filter(x => x.referrer_uid === u.id).length}</div>
-        </div>
+        <div class="user-stat"><div class="l">Вложено</div>
+          <div class="v accent">${fmt(invested)}</div></div>
+        <div class="user-stat"><div class="l">К выводу</div>
+          <div class="v ok">${fmt(toPayout)}</div></div>
+        <div class="user-stat"><div class="l">Выплачено</div>
+          <div class="v ok">${fmt(paidSum)}</div></div>
+        <div class="user-stat"><div class="l">Активных</div>
+          <div class="v">${active.length}</div></div>
+        <div class="user-stat"><div class="l">Покупок</div>
+          <div class="v">${userPurchases.length}</div></div>
+        <div class="user-stat"><div class="l">Рефералов</div>
+          <div class="v">${referrals.length}</div></div>
       </div>
 
-      <div class="muted-sm" style="margin-bottom:12px">
-        📅 Регистрация: ${fmtDate(u.registered_at)}
-        ${u.referrer_username ? ` · 🎁 Реферер: @${esc(u.referrer_username)}` : ''}
+      <div class="muted-sm" style="margin-bottom:10px">
+        📅 ${fmtDate(u.registered_at)}
+        ${u.referrer_username ? ' · 🎁 @'+esc(u.referrer_username) : ''}
         ${u.agreed_terms ? ' · ✅ Условия приняты' : ' · ⚠️ Условия не приняты'}
       </div>
 
-      <div class="flex flex-wrap">
-        <button class="btn" onclick="openUserDetail('${u.id}')">📊 Детали</button>
-        <button class="btn ghost" onclick="writeUser('${u.telegram_username||''}', ${u.telegram_id})">
+      <div class="flex">
+        <button class="btn sm" onclick="openUserDetail('${esc(uid)}')">📊 Детали</button>
+        <button class="btn ghost sm" onclick="writeUser('${esc(u.telegram_username||'')}', ${u.telegram_id||0})">
           💬 Написать
         </button>
-        <button class="btn secondary sm" onclick="showRefTree('${u.id}')">🌳 Рефералы</button>
+        <button class="btn secondary sm" onclick="showRefTree('${esc(uid)}')">🌳 Рефералы</button>
       </div>
     </div>
   `;
 }
 
 function openUserDetail(uid){
-  const u = CACHE.users.find(x => x.id === uid);
-  if (!u) return;
-  const userPurchases = CACHE.purchases.filter(p => p.user_uid === uid);
-  const referrals = CACHE.users.filter(x => x.referrer_uid === uid);
+  uid = String(uid);
+  const u = CACHE.users.find(x => String(x.id || x._id) === uid);
+  if (!u) { toast('Пользователь не найден', 'err'); return; }
+
+  const userPurchases = CACHE.purchases.filter(p => String(p.user_uid) === uid);
+  const referrals = CACHE.users.filter(x => String(x.referrer_uid || '') === uid);
 
   const purchasesHtml = userPurchases.length ? userPurchases.map(p => `
     <div class="meta-item" style="margin-bottom:8px">
-      <div class="row" style="margin-bottom:6px">
+      <div class="row" style="margin-bottom:5px">
         <div style="font-weight:700;color:var(--accent)">📩 Заявка #${p.id}</div>
         <span class="badge ${p.status}">${statusLabel(p.status)}</span>
       </div>
-      <div style="font-size:12px;font-weight:600;margin-bottom:4px">${esc(p.era_title)}</div>
-      <div class="muted-sm">Вложено: ${fmt(p.purchase_price)} · Начисление: +${fmt(p.profit_amount)} · Итого: ${fmt(p.total_amount)}</div>
-      <div class="muted-sm">Создана: ${fmtDate(p.created_at)}${p.activated_at ? ' · Активирована: '+fmtDate(p.activated_at) : ''}</div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:3px">${esc(p.era_title)}</div>
+      <div class="muted-sm">${fmt(p.purchase_price)} → +${fmt(p.profit_amount)} = ${fmt(p.total_amount)}</div>
+      <div class="muted-sm">${fmtDate(p.created_at)}${p.activated_at ? ' · ✅ '+fmtDate(p.activated_at) : ''}</div>
     </div>
-  `).join('') : '<div class="muted" style="padding:16px;text-align:center">Покупок нет</div>';
+  `).join('') : '<div class="muted" style="padding:14px;text-align:center">Покупок нет</div>';
 
   const refsHtml = referrals.length ? referrals.map(r => `
-    <div class="list-item">
+    <div style="padding:10px 0;border-bottom:1px solid var(--border)">
       <div>${esc(r.first_name||'')} <span class="muted">@${esc(r.telegram_username||'—')}</span></div>
-      <span class="muted-sm">${fmtDate(r.registered_at)}</span>
+      <div class="muted-sm">${fmtDate(r.registered_at)}</div>
     </div>
-  `).join('') : '<div class="muted" style="padding:16px;text-align:center">Рефералов нет</div>';
+  `).join('') : '<div class="muted" style="padding:14px;text-align:center">Рефералов нет</div>';
 
   const totalInvested = userPurchases
     .filter(p => !['awaiting_payment','cancelled'].includes(p.status))
@@ -895,36 +828,32 @@ function openUserDetail(uid){
   const totalPaid = userPurchases.filter(p => p.status === 'paid')
     .reduce((s,p) => s + Number(p.total_amount||0), 0);
 
+  const displayName = [u.first_name, u.last_name].filter(Boolean).join(' ') || 'Без имени';
+
   showModal(`
     <div class="modal-head">
-      <h2>👤 ${esc(u.first_name||'')} ${esc(u.last_name||'')}</h2>
+      <h2>👤 ${esc(displayName)}</h2>
       <button class="close-x" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
-      <div class="user-stats" style="margin-bottom:16px">
-        <div class="user-stat">
-          <div class="l">Вложено</div>
-          <div class="v accent">${fmt(totalInvested)}</div>
-        </div>
-        <div class="user-stat">
-          <div class="l">К выводу</div>
-          <div class="v ok">${fmt(totalToPayout)}</div>
-        </div>
-        <div class="user-stat">
-          <div class="l">Выплачено</div>
-          <div class="v ok">${fmt(totalPaid)}</div>
-        </div>
+      <div class="user-stats" style="margin-bottom:14px">
+        <div class="user-stat"><div class="l">Вложено</div>
+          <div class="v accent">${fmt(totalInvested)}</div></div>
+        <div class="user-stat"><div class="l">К выводу</div>
+          <div class="v ok">${fmt(totalToPayout)}</div></div>
+        <div class="user-stat"><div class="l">Выплачено</div>
+          <div class="v ok">${fmt(totalPaid)}</div></div>
       </div>
 
-      <h3 style="margin:16px 0 10px;font-size:14px">📦 Покупки (${userPurchases.length})</h3>
+      <h3 style="margin:14px 0 8px;font-size:13px">📦 Покупки (${userPurchases.length})</h3>
       ${purchasesHtml}
 
-      <h3 style="margin:16px 0 10px;font-size:14px">🌳 Рефералы (${referrals.length})</h3>
+      <h3 style="margin:14px 0 8px;font-size:13px">🌳 Рефералы (${referrals.length})</h3>
       ${refsHtml}
     </div>
     <div class="modal-foot">
       <button class="btn ghost" onclick="closeModal()">Закрыть</button>
-      <button class="btn" onclick="writeUser('${u.telegram_username||''}', ${u.telegram_id})">💬 Написать</button>
+      <button class="btn" onclick="writeUser('${esc(u.telegram_username||'')}', ${u.telegram_id||0})">💬 Написать</button>
     </div>
   `);
 }
@@ -935,12 +864,12 @@ async function showRefTree(uid){
     const html = renderTree(tree.children);
     showModal(`
       <div class="modal-head">
-        <h2>🌳 Реферальное дерево</h2>
+        <h2>🌳 Рефералы</h2>
         <button class="close-x" onclick="closeModal()">✕</button>
       </div>
       <div class="modal-body">
-        <pre style="background:var(--card2);padding:14px;border-radius:10px;
-          font-size:12px;overflow:auto;max-height:400px;line-height:1.7">${html || 'Нет рефералов'}</pre>
+        <pre style="background:var(--card2);padding:12px;border-radius:9px;
+          font-size:12px;overflow:auto;max-height:400px;line-height:1.6">${html || 'Нет рефералов'}</pre>
       </div>
     `);
   } catch(e){ toast(e.message, 'err'); }
@@ -948,43 +877,39 @@ async function showRefTree(uid){
 
 function renderTree(nodes, depth=0){
   return nodes.map(n =>
-    '  '.repeat(depth) + `• ${esc(n.name||'')} @${esc(n.username||'—')} (#${n.id})\n` +
+    '  '.repeat(depth) + `• ${esc(n.name||'')} @${esc(n.username||'—')}\n` +
     renderTree(n.children||[], depth+1)
   ).join('');
 }
 
 function writeUser(username, tgId){
   let url;
-  if (username){
-    url = `https://t.me/${username}`;
-  } else if (tgId){
-    url = `tg://user?id=${tgId}`;
-  } else {
-    toast('Нет username или ID', 'err');
-    return;
-  }
+  if (username){ url = `https://t.me/${username}`; }
+  else if (tgId){ url = `tg://user?id=${tgId}`; }
+  else { toast('Нет username или ID', 'err'); return; }
   window.open(url, '_blank');
 }
 
 // ============================================================
-// ERAS — товары
+// ERAS
 // ============================================================
 async function tabEras(){
+  stopRefresh();
   CACHE.eras = await api('/api/admin/eras');
 
   layout(`
     <div class="header">
       <div>
-        <h1>🧩 Товары (Эры)</h1>
-        <div class="sub">Всего: ${CACHE.eras.length} · Изменения влияют только на новые покупки</div>
+        <h1>🧩 Товары</h1>
+        <div class="sub">Всего: ${CACHE.eras.length}</div>
       </div>
-      <button class="btn" onclick="openEraModal()">➕ Создать эру</button>
+      <button class="btn" onclick="openEraModal()">➕ Создать</button>
     </div>
 
     ${CACHE.eras.length ? CACHE.eras.map(e => eraCard(e)).join('') : `
       <div class="empty"><div class="ic">📦</div>
         <h3>Товаров нет</h3>
-        <p class="muted" style="margin-bottom:16px">Создайте первую эру</p>
+        <p class="muted" style="margin:12px 0">Создайте первую эру</p>
         <button class="btn" onclick="openEraModal()">➕ Создать</button>
       </div>
     `}
@@ -995,10 +920,10 @@ function eraCard(e){
   const roi = e.price > 0 ? Math.round((e.profit_amount / e.price) * 100) : 0;
   return `
     <div class="order-card">
-      <div class="row" style="align-items:flex-start;margin-bottom:12px">
+      <div class="row" style="align-items:flex-start;margin-bottom:10px">
         <div>
           <div class="on">🧩 ${esc(e.title)}</div>
-          <div class="muted-sm">ID #${e.id} · Sort ${e.sort_order||e.id}</div>
+          <div class="muted-sm">ID #${e.id}</div>
         </div>
         <span class="badge ${e.is_active ? 'active' : 'cancelled'}">
           ${e.is_active ? '🟢 Активна' : '⚫ Отключена'}
@@ -1006,32 +931,22 @@ function eraCard(e){
       </div>
 
       <div class="meta">
-        <div class="meta-item">
-          <div class="l">💵 Стоимость</div>
-          <div class="v accent">${fmt(e.price)}</div>
-        </div>
-        <div class="meta-item">
-          <div class="l">💰 Начисление</div>
-          <div class="v ok">+${fmt(e.profit_amount)}</div>
-        </div>
-        <div class="meta-item">
-          <div class="l">🏆 Итого</div>
-          <div class="v ok">${fmt(e.price + e.profit_amount)}</div>
-        </div>
-        <div class="meta-item">
-          <div class="l">📅 Срок</div>
-          <div class="v">${e.duration_days} дней</div>
-        </div>
-        <div class="meta-item">
-          <div class="l">📈 ROI</div>
-          <div class="v ok">+${roi}%</div>
-        </div>
+        <div class="meta-item"><div class="l">💵 Стоимость</div>
+          <div class="v accent">${fmt(e.price)}</div></div>
+        <div class="meta-item"><div class="l">💰 Начисление</div>
+          <div class="v ok">+${fmt(e.profit_amount)}</div></div>
+        <div class="meta-item"><div class="l">🏆 Итого</div>
+          <div class="v ok">${fmt(e.price + e.profit_amount)}</div></div>
+        <div class="meta-item"><div class="l">📅 Срок</div>
+          <div class="v">${e.duration_days} дней</div></div>
+        <div class="meta-item"><div class="l">📈 ROI</div>
+          <div class="v ok">+${roi}%</div></div>
       </div>
 
-      ${e.description ? `<div class="muted-sm" style="margin-bottom:12px">${esc(e.description)}</div>` : ''}
+      ${e.description ? `<div class="muted-sm" style="margin-bottom:10px">${esc(e.description)}</div>` : ''}
 
-      <div class="flex flex-wrap">
-        <button class="btn" onclick="openEraModal(${e.id})">✏️ Редактировать</button>
+      <div class="flex">
+        <button class="btn sm" onclick="openEraModal(${e.id})">✏️ Изменить</button>
         <button class="btn secondary sm" onclick="toggleEra(${e.id}, ${e.is_active ? 0 : 1})">
           ${e.is_active ? '⚫ Отключить' : '🟢 Включить'}
         </button>
@@ -1047,7 +962,7 @@ function openEraModal(id){
 
   showModal(`
     <div class="modal-head">
-      <h2>${isEdit ? '✏️ Редактировать эру' : '➕ Создать эру'}</h2>
+      <h2>${isEdit ? '✏️ Изменить эру' : '➕ Создать эру'}</h2>
       <button class="close-x" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
@@ -1087,11 +1002,10 @@ function openEraModal(id){
     </div>
     <div class="modal-foot">
       <button class="btn ghost" onclick="closeModal()">Отмена</button>
-      <button class="btn" onclick="saveEra(${id||0})">💾 ${isEdit ? 'Сохранить' : 'Создать'}</button>
+      <button class="btn" onclick="saveEra(${id||0})">${isEdit ? '💾 Сохранить' : '✅ Создать'}</button>
     </div>
   `);
 
-  // Авто-пересчёт итога
   setTimeout(()=>{
     const price = document.getElementById('f_price');
     const profit = document.getElementById('f_profit');
@@ -1101,7 +1015,7 @@ function openEraModal(id){
     };
     price.addEventListener('input', recalc);
     profit.addEventListener('input', recalc);
-  }, 50);
+  }, 30);
 }
 
 async function saveEra(id){
@@ -1117,7 +1031,7 @@ async function saveEra(id){
   try {
     if (id){
       await api('/api/admin/eras/' + id, {method:'PUT', body});
-      toast('💾 Эра сохранена');
+      toast('💾 Сохранено');
     } else {
       await api('/api/admin/eras', {method:'POST', body});
       toast('✅ Эра создана');
@@ -1135,16 +1049,16 @@ async function toggleEra(id, newActive){
       method:'PUT',
       body: {...e, is_active: newActive}
     });
-    toast(newActive ? '🟢 Эра включена' : '⚫ Эра отключена');
+    toast(newActive ? '🟢 Включена' : '⚫ Отключена');
     tabEras();
   } catch(e){ toast(e.message, 'err'); }
 }
 
 async function deleteEra(id){
-  if (!confirm(`🗑 Удалить эру #${id}?\n\nДействие необратимо. Существующие покупки не пострадают.`)) return;
+  if (!confirm(`🗑 Удалить эру #${id}?`)) return;
   try {
     await api('/api/admin/eras/' + id, {method:'DELETE'});
-    toast('🗑 Эра удалена');
+    toast('🗑 Удалено');
     tabEras();
   } catch(e){ toast(e.message, 'err'); }
 }
@@ -1153,6 +1067,7 @@ async function deleteEra(id){
 // CONTENT
 // ============================================================
 async function tabContent(){
+  stopRefresh();
   const keys = [
     {k:'marketing_image', t:'Маркетинговое изображение', upload:true},
     {k:'rules_text', t:'Правила проекта', textarea:true},
@@ -1174,24 +1089,24 @@ async function tabContent(){
     <div class="header">
       <div>
         <h1>📝 Контент</h1>
-        <div class="sub">Тексты и изображения проекта</div>
+        <div class="sub">Тексты и изображения</div>
       </div>
     </div>
 
     ${keys.map(({k,t,textarea,upload}) => `
       <div class="card">
-        <h3 style="margin-bottom:12px">${t}</h3>
+        <h3 style="margin-bottom:10px;font-size:13.5px">${t}</h3>
         ${upload ? `
           ${values[k] ? `<img src="${API}${values[k]}"
-            style="max-width:100%;max-height:200px;border-radius:10px;margin-bottom:12px">` :
-            '<div class="muted" style="margin-bottom:12px">Не загружено</div>'}
+            style="max-width:100%;max-height:200px;border-radius:9px;margin-bottom:10px">` :
+            '<div class="muted" style="margin-bottom:10px">Не загружено</div>'}
           <input type="file" id="f_${k}" class="input">
-          <button class="btn" style="margin-top:10px" onclick="uploadFile('${k}')">⬆️ Загрузить</button>
+          <button class="btn sm" style="margin-top:8px" onclick="uploadFile('${k}')">⬆️ Загрузить</button>
         ` : `
           ${textarea
             ? `<textarea class="input" id="c_${k}" rows="5">${esc(values[k]||'')}</textarea>`
             : `<input class="input" id="c_${k}" value="${esc(values[k]||'')}">`}
-          <button class="btn" style="margin-top:10px" onclick="saveContent('${k}')">💾 Сохранить</button>
+          <button class="btn sm" style="margin-top:8px" onclick="saveContent('${k}')">💾 Сохранить</button>
         `}
       </div>
     `).join('')}
@@ -1221,46 +1136,37 @@ async function uploadFile(key){
 // LOGS
 // ============================================================
 async function tabLogs(){
+  stopRefresh();
   const list = await api('/api/admin/actions');
   layout(`
     <div class="header">
       <div>
-        <h1>📜 Журнал действий</h1>
-        <div class="sub">Последние ${list.length} действий администраторов</div>
+        <h1>📜 Журнал</h1>
+        <div class="sub">Последние ${list.length} действий</div>
       </div>
-      <button class="btn" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">📢 Канал логов</button>
+      <button class="btn sm" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">📢 Канал</button>
     </div>
-    <div class="card" style="overflow:auto">
-      <table style="width:100%;border-collapse:collapse;font-size:13px">
+    <div class="card" style="padding:0;overflow:auto">
+      <table>
         <thead>
           <tr>
-            <th style="padding:11px 10px;text-align:left;color:var(--muted);
-              font-size:11px;text-transform:uppercase;letter-spacing:.05em;
-              border-bottom:1px solid var(--border)">#</th>
-            <th style="padding:11px 10px;text-align:left;color:var(--muted);
-              font-size:11px;text-transform:uppercase;letter-spacing:.05em;
-              border-bottom:1px solid var(--border)">Админ</th>
-            <th style="padding:11px 10px;text-align:left;color:var(--muted);
-              font-size:11px;text-transform:uppercase;letter-spacing:.05em;
-              border-bottom:1px solid var(--border)">Действие</th>
-            <th style="padding:11px 10px;text-align:left;color:var(--muted);
-              font-size:11px;text-transform:uppercase;letter-spacing:.05em;
-              border-bottom:1px solid var(--border)">Детали</th>
-            <th style="padding:11px 10px;text-align:left;color:var(--muted);
-              font-size:11px;text-transform:uppercase;letter-spacing:.05em;
-              border-bottom:1px solid var(--border)">Дата</th>
+            <th>#</th><th>Админ</th><th>Действие</th><th>Детали</th><th>Дата</th>
           </tr>
         </thead>
         <tbody>
-        ${list.map(a => `
+        ${list.length ? list.map(a => `
           <tr>
-            <td style="padding:10px;border-bottom:1px solid var(--border)">${a.id}</td>
-            <td style="padding:10px;border-bottom:1px solid var(--border)">${esc(a.admin)}</td>
-            <td style="padding:10px;border-bottom:1px solid var(--border)">${esc(a.action)}</td>
-            <td style="padding:10px;border-bottom:1px solid var(--border)">${esc(a.details)}</td>
-            <td style="padding:10px;border-bottom:1px solid var(--border)">${fmtDate(a.created_at)}</td>
+            <td>${a.id}</td>
+            <td>${esc(a.admin)}</td>
+            <td>${esc(a.action)}</td>
+            <td>${esc(a.details)}</td>
+            <td>${fmtDate(a.created_at)}</td>
           </tr>
-        `).join('')}
+        `).join('') : `
+          <tr><td colspan="5" style="text-align:center;padding:30px;color:var(--muted)">
+            Журнал пуст
+          </td></tr>
+        `}
         </tbody>
       </table>
     </div>
@@ -1313,9 +1219,6 @@ async function render(){
 }
 
 render();
-setInterval(()=>{
-  if (TOKEN && ['dashboard','purchases','payouts'].includes(TAB)) render();
-}, 30000);
 </script>
 </body>
 </html>

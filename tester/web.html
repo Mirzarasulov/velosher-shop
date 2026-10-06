@@ -64,6 +64,7 @@
   .btn.xs{padding:7px 12px;font-size:12px;border-radius:8px;width:auto}
   .era-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:0;margin-bottom:14px;overflow:hidden}
   .era-card .head{padding:18px 18px 14px;background:var(--card2);border-bottom:1px solid var(--border)}
+  .era-card .head .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
   .era-card .title-wrap{display:flex;gap:12px;align-items:center;min-width:0;flex:1}
   .era-card .icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;
     font-size:22px;background:var(--card3);border:1px solid var(--border2);flex-shrink:0}
@@ -139,6 +140,11 @@
   .progress{height:8px;background:var(--card3);border-radius:4px;overflow:hidden;margin-top:8px}
   .progress .fill{height:100%;border-radius:4px;background:var(--accent)}
   .progress .fill.ok{background:#39d98a} .progress .fill.warn{background:#f5b547} .progress .fill.err{background:#ff5c5c}
+  .days-left{padding:6px 12px;border-radius:10px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+  .days-left.ok{background:rgba(57,217,138,.15);color:var(--ok)}
+  .days-left.warn{background:rgba(245,181,71,.15);color:var(--warn)}
+  .days-left.err{background:rgba(255,92,92,.15);color:var(--err)}
+  .days-left.info{background:rgba(99,169,255,.15);color:var(--info)}
   .skel{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);background-size:200% 100%;
     animation:sh 1.2s infinite;border-radius:14px;border:1px solid var(--border);margin-bottom:12px}
   @keyframes sh{to{background-position:-200% 0}}
@@ -163,19 +169,20 @@
 <div id="toast" class="toast hidden"></div>
 
 <script>
+// ============================================================
 const FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app';
 const BOT_USERNAME = 'loadingtester1bot';
 const ADMIN_USERNAME = 'loadingtester1bot';
-const POLL_MS = 20000;
+const POLL_MS = 25000;
+// ============================================================
 
 const tg = window.Telegram && window.Telegram.WebApp;
 const $ = id => document.getElementById(id);
 let CURRENT_TAB = 'home';
 let ME = null, PURCHASES = [], PAYOUTS = [], ERAS = [], USER_UID = '';
 let HAVE = {};
-let BUSY = new Set();
+const BUSY = new Set();
 let shopFilter = 'all', shopSearch = '';
-let RID = 0;
 
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function q(v){ return esc(JSON.stringify(v ?? '')); }
@@ -183,14 +190,12 @@ const num = v => { const n = Number(v); return isFinite(n) ? n : 0; };
 function fmt(n){ return num(n).toLocaleString('ru-RU') + ' ₽'; }
 function fmtDate(s){
   if (!s) return '—';
-  const d = new Date(s);
-  if (isNaN(d)) return String(s);
+  const d = new Date(s); if (isNaN(d)) return String(s);
   return d.toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric'});
 }
 function fmtDT(s){
   if (!s) return '—';
-  const d = new Date(s);
-  if (isNaN(d)) return String(s);
+  const d = new Date(s); if (isNaN(d)) return String(s);
   return d.toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' +
          d.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
 }
@@ -220,7 +225,7 @@ async function once(key, fn){
   finally { BUSY.delete(key); }
 }
 
-// Firebase
+// ---- Firebase REST ----
 async function fbGet(path){
   const r = await fetch(`${FIREBASE}/${path}.json`);
   if (!r.ok) throw new Error('Firebase ' + r.status);
@@ -258,6 +263,7 @@ async function loadMe(){
     last_name: u.last_name || '',
     photo_url: u.photo_url || (existing && existing.photo_url) || '',
     registered_at: (existing && existing.registered_at) || now,
+    referrer_uid: (existing && existing.referrer_uid) || '',
   };
   if (!existing || existing.photo_url !== data.photo_url || existing.username !== data.username){
     await fbPut(`users/${u.id}`, data);
@@ -274,7 +280,6 @@ async function loadEras(){
       duration_days: num(e.duration_days)}))
     .sort((a, b) => (num(a.sort_order) - num(b.sort_order)) || (num(a.id) - num(b.id)));
 }
-
 async function loadPurchases(){
   if (!USER_UID) return [];
   const raw = await fbGet('purchases');
@@ -282,7 +287,6 @@ async function loadPurchases(){
     .filter(p => String(p.user_telegram_id) === String(USER_UID))
     .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 }
-
 async function loadPayouts(){
   if (!USER_UID) return [];
   const raw = await fbGet('payouts');
@@ -291,15 +295,49 @@ async function loadPayouts(){
     .sort((a, b) => new Date(b.requested_at || 0) - new Date(a.requested_at || 0));
 }
 
-function isEraFinished(p){
-  if (p.status !== 'approved') return false;
-  const exp = p.expires_at ? new Date(p.expires_at) : null;
-  if (!exp || isNaN(exp)) return false;
-  return Date.now() >= exp.getTime();
+function daysLeft(p){
+  if (p.expires_at){
+    const e = new Date(p.expires_at).getTime();
+    if (!isNaN(e)) return Math.max(0, Math.ceil((e - Date.now()) / 86400000));
+  }
+  return 0;
 }
-
-function hasPayout(pid){
-  return PAYOUTS.some(po => String(po.purchase_id) === String(pid) && (po.status === 'pending' || po.status === 'paid'));
+function progressOf(p){
+  if (!p.start_date || !p.expires_at) return 0;
+  const a = new Date(p.start_date).getTime(), e = new Date(p.expires_at).getTime(), n = Date.now();
+  if (isNaN(a) || isNaN(e) || e <= a) return 0;
+  if (n >= e) return 100;
+  if (n <= a) return 0;
+  return Math.round(((n - a) / (e - a)) * 100);
+}
+function canWithdraw(p){
+  if (p.status !== 'completed') return false;
+  return !PAYOUTS.some(po => String(po.purchase_id) === String(p.id)
+    && (po.status === 'pending' || po.status === 'paid'));
+}
+function dayCls(p){
+  if (['completed','paid'].includes(p.status)) return 'info';
+  if (p.status === 'approved'){
+    const d = daysLeft(p);
+    return d <= 1 ? 'err' : d <= 3 ? 'warn' : 'ok';
+  }
+  return 'info';
+}
+function dayLabel(p){
+  if (p.status === 'created') return '⏳ Ожидает связи';
+  if (p.status === 'in_progress') return '🟡 В процессе';
+  if (p.status === 'cancelled') return '❌ Отменён';
+  if (p.status === 'completed') return '🏁 Период завершён';
+  if (p.status === 'paid') return '💰 Выплачено';
+  if (p.status === 'approved'){
+    const d = daysLeft(p);
+    if (d <= 0) return '🏁 Завершение';
+    if (d === 1) return '⏰ Остался 1 день';
+    if (d === 2) return '⏰ Осталось 2 дня';
+    if (d <= 3) return `⏰ Осталось ${d} дня`;
+    return `✅ Осталось ${d} дн.`;
+  }
+  return '';
 }
 
 window.setTab = function(tab){
@@ -357,6 +395,7 @@ window.requestPayout = pid => once('po' + pid, async () => {
   toast(`✅ Заявка на вывод #${nextId} создана`, 'ok', 4000);
   haptic();
   await reload();
+  render();
 });
 
 async function getNextId(counter){
@@ -368,11 +407,11 @@ async function getNextId(counter){
 
 window.copyRef = function(){
   if (!ME) return;
-  const link = location.origin + location.pathname + '?ref=' + ME.telegram_id;
+  const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${ME.telegram_id}`;
   const ok = () => { toast('📋 Скопировано', 'ok'); haptic(); };
   if (navigator.clipboard && navigator.clipboard.writeText)
-    navigator.clipboard.writeText(link).then(ok).catch(() => fallbackCopy(link, ok));
-  else fallbackCopy(link, ok);
+    navigator.clipboard.writeText(refLink).then(ok).catch(() => fallbackCopy(refLink, ok));
+  else fallbackCopy(refLink, ok);
 };
 function fallbackCopy(text, ok){
   const ta = document.createElement('textarea');
@@ -430,7 +469,6 @@ function setApp(html){
   $('app').innerHTML = html;
   $('nav').classList.remove('hidden');
 }
-
 function screenNoTg(){
   $('nav').classList.add('hidden');
   $('app').innerHTML = `
@@ -454,7 +492,7 @@ function drawHome(){
   const available = completed.reduce((s, p) => s + num(p.total_amount), 0);
   const name = me.first_name || u.first_name || me.username || 'друг';
   const photo = me.photo_url || u.photo_url || '';
-  const refLink = location.origin + location.pathname + '?ref=' + (me.telegram_id || '');
+  const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${me.telegram_id || ''}`;
 
   setApp(`
     <div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div>
@@ -487,7 +525,10 @@ function drawHome(){
 }
 
 function eraCardPurchase(p){
-  const canWithdraw = isEraFinished(p) && !hasPayout(p.id);
+  const cls = dayCls(p);
+  const prog = progressOf(p);
+  const showProgress = p.status === 'approved';
+  const canW = canWithdraw(p);
   return `
     <div class="era-card">
       <div class="head">
@@ -505,13 +546,20 @@ function eraCardPurchase(p){
           <div class="metric"><div class="l">Начисл.</div><div class="v profit">+${fmt(p.profit_amount)}</div></div>
           <div class="metric"><div class="l">Итого</div><div class="v total">${fmt(p.total_amount)}</div></div>
         </div>
-        <div class="muted-sm" style="margin-top:12px">
+        <div style="text-align:center;margin-top:14px">
+          <span class="days-left ${cls}">${esc(dayLabel(p))}</span>
+        </div>
+        ${showProgress ? `<div class="progress" style="margin-top:12px">
+          <div class="fill ${cls}" style="width:${prog}%"></div>
+        </div>` : ''}
+        <div class="muted-sm" style="margin-top:12px;line-height:1.7">
           🕐 Создано: ${fmtDT(p.created_at)}
+          ${p.activated_at ? '<br>✅ Подтверждено: ' + fmtDT(p.activated_at) : ''}
           ${p.start_date ? '<br>📅 Начало: ' + fmtDate(p.start_date) : ''}
           ${p.last_day ? ' · 🏁 Последний: ' + fmtDate(p.last_day) : ''}
         </div>
       </div>
-      ${canWithdraw ? `<div class="actions">
+      ${canW ? `<div class="actions">
         <button class="btn success" onclick="requestPayout(${q(p.id)})">💸 Подать заявку на вывод</button>
       </div>` : ''}
     </div>`;
@@ -601,7 +649,7 @@ function drawProfile(){
   const me = ME || {}, u = tgUser() || {};
   const name = me.first_name || u.first_name || me.username || 'Пользователь';
   const photo = me.photo_url || u.photo_url || '';
-  const item = (emo, label, fn) => `<div class="menu-item" onclick="${fn}"><div class="left"><div class="emo">${emo}</div><div>${label}</div></div><div class="arrow">→</div></div>`;
+  const item = (emo, label, fn) => `<div class="menu-item" onclick="${fn}"><div class="left"><div class="emo">${emo}</div><div>${label}</div></div><div style="color:var(--muted)">→</div></div>`;
   setApp(`
     <div class="topbar"><div class="brand"><div class="logo">👤</div>Профиль</div></div>
     <div class="hero center" style="padding:24px 20px">
@@ -617,8 +665,16 @@ function drawProfile(){
     <div class="card" style="padding:0 16px">
       <div class="list-item"><span class="muted">Telegram ID</span><b>${esc(me.telegram_id || u.id || '—')}</b></div>
       <div class="list-item"><span class="muted">Username</span><b>@${esc(me.username || u.username || '—')}</b></div>
+      <div class="list-item"><span class="muted">Рефералов</span><b id="refcount">—</b></div>
       <div class="list-item"><span class="muted">Регистрация</span><b>${fmtDT(me.registered_at)}</b></div>
     </div>`);
+  (async () => {
+    try {
+      const users = toList(await fbGet('users'));
+      const c = users.filter(x => String(x.referrer_uid || '') === String(ME.telegram_id)).length;
+      const el = $('refcount'); if (el) el.textContent = c;
+    } catch(e){}
+  })();
 }
 
 const SCREENS = { home: drawHome, buy: drawBuy, purchases: drawPurchases, profile: drawProfile };
@@ -656,7 +712,6 @@ async function render(force){
 }
 
 window.refresh = function(){ HAVE = {}; render(true); };
-window.logout = function(){ try { tg.close(); } catch(e){} };
 
 (function init(){
   try { if (tg){ tg.ready(); tg.expand(); tg.setHeaderColor && tg.setHeaderColor('#0a0e14'); tg.setBackgroundColor && tg.setBackgroundColor('#0a0e14'); } } catch(e){}

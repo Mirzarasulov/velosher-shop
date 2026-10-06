@@ -21,25 +21,24 @@
   .side .logo{display:flex;align-items:center;gap:10px;padding:0 8px 16px;border-bottom:1px solid var(--border);margin-bottom:12px}
   .side .logo .ic{width:34px;height:34px;border-radius:9px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff}
   .side .logo .t{font-weight:700;font-size:14px}
-  .side .logo .s{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+  .side .logo .s{font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:600}
   .side .nav-item{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:none;border:0;color:var(--text2);
     padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;margin-bottom:1px;font-weight:500}
   .side .nav-item:hover{background:var(--card2)}
   .side .nav-item.active{background:var(--accent);color:#fff}
   .side .nav-item .emo{font-size:15px;width:18px;text-align:center}
   .side .nav-item .count{margin-left:auto;padding:1px 7px;border-radius:9px;background:rgba(255,255,255,.14);font-size:10px;font-weight:700;min-width:18px;text-align:center}
-  .side .section{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700;padding:12px 12px 4px}
+  .side .section{font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;padding:12px 12px 4px}
   .main{flex:1;min-width:0;padding:20px 24px;overflow-x:hidden}
   .header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px;flex-wrap:wrap}
-  .header h1{font-size:22px;font-weight:700;margin-bottom:2px}
+  .header h1{font-size:22px;font-weight:700}
   .header .sub{font-size:12px;color:var(--muted)}
   .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:20px}
   .stat{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px}
   .stat .ic{font-size:22px;margin-bottom:6px}
-  .stat .l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:3px}
+  .stat .l{font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:600;margin-bottom:3px}
   .stat .v{font-size:20px;font-weight:700}
-  .stat .v.ok{color:var(--ok)} .stat .v.warn{color:var(--warn)}
-  .stat .v.info{color:var(--info)} .stat .v.accent{color:var(--accent)}
+  .stat .v.ok{color:var(--ok)} .stat .v.warn{color:var(--warn)} .stat .v.info{color:var(--info)} .stat .v.accent{color:var(--accent)}
   .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
   .btn{padding:8px 14px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-size:12.5px;font-weight:600;
     cursor:pointer;display:inline-flex;align-items:center;gap:6px}
@@ -54,13 +53,14 @@
   .badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
   .badge.created{background:rgba(99,169,255,.15);color:var(--info)}
   .badge.in_progress{background:rgba(245,181,71,.15);color:var(--warn)}
-  .badge.approved,.badge.completed{background:rgba(57,217,138,.15);color:var(--ok)}
-  .badge.cancelled{background:rgba(255,92,92,.15);color:var(--err)}
+  .badge.approved,.badge.completed,.badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
+  .badge.cancelled,.badge.rejected{background:rgba(255,92,92,.15);color:var(--err)}
+  .badge.pending{background:rgba(245,181,71,.15);color:var(--warn)}
   .order-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
   .order-card .on{font-size:15px;font-weight:700;color:var(--accent);margin-bottom:8px}
   .order-card .meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:7px;margin-bottom:11px}
   .meta-item{background:var(--card2);border-radius:8px;padding:8px 10px}
-  .meta-item .l{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:600;margin-bottom:2px}
+  .meta-item .l{font-size:9.5px;color:var(--muted);text-transform:uppercase;font-weight:600;margin-bottom:2px}
   .meta-item .v{font-size:12.5px;font-weight:600;word-break:break-word}
   .meta-item .v.ok{color:var(--ok)} .meta-item .v.accent{color:var(--accent)}
   .flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -83,8 +83,7 @@
     color:var(--text);font-size:13px;outline:none}
   .input:focus{border-color:var(--accent)}
   .form-row{margin-bottom:11px}
-  .form-row label{display:block;font-size:10.5px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;
-    letter-spacing:.04em;font-weight:600}
+  .form-row label{display:block;font-size:10.5px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;font-weight:600}
   .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
   .modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
   .modal-head{padding:18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
@@ -114,15 +113,17 @@
 
 <script>
 const FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app';
-const TTL = 15000;
-const POLL_MS = 20000;
+const TTL = 20000;
+const POLL_MS = 25000;
+const PAGE = 30;
 
 const $ = id => document.getElementById(id);
 let TAB = 'dashboard';
 let RID = 0;
-const DATA = { purchases: [], eras: [], users: [] };
+const DATA = { purchases: [], payouts: [], eras: [], users: [] };
 const SIG = {};
-let FILTER = { purchases: 'all', search: '' };
+let FILTER = { purchases: 'all', payouts: 'all', search: '' };
+let LIM = { purchases: PAGE, payouts: PAGE, users: PAGE };
 let store = {};
 const inflight = {};
 const BUSY = new Set();
@@ -135,11 +136,18 @@ function fmtDate(s){
   if (!s) return '—';
   const d = new Date(s);
   if (isNaN(d)) return String(s);
+  return d.toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric'});
+}
+function fmtDT(s){
+  if (!s) return '—';
+  const d = new Date(s);
+  if (isNaN(d)) return String(s);
   return d.toLocaleString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
 }
 function statusLabel(s){
   return ({created:'Создан', in_progress:'В процессе', approved:'Одобрен',
-    completed:'Завершён', cancelled:'Отменён'})[s] || s;
+    completed:'Завершён', paid:'Выплачен', cancelled:'Отменён',
+    pending:'Ожидает', rejected:'Отклонён'})[s] || s;
 }
 
 function toast(msg, type='ok', ms=2500){
@@ -198,22 +206,22 @@ async function get(path, force){
 function invalidate(){ store = {}; }
 
 async function loadAll(force){
-  const [pRaw, eRaw, uRaw] = await Promise.all([
-    get('purchases', force),
-    get('eras', force),
-    get('users', force),
+  const [p, po, e, u] = await Promise.all([
+    get('purchases', force), get('payouts', force),
+    get('eras', force), get('users', force)
   ]);
-  const sigP = JSON.stringify(pRaw), sigE = JSON.stringify(eRaw), sigU = JSON.stringify(uRaw);
   let changed = false;
-  if (sigP !== SIG.p){ SIG.p = sigP; DATA.purchases = toList(pRaw).sort((a,b) => num(b.id) - num(a.id)); changed = true; }
-  if (sigE !== SIG.e){ SIG.e = sigE; DATA.eras = toList(eRaw).sort((a,b) => (num(a.sort_order) - num(b.sort_order)) || (num(a.id) - num(b.id))); changed = true; }
-  if (sigU !== SIG.u){ SIG.u = sigU; DATA.users = toList(uRaw); changed = true; }
+  const sp = JSON.stringify(p);
+  if (sp !== SIG.p){ SIG.p = sp; DATA.purchases = toList(p).sort((a,b) => num(b.id) - num(a.id)); changed = true; }
+  const spo = JSON.stringify(po);
+  if (spo !== SIG.po){ SIG.po = spo; DATA.payouts = toList(po).sort((a,b) => num(b.id) - num(a.id)); changed = true; }
+  const se = JSON.stringify(e);
+  if (se !== SIG.e){ SIG.e = se; DATA.eras = toList(e).sort((a,b) => (num(a.sort_order) - num(b.sort_order)) || (num(a.id) - num(b.id))); changed = true; }
+  const su = JSON.stringify(u);
+  if (su !== SIG.u){ SIG.u = su; DATA.users = toList(u); changed = true; }
   return changed;
 }
 
-// ============================================================
-// ОБОЛОЧКА
-// ============================================================
 function shell(){
   if ($('main')) return;
   const nav = (tab, emo, label, cnt) => `
@@ -229,6 +237,7 @@ function shell(){
         ${nav('dashboard','📊','Дашборд')}
         <div class="section">Операции</div>
         ${nav('purchases','📩','Заявки',1)}
+        ${nav('payouts','💸','Выплаты',1)}
         <div class="section">Управление</div>
         ${nav('users','👥','Пользователи')}
         ${nav('eras','🧩','Товары')}
@@ -241,7 +250,10 @@ function shell(){
 }
 function updateNav(){
   document.querySelectorAll('.nav-item[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === TAB));
-  const c = { purchases: DATA.purchases.filter(p => p.status === 'created').length };
+  const c = {
+    purchases: DATA.purchases.filter(p => p.status === 'created').length,
+    payouts: DATA.payouts.filter(p => p.status === 'pending').length,
+  };
   for (const k in c){
     const el = $('cnt-' + k);
     if (el){ el.textContent = c[k]; el.classList.toggle('hidden', !c[k]); }
@@ -253,10 +265,7 @@ function emptyBlock(icon, title, text='', extra=''){
     ${text ? `<p class="muted" style="margin:8px 0">${text}</p>` : ''}${extra}</div>`;
 }
 
-// ============================================================
-// РОУТИНГ
-// ============================================================
-const TABS = { dashboard: drawDashboard, purchases: drawPurchases, users: drawUsers, eras: drawEras };
+const TABS = { dashboard: drawDashboard, purchases: drawPurchases, payouts: drawPayouts, users: drawUsers, eras: drawEras };
 
 async function render(force){
   const my = ++RID;
@@ -272,18 +281,20 @@ async function render(force){
     setMain(emptyBlock('⚠️', 'Ошибка', esc(e.message), `<button class="btn" onclick="render(true)">🔄 Повторить</button>`));
   }
 }
-function setTab(t){ TAB = t; FILTER.search = ''; render(); }
+function setTab(t){ TAB = t; FILTER.search = ''; LIM = { purchases: PAGE, payouts: PAGE, users: PAGE }; render(); }
 function refresh(){ invalidate(); render(true); }
 window.setTab = setTab; window.refresh = refresh; window.closeModal = closeModal;
+window.invalidate = invalidate;
 
 // ============================================================
 // DASHBOARD
 // ============================================================
 function drawDashboard(){
-  const P = DATA.purchases;
+  const P = DATA.purchases, PO = DATA.payouts;
   const byStatus = k => P.filter(p => p.status === k).length;
   const totalSum = P.filter(p => p.status !== 'cancelled').reduce((s,p) => s + num(p.purchase_price), 0);
-  const profit = P.filter(p => p.status === 'approved' || p.status === 'completed').reduce((s,p) => s + num(p.profit_amount), 0);
+  const pendingPayouts = PO.filter(p => p.status === 'pending');
+  const pendingSum = pendingPayouts.reduce((s,p) => s + num(p.amount), 0);
   setMain(`
     <div class="header">
       <div><h1>📊 Дашборд</h1><div class="sub">Общая статистика</div></div>
@@ -293,11 +304,11 @@ function drawDashboard(){
       <div class="stat"><div class="ic">👥</div><div class="l">Пользователей</div><div class="v">${DATA.users.length}</div></div>
       <div class="stat"><div class="ic">📩</div><div class="l">Всего заявок</div><div class="v">${P.length}</div></div>
       <div class="stat"><div class="ic">🔵</div><div class="l">Созданных</div><div class="v info">${byStatus('created')}</div></div>
-      <div class="stat"><div class="ic">🟡</div><div class="l">В процессе</div><div class="v warn">${byStatus('in_progress')}</div></div>
       <div class="stat"><div class="ic">🟢</div><div class="l">Одобрено</div><div class="v ok">${byStatus('approved')}</div></div>
       <div class="stat"><div class="ic">🏁</div><div class="l">Завершено</div><div class="v ok">${byStatus('completed')}</div></div>
+      <div class="stat"><div class="ic">💸</div><div class="l">Выплат ждут</div><div class="v warn">${pendingPayouts.length}</div></div>
       <div class="stat"><div class="ic">💵</div><div class="l">Сумма покупок</div><div class="v accent">${fmt(totalSum)}</div></div>
-      <div class="stat"><div class="ic">📈</div><div class="l">Начислено</div><div class="v ok">${fmt(profit)}</div></div>
+      <div class="stat"><div class="ic">💰</div><div class="l">К выплате</div><div class="v warn">${fmt(pendingSum)}</div></div>
     </div>`);
 }
 
@@ -315,17 +326,10 @@ function purchaseFiltered(){
            String(p.user_telegram_id || '').includes(s);
   });
 }
-
 function drawPurchases(){
   const P = DATA.purchases;
-  const c = {
-    all: P.length,
-    created: P.filter(p => p.status === 'created').length,
-    in_progress: P.filter(p => p.status === 'in_progress').length,
-    approved: P.filter(p => p.status === 'approved').length,
-    completed: P.filter(p => p.status === 'completed').length,
-    cancelled: P.filter(p => p.status === 'cancelled').length,
-  };
+  const c = { all: P.length };
+  ['created','in_progress','approved','completed','cancelled'].forEach(k => c[k] = P.filter(p => p.status === k).length);
   const tabs = [
     ['all','📋 Все'],['created','🔵 Созданные'],['in_progress','🟡 В процессе'],
     ['approved','🟢 Одобренные'],['completed','🏁 Завершённые'],['cancelled','❌ Отменённые']
@@ -337,17 +341,34 @@ function drawPurchases(){
       <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button>
     </div>
     <div class="tabs">${tabs.map(([k, l]) =>
-      `<button class="tab ${FILTER.purchases === k ? 'active' : ''}" onclick="setFilter('${k}')">${l} (${c[k]})</button>`).join('')}</div>
+      `<button class="tab ${FILTER.purchases === k ? 'active' : ''}" onclick="setFilter('purchases','${k}')">${l} (${c[k]})</button>`).join('')}</div>
     <div class="card" style="padding:10px">
       <input class="input" placeholder="🔍 Поиск: имя, @username, ID…" value="${esc(FILTER.search)}"
-        oninput="onSearch(this.value)">
+        oninput="onSearch(this.value,'purchases')">
     </div>
-    ${list.length ? list.map(orderCard).join('') : emptyBlock('📭', 'Заявок нет')}`);
+    <div id="list"></div>`);
+  fillPurchases();
 }
-function setFilter(f){ FILTER.purchases = f; drawPurchases(); }
+function fillPurchases(){
+  const f = purchaseFiltered();
+  const lim = LIM.purchases;
+  $('list').innerHTML = f.length
+    ? f.slice(0, lim).map(orderCard).join('') + moreBtn('purchases', f.length - lim)
+    : emptyBlock('📭', 'Заявок нет');
+}
+function moreBtn(name, left){
+  return left > 0 ? `<div style="text-align:center;margin:14px 0">
+    <button class="btn secondary" onclick="more('${name}')">Показать ещё (${left})</button></div>` : '';
+}
+function more(name){ LIM[name] += PAGE; name === 'purchases' ? fillPurchases() : name === 'payouts' ? fillPayouts() : fillUsers(); }
+function setFilter(name, v){ FILTER[name] = v; LIM[name] = PAGE; TABS[name](); }
 let SEARCH_TIMER;
-function onSearch(v){ FILTER.search = v; clearTimeout(SEARCH_TIMER); SEARCH_TIMER = setTimeout(drawPurchases, 150); }
-window.setFilter = setFilter; window.onSearch = onSearch;
+function onSearch(v, tab){
+  FILTER.search = v; LIM[tab] = PAGE;
+  clearTimeout(SEARCH_TIMER);
+  SEARCH_TIMER = setTimeout(() => tab === 'purchases' ? fillPurchases() : fillUsers(), 150);
+}
+window.setFilter = setFilter; window.onSearch = onSearch; window.more = more;
 
 function orderCard(p){
   return `
@@ -367,27 +388,60 @@ function orderCard(p){
         <div class="meta-item"><div class="l">📅 Срок</div><div class="v">${num(p.duration_days)} дней</div></div>
       </div>
       <div class="muted-sm" style="margin-bottom:10px">
-        🕐 Создано: ${fmtDate(p.created_at)}
-        ${p.status_changed_at && p.status_changed_at !== p.created_at ? ' · 🔄 Изменено: ' + fmtDate(p.status_changed_at) : ''}
+        🕐 Создано: ${fmtDT(p.created_at)}
+        ${p.activated_at ? '<br>✅ Подтверждено: ' + fmtDT(p.activated_at) : ''}
+        ${p.start_date ? '<br>📅 Начало: ' + fmtDate(p.start_date) : ''}
+        ${p.last_day ? ' · 🏁 Последний: ' + fmtDate(p.last_day) : ''}
+        ${p.expires_at ? ' · ⏰ Завершение: ' + fmtDate(p.expires_at) : ''}
       </div>
       <div class="flex">
-        ${p.status !== 'in_progress' && p.status !== 'cancelled' && p.status !== 'completed'
-          ? `<button class="btn secondary sm" onclick="setStatus(${q(p._key)}, 'in_progress')">🟡 В процессе</button>` : ''}
-        ${p.status !== 'approved' && p.status !== 'cancelled' && p.status !== 'completed'
-          ? `<button class="btn ok sm" onclick="setStatus(${q(p._key)}, 'approved')">🟢 Одобрить</button>` : ''}
-        ${p.status === 'approved'
-          ? `<button class="btn sm" onclick="setStatus(${q(p._key)}, 'completed')">🏁 Завершить</button>` : ''}
-        ${p.status !== 'cancelled' && p.status !== 'completed'
-          ? `<button class="btn danger sm" onclick="setStatus(${q(p._key)}, 'cancelled')">❌ Отменить</button>` : ''}
+        ${p.status === 'created' ? `
+          <button class="btn secondary sm" onclick="setStatus(${q(p._key)}, 'in_progress')">🟡 В процессе</button>
+          <button class="btn ok sm" onclick="approvePurchase(${q(p._key)})">🟢 Одобрить</button>
+          <button class="btn danger sm" onclick="setStatus(${q(p._key)}, 'cancelled')">❌ Отменить</button>
+        ` : ''}
+        ${p.status === 'in_progress' ? `
+          <button class="btn ok sm" onclick="approvePurchase(${q(p._key)})">🟢 Одобрить</button>
+          <button class="btn danger sm" onclick="setStatus(${q(p._key)}, 'cancelled')">❌ Отменить</button>
+        ` : ''}
+        ${p.status === 'approved' ? `
+          <button class="btn sm" onclick="setStatus(${q(p._key)}, 'completed')">🏁 Завершить</button>
+          <button class="btn danger sm" onclick="setStatus(${q(p._key)}, 'cancelled')">❌ Отменить</button>
+        ` : ''}
         ${p.user_username ? `<button class="btn ghost sm" onclick="writeUser(${q(p.user_username)}, ${q(p.user_telegram_id || 0)})">💬 Написать</button>` : ''}
       </div>
     </div>`;
 }
 
 window.setStatus = (key, status) => once('p' + key + status, async () => {
-  if (!confirm(`Изменить статус заявки на "${statusLabel(status)}"?`)) return;
+  if (!confirm(`Изменить статус на "${statusLabel(status)}"?`)) return;
   await fbPatch(`purchases/${key}`, {status, status_changed_at: new Date().toISOString()});
   toast(`✅ Статус → ${statusLabel(status)}`);
+  invalidate();
+  await render(true);
+});
+
+window.approvePurchase = key => once('ap' + key, async () => {
+  if (!confirm('Одобрить заявку? Участник получит уведомление с датами.')) return;
+  const p = DATA.purchases.find(x => x._key === key);
+  if (!p) return;
+  const now = new Date();
+  // Ташкент UTC+5
+  const tzNow = new Date(now.getTime() + 5*3600*1000);
+  const y = tzNow.getUTCFullYear(), m = tzNow.getUTCMonth(), d = tzNow.getUTCDate();
+  const first = new Date(Date.UTC(y, m, d+1, 0, 0, 0) - 5*3600*1000);
+  const days = num(p.duration_days);
+  const last = new Date(first.getTime() + (days - 1) * 86400000);
+  const expires = new Date(last.getTime() + 86400000);
+  await fbPatch(`purchases/${key}`, {
+    status: 'approved',
+    activated_at: now.toISOString(),
+    start_date: first.toISOString(),
+    last_day: last.toISOString(),
+    expires_at: expires.toISOString(),
+    status_changed_at: now.toISOString(),
+  });
+  toast('🟢 Одобрено');
   invalidate();
   await render(true);
 });
@@ -399,6 +453,92 @@ window.writeUser = function(username, tgId){
   else { toast('Нет username или ID', 'err'); return; }
   window.open(url, '_blank');
 };
+
+// ============================================================
+// PAYOUTS
+// ============================================================
+function drawPayouts(){
+  const P = DATA.payouts;
+  const c = { all: P.length };
+  ['pending','paid','rejected'].forEach(k => c[k] = P.filter(p => p.status === k).length);
+  const tabs = [['all','📋 Все'],['pending','⏳ Ожидают'],['paid','✅ Выплачено'],['rejected','❌ Отклонено']];
+  const f = FILTER.payouts;
+  const list = f === 'all' ? P : P.filter(p => p.status === f);
+  setMain(`
+    <div class="header">
+      <div><h1>💸 Выплаты</h1><div class="sub">Всего: ${c.all}</div></div>
+      <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button>
+    </div>
+    <div class="tabs">${tabs.map(([k, l]) =>
+      `<button class="tab ${f === k ? 'active' : ''}" onclick="setFilter('payouts','${k}')">${l} (${c[k]})</button>`).join('')}</div>
+    <div id="list"></div>`);
+  fillPayouts();
+}
+function fillPayouts(){
+  const f = FILTER.payouts;
+  const list = f === 'all' ? DATA.payouts : DATA.payouts.filter(p => p.status === f);
+  const lim = LIM.payouts;
+  $('list').innerHTML = list.length
+    ? list.slice(0, lim).map(payoutCard).join('') + moreBtn('payouts', list.length - lim)
+    : emptyBlock('📭', 'Заявок нет');
+}
+
+function payoutCard(po){
+  return `
+    <div class="order-card">
+      <div class="row" style="align-items:flex-start;margin-bottom:10px">
+        <div class="on">💸 Вывод #${esc(po.id)}</div>
+        <span class="badge ${esc(po.status)}">${esc(statusLabel(po.status))}</span>
+      </div>
+      <div class="meta">
+        <div class="meta-item"><div class="l">📄 Покупка</div><div class="v">#${esc(po.purchase_id)}</div></div>
+        <div class="meta-item"><div class="l">👤 Участник</div><div class="v">${esc(po.user_first_name || '—')}</div></div>
+        <div class="meta-item"><div class="l">🔗 Никнейм</div><div class="v">@${esc(po.user_username || '—')}</div></div>
+        <div class="meta-item"><div class="l">🆔 TG ID</div><div class="v">${esc(po.user_telegram_id || '—')}</div></div>
+        <div class="meta-item"><div class="l">💳 Эра</div><div class="v">${esc(po.era_title || '—')}</div></div>
+        <div class="meta-item"><div class="l">💵 Куплено</div><div class="v">${fmt(po.purchase_price)}</div></div>
+        <div class="meta-item"><div class="l">💰 К выводу</div><div class="v ok">${fmt(po.amount)}</div></div>
+      </div>
+      <div class="muted-sm" style="margin-bottom:10px">
+        📅 Подано: ${fmtDT(po.requested_at)}
+        ${po.paid_at ? '<br>✅ Выплачено: ' + fmtDT(po.paid_at) : ''}
+        ${po.rejected_at ? '<br>❌ Отклонено: ' + fmtDT(po.rejected_at) : ''}
+      </div>
+      <div class="flex">
+        ${po.status === 'pending' ? `
+          <button class="btn ok sm" onclick="markPayoutPaid(${q(po._key)}, ${q(po.id)})">✅ Подтвердить выплату</button>
+          <button class="btn danger sm" onclick="rejectPayout(${q(po._key)}, ${q(po.id)})">❌ Отклонить</button>
+        ` : ''}
+        ${po.user_username ? `<button class="btn ghost sm" onclick="writeUser(${q(po.user_username)}, ${q(po.user_telegram_id || 0)})">👤 Связаться</button>` : ''}
+      </div>
+    </div>`;
+}
+
+window.markPayoutPaid = (key, id) => once('po' + key, async () => {
+  if (!confirm(`Подтвердить выплату #${id}?\n\nНажимайте только после фактического перевода денег.`)) return;
+  const po = DATA.payouts.find(x => x._key === key);
+  if (!po) return;
+  await fbPatch(`payouts/${key}`, {status: 'paid', paid_at: new Date().toISOString()});
+  // покупку помечаем paid
+  const purchaseKey = DATA.purchases.find(p => String(p.id) === String(po.purchase_id))?._key;
+  if (purchaseKey) await fbPatch(`purchases/${purchaseKey}`, {status: 'paid', paid_at: new Date().toISOString()});
+  toast('✅ Выплата подтверждена');
+  invalidate();
+  await render(true);
+});
+
+window.rejectPayout = (key, id) => once('por' + key, async () => {
+  const reason = prompt('Причина отклонения (увидит участник):', 'Не указана');
+  if (reason === null) return;
+  await fbPatch(`payouts/${key}`, {
+    status: 'rejected',
+    rejected_at: new Date().toISOString(),
+    reject_reason: reason || 'Не указана',
+  });
+  toast('❌ Отклонено');
+  invalidate();
+  await render(true);
+});
 
 // ============================================================
 // USERS
@@ -417,17 +557,28 @@ function drawUsers(){
     </div>
     <div class="card" style="padding:10px">
       <input class="input" placeholder="🔍 Поиск: имя, @username, ID…" value="${esc(FILTER.search)}"
-        oninput="FILTER.search=this.value;drawUsers()">
+        oninput="onSearch(this.value,'users')">
     </div>
-    ${list.length ? list.map(userCard).join('') : emptyBlock('👤', 'Пользователей нет')}`);
+    <div id="list"></div>`);
+  fillUsers();
 }
-
+function fillUsers(){
+  const s = FILTER.search.trim().toLowerCase();
+  const list = s ? DATA.users.filter(u =>
+    (u.first_name || '').toLowerCase().includes(s) ||
+    (u.username || '').toLowerCase().includes(s) ||
+    String(u.telegram_id || '').includes(s)
+  ) : DATA.users;
+  const lim = LIM.users;
+  $('list').innerHTML = list.length
+    ? list.slice(0, lim).map(userCard).join('') + moreBtn('users', list.length - lim)
+    : emptyBlock('👤', 'Пользователей нет');
+}
 function userCard(u){
   const ps = DATA.purchases.filter(p => String(p.user_telegram_id) === String(u.telegram_id));
   const invested = ps.filter(p => p.status !== 'cancelled').reduce((s,p) => s + num(p.purchase_price), 0);
-  const earned = ps.filter(p => p.status === 'completed').reduce((s,p) => s + num(p.total_amount), 0);
+  const earned = ps.filter(p => p.status === 'completed' || p.status === 'paid').reduce((s,p) => s + num(p.total_amount), 0);
   const initial = (u.first_name || u.username || '?')[0].toUpperCase();
-  const name = u.first_name || 'Без имени';
   return `
     <div class="order-card">
       <div class="flex" style="margin-bottom:10px">
@@ -436,7 +587,7 @@ function userCard(u){
           ${u.photo_url ? `<img src="${esc(u.photo_url)}" style="width:100%;height:100%;object-fit:cover">` : esc(initial)}
         </div>
         <div style="flex:1;min-width:0">
-          <div style="font-weight:700;font-size:14px">${esc(name)}</div>
+          <div style="font-weight:700;font-size:14px">${esc(u.first_name || 'Без имени')}</div>
           <div class="muted-sm">@${esc(u.username || '—')} · ID ${esc(u.telegram_id || '—')}</div>
         </div>
       </div>
@@ -445,7 +596,7 @@ function userCard(u){
         <div class="meta-item"><div class="l">Выплачено</div><div class="v ok">${fmt(earned)}</div></div>
         <div class="meta-item"><div class="l">Заявок</div><div class="v">${ps.length}</div></div>
       </div>
-      <div class="muted-sm">📅 ${fmtDate(u.registered_at)}</div>
+      <div class="muted-sm">📅 ${fmtDT(u.registered_at)}</div>
       ${u.username ? `<div class="flex" style="margin-top:10px">
         <button class="btn ghost sm" onclick="writeUser(${q(u.username)}, ${q(u.telegram_id || 0)})">💬 Написать</button>
       </div>` : ''}
@@ -468,7 +619,6 @@ function drawEras(){
     ${E.length ? E.map(eraCard).join('') : emptyBlock('📦', 'Товаров нет',
       'Создайте первую эру', `<button class="btn" onclick="openEraModal()" style="margin-top:12px">➕ Создать</button>`)}`);
 }
-
 function eraCard(e){
   const roi = e.price > 0 ? Math.round((e.profit_amount / e.price) * 100) : 0;
   return `
@@ -491,7 +641,6 @@ function eraCard(e){
       </div>
     </div>`;
 }
-
 window.openEraModal = function(key){
   const e = key ? DATA.eras.find(x => x._key === key) : null;
   showModal(`
@@ -521,7 +670,6 @@ window.openEraModal = function(key){
       <button class="btn" onclick="saveEra(${q(key || '')})">💾 Сохранить</button>
     </div>`);
 };
-
 window.saveEra = key => once('save' + (key || 'new'), async () => {
   const title = $('f_title').value.trim();
   if (!title){ toast('Введите название', 'err'); return; }
@@ -542,14 +690,12 @@ window.saveEra = key => once('save' + (key || 'new'), async () => {
     toast('💾 Обновлено');
   } else {
     const newId = DATA.eras.length ? Math.max(...DATA.eras.map(x => num(x.id))) + 1 : 1;
-    body.id = newId;
-    body.sort_order = newId;
+    body.id = newId; body.sort_order = newId;
     await fbPut(`eras/${newId}`, body);
     toast(`✅ Эра #${newId} создана`);
   }
   closeModal(); invalidate(); await render(true);
 });
-
 window.deleteEra = (key, title) => once('del' + key, async () => {
   if (!confirm(`🗑 Удалить "${title}"?`)) return;
   await fbDelete(`eras/${key}`);
@@ -561,8 +707,8 @@ window.deleteEra = (key, title) => once('del' + key, async () => {
 // СТАРТ
 // ============================================================
 render();
-setInterval(() => { if (!document.hidden) { invalidate(); render(true); } }, POLL_MS);
-document.addEventListener('visibilitychange', () => { if (!document.hidden) { invalidate(); render(true); } });
+setInterval(() => { if (!document.hidden){ invalidate(); render(true); } }, POLL_MS);
+document.addEventListener('visibilitychange', () => { if (!document.hidden){ invalidate(); render(true); } });
 </script>
 </body>
 </html>

@@ -13,24 +13,18 @@
     --text:#e8edf3; --text2:#c4ccd6; --muted:#7a8595;
     --accent:#4f8cff; --accent2:#356fd8; --accent-glow:rgba(79,140,255,.35);
     --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c; --info:#63a9ff;
-    --gold:#ffd166; --silver:#c0c8d4; --bronze:#e29c5c;
+    --gold:#ffd166;
     --r:14px; --r2:12px; --r3:10px;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
-  html,body{
-    background:var(--bg);color:var(--text);
+  html,body{background:var(--bg);color:var(--text);
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
-    font-size:15px;line-height:1.5;min-height:100vh;
-    -webkit-font-smoothing:antialiased;
-  }
-  body::before{
-    content:'';position:fixed;top:0;left:0;right:0;height:280px;
+    font-size:15px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
+  body::before{content:'';position:fixed;top:0;left:0;right:0;height:280px;
     background:radial-gradient(circle at 50% 0%,rgba(79,140,255,.15),transparent 60%);
-    pointer-events:none;z-index:0;
-  }
+    pointer-events:none;z-index:0}
   .app{max-width:560px;margin:0 auto;padding:0 16px 100px;position:relative;z-index:1}
-  
-  /* HEADER */
+
   .topbar{position:sticky;top:0;z-index:40;background:rgba(10,14,20,.85);
     backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     border-bottom:1px solid var(--border);margin:0 -16px 16px;padding:12px 16px;
@@ -42,30 +36,22 @@
   .topbar .actions{display:flex;gap:8px;align-items:center}
   .icon-btn{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);
     background:var(--card2);color:var(--text2);font-size:17px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;position:relative;transition:all .15s}
+    display:flex;align-items:center;justify-content:center;transition:all .15s}
   .icon-btn:active{transform:scale(.94);background:var(--card3)}
-  .icon-btn .dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;
-    background:var(--err);border:2px solid var(--card2)}
-  
-  /* TYPO */
+
   h1{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.25}
   h2{font-size:18px;font-weight:700;letter-spacing:-.01em}
   h3{font-size:15px;font-weight:600}
   .muted{color:var(--muted);font-size:13px}
   .muted-sm{color:var(--muted);font-size:11px}
   .section-title{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px}
-  .section-title h2{margin:0}
-  
-  /* CARDS */
+
   .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
   .card2{background:var(--card2);border:1px solid var(--border);border-radius:var(--r2);padding:12px}
-  
-  /* HERO / PROFILE CARD */
-  .hero{
-    background:linear-gradient(135deg,#1a2540 0%,#161b26 100%);
+
+  .hero{background:linear-gradient(135deg,#1a2540 0%,#161b26 100%);
     border:1px solid var(--border2);border-radius:18px;padding:20px;
-    margin-bottom:16px;position:relative;overflow:hidden;
-  }
+    margin-bottom:16px;position:relative;overflow:hidden}
   .hero::before{content:'';position:absolute;top:-50%;right:-30%;width:280px;height:280px;
     background:radial-gradient(circle,rgba(79,140,255,.25),transparent 70%);pointer-events:none}
   .hero .row{display:flex;justify-content:space-between;align-items:center;gap:12px;position:relative}
@@ -79,13 +65,10 @@
   .hero .info{min-width:0;flex:1}
   .hero .info h1{font-size:20px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .hero .info .sub{color:var(--text2);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  
-  /* STATS GRID */
+
   .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px}
   .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);
     padding:14px;position:relative;overflow:hidden}
-  .stat::after{content:'';position:absolute;top:0;right:0;width:60px;height:60px;
-    background:radial-gradient(circle,var(--accent-glow),transparent 70%);opacity:.3}
   .stat .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;
     font-weight:600;margin-bottom:6px}
   .stat .value{font-size:22px;font-weight:700;letter-spacing:-.02em}
@@ -93,8 +76,7 @@
   .stat .value.ok{color:var(--ok)}
   .stat .value.warn{color:var(--warn)}
   .stat .value.accent{color:var(--accent)}
-  
-  /* BUTTONS */
+
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;
     padding:14px 18px;border-radius:12px;border:0;
     background:linear-gradient(135deg,var(--accent),var(--accent2));
@@ -104,18 +86,14 @@
   .btn:active{transform:scale(.97);box-shadow:0 2px 6px var(--accent-glow)}
   .btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
   .btn.secondary{background:var(--card2);color:var(--text);border:1px solid var(--border2);box-shadow:none}
-  .btn.secondary:active{background:var(--card3)}
   .btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text2);box-shadow:none}
   .btn.danger{background:linear-gradient(135deg,#ff5c5c,#d63a3a);box-shadow:0 4px 14px rgba(255,92,92,.3)}
   .btn.success{background:linear-gradient(135deg,#39d98a,#22a86b);box-shadow:0 4px 14px rgba(57,217,138,.3)}
   .btn.sm{padding:10px 14px;font-size:13px;border-radius:10px;width:auto}
   .btn.xs{padding:7px 12px;font-size:12px;border-radius:8px;width:auto}
-  
-  /* ERA CARDS (shop) */
+
   .era-card{background:var(--card);border:1px solid var(--border);border-radius:16px;
-    padding:0;margin-bottom:14px;overflow:hidden;cursor:pointer;
-    transition:all .2s;position:relative}
-  .era-card:active{transform:scale(.99);border-color:var(--border2)}
+    padding:0;margin-bottom:14px;overflow:hidden;transition:all .2s;position:relative}
   .era-card .head{padding:18px 18px 14px;background:linear-gradient(135deg,var(--card2),var(--card));
     border-bottom:1px solid var(--border);position:relative;overflow:hidden}
   .era-card .head::before{content:'';position:absolute;top:-40%;right:-20%;width:180px;height:180px;
@@ -129,10 +107,6 @@
   .era-card .name{font-size:17px;font-weight:700;letter-spacing:-.01em}
   .era-card .tier{font-size:11px;color:var(--muted);text-transform:uppercase;
     letter-spacing:.08em;font-weight:600;margin-top:2px}
-  .era-card .price-tag{text-align:right;flex-shrink:0}
-  .era-card .price-tag .p{font-size:20px;font-weight:800;color:var(--text);
-    letter-spacing:-.02em}
-  .era-card .price-tag .per{font-size:11px;color:var(--muted);margin-top:2px}
   .era-card .body{padding:16px 18px}
   .era-card .desc{color:var(--text2);font-size:13px;margin-bottom:14px;line-height:1.5}
   .era-card .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -145,15 +119,13 @@
   .metric .v.total{color:var(--accent)}
   .era-card .actions{padding:0 18px 18px;display:flex;gap:8px}
   .era-card .actions .btn{flex:1}
-  .era-card.disabled{opacity:.55;pointer-events:none}
-  .era-card .badge-tier{position:absolute;top:14px;right:14px;padding:4px 10px;
+  .badge-tier{position:absolute;top:14px;right:14px;padding:4px 10px;
     border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.05em;
     text-transform:uppercase;z-index:2}
   .badge-tier.starter{background:rgba(99,169,255,.15);color:#63a9ff;border:1px solid rgba(99,169,255,.3)}
   .badge-tier.middle{background:rgba(79,140,255,.15);color:#4f8cff;border:1px solid rgba(79,140,255,.3)}
   .badge-tier.premium{background:rgba(255,209,102,.15);color:#ffd166;border:1px solid rgba(255,209,102,.3)}
-  
-  /* BADGE (statuses) */
+
   .badge{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;
     font-size:11px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap}
   .badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
@@ -163,8 +135,7 @@
   .badge.awaiting_payout{background:rgba(245,181,71,.15);color:var(--warn)}
   .badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
   .badge.cancelled{background:rgba(255,92,92,.15);color:var(--err)}
-  
-  /* SEARCH / FILTERS */
+
   .searchbar{display:flex;gap:8px;margin-bottom:12px;align-items:center}
   .search-input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid var(--border);
     background:var(--card);color:var(--text);font-size:14px;outline:none;
@@ -179,8 +150,7 @@
   .chip:active{transform:scale(.95)}
   .chip.active{background:var(--accent);color:#fff;border-color:var(--accent);
     box-shadow:0 3px 10px var(--accent-glow)}
-  
-  /* NAV */
+
   .nav{position:fixed;bottom:0;left:0;right:0;background:rgba(19,24,32,.92);
     backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     border-top:1px solid var(--border);display:flex;justify-content:space-around;
@@ -191,11 +161,10 @@
     cursor:pointer;flex:1;transition:color .15s;font-family:inherit;font-weight:600}
   .nav button.active{color:var(--accent)}
   .nav button .ico{font-size:20px;line-height:1}
-  
-  /* MODAL */
+
   .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);
     backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:100;
-    display:flex;align-items:flex-end;justify-content:center;padding:0;
+    display:flex;align-items:flex-end;justify-content:center;
     animation:fadeIn .2s ease}
   .modal{background:var(--card);border-radius:22px 22px 0 0;width:100%;max-width:560px;
     max-height:88vh;overflow-y:auto;animation:slideUp .28s cubic-bezier(.2,.8,.3,1);
@@ -208,8 +177,7 @@
   @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
   .close-x{width:34px;height:34px;border-radius:50%;background:var(--card3);border:1px solid var(--border2);
     color:var(--text2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-  
-  /* UTILS */
+
   .row{display:flex;justify-content:space-between;gap:12px;align-items:center}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -227,34 +195,34 @@
   .skeleton{background:linear-gradient(90deg,var(--card2) 25%,var(--card3) 50%,var(--card2) 75%);
     background-size:200% 100%;animation:sk 1.4s ease-in-out infinite;border-radius:10px}
   @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
-  
+
   img.marketing{width:100%;border-radius:12px;display:block}
   a{color:var(--accent);text-decoration:none}
   .list-item{padding:14px 0;border-bottom:1px solid var(--border);display:flex;
     justify-content:space-between;align-items:center;gap:12px}
   .list-item:last-child{border-bottom:0}
-  
-  /* DEV DIAG */
+
   .dev-info{background:#1a1e26;border:1px dashed #3a4453;border-radius:10px;
     padding:12px;font-size:11px;color:#8a94a3;margin-top:12px;
     word-break:break-all;line-height:1.6;font-family:ui-monospace,monospace}
   .dev-info.warn{background:#2a1515;border-color:#5c3030;color:#ffb3b3}
-  .dev-info b{color:#c4ccd6}
-  
-  /* EMPTY */
+
   .empty{padding:44px 20px;text-align:center}
   .empty .icon{font-size:52px;margin-bottom:12px;opacity:.5}
-  .empty h3{margin-bottom:6px}
-  
-  /* PROGRESS BAR */
+
   .progress{height:6px;background:var(--card3);border-radius:3px;overflow:hidden;margin-top:8px}
   .progress .fill{height:100%;background:linear-gradient(90deg,var(--accent),#7b5cff);
     border-radius:3px;transition:width .4s ease}
-  
-  /* REFERRAL BOX */
+
   .ref-box{background:var(--card2);border:1px solid var(--border2);border-radius:12px;
     padding:12px 14px;font-size:13px;font-family:ui-monospace,monospace;
     word-break:break-all;color:var(--text2);line-height:1.5}
+
+  /* Номер заявки */
+  .order-num{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;
+    background:rgba(79,140,255,.12);border:1px solid rgba(79,140,255,.25);
+    border-radius:8px;font-size:11px;font-weight:700;color:var(--accent);
+    letter-spacing:.03em;margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -278,18 +246,17 @@
 
 <script>
 // ============================================================
-// ⚙️ НАСТРОЙКИ — ИЗМЕНИТЕ ПОД СЕБЯ
+// ⚙️ НАСТРОЙКИ — ЗАМЕНИТЕ ПОД СЕБЯ
 // ============================================================
-const API = localStorage.getItem('api_url') || 'http://localhost:8000';
-const BOT_USERNAME = 'loadingtester1bot';   // ⬅️ БЕЗ @, проверьте точно!
-const DEBUG = true;                          // Показывать диагностику
+const API = 'http://localhost:8000';   // ⬅️ ЗАМЕНИТЕ на ngrok URL
+const BOT_USERNAME = 'loadingtester1bot';
+const DEBUG = false;
 // ============================================================
 
 let TOKEN = localStorage.getItem('token') || '';
 let ME = null;
 let CACHE_ERAS = [];
 
-// ---------- TOAST ----------
 function toast(msg, ms=2500){
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.remove('hidden');
@@ -297,7 +264,6 @@ function toast(msg, ms=2500){
   t._t = setTimeout(()=>t.classList.add('hidden'), ms);
 }
 
-// ---------- API ----------
 async function api(path, opts={}){
   const headers = opts.headers || {};
   if (TOKEN) headers['Authorization'] = 'Bearer ' + TOKEN;
@@ -324,16 +290,8 @@ function logout(){
   location.reload();
 }
 
-// ---------- AUTH ----------
 async function tryTelegramAuth(){
   const tg = window.Telegram?.WebApp;
-  if (DEBUG) {
-    console.log('=== TG DEBUG ===');
-    console.log('tg:', tg);
-    console.log('initData:', tg?.initData);
-    console.log('initDataUnsafe:', tg?.initDataUnsafe);
-    console.log('user:', tg?.initDataUnsafe?.user);
-  }
   if (!tg) return { ok:false, reason:'no_tg' };
   tg.ready(); tg.expand();
 
@@ -366,7 +324,6 @@ async function tryTelegramAuth(){
   }
 }
 
-// ---------- ROUTER ----------
 let currentTab = 'home';
 function setTab(tab){
   currentTab = tab;
@@ -380,24 +337,6 @@ document.getElementById('nav').addEventListener('click', e=>{
   setTab(b.dataset.tab);
 });
 
-// ---------- LOADING SKELETON ----------
-function skeletonHome(){
-  return `
-    <div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div></div>
-    <div class="skeleton" style="height:100px;margin-bottom:12px"></div>
-    <div class="stats">
-      <div class="skeleton" style="height:78px"></div>
-      <div class="skeleton" style="height:78px"></div>
-      <div class="skeleton" style="height:78px"></div>
-      <div class="skeleton" style="height:78px"></div>
-    </div>
-    <div class="skeleton" style="height:160px;margin-top:12px"></div>
-  `;
-}
-
-// ============================================================
-// AUTH SCREEN
-// ============================================================
 function screenAuth(reason='', info={}){
   document.getElementById('nav').classList.add('hidden');
   const tg = window.Telegram?.WebApp;
@@ -412,34 +351,29 @@ function screenAuth(reason='', info={}){
       user: ${tg?.initDataUnsafe?.user ? '✅ есть' : '❌ нет'}<br>
       hash: ${tg?.initDataUnsafe?.hash ? '✅ есть' : '❌ нет'}<br>
       Reason: <b>${esc(reason)}</b>
-      ${info && Object.keys(info).length ? '<br>Info: ' + esc(JSON.stringify(info)) : ''}
-      ${DEBUG && reason==='api_error' && info?.error ? '<br>Error: ' + esc(info.error) : ''}
     </div>
   ` : '';
 
   const hint = reason === 'no_tg'
     ? 'Откройте страницу через кнопку в боте @' + BOT_USERNAME
     : reason === 'no_user'
-    ? 'Telegram не передал данные. Кнопка в bot.py должна быть через web_app=WebAppInfo(...), а не url=...'
+    ? 'Telegram не передал данные. Откройте через кнопку WebApp в боте.'
     : reason === 'api_error'
     ? 'Backend недоступен по адресу: ' + API
     : '';
 
   document.getElementById('app').innerHTML = `
     <div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div></div>
-
     <div class="hero center" style="padding:36px 20px">
       <div style="font-size:56px;margin-bottom:8px">✨</div>
       <h1 style="font-size:26px;margin-bottom:6px">Проект «Эры»</h1>
       <div class="muted">Войдите через Telegram, чтобы начать</div>
     </div>
-
     <div class="card">
       <div id="tg-login-widget" style="display:flex;justify-content:center;padding:8px 0"></div>
       ${hint ? `<div class="dev-info warn" style="margin-top:12px">⚠️ ${esc(hint)}</div>` : ''}
       ${tgDiag}
     </div>
-
     <div class="card">
       <h3 style="margin-bottom:10px">Как войти</h3>
       <ol class="muted" style="padding-left:20px;line-height:1.8">
@@ -460,9 +394,6 @@ function screenAuth(reason='', info={}){
     script.setAttribute('data-onauth', 'onTelegramAuth(user)');
     script.setAttribute('data-request-access', 'write');
     container.appendChild(script);
-  } else {
-    document.getElementById('tg-login-widget').innerHTML =
-      '<div class="muted">⚠️ BOT_USERNAME не указан</div>';
   }
 }
 window.onTelegramAuth = async function(user){
@@ -474,9 +405,6 @@ window.onTelegramAuth = async function(user){
   } catch(e){ toast('Ошибка: ' + e.message); }
 };
 
-// ============================================================
-// HELPERS
-// ============================================================
 function tierOf(era){
   const price = Number(era.price||0);
   if (price >= 50000) return { key:'premium', label:'PREMIUM', icon:'💎', glow:'rgba(255,209,102,.25)' };
@@ -493,9 +421,7 @@ function progressOf(p){
   return Math.round(((now - a) / (e - a)) * 100);
 }
 
-// ============================================================
 // HOME
-// ============================================================
 async function screenHome(){
   const [me, purchases] = await Promise.all([
     api('/api/me'), api('/api/purchases/my')
@@ -506,10 +432,9 @@ async function screenHome(){
     .reduce((s,p)=>s+Number(p.profit_amount||0),0);
   const available = purchases.filter(p=>p.status==='completed')
     .reduce((s,p)=>s+Number(p.total_amount||0),0);
-  const invested = purchases.filter(p=>p.status!=='awaiting_payment' && p.status!=='cancelled')
+  const invested = purchases.filter(p=>!['awaiting_payment','cancelled'].includes(p.status))
     .reduce((s,p)=>s+Number(p.purchase_price||0),0);
   const refLink = `${location.origin}${location.pathname}?ref=${me.referral_code}`;
-
   const displayName = me.first_name || me.telegram_username || 'друг';
   const initial = (displayName[0] || '👤').toUpperCase();
 
@@ -520,13 +445,10 @@ async function screenHome(){
         <button class="icon-btn" onclick="openNotifications()">🔔</button>
       </div>
     </div>
-
     <div class="hero">
       <div class="row">
         <div class="user">
-          <div class="avatar">
-            ${me.photo_url ? `<img src="${esc(me.photo_url)}" alt="">` : initial}
-          </div>
+          <div class="avatar">${me.photo_url ? `<img src="${esc(me.photo_url)}" alt="">` : initial}</div>
           <div class="info">
             <div class="muted-sm">Привет 👋</div>
             <h1>${esc(displayName)}</h1>
@@ -536,7 +458,6 @@ async function screenHome(){
         <span class="badge active">${esc(me.status)}</span>
       </div>
     </div>
-
     <div class="stats">
       <div class="stat">
         <div class="label">Инвестировано</div>
@@ -555,7 +476,6 @@ async function screenHome(){
         <div class="value sm ${available>0?'ok':''}">${fmt(available)}</div>
       </div>
     </div>
-
     <div class="card">
       <div class="row" style="margin-bottom:10px">
         <h3>🔗 Реферальная ссылка</h3>
@@ -566,12 +486,10 @@ async function screenHome(){
         📋 Скопировать
       </button>
     </div>
-
     <div class="section-title">
       <h2>Активные эры</h2>
       ${active.length ? `<button class="btn ghost xs" onclick="setTab('purchases')">Все →</button>` : ''}
     </div>
-
     ${active.length ? active.map(p=>eraCardActive(p)).join('') : `
       <div class="card empty">
         <div class="icon">🌱</div>
@@ -595,7 +513,7 @@ function eraCardActive(p){
             <div class="icon" style="background:rgba(57,217,138,.15);border-color:rgba(57,217,138,.3)">🌿</div>
             <div style="min-width:0">
               <div class="name">${esc(p.era_title)}</div>
-              <div class="tier">Осталось ${p.days_left} дн.</div>
+              <div class="tier">Заявка #${p.id} · осталось ${p.days_left} дн.</div>
             </div>
           </div>
           <span class="badge ${p.status}">${statusLabel(p.status)}</span>
@@ -607,9 +525,7 @@ function eraCardActive(p){
           <div class="metric"><div class="l">Начисл.</div><div class="v profit">+${fmt(p.profit_amount)}</div></div>
           <div class="metric"><div class="l">Итого</div><div class="v total">${fmt(p.total_amount)}</div></div>
         </div>
-        <div class="progress" style="margin-top:12px">
-          <div class="fill" style="width:${progress}%"></div>
-        </div>
+        <div class="progress" style="margin-top:12px"><div class="fill" style="width:${progress}%"></div></div>
         <div class="muted-sm" style="margin-top:6px;text-align:center">Прогресс ${progress}%</div>
       </div>
       ${p.status==='completed' ? `
@@ -621,16 +537,13 @@ function eraCardActive(p){
   `;
 }
 
-// ============================================================
-// SHOP / BUY
-// ============================================================
+// SHOP
 let shopFilter = 'all';
 let shopSort = 'default';
 let shopSearch = '';
 
 async function screenBuy(){
   const me = await api('/api/me'); ME = me;
-
   if (!me.agreed_terms){
     document.getElementById('app').innerHTML = `
       <div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div></div>
@@ -644,10 +557,8 @@ async function screenBuy(){
     document.getElementById('terms').textContent = c.value || '';
     return;
   }
-
   const eras = await api('/api/eras');
   CACHE_ERAS = eras;
-
   let filtered = eras.slice();
   if (shopSearch){
     const q = shopSearch.toLowerCase();
@@ -658,7 +569,6 @@ async function screenBuy(){
   if (shopFilter === 'starter') filtered = filtered.filter(e=>e.price<10000);
   if (shopFilter === 'middle')  filtered = filtered.filter(e=>e.price>=10000 && e.price<50000);
   if (shopFilter === 'premium') filtered = filtered.filter(e=>e.price>=50000);
-
   if (shopSort === 'price_asc')  filtered.sort((a,b)=>a.price-b.price);
   if (shopSort === 'price_desc') filtered.sort((a,b)=>b.price-a.price);
   if (shopSort === 'profit')     filtered.sort((a,b)=>b.profit_amount-a.profit_amount);
@@ -667,24 +577,18 @@ async function screenBuy(){
   document.getElementById('app').innerHTML = `
     <div class="topbar">
       <div class="brand"><div class="logo">🛒</div>Магазин</div>
-      <div class="actions">
-        <span class="muted-sm">${eras.length} эр</span>
-      </div>
+      <div class="actions"><span class="muted-sm">${eras.length} эр</span></div>
     </div>
-
     <div class="searchbar">
       <input class="search-input" id="shopSearch" placeholder="🔍 Поиск эры…"
-        value="${esc(shopSearch)}"
-        oninput="shopSearch=this.value;screenBuy()">
+        value="${esc(shopSearch)}" oninput="shopSearch=this.value;screenBuy()">
     </div>
-
     <div class="filters">
       <button class="chip ${shopFilter==='all'?'active':''}" onclick="shopFilter='all';screenBuy()">Все</button>
       <button class="chip ${shopFilter==='starter'?'active':''}" onclick="shopFilter='starter';screenBuy()">⚡ Старт</button>
       <button class="chip ${shopFilter==='middle'?'active':''}" onclick="shopFilter='middle';screenBuy()">🚀 Бизнес</button>
       <button class="chip ${shopFilter==='premium'?'active':''}" onclick="shopFilter='premium';screenBuy()">💎 Premium</button>
     </div>
-
     <div class="filters">
       <span class="muted-sm" style="align-self:center;padding-right:6px">Сортировка:</span>
       <button class="chip ${shopSort==='default'?'active':''}" onclick="shopSort='default';screenBuy()">По умолч.</button>
@@ -693,7 +597,6 @@ async function screenBuy(){
       <button class="chip ${shopSort==='profit'?'active':''}" onclick="shopSort='profit';screenBuy()">Прибыль</button>
       <button class="chip ${shopSort==='duration'?'active':''}" onclick="shopSort='duration';screenBuy()">Срок</button>
     </div>
-
     ${filtered.length ? filtered.map(e=>eraCardShop(e)).join('') : `
       <div class="card empty">
         <div class="icon">🔍</div>
@@ -724,18 +627,9 @@ function eraCardShop(e){
       <div class="body">
         <div class="desc">${esc(e.description||'')}</div>
         <div class="metrics">
-          <div class="metric">
-            <div class="l">Стоимость</div>
-            <div class="v">${fmt(e.price)}</div>
-          </div>
-          <div class="metric">
-            <div class="l">Начисление</div>
-            <div class="v profit">+${fmt(e.profit_amount)}</div>
-          </div>
-          <div class="metric">
-            <div class="l">Итого</div>
-            <div class="v total">${fmt(e.total_amount)}</div>
-          </div>
+          <div class="metric"><div class="l">Стоимость</div><div class="v">${fmt(e.price)}</div></div>
+          <div class="metric"><div class="l">Начисление</div><div class="v profit">+${fmt(e.profit_amount)}</div></div>
+          <div class="metric"><div class="l">Итого</div><div class="v total">${fmt(e.total_amount)}</div></div>
         </div>
       </div>
       <div class="actions">
@@ -746,7 +640,6 @@ function eraCardShop(e){
   `;
 }
 
-// MODAL: ERA DETAIL
 function openEraDetail(id){
   const e = CACHE_ERAS.find(x=>x.id===id);
   if (!e) return;
@@ -762,26 +655,12 @@ function openEraDetail(id){
     </div>
     <div class="modal-body">
       <p class="muted" style="margin-bottom:16px;line-height:1.6">${esc(e.description||'')}</p>
-
       <div class="grid2" style="margin-bottom:14px">
-        <div class="stat">
-          <div class="label">Стоимость</div>
-          <div class="value sm">${fmt(e.price)}</div>
-        </div>
-        <div class="stat">
-          <div class="label">Начисление</div>
-          <div class="value sm ok">+${fmt(e.profit_amount)}</div>
-        </div>
-        <div class="stat">
-          <div class="label">Итоговая сумма</div>
-          <div class="value sm accent">${fmt(e.total_amount)}</div>
-        </div>
-        <div class="stat">
-          <div class="label">Доходность</div>
-          <div class="value sm ok">+${roi}%</div>
-        </div>
+        <div class="stat"><div class="label">Стоимость</div><div class="value sm">${fmt(e.price)}</div></div>
+        <div class="stat"><div class="label">Начисление</div><div class="value sm ok">+${fmt(e.profit_amount)}</div></div>
+        <div class="stat"><div class="label">Итоговая сумма</div><div class="value sm accent">${fmt(e.total_amount)}</div></div>
+        <div class="stat"><div class="label">Доходность</div><div class="value sm ok">+${roi}%</div></div>
       </div>
-
       <div class="card2" style="margin-bottom:16px">
         <div class="row" style="margin-bottom:8px">
           <span class="muted">Срок</span><b>${e.duration_days} дней</b>
@@ -791,7 +670,6 @@ function openEraDetail(id){
           <b>через ${e.duration_days} дн. после активации</b>
         </div>
       </div>
-
       <button class="btn" onclick="closeModal();buyEra(${e.id})">
         🛒 Подать заявку на покупку
       </button>
@@ -802,9 +680,7 @@ function openEraDetail(id){
   `);
 }
 
-// ============================================================
 // MY PURCHASES
-// ============================================================
 async function screenPurchases(){
   const list = await api('/api/purchases/my');
   document.getElementById('app').innerHTML = `
@@ -812,7 +688,6 @@ async function screenPurchases(){
       <div class="brand"><div class="logo">📦</div>Мои эры</div>
       <div class="actions"><span class="muted-sm">${list.length}</span></div>
     </div>
-
     ${list.length ? list.map(p=>eraCardFull(p)).join('') : `
       <div class="card empty">
         <div class="icon">📦</div>
@@ -831,12 +706,13 @@ function eraCardFull(p){
   return `
     <div class="era-card">
       <div class="head">
+        <div class="order-num">📩 Заявка #${p.id}</div>
         <div class="row">
           <div class="title-wrap">
             <div class="icon">🌿</div>
             <div style="min-width:0">
               <div class="name">${esc(p.era_title)}</div>
-              <div class="tier">#${p.id} · ${p.duration_days} дн.</div>
+              <div class="tier">${p.duration_days} дней · ${fmt(p.purchase_price)}</div>
             </div>
           </div>
           <span class="badge ${p.status}">${statusLabel(p.status)}</span>
@@ -848,18 +724,17 @@ function eraCardFull(p){
           <div class="metric"><div class="l">Начисл.</div><div class="v profit">+${fmt(p.profit_amount)}</div></div>
           <div class="metric"><div class="l">Итого</div><div class="v total">${fmt(p.total_amount)}</div></div>
         </div>
-
         ${p.status==='active' ? `
           <div class="progress" style="margin-top:12px"><div class="fill" style="width:${progress}%"></div></div>
           <div class="muted-sm" style="margin-top:6px;text-align:center">Прогресс ${progress}% · осталось ${p.days_left} дн.</div>
         ` : ''}
-
         <div class="card2" style="margin-top:12px;background:var(--card3)">
           ${p.created_at ? `<div class="row" style="padding:4px 0"><span class="muted-sm">Заявка создана</span><span style="font-size:12px">${fmtDate(p.created_at)}</span></div>`:''}
           ${p.activated_at ? `<div class="row" style="padding:4px 0"><span class="muted-sm">Активирована</span><span style="font-size:12px">${fmtDate(p.activated_at)}</span></div>`:''}
           ${p.expires_at ? `<div class="row" style="padding:4px 0"><span class="muted-sm">Завершение</span><span style="font-size:12px">${fmtDate(p.expires_at)}</span></div>`:''}
           ${p.payout_requested_at ? `<div class="row" style="padding:4px 0"><span class="muted-sm">Заявка на вывод</span><span style="font-size:12px">${fmtDate(p.payout_requested_at)}</span></div>`:''}
           ${p.paid_at ? `<div class="row" style="padding:4px 0"><span class="muted-sm">Выплачено</span><span style="font-size:12px">${fmtDate(p.paid_at)}</span></div>`:''}
+          ${p.cancelled_at ? `<div class="row" style="padding:4px 0"><span class="muted-sm">Отменена</span><span style="font-size:12px">${fmtDate(p.cancelled_at)}</span></div>`:''}
         </div>
       </div>
       ${p.status==='completed' ? `
@@ -871,9 +746,7 @@ function eraCardFull(p){
   `;
 }
 
-// ============================================================
 // REFERRALS
-// ============================================================
 async function screenReferrals(){
   const [me, list] = await Promise.all([api('/api/me'), api('/api/referrals')]);
   const link = `${location.origin}${location.pathname}?ref=${me.referral_code}`;
@@ -882,19 +755,16 @@ async function screenReferrals(){
       <div class="brand"><div class="logo">👥</div>Друзья</div>
       <div class="actions"><span class="muted-sm">${list.length}</span></div>
     </div>
-
     <div class="card">
       <h3 style="margin-bottom:10px">🔗 Пригласите друзей</h3>
       <div class="ref-box">${esc(link)}</div>
       <button class="btn" style="margin-top:12px" onclick="shareRef('${link}')">📤 Поделиться</button>
       <button class="btn secondary" style="margin-top:8px" onclick="copyRef('${link}')">📋 Скопировать</button>
     </div>
-
     <div class="stats">
       <div class="stat"><div class="label">Приглашено</div><div class="value">${list.length}</div></div>
       <div class="stat"><div class="label">С покупками</div><div class="value">${list.filter(u=>u.purchases_count>0).length}</div></div>
     </div>
-
     <div class="section-title"><h2>Ваши друзья</h2></div>
     <div class="card" style="padding:0 16px">
       ${list.length ? list.map(u=>`
@@ -911,62 +781,38 @@ async function screenReferrals(){
           <span class="badge active">${u.purchases_count} покупок</span>
         </div>
       `).join('') : `
-        <div class="empty">
-          <div class="icon">👥</div>
-          <h3>Пока никого нет</h3>
-          <p class="muted">Поделитесь ссылкой с друзьями</p>
-        </div>
+        <div class="empty"><div class="icon">👥</div><h3>Пока никого нет</h3>
+        <p class="muted">Поделитесь ссылкой с друзьями</p></div>
       `}
     </div>
   `;
 }
 
-// ============================================================
 // PROFILE
-// ============================================================
 async function screenProfile(){
   const me = await api('/api/me');
   const displayName = me.first_name || me.telegram_username || 'Пользователь';
   const initial = (displayName[0] || '👤').toUpperCase();
   document.getElementById('app').innerHTML = `
-    <div class="topbar">
-      <div class="brand"><div class="logo">👤</div>Профиль</div>
-    </div>
-
+    <div class="topbar"><div class="brand"><div class="logo">👤</div>Профиль</div></div>
     <div class="hero center" style="padding:24px 20px">
       <div class="avatar lg" style="margin:0 auto 12px">
         ${me.photo_url ? `<img src="${esc(me.photo_url)}" alt="">` : initial}
       </div>
       <h2 style="margin-bottom:4px">${esc(displayName)}</h2>
       ${me.telegram_username ? `<div class="muted">@${esc(me.telegram_username)}</div>` : ''}
-      <div style="margin-top:10px">
-        <span class="badge active">${esc(me.status)}</span>
-      </div>
+      <div style="margin-top:10px"><span class="badge active">${esc(me.status)}</span></div>
     </div>
-
     <div class="card" style="padding:0 16px">
-      <div class="list-item">
-        <span class="muted">ID</span><b>${me.id}</b>
-      </div>
-      <div class="list-item">
-        <span class="muted">Telegram ID</span><b>${me.telegram_id}</b>
-      </div>
-      <div class="list-item">
-        <span class="muted">Username</span><b>@${esc(me.telegram_username||'—')}</b>
-      </div>
-      <div class="list-item">
-        <span class="muted">Реферер</span>
-        <b>${me.referrer ? '@'+esc(me.referrer.username||me.referrer.first_name||'—') : '—'}</b>
-      </div>
-      <div class="list-item">
-        <span class="muted">Регистрация</span><b>${fmtDate(me.registered_at)}</b>
-      </div>
-      <div class="list-item">
-        <span class="muted">Условия</span>
-        <b>${me.agreed_terms ? '✅ Подтверждены' : '❌ Не подтверждены'}</b>
-      </div>
+      <div class="list-item"><span class="muted">ID</span><b>${me.id}</b></div>
+      <div class="list-item"><span class="muted">Telegram ID</span><b>${me.telegram_id}</b></div>
+      <div class="list-item"><span class="muted">Username</span><b>@${esc(me.telegram_username||'—')}</b></div>
+      <div class="list-item"><span class="muted">Реферер</span>
+        <b>${me.referrer ? '@'+esc(me.referrer.username||me.referrer.first_name||'—') : '—'}</b></div>
+      <div class="list-item"><span class="muted">Регистрация</span><b>${fmtDate(me.registered_at)}</b></div>
+      <div class="list-item"><span class="muted">Условия</span>
+        <b>${me.agreed_terms ? '✅ Подтверждены' : '❌ Не подтверждены'}</b></div>
     </div>
-
     <div class="section-title"><h2>Информация</h2></div>
     <div class="card" style="padding:0 16px">
       <div class="list-item" style="cursor:pointer" onclick="showContent('rules_text','Правила проекта')">
@@ -979,17 +825,10 @@ async function screenProfile(){
         <span>📊 Маркетинг проекта</span><span class="muted">→</span>
       </div>
     </div>
-
     <button class="btn ghost" onclick="logout()" style="margin-top:8px">🚪 Выйти</button>
-    <div class="muted-sm" style="text-align:center;margin-top:16px">
-      API: ${esc(API)}<br>Бот: @${esc(BOT_USERNAME)}
-    </div>
   `;
 }
 
-// ============================================================
-// CONTENT PAGES
-// ============================================================
 async function showContent(key, title){
   const c = await api('/api/content/'+key);
   document.getElementById('app').innerHTML = `
@@ -1018,9 +857,6 @@ async function showMarketing(){
   `;
 }
 
-// ============================================================
-// NOTIFICATIONS
-// ============================================================
 async function openNotifications(){
   try {
     const list = await api('/api/notifications');
@@ -1043,9 +879,6 @@ async function openNotifications(){
   } catch(e){ toast(e.message); }
 }
 
-// ============================================================
-// MODAL
-// ============================================================
 function showModal(html){
   document.getElementById('modal-root').innerHTML = `
     <div class="modal-backdrop" onclick="if(event.target===this)closeModal()">
@@ -1053,26 +886,18 @@ function showModal(html){
     </div>
   `;
 }
-function closeModal(){
-  document.getElementById('modal-root').innerHTML = '';
-}
+function closeModal(){ document.getElementById('modal-root').innerHTML = ''; }
 
-// ============================================================
-// ACTIONS
-// ============================================================
 async function agreeTerms(){
-  try {
-    await api('/api/agree', {method:'POST'});
-    toast('✅ Условия подтверждены');
-    render();
-  } catch(e){ toast(e.message); }
+  try { await api('/api/agree', {method:'POST'}); toast('✅ Условия подтверждены'); render(); }
+  catch(e){ toast(e.message); }
 }
 
 async function buyEra(id){
   if (!confirm('Создать заявку на покупку?')) return;
   try {
-    await api('/api/purchases/create/'+id, {method:'POST'});
-    toast('✅ Заявка создана. Ожидайте связи администратора.');
+    const res = await api('/api/purchases/create/'+id, {method:'POST'});
+    toast(`✅ Заявка #${res.purchase_id} создана. Ожидайте связи администратора.`);
     setTab('purchases');
   } catch(e){ toast('⚠️ ' + e.message); }
 }
@@ -1095,19 +920,13 @@ function copyRef(text){
       toast('📋 Скопировано');
     });
 }
-
 function shareRef(text){
   if (navigator.share){
-    navigator.share({ title:'Эры — Проект', text:'Присоединяйся к проекту «Эры»!', url:text })
+    navigator.share({ title:'Эры', text:'Присоединяйся к проекту «Эры»!', url:text })
       .catch(()=>copyRef(text));
-  } else {
-    copyRef(text);
-  }
+  } else { copyRef(text); }
 }
 
-// ============================================================
-// UTILS
-// ============================================================
 function esc(s){ return String(s??'').replace(/[&<>"']/g,
   c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function fmt(n){ return Number(n||0).toLocaleString('ru-RU') + ' ₽'; }
@@ -1115,7 +934,8 @@ function fmtDate(s){
   if (!s) return '—';
   try {
     const d = new Date(s);
-    return d.toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric'});
+    return d.toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric'})
+      + ' ' + d.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
   } catch { return s; }
 }
 function statusLabel(s){
@@ -1126,27 +946,17 @@ function statusLabel(s){
   })[s] || s;
 }
 
-// ============================================================
-// MAIN RENDER
-// ============================================================
 async function render(){
   try {
     if (!TOKEN){
       const result = await tryTelegramAuth();
-      if (!result.ok){
-        screenAuth(result.reason, result.info || result);
-        return;
-      }
+      if (!result.ok){ screenAuth(result.reason, result.info || result); return; }
     }
     document.getElementById('nav').classList.remove('hidden');
     document.getElementById('loading').classList.add('hidden');
-
     const routes = {
-      home: screenHome,
-      buy: screenBuy,
-      purchases: screenPurchases,
-      referrals: screenReferrals,
-      profile: screenProfile
+      home: screenHome, buy: screenBuy, purchases: screenPurchases,
+      referrals: screenReferrals, profile: screenProfile
     };
     await routes[currentTab]();
   } catch(e){
@@ -1156,7 +966,6 @@ async function render(){
   }
 }
 
-// старт
 document.querySelectorAll('#nav button').forEach(b=>{
   if (b.dataset.tab === 'home') b.classList.add('active');
 });

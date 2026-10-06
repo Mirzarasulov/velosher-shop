@@ -253,6 +253,13 @@ async function loadMe(){
   USER_UID = String(u.id);
   const existing = await fbGet(`users/${u.id}`);
   const now = new Date().toISOString();
+
+  // Реферальная система: при первом входе сохраняем ref_code из start_param
+  let refCode = '';
+  if (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param){
+    refCode = tg.initDataUnsafe.start_param.replace(/^ref_/, '');
+  }
+
   const data = {
     telegram_id: u.id,
     username: u.username || '',
@@ -260,9 +267,21 @@ async function loadMe(){
     last_name: u.last_name || '',
     photo_url: u.photo_url || (existing && existing.photo_url) || '',
     registered_at: (existing && existing.registered_at) || now,
-    referrer_uid: (existing && existing.referrer_uid) || '',
   };
-  if (!existing || existing.photo_url !== data.photo_url || existing.username !== data.username){
+
+  // Реферер закрепляется ТОЛЬКО при первой регистрации
+  if (existing && existing.referrer_uid){
+    data.referrer_uid = existing.referrer_uid;
+  } else if (!existing && refCode && refCode !== String(u.id)){
+    const referrer = await fbGet(`users/${refCode}`).catch(() => null);
+    if (referrer && referrer.telegram_id){
+      data.referrer_uid = String(refCode);
+    }
+  }
+
+  if (!existing || existing.photo_url !== data.photo_url || existing.username !== data.username
+      || existing.first_name !== data.first_name
+      || (data.referrer_uid && existing.referrer_uid !== data.referrer_uid)){
     await fbPut(`users/${u.id}`, data);
   }
   return data;
@@ -458,6 +477,34 @@ window.openContact = function(){
     </div>`);
 };
 
+window.openMyRefs = async function(){
+  try {
+    const users = toList(await fbGet('users'));
+    const mine = users.filter(x => String(x.referrer_uid || '') === String(ME.telegram_id))
+      .sort((a,b) => new Date(b.registered_at || 0) - new Date(a.registered_at || 0));
+    const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${ME.telegram_id}`;
+    showModal(`
+      <div class="modal-head"><h2>👥 Мои рефералы (${mine.length})</h2>
+        <button class="close-x" onclick="closeModal()">✕</button></div>
+      <div class="modal-body">
+        <div class="card2" style="margin-bottom:14px">
+          <div class="muted-sm" style="margin-bottom:6px">Реферальная ссылка:</div>
+          <div class="ref-box">${esc(refLink)}</div>
+          <button class="btn secondary sm" style="margin-top:10px;width:100%" onclick="copyRef()">📋 Скопировать</button>
+        </div>
+        ${mine.length ? mine.map(r => `
+          <div class="card2" style="margin-bottom:8px">
+            <div class="row" style="margin-bottom:4px">
+              <b>${esc(r.first_name || 'Пользователь')}</b>
+              <span class="muted-sm">${fmtDate(r.registered_at)}</span>
+            </div>
+            <div class="muted-sm">@${esc(r.username || '—')} · ID ${esc(r.telegram_id)}</div>
+          </div>
+        `).join('') : '<div class="empty"><div class="icon">👥</div><p>Пока никого нет</p></div>'}
+      </div>`);
+  } catch(e){ toast(e.message, 'err'); }
+};
+
 function skeleton(){
   return '<div class="skel" style="height:56px"></div><div class="skel" style="height:110px"></div>' +
     '<div class="skel" style="height:150px"></div>';
@@ -508,7 +555,10 @@ function drawHome(){
       <div class="stat"><div class="label">К выводу</div><div class="value sm ${available > 0 ? 'ok' : ''}">${fmt(available)}</div></div>
     </div>
     <div class="card">
-      <div class="row" style="margin-bottom:10px"><h3>🔗 Реферальная ссылка</h3></div>
+      <div class="row" style="margin-bottom:10px">
+        <h3>🔗 Реферальная ссылка</h3>
+        <button class="btn ghost xs" onclick="openMyRefs()">Мои рефералы →</button>
+      </div>
       <div class="ref-box">${esc(refLink)}</div>
       <button class="btn secondary sm" style="margin-top:10px;width:100%" onclick="copyRef()">📋 Скопировать</button>
     </div>
@@ -656,6 +706,7 @@ function drawProfile(){
     </div>
     <div class="section-title"><h2>Мой аккаунт</h2></div>
     <div class="card" style="padding:0 16px">
+      ${item('👥', 'Мои рефералы', 'openMyRefs()')}
       ${item('💬', 'Связь с админом', 'openContact()')}
     </div>
     <div class="section-title"><h2>Данные</h2></div>

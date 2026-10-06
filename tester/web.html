@@ -3,318 +3,200 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#0a0e14">
-<title>Эры — Личный кабинет</title>
+<title>Эры</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-  :root{
-    --bg:#0a0e14; --card:#131820; --card2:#1a212c; --card3:#232b38;
-    --border:#252e3a; --border2:#2f3a48;
-    --text:#e8edf3; --text2:#c4ccd6; --muted:#7a8595;
-    --accent:#4f8cff; --accent2:#356fd8; --accent-glow:rgba(79,140,255,.35);
-    --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c; --info:#63a9ff;
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{
+    background:#0a0e14;color:#e8edf3;font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+    font-size:15px;line-height:1.5;padding-bottom:80px;
   }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
-  html,body{background:var(--bg);color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
-    font-size:15px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased;
-    overflow-x:hidden}
-  body::before{content:'';position:fixed;top:0;left:0;right:0;height:280px;
-    background:radial-gradient(circle at 50% 0%,rgba(79,140,255,.15),transparent 60%);
-    pointer-events:none;z-index:0}
-  .app{max-width:560px;margin:0 auto;padding:0 16px 110px;position:relative;z-index:1}
+  .app{max-width:560px;margin:0 auto;padding:0 16px}
 
-  .topbar{position:sticky;top:0;z-index:40;background:rgba(10,14,20,.88);
-    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    border-bottom:1px solid var(--border);margin:0 -16px 16px;padding:12px 16px;
-    display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .topbar .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}
-  .topbar .brand .logo{width:34px;height:34px;border-radius:10px;
-    background:linear-gradient(135deg,var(--accent),#7b5cff);display:flex;
-    align-items:center;justify-content:center;font-size:16px;
-    box-shadow:0 4px 14px var(--accent-glow)}
-  .topbar .actions{display:flex;gap:8px;align-items:center}
-  .icon-btn{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);
-    background:var(--card2);color:var(--text2);font-size:17px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;transition:transform .1s}
-  .icon-btn:active{transform:scale(.94)}
+  /* TOP */
+  .top{display:flex;justify-content:space-between;align-items:center;padding:14px 0;
+    border-bottom:1px solid #252e3a;margin-bottom:16px;position:sticky;top:0;
+    background:#0a0e14;z-index:10}
+  .top h1{font-size:18px;font-weight:700}
+  .top button{background:#1a212c;border:1px solid #252e3a;color:#e8edf3;
+    padding:8px 12px;border-radius:10px;font-size:14px;cursor:pointer}
 
-  h1{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.25}
-  h2{font-size:18px;font-weight:700;letter-spacing:-.01em}
-  h3{font-size:15px;font-weight:600}
-  .muted{color:var(--muted);font-size:13px}
-  .muted-sm{color:var(--muted);font-size:11px}
-  .section-title{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px}
-
-  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
-  .card2{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px}
-
-  .hero{background:linear-gradient(135deg,#1a2540 0%,#161b26 100%);
-    border:1px solid var(--border2);border-radius:18px;padding:20px;
-    margin-bottom:16px;position:relative;overflow:hidden}
-  .hero::before{content:'';position:absolute;top:-50%;right:-30%;width:280px;height:280px;
-    background:radial-gradient(circle,rgba(79,140,255,.25),transparent 70%);pointer-events:none}
-  .hero .row{display:flex;justify-content:space-between;align-items:center;gap:12px;position:relative}
-  .hero .user{display:flex;gap:14px;align-items:center;min-width:0;flex:1}
-  .avatar{width:56px;height:56px;border-radius:50%;background:var(--card3);
-    display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;
-    color:var(--accent);border:2px solid var(--border2);overflow:hidden;flex-shrink:0}
-  .avatar img{width:100%;height:100%;object-fit:cover}
-  .avatar.lg{width:88px;height:88px;font-size:36px}
+  /* HERO */
+  .hero{background:#1a2540;border:1px solid #2f3a48;border-radius:14px;
+    padding:16px;margin-bottom:12px;display:flex;gap:12px;align-items:center}
+  .hero img{width:50px;height:50px;border-radius:50%;background:#232b38;flex-shrink:0;object-fit:cover}
+  .hero .av{width:50px;height:50px;border-radius:50%;background:#232b38;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#4f8cff}
   .hero .info{min-width:0;flex:1}
-  .hero .info h1{font-size:20px;margin-bottom:2px;white-space:nowrap;
+  .hero .info .n{font-size:16px;font-weight:700;margin-bottom:2px;white-space:nowrap;
     overflow:hidden;text-overflow:ellipsis}
-  .hero .info .sub{color:var(--text2);font-size:13px;white-space:nowrap;
-    overflow:hidden;text-overflow:ellipsis}
+  .hero .info .u{color:#7a8595;font-size:12px}
 
-  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px}
-  .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;
-    padding:14px}
-  .stat .label{color:var(--muted);font-size:11px;text-transform:uppercase;
-    letter-spacing:.05em;font-weight:600;margin-bottom:6px}
-  .stat .value{font-size:22px;font-weight:700;letter-spacing:-.02em}
-  .stat .value.sm{font-size:18px}
-  .stat .value.ok{color:var(--ok)}
-  .stat .value.accent{color:var(--accent)}
+  /* STATS */
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+  .stat{background:#131820;border:1px solid #252e3a;border-radius:12px;padding:12px}
+  .stat .l{color:#7a8595;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:4px;letter-spacing:.04em}
+  .stat .v{font-size:18px;font-weight:700}
+  .stat .v.ok{color:#39d98a}
+  .stat .v.accent{color:#4f8cff}
 
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;
-    padding:14px 18px;border-radius:12px;border:0;
-    background:linear-gradient(135deg,var(--accent),var(--accent2));
-    color:#fff;font-weight:600;font-size:15px;cursor:pointer;
-    transition:transform .12s;text-align:center;font-family:inherit;
-    box-shadow:0 4px 14px var(--accent-glow)}
-  .btn:active{transform:scale(.97)}
-  .btn:disabled{opacity:.5;cursor:not-allowed}
-  .btn.secondary{background:var(--card2);color:var(--text);border:1px solid var(--border2);box-shadow:none}
-  .btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text2);box-shadow:none}
-  .btn.success{background:linear-gradient(135deg,#39d98a,#22a86b);box-shadow:0 4px 14px rgba(57,217,138,.3)}
-  .btn.sm{padding:10px 14px;font-size:13px;border-radius:10px;width:auto}
-  .btn.xs{padding:7px 12px;font-size:12px;border-radius:8px;width:auto}
+  /* CARD */
+  .card{background:#131820;border:1px solid #252e3a;border-radius:12px;padding:14px;margin-bottom:10px}
+  .card h3{font-size:14px;font-weight:600;margin-bottom:8px}
 
-  .era-card{background:var(--card);border:1px solid var(--border);border-radius:16px;
-    padding:0;margin-bottom:14px;overflow:hidden;position:relative}
-  .era-card .head{padding:18px 18px 14px;
-    background:linear-gradient(135deg,var(--card2),var(--card));
-    border-bottom:1px solid var(--border);position:relative;overflow:hidden}
-  .era-card .head::before{content:'';position:absolute;top:-40%;right:-20%;
-    width:180px;height:180px;
-    background:radial-gradient(circle,var(--era-glow,rgba(79,140,255,.2)),transparent 70%)}
-  .era-card .head .row{display:flex;justify-content:space-between;align-items:flex-start;
-    gap:12px;position:relative}
-  .era-card .title-wrap{display:flex;gap:12px;align-items:center;min-width:0;flex:1}
-  .era-card .icon{width:48px;height:48px;border-radius:14px;display:flex;
-    align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
-    background:var(--card3);border:1px solid var(--border2)}
-  .era-card .name{font-size:17px;font-weight:700;letter-spacing:-.01em}
-  .era-card .tier{font-size:11px;color:var(--muted);text-transform:uppercase;
-    letter-spacing:.08em;font-weight:600;margin-top:2px}
-  .era-card .body{padding:16px 18px}
-  .era-card .desc{color:var(--text2);font-size:13px;margin-bottom:14px;line-height:1.5}
-  .era-card .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-  .metric{background:var(--card2);border-radius:10px;padding:10px 8px;
-    text-align:center;border:1px solid var(--border)}
-  .metric .l{color:var(--muted);font-size:10px;text-transform:uppercase;
-    letter-spacing:.05em;font-weight:600;margin-bottom:4px}
-  .metric .v{font-size:14px;font-weight:700}
-  .metric .v.profit{color:var(--ok)}
-  .metric .v.total{color:var(--accent)}
-  .era-card .actions{padding:0 18px 18px;display:flex;gap:8px}
-  .era-card .actions .btn{flex:1}
-  .badge-tier{position:absolute;top:14px;right:14px;padding:4px 10px;
-    border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.05em;
-    text-transform:uppercase;z-index:2}
-  .badge-tier.starter{background:rgba(99,169,255,.15);color:#63a9ff;
-    border:1px solid rgba(99,169,255,.3)}
-  .badge-tier.middle{background:rgba(79,140,255,.15);color:#4f8cff;
-    border:1px solid rgba(79,140,255,.3)}
-  .badge-tier.premium{background:rgba(255,209,102,.15);color:#ffd166;
-    border:1px solid rgba(255,209,102,.3)}
+  /* BUTTONS */
+  .btn{display:block;width:100%;padding:14px;border:0;border-radius:12px;
+    background:#4f8cff;color:#fff;font-size:15px;font-weight:600;cursor:pointer;
+    font-family:inherit;text-align:center;margin-bottom:8px}
+  .btn:active{background:#356fd8}
+  .btn:disabled{opacity:.5}
+  .btn.gray{background:#1a212c;border:1px solid #2f3a48;color:#e8edf3}
+  .btn.green{background:#39d98a;color:#04241a}
+  .btn.sm{padding:10px 14px;font-size:13px;width:auto;display:inline-block;margin-right:6px}
 
-  .badge{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;
-    border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.02em;
-    text-transform:uppercase;white-space:nowrap}
-  .badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
-  .badge.awaiting_payment{background:rgba(245,181,71,.15);color:var(--warn)}
-  .badge.active{background:rgba(57,217,138,.15);color:var(--ok)}
-  .badge.completed{background:rgba(99,169,255,.15);color:var(--info)}
-  .badge.awaiting_payout{background:rgba(245,181,71,.15);color:var(--warn)}
-  .badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
-  .badge.cancelled{background:rgba(255,92,92,.15);color:var(--err)}
+  /* ERA CARD */
+  .era{background:#131820;border:1px solid #252e3a;border-radius:14px;
+    padding:14px;margin-bottom:10px}
+  .era .h{display:flex;justify-content:space-between;align-items:flex-start;
+    gap:10px;margin-bottom:10px}
+  .era .h .t{font-size:16px;font-weight:700;margin-bottom:2px}
+  .era .h .s{font-size:11px;color:#7a8595}
+  .era .price{font-size:18px;font-weight:700;color:#4f8cff}
+  .era .desc{font-size:12px;color:#c4ccd6;margin-bottom:10px;line-height:1.5}
+  .era .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+  .era .m{background:#1a212c;border-radius:8px;padding:8px;text-align:center}
+  .era .m .l{font-size:9px;color:#7a8595;text-transform:uppercase;font-weight:600;margin-bottom:2px}
+  .era .m .v{font-size:13px;font-weight:700}
+  .era .m .v.ok{color:#39d98a}
+  .era .m .v.accent{color:#4f8cff}
 
-  .searchbar{display:flex;gap:8px;margin-bottom:12px;align-items:center}
-  .search-input{flex:1;padding:12px 14px;border-radius:12px;
-    border:1px solid var(--border);background:var(--card);color:var(--text);
-    font-size:14px;outline:none;font-family:inherit}
-  .filters{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;
-    -webkit-overflow-scrolling:touch;scrollbar-width:none}
-  .filters::-webkit-scrollbar{display:none}
-  .chip{padding:8px 14px;border-radius:20px;background:var(--card2);
-    border:1px solid var(--border);color:var(--text2);font-size:13px;
-    font-weight:600;cursor:pointer;white-space:nowrap;
-    font-family:inherit;flex-shrink:0}
-  .chip:active{transform:scale(.95)}
-  .chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  /* BADGE */
+  .badge{display:inline-block;padding:3px 9px;border-radius:11px;
+    font-size:10px;font-weight:700;text-transform:uppercase}
+  .badge.active{background:rgba(57,217,138,.15);color:#39d98a}
+  .badge.awaiting_payment{background:rgba(245,181,71,.15);color:#f5b547}
+  .badge.completed{background:rgba(99,169,255,.15);color:#63a9ff}
+  .badge.awaiting_payout{background:rgba(245,181,71,.15);color:#f5b547}
+  .badge.paid{background:rgba(57,217,138,.15);color:#39d98a}
+  .badge.cancelled{background:rgba(255,92,92,.15);color:#ff5c5c}
 
-  .nav{position:fixed;bottom:0;left:0;right:0;background:rgba(19,24,32,.94);
-    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    border-top:1px solid var(--border);display:flex;justify-content:space-around;
-    padding:8px 8px calc(8px + env(safe-area-inset-bottom));z-index:50;
-    max-width:560px;margin:0 auto}
-  .nav button{background:none;border:0;color:var(--muted);font-size:11px;
-    padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;
-    cursor:pointer;flex:1;font-family:inherit;font-weight:600}
-  .nav button.active{color:var(--accent)}
-  .nav button .ico{font-size:20px;line-height:1}
+  /* PROGRESS */
+  .bar{height:6px;background:#232b38;border-radius:3px;overflow:hidden;margin-top:8px}
+  .bar .f{height:100%;background:#4f8cff;border-radius:3px}
+  .bar .f.ok{background:#39d98a}
+  .bar .f.warn{background:#f5b547}
+  .bar .f.err{background:#ff5c5c}
 
-  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;
+  /* NAV */
+  .nav{position:fixed;bottom:0;left:0;right:0;background:#131820;
+    border-top:1px solid #252e3a;display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom));
+    z-index:50;max-width:560px;margin:0 auto}
+  .nav button{flex:1;background:none;border:0;color:#7a8595;font-size:11px;
+    padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:3px;
+    cursor:pointer;font-family:inherit;font-weight:600}
+  .nav button.active{color:#4f8cff}
+  .nav button .i{font-size:20px;line-height:1}
+
+  /* MODAL */
+  .m-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;
     display:flex;align-items:flex-end;justify-content:center}
-  .modal{background:var(--card);border-radius:22px 22px 0 0;width:100%;
-    max-width:560px;max-height:88vh;overflow-y:auto;
-    border:1px solid var(--border2);border-bottom:0}
-  .modal-head{position:sticky;top:0;
-    background:linear-gradient(135deg,var(--card2),var(--card));
-    padding:20px;border-bottom:1px solid var(--border);z-index:1;
-    display:flex;justify-content:space-between;align-items:center}
-  .modal-body{padding:20px}
-  .close-x{width:34px;height:34px;border-radius:50%;background:var(--card3);
-    border:1px solid var(--border2);color:var(--text2);font-size:18px;
-    cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .m{background:#131820;border-radius:20px 20px 0 0;width:100%;max-width:560px;
+    max-height:85vh;overflow-y:auto;padding:20px}
+  .m-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .m-h h2{font-size:18px}
+  .m-x{width:32px;height:32px;border-radius:50%;background:#232b38;border:0;
+    color:#c4ccd6;font-size:16px;cursor:pointer}
 
-  .row{display:flex;justify-content:space-between;gap:12px;align-items:center}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  /* COMMON */
+  .muted{color:#7a8595;font-size:12px}
+  .empty{text-align:center;padding:40px 20px;color:#7a8595}
+  .empty .ic{font-size:44px;margin-bottom:10px;opacity:.5}
+  .toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);
+    background:#1a212c;border:1px solid #2f3a48;padding:12px 18px;border-radius:10px;
+    font-size:13px;z-index:999;max-width:90%}
+  .loader{text-align:center;padding:60px 20px;color:#7a8595}
   .hidden{display:none !important}
-  .center{text-align:center}
-  .toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);
-    background:var(--card2);border:1px solid var(--border2);padding:12px 18px;
-    border-radius:12px;font-size:13px;font-weight:500;z-index:999;
-    max-width:90%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.4)}
-  .spinner{display:inline-block;width:14px;height:14px;
-    border:2px solid rgba(255,255,255,.25);border-top-color:#fff;
-    border-radius:50%;animation:sp .65s linear infinite;vertical-align:middle}
-  @keyframes sp{to{transform:rotate(360deg)}}
-  .skeleton{background:linear-gradient(90deg,var(--card2) 25%,var(--card3) 50%,var(--card2) 75%);
-    background-size:200% 100%;animation:sk 1.4s ease-in-out infinite;border-radius:10px}
-  @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-  img.marketing{width:100%;border-radius:12px;display:block}
-  a{color:var(--accent);text-decoration:none}
-  .list-item{padding:14px 0;border-bottom:1px solid var(--border);
-    display:flex;justify-content:space-between;align-items:center;gap:12px}
-  .list-item:last-child{border-bottom:0}
+  /* REF */
+  .ref{background:#1a212c;border:1px solid #2f3a48;border-radius:10px;
+    padding:10px 12px;font-size:12px;font-family:monospace;word-break:break-all;color:#c4ccd6}
 
-  .empty{padding:44px 20px;text-align:center}
-  .empty .icon{font-size:52px;margin-bottom:12px;opacity:.5}
+  /* MENU */
+  .menu{background:#131820;border:1px solid #252e3a;border-radius:12px;
+    padding:0 14px;margin-bottom:12px}
+  .menu-i{display:flex;justify-content:space-between;align-items:center;
+    padding:14px 0;border-bottom:1px solid #252e3a;cursor:pointer}
+  .menu-i:last-child{border-bottom:0}
+  .menu-i .ic{font-size:20px;margin-right:12px}
+  .menu-i .arrow{color:#7a8595}
 
-  .progress{height:8px;background:var(--card3);border-radius:4px;
-    overflow:hidden;margin-top:8px}
-  .progress .fill{height:100%;border-radius:4px;transition:width .4s ease;
-    background:linear-gradient(90deg,var(--accent),#7b5cff)}
-  .progress .fill.ok{background:linear-gradient(90deg,#39d98a,#22a86b)}
-  .progress .fill.warn{background:linear-gradient(90deg,#f5b547,#e09a2e)}
-  .progress .fill.err{background:linear-gradient(90deg,#ff5c5c,#d63a3a)}
+  .contact{display:flex;align-items:center;gap:12px;padding:14px;
+    background:#1a212c;border-radius:10px;text-decoration:none;color:#e8edf3;
+    margin-bottom:10px;border:1px solid #252e3a}
+  .contact .em{font-size:26px}
+  .contact .in{flex:1}
+  .contact .in .t{font-weight:600;font-size:14px}
+  .contact .in .s{font-size:12px;color:#7a8595}
 
-  .ref-box{background:var(--card2);border:1px solid var(--border2);
-    border-radius:12px;padding:12px 14px;font-size:13px;
-    font-family:ui-monospace,monospace;word-break:break-all;
-    color:var(--text2);line-height:1.5}
-
-  .order-num{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;
-    background:rgba(79,140,255,.12);border:1px solid rgba(79,140,255,.25);
-    border-radius:8px;font-size:11px;font-weight:700;color:var(--accent);
-    letter-spacing:.03em;margin-bottom:8px}
-
-  .days-left{padding:6px 12px;border-radius:10px;font-size:12px;
-    font-weight:700;display:inline-flex;align-items:center;gap:6px}
-  .days-left.ok{background:rgba(57,217,138,.15);color:var(--ok)}
-  .days-left.warn{background:rgba(245,181,71,.15);color:var(--warn)}
-  .days-left.err{background:rgba(255,92,92,.15);color:var(--err)}
-  .days-left.info{background:rgba(99,169,255,.15);color:var(--info)}
-
-  .menu-item{display:flex;align-items:center;justify-content:space-between;
-    padding:16px 0;border-bottom:1px solid var(--border);cursor:pointer;
-    transition:padding-left .12s}
-  .menu-item:last-child{border-bottom:0}
-  .menu-item:active{padding-left:6px}
-  .menu-item .left{display:flex;align-items:center;gap:14px}
-  .menu-item .emo{width:40px;height:40px;border-radius:11px;display:flex;
-    align-items:center;justify-content:center;font-size:19px;
-    background:var(--card2);border:1px solid var(--border)}
-  .menu-item .arrow{color:var(--muted)}
-
-  .contact-btn{display:flex;align-items:center;gap:14px;padding:16px;
-    background:var(--card2);border:1px solid var(--border);
-    border-radius:12px;cursor:pointer;text-decoration:none;color:var(--text);
-    margin-bottom:10px}
-  .contact-btn:active{transform:scale(.98)}
-  .contact-btn .emo{width:46px;height:46px;border-radius:12px;display:flex;
-    align-items:center;justify-content:center;font-size:22px;
-    background:linear-gradient(135deg,var(--accent),#7b5cff);color:#fff;flex-shrink:0}
-  .contact-btn.tg .emo{background:linear-gradient(135deg,#2aabee,#229ed9)}
-  .contact-btn .info{flex:1;min-width:0}
-  .contact-btn .info .t{font-weight:600;font-size:14px;margin-bottom:2px}
-  .contact-btn .info .s{font-size:12px;color:var(--muted);
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .list{background:#131820;border:1px solid #252e3a;border-radius:12px;
+    padding:0 14px;margin-bottom:12px}
+  .list-i{display:flex;justify-content:space-between;padding:12px 0;
+    border-bottom:1px solid #252e3a;font-size:14px}
+  .list-i:last-child{border-bottom:0}
+  .list-i .l{color:#7a8595}
 </style>
 </head>
 <body>
 
 <div class="app" id="app">
-  <div id="loading" class="center" style="padding:80px 0">
-    <div class="spinner" style="border-color:var(--accent) #0000 var(--accent) #0000;width:36px;height:36px;border-width:3px"></div>
-    <div class="muted" style="margin-top:16px">Загрузка…</div>
-  </div>
+  <div class="loader">Загрузка…</div>
 </div>
 
 <nav class="nav hidden" id="nav">
-  <button data-tab="home"><span class="ico">🏠</span>Главная</button>
-  <button data-tab="buy"><span class="ico">🛒</span>Купить</button>
-  <button data-tab="purchases"><span class="ico">📦</span>Покупки</button>
-  <button data-tab="profile"><span class="ico">👤</span>Профиль</button>
+  <button data-tab="home"><span class="i">🏠</span>Главная</button>
+  <button data-tab="buy"><span class="i">🛒</span>Купить</button>
+  <button data-tab="my"><span class="i">📦</span>Покупки</button>
+  <button data-tab="profile"><span class="i">👤</span>Профиль</button>
 </nav>
 
-<div id="modal-root"></div>
+<div id="modal"></div>
 <div id="toast" class="toast hidden"></div>
 
 <script>
 // ============================================================
-// НАСТРОЙКИ
+// ⚠️ ЗАМЕНИТЕ API НА ВАШ NGROK URL
 // ============================================================
-const API = 'http://localhost:8000';   // ⬅️ ЗАМЕНИТЕ на ваш ngrok URL
-const BOT_USERNAME = 'loadingtester1bot';
-const ADMIN_USERNAME = 'loadingtester1bot';
-const CACHE_TTL = 60000; // 60 секунд кэш
+const API = 'http://localhost:8000';   // ⬅️ ЗАМЕНИТЕ!
+const BOT = 'loadingtester1bot';
+const ADMIN = 'loadingtester1bot';
 // ============================================================
 
 let TOKEN = localStorage.getItem('token') || '';
 let ME = null;
-let CURRENT_TAB = 'home';
+let TAB = 'home';
+let ERAS = [];
+let PURCHASES = [];
 
-// Кэш данных
-const CACHE = {
-  me: { data: null, time: 0 },
-  purchases: { data: null, time: 0 },
-  eras: { data: null, time: 0 },
-  notifications: { data: null, time: 0 },
-};
+const $ = id => document.getElementById(id);
 
-// ---------- SAFE HELPERS ----------
-function $(id){ return document.getElementById(id); }
-function hideNav(){ const n = $('nav'); if (n) n.classList.add('hidden'); }
-function showNav(){ const n = $('nav'); if (n) n.classList.remove('hidden'); }
-function hideLoading(){ const l = $('loading'); if (l) l.classList.add('hidden'); }
-
-// ---------- TOAST ----------
-function toast(msg, ms=2500){
+function toast(msg){
   const t = $('toast');
-  if (!t) return;
   t.textContent = msg;
   t.classList.remove('hidden');
   clearTimeout(t._t);
-  t._t = setTimeout(()=>t.classList.add('hidden'), ms);
+  t._t = setTimeout(() => t.classList.add('hidden'), 2500);
 }
 
-// ---------- API ----------
+function esc(s){ return String(s??'').replace(/[&<>"']/g,
+  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmt(n){ return Number(n||0).toLocaleString('ru-RU') + ' ₽'; }
+function fmtDate(s){
+  if (!s) return '—';
+  try { return new Date(s).toLocaleString('ru-RU',
+    {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+  catch { return s; }
+}
+
 async function api(path, opts={}){
   const headers = opts.headers || {};
   if (TOKEN) headers['Authorization'] = 'Bearer ' + TOKEN;
@@ -323,65 +205,36 @@ async function api(path, opts={}){
     headers['Content-Type'] = 'application/json';
     opts.body = JSON.stringify(opts.body);
   }
-  let res;
-  try {
-    res = await fetch(API + path, {...opts, headers});
-  } catch(e) {
-    throw new Error('Сервер недоступен');
-  }
+  const res = await fetch(API + path, {...opts, headers});
   if (res.status === 401){ logout(); throw new Error('Unauthorized'); }
   const data = await res.json().catch(()=>({}));
   if (!res.ok) throw new Error(data.detail || 'Ошибка');
   return data;
 }
 
-// ---------- CACHED API ----------
-async function cached(key, path, force=false){
-  const c = CACHE[key];
-  const now = Date.now();
-  if (!force && c.data && (now - c.time) < CACHE_TTL){
-    return c.data;
-  }
-  const data = await api(path);
-  c.data = data;
-  c.time = now;
-  return data;
-}
-
-function invalidateCache(key){
-  if (key){
-    CACHE[key].data = null;
-    CACHE[key].time = 0;
-  } else {
-    Object.keys(CACHE).forEach(k => {
-      CACHE[k].data = null;
-      CACHE[k].time = 0;
-    });
-  }
+function logout(){
+  localStorage.removeItem('token');
+  TOKEN = '';
+  ME = null;
+  location.reload();
 }
 
 // ---------- AUTH ----------
-async function tryTelegramAuth(){
+async function tryAuth(){
   const tg = window.Telegram?.WebApp;
   if (!tg) return { ok:false, reason:'no_tg' };
-  try { tg.ready(); tg.expand(); } catch(e){}
-  if (!tg.initDataUnsafe?.user) {
-    return { ok:false, reason:'no_user' };
-  }
+  tg.ready(); tg.expand();
+  if (!tg.initDataUnsafe?.user) return { ok:false, reason:'no_user' };
   const u = tg.initDataUnsafe.user;
-  const urlRef = new URLSearchParams(location.search).get('ref') || '';
+  const ref = new URLSearchParams(location.search).get('ref') || '';
   try {
     const res = await api('/api/auth/telegram', {
       method:'POST',
       body: {
-        id: u.id,
-        first_name: u.first_name || '',
-        last_name: u.last_name || '',
-        username: u.username || '',
-        photo_url: u.photo_url || '',
+        id: u.id, first_name: u.first_name || '', last_name: u.last_name || '',
+        username: u.username || '', photo_url: u.photo_url || '',
         auth_date: tg.initDataUnsafe.auth_date || 0,
-        hash: tg.initDataUnsafe.hash || '',
-        ref: urlRef
+        hash: tg.initDataUnsafe.hash || '', ref
       }
     });
     TOKEN = res.token;
@@ -392,332 +245,155 @@ async function tryTelegramAuth(){
   }
 }
 
-// ============================================================
-// ACTIONS (глобальные)
-// ============================================================
-window.setTab = function(tab){
-  if (CURRENT_TAB === tab) return;
-  CURRENT_TAB = tab;
+// ---------- ACTIONS ----------
+function setTab(t){
+  TAB = t;
   document.querySelectorAll('#nav button').forEach(b => {
-    b.classList.toggle('active', b.dataset.tab === tab);
+    b.classList.toggle('active', b.dataset.tab === t);
   });
-  renderCurrentTab();
-};
-
-window.logout = function(){
-  localStorage.removeItem('token');
-  TOKEN = '';
-  ME = null;
-  invalidateCache();
-  location.reload();
-};
-
-window.copyRef = function(text){
-  if (navigator.clipboard?.writeText){
-    navigator.clipboard.writeText(text)
-      .then(()=>toast('📋 Скопировано'))
-      .catch(()=>fallbackCopy(text));
-  } else {
-    fallbackCopy(text);
-  }
-};
-
-function fallbackCopy(text){
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.position = 'fixed';
-  ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.select();
-  try { document.execCommand('copy'); toast('📋 Скопировано'); }
-  catch(e){ toast('Не удалось'); }
-  ta.remove();
+  render();
 }
 
-window.agreeTerms = async function(){
+async function agree(){
   try {
     await api('/api/agree', {method:'POST'});
-    invalidateCache('me');
     toast('✅ Условия подтверждены');
-    renderCurrentTab();
+    render();
   } catch(e){ toast(e.message); }
-};
+}
 
-window.buyEra = async function(id){
+async function buy(id){
   if (!confirm('Создать заявку на покупку?')) return;
   try {
-    const res = await api('/api/purchases/create/' + id, {method:'POST'});
-    invalidateCache('purchases');
-    invalidateCache('me');
-    toast(`✅ Заявка #${res.purchase_id} создана`);
-    window.setTab('purchases');
+    const r = await api('/api/purchases/create/' + id, {method:'POST'});
+    toast('✅ Заявка #' + r.purchase_id + ' создана');
+    setTab('my');
   } catch(e){ toast('⚠️ ' + e.message); }
-};
+}
 
-window.requestPayout = async function(pid){
+async function payout(id){
   if (!confirm('Подать заявку на вывод?')) return;
   try {
-    await api('/api/payouts/request/' + pid, {method:'POST'});
-    invalidateCache('purchases');
-    invalidateCache('me');
+    await api('/api/payouts/request/' + id, {method:'POST'});
     toast('✅ Заявка на вывод создана');
-    renderCurrentTab();
+    render();
   } catch(e){ toast('⚠️ ' + e.message); }
-};
+}
 
-window.openEraDetail = function(id){
-  const eras = CACHE.eras.data || [];
-  const e = eras.find(x => x.id === id);
-  if (!e) return;
-  const tier = tierOf(e);
-  const roi = e.price > 0 ? Math.round((e.profit_amount / e.price) * 100) : 0;
-  showModal(`
-    <div class="modal-head">
-      <div>
-        <div class="muted-sm">${tier.icon} ${tier.label}</div>
-        <h2>${esc(e.title)}</h2>
-      </div>
-      <button class="close-x" onclick="closeModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <p class="muted" style="margin-bottom:16px;line-height:1.6">${esc(e.description||'')}</p>
-      <div class="grid2" style="margin-bottom:14px">
-        <div class="stat"><div class="label">Стоимость</div><div class="value sm">${fmt(e.price)}</div></div>
-        <div class="stat"><div class="label">Начисление</div><div class="value sm ok">+${fmt(e.profit_amount)}</div></div>
-        <div class="stat"><div class="label">Итоговая сумма</div><div class="value sm accent">${fmt(e.total_amount)}</div></div>
-        <div class="stat"><div class="label">Доходность</div><div class="value sm ok">+${roi}%</div></div>
-      </div>
-      <div class="card2" style="margin-bottom:16px">
-        <div class="row" style="margin-bottom:8px">
-          <span class="muted">Срок</span><b>${e.duration_days} дней</b>
-        </div>
-        <div class="row">
-          <span class="muted">Дата завершения</span>
-          <b>через ${e.duration_days} дн. после активации</b>
-        </div>
-      </div>
-      <button class="btn" onclick="closeModal();buyEra(${e.id})">
-        🛒 Подать заявку на покупку
-      </button>
-      <div class="muted-sm" style="text-align:center;margin-top:10px">
-        После подачи заявки администратор свяжется с вами для оплаты
-      </div>
-    </div>
-  `);
-};
-
-window.closeModal = function(){
-  const r = $('modal-root');
-  if (r) r.innerHTML = '';
-};
-
-window.openMyOrders = function(){
-  const purchases = CACHE.purchases.data || [];
-  if (!purchases.length){
-    showModal(`
-      <div class="modal-head">
-        <h2>📋 Мои заказы</h2>
-        <button class="close-x" onclick="closeModal()">✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="empty"><div class="icon">📭</div>
-        <h3>Заказов нет</h3>
-        <p class="muted">Создайте первый заказ в магазине</p></div>
-      </div>
-    `);
-    return;
+function copyRef(){
+  const link = `${location.origin}${location.pathname}?ref=${ME.referral_code}`;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(link).then(() => toast('📋 Скопировано'));
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = link; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); ta.remove(); toast('📋 Скопировано');
   }
-  showModal(`
-    <div class="modal-head">
-      <div>
-        <h2>📋 Мои заказы</h2>
-        <div class="muted-sm">Всего: ${purchases.length}</div>
-      </div>
-      <button class="close-x" onclick="closeModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      ${purchases.map(p => `
-        <div class="card2" style="margin-bottom:10px">
-          <div class="row" style="margin-bottom:8px">
-            <div class="order-num" style="margin:0">📩 Заявка #${p.id}</div>
-            <span class="badge ${p.status}">${statusLabel(p.status)}</span>
-          </div>
-          <div style="font-weight:600;margin-bottom:4px">${esc(p.era_title)}</div>
-          <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0">
-            <span>Вложено</span><b style="color:var(--text)">${fmt(p.purchase_price)}</b>
-          </div>
-          <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0">
-            <span>Начисление</span><b style="color:var(--ok)">+${fmt(p.profit_amount)}</b>
-          </div>
-          <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0">
-            <span>Итого</span><b style="color:var(--accent)">${fmt(p.total_amount)}</b>
-          </div>
-          <div class="muted-sm" style="margin-top:6px">
-            ${fmtDate(p.created_at)}
-            ${p.last_day ? ' · 🏁 ' + fmtDate(p.last_day) : ''}
-          </div>
-        </div>
-      `).join('')}
-    </div>
-  `);
-};
+}
 
-window.openContact = function(){
-  const adminLink = `https://t.me/${ADMIN_USERNAME}`;
-  const botLink = `https://t.me/${BOT_USERNAME}`;
-  showModal(`
-    <div class="modal-head">
-      <div>
-        <h2>💬 Связь</h2>
-        <div class="muted-sm">Мы всегда на связи</div>
-      </div>
-      <button class="close-x" onclick="closeModal()">✕</button>
+function writeUser(username, tgId){
+  let url;
+  if (username) url = `https://t.me/${username}`;
+  else if (tgId) url = `tg://user?id=${tgId}`;
+  else return toast('Нет username');
+  window.open(url, '_blank');
+}
+
+// ---------- MODAL ----------
+function openModal(html){
+  $('modal').innerHTML = `
+    <div class="m-bg" onclick="if(event.target===this)closeModal()">
+      <div class="m">${html}</div>
     </div>
-    <div class="modal-body">
-      <a class="contact-btn tg" href="${adminLink}" target="_blank" rel="noopener">
-        <div class="emo">👨‍💼</div>
-        <div class="info">
-          <div class="t">Администратор</div>
-          <div class="s">@${esc(ADMIN_USERNAME)}</div>
+  `;
+}
+function closeModal(){ $('modal').innerHTML = ''; }
+
+function showMyOrders(){
+  if (!PURCHASES.length) {
+    return openModal(`
+      <div class="m-h"><h2>📋 Мои заказы</h2>
+      <button class="m-x" onclick="closeModal()">✕</button></div>
+      <div class="empty"><div class="ic">📭</div><p>Заказов нет</p></div>
+    `);
+  }
+  openModal(`
+    <div class="m-h"><h2>📋 Мои заказы (${PURCHASES.length})</h2>
+    <button class="m-x" onclick="closeModal()">✕</button></div>
+    ${PURCHASES.map(p => `
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <b style="color:#4f8cff">📩 #${p.id}</b>
+          <span class="badge ${p.status}">${statusLabel(p.status)}</span>
         </div>
-        <div style="color:var(--muted)">→</div>
-      </a>
-      <a class="contact-btn tg" href="${botLink}" target="_blank" rel="noopener">
-        <div class="emo">🤖</div>
-        <div class="info">
-          <div class="t">Бот проекта</div>
-          <div class="s">@${esc(BOT_USERNAME)}</div>
-        </div>
-        <div style="color:var(--muted)">→</div>
-      </a>
-      <div class="card2" style="margin-top:14px">
-        <div class="muted" style="line-height:1.7">
-          <b style="color:var(--text)">По каким вопросам:</b><br>
-          • Заявка на покупку и оплата<br>
-          • Активация эры<br>
-          • Заявка на вывод средств<br>
-          • Технические проблемы
-        </div>
+        <div style="font-weight:600;margin-bottom:4px">${esc(p.era_title)}</div>
+        <div class="muted">Вложено: ${fmt(p.purchase_price)} · Начисл: +${fmt(p.profit_amount)} · Итого: ${fmt(p.total_amount)}</div>
+        <div class="muted" style="margin-top:4px">${fmtDate(p.created_at)}</div>
+      </div>
+    `).join('')}
+  `);
+}
+
+function showContact(){
+  openModal(`
+    <div class="m-h"><h2>💬 Связь</h2>
+    <button class="m-x" onclick="closeModal()">✕</button></div>
+    <a class="contact" href="https://t.me/${ADMIN}" target="_blank">
+      <div class="em">👨‍💼</div>
+      <div class="in"><div class="t">Администратор</div><div class="s">@${ADMIN}</div></div>
+    </a>
+    <a class="contact" href="https://t.me/${BOT}" target="_blank">
+      <div class="em">🤖</div>
+      <div class="in"><div class="t">Бот проекта</div><div class="s">@${BOT}</div></div>
+    </a>
+    <div class="card" style="margin-top:14px">
+      <div class="muted" style="line-height:1.7">
+        <b style="color:#e8edf3">По вопросам:</b><br>
+        • Заявка на покупку<br>
+        • Активация эры<br>
+        • Вывод средств<br>
+        • Технические проблемы
       </div>
     </div>
   `);
-};
+}
 
-window.openNotifications = async function(){
+async function showNotif(){
   try {
-    const list = await cached('notifications', '/api/notifications', true);
-    showModal(`
-      <div class="modal-head">
-        <h2>🔔 Уведомления</h2>
-        <button class="close-x" onclick="closeModal()">✕</button>
-      </div>
-      <div class="modal-body">
-        ${list.length ? list.map(n => `
-          <div style="padding:12px 0;border-bottom:1px solid var(--border)">
-            <div style="font-size:13px">${esc(n.text)}</div>
-            <div class="muted-sm" style="margin-top:4px">${fmtDate(n.created_at)}</div>
-          </div>
-        `).join('') : `
-          <div class="empty"><div class="icon">🔔</div>
-          <p class="muted">Уведомлений нет</p></div>
-        `}
-      </div>
+    const list = await api('/api/notifications');
+    openModal(`
+      <div class="m-h"><h2>🔔 Уведомления</h2>
+      <button class="m-x" onclick="closeModal()">✕</button></div>
+      ${list.length ? list.map(n => `
+        <div style="padding:12px 0;border-bottom:1px solid #252e3a">
+          <div style="font-size:13px">${esc(n.text||'Уведомление')}</div>
+          <div class="muted" style="margin-top:4px">${fmtDate(n.created_at)}</div>
+        </div>
+      `).join('') : '<div class="empty"><div class="ic">🔔</div><p>Пусто</p></div>'}
     `);
   } catch(e){ toast(e.message); }
-};
+}
 
-window.showContent = async function(key, title){
+async function showContent(key, title){
   try {
     const c = await api('/api/content/' + key);
-    const app = $('app');
-    app.innerHTML = `
-      <div class="topbar">
-        <button class="icon-btn" onclick="setTab('${CURRENT_TAB}')">←</button>
-        <div class="brand"><div class="logo">📄</div>${esc(title)}</div>
-        <div style="width:38px"></div>
+    $('app').innerHTML = `
+      <div class="top">
+        <button onclick="setTab('${TAB}')">←</button>
+        <h1>${esc(title)}</h1>
+        <div style="width:50px"></div>
       </div>
       <div class="card"><div style="white-space:pre-wrap;line-height:1.7">${esc(c.value||'')}</div></div>
     `;
   } catch(e){ toast(e.message); }
-};
-
-window.showMarketing = async function(){
-  try {
-    const c = await api('/api/content/marketing_image');
-    const app = $('app');
-    app.innerHTML = `
-      <div class="topbar">
-        <button class="icon-btn" onclick="setTab('${CURRENT_TAB}')">←</button>
-        <div class="brand"><div class="logo">📊</div>Маркетинг</div>
-        <div style="width:38px"></div>
-      </div>
-      <div class="card">
-        ${c.value
-          ? `<img class="marketing" src="${API}${c.value}" alt="">`
-          : '<div class="muted center" style="padding:32px 0">Изображение пока не добавлено</div>'}
-      </div>
-    `;
-  } catch(e){ toast(e.message); }
-};
-
-// Shop filters (без ре-рендера, только CSS)
-window.shopSetFilter = function(f, btn){
-  document.querySelectorAll('.filters .chip').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  const cards = document.querySelectorAll('.era-card[data-price]');
-  cards.forEach(card => {
-    const price = parseFloat(card.dataset.price);
-    let show = true;
-    if (f === 'starter') show = price < 10000;
-    else if (f === 'middle') show = price >= 10000 && price < 50000;
-    else if (f === 'premium') show = price >= 50000;
-    card.style.display = show ? '' : 'none';
-  });
-};
-
-window.shopSetSort = function(s, btn){
-  document.querySelectorAll('.filters .chip').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  const container = document.querySelector('.shop-container');
-  if (!container) return;
-  const cards = Array.from(container.querySelectorAll('.era-card[data-price]'));
-  cards.sort((a, b) => {
-    const pa = parseFloat(a.dataset.price);
-    const pb = parseFloat(b.dataset.price);
-    const ra = parseFloat(a.dataset.profit);
-    const rb = parseFloat(b.dataset.profit);
-    const da = parseInt(a.dataset.duration);
-    const db = parseInt(b.dataset.duration);
-    if (s === 'price_asc') return pa - pb;
-    if (s === 'price_desc') return pb - pa;
-    if (s === 'profit') return rb - ra;
-    if (s === 'duration') return da - db;
-    return parseInt(a.dataset.id) - parseInt(b.dataset.id);
-  });
-  cards.forEach(c => container.appendChild(c));
-};
-
-// ============================================================
-// MODAL
-// ============================================================
-function showModal(html){
-  const root = $('modal-root');
-  if (!root) return;
-  root.innerHTML = `
-    <div class="modal-backdrop" onclick="if(event.target===this)closeModal()">
-      <div class="modal">${html}</div>
-    </div>
-  `;
 }
 
-// ============================================================
-// HELPERS
-// ============================================================
+// ---------- HELPERS ----------
 function tierOf(era){
-  const price = Number(era.price||0);
-  if (price >= 30000) return { key:'premium', label:'PREMIUM', icon:'💎', glow:'rgba(255,209,102,.25)' };
-  if (price >= 5000) return { key:'middle', label:'БИЗНЕС', icon:'🚀', glow:'rgba(79,140,255,.25)' };
-  return { key:'starter', label:'СТАРТ', icon:'⚡', glow:'rgba(99,169,255,.2)' };
+  const p = Number(era.price || 0);
+  if (p >= 30000) return 'premium';
+  if (p >= 5000) return 'middle';
+  return 'starter';
 }
 
 function progressOf(p){
@@ -730,89 +406,79 @@ function progressOf(p){
   return Math.round(((now - a) / (e - a)) * 100);
 }
 
-function daysLeftClass(days, status){
-  if (['completed','awaiting_payout','paid'].includes(status)) return 'info';
-  if (days <= 1) return 'err';
-  if (days <= 3) return 'warn';
-  return 'ok';
+function statusLabel(s){
+  return ({awaiting_payment:'Ожидает оплаты',active:'Активен',
+    completed:'Завершён',awaiting_payout:'Ожидает выплаты',
+    paid:'Выплачен',cancelled:'Отменён'})[s] || s;
 }
 
-function daysLeftLabel(p){
+function daysLabel(p){
   if (p.status === 'completed') return '🏁 Завершён';
   if (p.status === 'awaiting_payout') return '💸 Ждёт выплату';
   if (p.status === 'paid') return '💰 Выплачен';
   if (p.status === 'awaiting_payment') return '⏳ Ожидает оплаты';
   if (p.status === 'cancelled') return '❌ Отменён';
   if (p.days_left <= 0) return '🏁 Завершение';
-  if (p.days_left === 1) return '⏰ Остался 1 день';
-  if (p.days_left === 2) return '⏰ Осталось 2 дня';
-  if (p.days_left <= 3) return `⏰ Осталось ${p.days_left} дня`;
-  return `✅ Осталось ${p.days_left} дн.`;
+  if (p.days_left === 1) return '⏰ 1 день';
+  if (p.days_left <= 3) return `⏰ ${p.days_left} дня`;
+  return `✅ ${p.days_left} дн.`;
+}
+
+function daysClass(p){
+  if (['completed','awaiting_payout','paid'].includes(p.status)) return '';
+  if (p.days_left <= 1) return 'err';
+  if (p.days_left <= 3) return 'warn';
+  return 'ok';
 }
 
 // ============================================================
 // SCREENS
 // ============================================================
-function screenAuth(reason=''){
-  hideNav();
-  const hint = reason === 'no_tg'
-    ? 'Откройте через кнопку в боте @' + BOT_USERNAME
-    : reason === 'no_user'
-    ? 'Telegram не передал данные. Откройте через WebApp-кнопку.'
-    : reason === 'api_error'
-    ? 'Backend недоступен: ' + API
+function screenAuth(reason){
+  document.getElementById('nav').classList.add('hidden');
+  const hint = reason === 'no_tg' ? 'Откройте через кнопку в боте @' + BOT
+    : reason === 'no_user' ? 'Telegram не передал данные'
+    : reason === 'api_error' ? 'Backend: ' + API
     : '';
-
   $('app').innerHTML = `
-    <div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div></div>
-    <div class="hero center" style="padding:36px 20px">
-      <div style="font-size:56px;margin-bottom:8px">✨</div>
-      <h1 style="font-size:26px;margin-bottom:6px">Проект «Эры»</h1>
-      <div class="muted">Войдите через Telegram</div>
+    <div class="top"><h1>✨ Эры</h1></div>
+    <div class="card" style="text-align:center;padding:30px">
+      <div style="font-size:48px;margin-bottom:10px">✨</div>
+      <h2 style="margin-bottom:6px">Проект «Эры»</h2>
+      <p class="muted">Войдите через Telegram</p>
     </div>
     <div class="card">
-      <div id="tg-login-widget" style="display:flex;justify-content:center;padding:8px 0"></div>
-      ${hint ? `<div class="card2" style="margin-top:12px;background:rgba(255,92,92,.1);border-color:rgba(255,92,92,.3);color:#ffb3b3;font-size:12px">⚠️ ${esc(hint)}</div>` : ''}
-    </div>
-    <div class="card">
-      <h3 style="margin-bottom:10px">Как войти</h3>
-      <ol class="muted" style="padding-left:20px;line-height:1.8">
-        <li>Откройте <b>@${esc(BOT_USERNAME)}</b></li>
-        <li>Нажмите <b>/start</b></li>
-        <li>Нажмите <b>«🚀 Открыть приложение»</b></li>
-      </ol>
+      <div id="tg-widget" style="display:flex;justify-content:center"></div>
+      ${hint ? `<div class="card" style="background:rgba(255,92,92,.1);border-color:#5c3030;color:#ffb3b3;font-size:12px;margin-top:10px">⚠️ ${esc(hint)}</div>` : ''}
     </div>
   `;
-
-  const container = $('tg-login-widget');
-  if (container && BOT_USERNAME && BOT_USERNAME !== 'YOUR_BOT_USERNAME') {
-    const script = document.createElement('script');
-    script.src = 'https://telegram.org/js/telegram-widget.js?22';
-    script.setAttribute('data-telegram-login', BOT_USERNAME);
-    script.setAttribute('data-size', 'large');
-    script.setAttribute('data-onauth', 'onTelegramAuth(user)');
-    script.setAttribute('data-request-access', 'write');
-    container.appendChild(script);
+  const c = $('tg-widget');
+  if (c && BOT) {
+    const s = document.createElement('script');
+    s.src = 'https://telegram.org/js/telegram-widget.js?22';
+    s.setAttribute('data-telegram-login', BOT);
+    s.setAttribute('data-size', 'large');
+    s.setAttribute('data-onauth', 'onTgAuth(user)');
+    c.appendChild(s);
   }
 }
 
-window.onTelegramAuth = async function(user){
-  const urlRef = new URLSearchParams(location.search).get('ref') || '';
+window.onTgAuth = async function(user){
+  const ref = new URLSearchParams(location.search).get('ref') || '';
   try {
-    const res = await api('/api/auth/telegram',
-      {method:'POST', body:{...user, ref:urlRef}});
-    TOKEN = res.token;
-    localStorage.setItem('token', TOKEN);
+    const r = await api('/api/auth/telegram', {method:'POST', body:{...user, ref}});
+    TOKEN = r.token; localStorage.setItem('token', TOKEN);
     location.reload();
-  } catch(e){ toast('Ошибка: ' + e.message); }
+  } catch(e){ toast(e.message); }
 };
 
+// HOME
 async function renderHome(){
   const [me, purchases] = await Promise.all([
-    cached('me', '/api/me'),
-    cached('purchases', '/api/purchases/my'),
+    api('/api/me'), api('/api/purchases/my')
   ]);
   ME = me;
+  PURCHASES = purchases;
 
   const active = purchases.filter(p => p.status === 'active');
   const expected = purchases.filter(p => ['active','completed'].includes(p.status))
@@ -821,420 +487,248 @@ async function renderHome(){
     .reduce((s,p) => s + Number(p.total_amount||0), 0);
   const invested = purchases.filter(p => !['awaiting_payment','cancelled'].includes(p.status))
     .reduce((s,p) => s + Number(p.purchase_price||0), 0);
-  const refLink = `${location.origin}${location.pathname}?ref=${me.referral_code}`;
-  const displayName = me.first_name || me.telegram_username || 'друг';
-  const initial = (displayName[0] || '👤').toUpperCase();
+
+  const name = me.first_name || me.telegram_username || 'друг';
+  const initial = (name[0] || '👤').toUpperCase();
 
   $('app').innerHTML = `
-    <div class="topbar">
-      <div class="brand"><div class="logo">✨</div>Эры</div>
-      <div class="actions">
-        <button class="icon-btn" onclick="openNotifications()">🔔</button>
-      </div>
+    <div class="top">
+      <h1>✨ Эры</h1>
+      <button onclick="showNotif()">🔔</button>
     </div>
 
     <div class="hero">
-      <div class="row">
-        <div class="user">
-          <div class="avatar">${me.photo_url
-            ? `<img src="${esc(me.photo_url)}" alt="">`
-            : initial}</div>
-          <div class="info">
-            <div class="muted-sm">Привет 👋</div>
-            <h1>${esc(displayName)}</h1>
-            ${me.telegram_username ? `<div class="sub">@${esc(me.telegram_username)}</div>` : ''}
-          </div>
-        </div>
-        <span class="badge active">${esc(me.status)}</span>
+      ${me.photo_url
+        ? `<img src="${esc(me.photo_url)}" alt="">`
+        : `<div class="av">${initial}</div>`}
+      <div class="info">
+        <div class="n">${esc(name)}</div>
+        ${me.telegram_username ? `<div class="u">@${esc(me.telegram_username)}</div>` : ''}
       </div>
     </div>
 
     <div class="stats">
-      <div class="stat">
-        <div class="label">Инвестировано</div>
-        <div class="value sm accent">${fmt(invested)}</div>
-      </div>
-      <div class="stat">
-        <div class="label">Активных эр</div>
-        <div class="value">${active.length}</div>
-      </div>
-      <div class="stat">
-        <div class="label">Начислено</div>
-        <div class="value sm ok">+${fmt(expected)}</div>
-      </div>
-      <div class="stat">
-        <div class="label">Доступно</div>
-        <div class="value sm ${available>0?'ok':''}">${fmt(available)}</div>
-      </div>
+      <div class="stat"><div class="l">Инвестировано</div><div class="v accent">${fmt(invested)}</div></div>
+      <div class="stat"><div class="l">Активных</div><div class="v">${active.length}</div></div>
+      <div class="stat"><div class="l">Начислено</div><div class="v ok">+${fmt(expected)}</div></div>
+      <div class="stat"><div class="l">Доступно</div><div class="v ${available>0?'ok':''}">${fmt(available)}</div></div>
     </div>
 
     <div class="card">
-      <div class="row" style="margin-bottom:10px">
-        <h3>🔗 Реферальная ссылка</h3>
-        <span class="muted-sm">${me.invited_count} друзей</span>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <h3>🔗 Реф-ссылка</h3>
+        <span class="muted">${me.invited_count} друзей</span>
       </div>
-      <div class="ref-box">${esc(refLink)}</div>
-      <button class="btn secondary sm" style="margin-top:10px;width:100%"
-        onclick="copyRef('${refLink.replace(/'/g, "\\'")}')">
-        📋 Скопировать
-      </button>
+      <div class="ref">${esc(location.origin + location.pathname + '?ref=' + me.referral_code)}</div>
+      <button class="btn gray" style="margin-top:10px" onclick="copyRef()">📋 Скопировать</button>
     </div>
 
-    <div class="section-title">
-      <h2>Активные эры</h2>
-      ${active.length
-        ? `<button class="btn ghost xs" onclick="setTab('purchases')">Все →</button>`
-        : ''}
-    </div>
-
-    ${active.length
-      ? active.map(p => eraCardActive(p)).join('')
-      : `<div class="card empty">
-           <div class="icon">🌱</div>
-           <h3>Пока нет активных эр</h3>
-           <p class="muted" style="margin-bottom:16px">Выберите эру и начните зарабатывать</p>
-           <button class="btn" style="max-width:240px;margin:0 auto"
-             onclick="setTab('buy')">🛒 Открыть магазин</button>
-         </div>`}
+    <h3 style="font-size:15px;margin:16px 0 10px">Активные эры</h3>
+    ${active.length ? active.map(eraActive).join('') : `
+      <div class="card empty">
+        <div class="ic">🌱</div>
+        <p style="margin-bottom:12px">Пока нет активных эр</p>
+        <button class="btn" style="max-width:200px;margin:0 auto" onclick="setTab('buy')">🛒 В магазин</button>
+      </div>
+    `}
   `;
+  document.getElementById('nav').classList.remove('hidden');
 }
 
-function eraCardActive(p){
+function eraActive(p){
   const progress = progressOf(p);
-  const cls = daysLeftClass(p.days_left, p.status);
-  const label = daysLeftLabel(p);
+  const cls = daysClass(p);
   return `
-    <div class="era-card">
-      <div class="head" style="--era-glow:rgba(57,217,138,.2)">
-        <div class="row">
-          <div class="title-wrap">
-            <div class="icon" style="background:rgba(57,217,138,.15);
-              border-color:rgba(57,217,138,.3)">🌿</div>
-            <div style="min-width:0">
-              <div class="name">${esc(p.era_title)}</div>
-              <div class="tier">Заявка #${p.id}</div>
-            </div>
-          </div>
-          <span class="badge ${p.status}">${statusLabel(p.status)}</span>
+    <div class="era">
+      <div class="h">
+        <div>
+          <div class="t">${esc(p.era_title)}</div>
+          <div class="s">Заявка #${p.id}</div>
         </div>
+        <span class="badge ${p.status}">${statusLabel(p.status)}</span>
       </div>
-      <div class="body">
-        <div class="metrics">
-          <div class="metric"><div class="l">Вложено</div>
-            <div class="v">${fmt(p.purchase_price)}</div></div>
-          <div class="metric"><div class="l">Начисл.</div>
-            <div class="v profit">+${fmt(p.profit_amount)}</div></div>
-          <div class="metric"><div class="l">Итого</div>
-            <div class="v total">${fmt(p.total_amount)}</div></div>
-        </div>
-        <div style="text-align:center;margin-top:14px">
-          <span class="days-left ${cls}">${label}</span>
-        </div>
-        <div class="progress" style="margin-top:12px">
-          <div class="fill ${cls}" style="width:${progress}%"></div>
-        </div>
-        <div class="muted-sm" style="margin-top:6px;text-align:center">
-          Прогресс ${progress}%
-        </div>
+      <div class="metrics">
+        <div class="m"><div class="l">Вложено</div><div class="v">${fmt(p.purchase_price)}</div></div>
+        <div class="m"><div class="l">Начисл.</div><div class="v ok">+${fmt(p.profit_amount)}</div></div>
+        <div class="m"><div class="l">Итого</div><div class="v accent">${fmt(p.total_amount)}</div></div>
       </div>
+      <div style="text-align:center;font-size:12px;font-weight:600">${daysLabel(p)}</div>
+      <div class="bar"><div class="f ${cls}" style="width:${progress}%"></div></div>
       ${p.status === 'completed'
-        ? `<div class="actions">
-             <button class="btn success" onclick="requestPayout(${p.id})">
-               💰 Подать заявку на вывод
-             </button>
-           </div>`
+        ? `<button class="btn green" style="margin-top:12px" onclick="payout(${p.id})">💰 Подать на вывод</button>`
         : ''}
     </div>
   `;
 }
 
+// BUY
 async function renderBuy(){
-  const me = await cached('me', '/api/me');
+  const me = await api('/api/me');
   ME = me;
 
   if (!me.agreed_terms){
     $('app').innerHTML = `
-      <div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div></div>
-      <h1>Условия участия</h1>
-      <div class="card" style="margin-top:12px">
-        <div style="white-space:pre-wrap;font-size:14px;line-height:1.7" id="terms">Загрузка…</div>
-      </div>
-      <button class="btn" onclick="agreeTerms()">✅ Я согласен и подтверждаю</button>
+      <div class="top"><h1>Условия</h1></div>
+      <div class="card"><div id="terms" style="white-space:pre-wrap;line-height:1.7">Загрузка…</div></div>
+      <button class="btn" onclick="agree()">✅ Я согласен</button>
     `;
     const c = await api('/api/content/terms_text');
-    const t = $('terms');
-    if (t) t.textContent = c.value || '';
+    const t = $('terms'); if (t) t.textContent = c.value || '';
     return;
   }
 
-  const eras = await cached('eras', '/api/eras');
+  const eras = await api('/api/eras');
+  ERAS = eras;
 
   $('app').innerHTML = `
-    <div class="topbar">
-      <div class="brand"><div class="logo">🛒</div>Магазин</div>
-      <div class="actions"><span class="muted-sm">${eras.length} эр</span></div>
-    </div>
-
-    <div class="filters">
-      <button class="chip active" onclick="shopSetFilter('all', this)">Все</button>
-      <button class="chip" onclick="shopSetFilter('starter', this)">⚡ Старт</button>
-      <button class="chip" onclick="shopSetFilter('middle', this)">🚀 Бизнес</button>
-      <button class="chip" onclick="shopSetFilter('premium', this)">💎 Premium</button>
-    </div>
-
-    <div class="filters">
-      <span class="muted-sm" style="align-self:center;padding-right:6px">Сортировка:</span>
-      <button class="chip active" onclick="shopSetSort('default', this)">По умолч.</button>
-      <button class="chip" onclick="shopSetSort('price_asc', this)">Дешевле</button>
-      <button class="chip" onclick="shopSetSort('price_desc', this)">Дороже</button>
-      <button class="chip" onclick="shopSetSort('profit', this)">Прибыль</button>
-      <button class="chip" onclick="shopSetSort('duration', this)">Срок</button>
-    </div>
-
-    <div class="shop-container">
-      ${eras.map(e => eraCardShop(e)).join('')}
-    </div>
+    <div class="top"><h1>🛒 Магазин</h1><span class="muted">${eras.length} эр</span></div>
+    ${eras.length ? eras.map(eraShop).join('') : '<div class="empty"><div class="ic">📦</div><p>Товаров нет</p></div>'}
   `;
 }
 
-function eraCardShop(e){
-  const tier = tierOf(e);
+function eraShop(e){
   const roi = e.price > 0 ? Math.round((e.profit_amount / e.price) * 100) : 0;
   return `
-    <div class="era-card"
-         data-id="${e.id}"
-         data-price="${e.price}"
-         data-profit="${e.profit_amount}"
-         data-duration="${e.duration_days}"
-         style="--era-glow:${tier.glow}">
-      <span class="badge-tier ${tier.key}">${tier.icon} ${tier.label}</span>
-      <div class="head">
-        <div class="row">
-          <div class="title-wrap">
-            <div class="icon">${tier.icon}</div>
-            <div style="min-width:0">
-              <div class="name">${esc(e.title)}</div>
-              <div class="tier">Срок ${e.duration_days} дней · +${roi}%</div>
-            </div>
-          </div>
+    <div class="era">
+      <div class="h">
+        <div>
+          <div class="t">${esc(e.title)}</div>
+          <div class="s">${e.duration_days} дней · +${roi}% ROI</div>
         </div>
+        <div class="price">${fmt(e.price)}</div>
       </div>
-      <div class="body">
-        <div class="desc">${esc(e.description||'')}</div>
-        <div class="metrics">
-          <div class="metric"><div class="l">Стоимость</div>
-            <div class="v">${fmt(e.price)}</div></div>
-          <div class="metric"><div class="l">Начисление</div>
-            <div class="v profit">+${fmt(e.profit_amount)}</div></div>
-          <div class="metric"><div class="l">Итого</div>
-            <div class="v total">${fmt(e.total_amount)}</div></div>
-        </div>
+      <div class="desc">${esc(e.description||'')}</div>
+      <div class="metrics">
+        <div class="m"><div class="l">Стоимость</div><div class="v">${fmt(e.price)}</div></div>
+        <div class="m"><div class="l">Начисл.</div><div class="v ok">+${fmt(e.profit_amount)}</div></div>
+        <div class="m"><div class="l">Итого</div><div class="v accent">${fmt(e.total_amount)}</div></div>
       </div>
-      <div class="actions">
-        <button class="btn secondary" onclick="openEraDetail(${e.id})">Подробнее</button>
-        <button class="btn" onclick="buyEra(${e.id})">Купить</button>
-      </div>
+      <button class="btn" onclick="buy(${e.id})">🛒 Подать заявку</button>
     </div>
   `;
 }
 
-async function renderPurchases(){
-  const list = await cached('purchases', '/api/purchases/my');
+// MY PURCHASES
+async function renderMy(){
+  const list = await api('/api/purchases/my');
+  PURCHASES = list;
+
   $('app').innerHTML = `
-    <div class="topbar">
-      <div class="brand"><div class="logo">📦</div>Мои покупки</div>
-      <div class="actions"><span class="muted-sm">${list.length}</span></div>
-    </div>
-    ${list.length
-      ? list.map(p => eraCardFull(p)).join('')
-      : `<div class="card empty">
-           <div class="icon">📦</div>
-           <h3>Покупок пока нет</h3>
-           <p class="muted" style="margin-bottom:16px">Купите первую эру в магазине</p>
-           <button class="btn" style="max-width:240px;margin:0 auto"
-             onclick="setTab('buy')">🛒 Открыть магазин</button>
-         </div>`}
+    <div class="top"><h1>📦 Покупки</h1><span class="muted">${list.length}</span></div>
+    ${list.length ? list.map(eraFull).join('') : `
+      <div class="card empty">
+        <div class="ic">📦</div>
+        <p style="margin-bottom:12px">Покупок нет</p>
+        <button class="btn" style="max-width:200px;margin:0 auto" onclick="setTab('buy')">🛒 В магазин</button>
+      </div>
+    `}
   `;
 }
 
-function eraCardFull(p){
+function eraFull(p){
   const progress = progressOf(p);
-  const cls = daysLeftClass(p.days_left, p.status);
-  const label = daysLeftLabel(p);
+  const cls = daysClass(p);
   return `
-    <div class="era-card">
-      <div class="head">
-        <div class="order-num">📩 Заявка #${p.id}</div>
-        <div class="row">
-          <div class="title-wrap">
-            <div class="icon">🌿</div>
-            <div style="min-width:0">
-              <div class="name">${esc(p.era_title)}</div>
-              <div class="tier">${p.duration_days} дней · ${fmt(p.purchase_price)}</div>
-            </div>
-          </div>
-          <span class="badge ${p.status}">${statusLabel(p.status)}</span>
+    <div class="era">
+      <div class="h">
+        <div>
+          <div class="t">${esc(p.era_title)}</div>
+          <div class="s">📩 Заявка #${p.id} · ${p.duration_days} дн.</div>
         </div>
+        <span class="badge ${p.status}">${statusLabel(p.status)}</span>
       </div>
-      <div class="body">
-        <div class="metrics">
-          <div class="metric"><div class="l">Вложено</div>
-            <div class="v">${fmt(p.purchase_price)}</div></div>
-          <div class="metric"><div class="l">Начисл.</div>
-            <div class="v profit">+${fmt(p.profit_amount)}</div></div>
-          <div class="metric"><div class="l">Итого</div>
-            <div class="v total">${fmt(p.total_amount)}</div></div>
-        </div>
-        ${p.status === 'active' ? `
-          <div style="text-align:center;margin-top:14px">
-            <span class="days-left ${cls}">${label}</span>
-          </div>
-          <div class="progress" style="margin-top:12px">
-            <div class="fill ${cls}" style="width:${progress}%"></div>
-          </div>
-          <div class="muted-sm" style="margin-top:6px;text-align:center">
-            Прогресс ${progress}%
-          </div>
-        ` : ''}
-        <div class="card2" style="margin-top:12px;background:var(--card3)">
-          ${p.created_at ? `<div class="row" style="padding:4px 0">
-            <span class="muted-sm">Создана</span>
-            <span style="font-size:12px">${fmtDate(p.created_at)}</span></div>` : ''}
-          ${p.start_date ? `<div class="row" style="padding:4px 0">
-            <span class="muted-sm">Начало</span>
-            <span style="font-size:12px">${fmtDate(p.start_date)}</span></div>` : ''}
-          ${p.last_day ? `<div class="row" style="padding:4px 0">
-            <span class="muted-sm">Последний день</span>
-            <span style="font-size:12px">${fmtDate(p.last_day)}</span></div>` : ''}
-          ${p.cancelled_at ? `<div class="row" style="padding:4px 0">
-            <span class="muted-sm">Отменена</span>
-            <span style="font-size:12px">${fmtDate(p.cancelled_at)}</span></div>` : ''}
-          ${p.payout_requested_at ? `<div class="row" style="padding:4px 0">
-            <span class="muted-sm">Заявка на вывод</span>
-            <span style="font-size:12px">${fmtDate(p.payout_requested_at)}</span></div>` : ''}
-          ${p.paid_at ? `<div class="row" style="padding:4px 0">
-            <span class="muted-sm">Выплачено</span>
-            <span style="font-size:12px">${fmtDate(p.paid_at)}</span></div>` : ''}
-        </div>
+      <div class="metrics">
+        <div class="m"><div class="l">Вложено</div><div class="v">${fmt(p.purchase_price)}</div></div>
+        <div class="m"><div class="l">Начисл.</div><div class="v ok">+${fmt(p.profit_amount)}</div></div>
+        <div class="m"><div class="l">Итого</div><div class="v accent">${fmt(p.total_amount)}</div></div>
+      </div>
+      ${p.status === 'active' ? `
+        <div style="text-align:center;font-size:12px;font-weight:600">${daysLabel(p)}</div>
+        <div class="bar"><div class="f ${cls}" style="width:${progress}%"></div></div>
+      ` : ''}
+      <div class="card" style="margin-top:12px;background:#1a212c;padding:10px">
+        ${p.created_at ? `<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span class="muted">Создана</span><span>${fmtDate(p.created_at)}</span></div>` : ''}
+        ${p.activated_at ? `<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span class="muted">Активирована</span><span>${fmtDate(p.activated_at)}</span></div>` : ''}
+        ${p.last_day ? `<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span class="muted">Последний день</span><span>${fmtDate(p.last_day)}</span></div>` : ''}
+        ${p.paid_at ? `<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span class="muted">Выплачено</span><span>${fmtDate(p.paid_at)}</span></div>` : ''}
       </div>
       ${p.status === 'completed'
-        ? `<div class="actions">
-             <button class="btn success" onclick="requestPayout(${p.id})">
-               💰 Подать заявку на вывод
-             </button>
-           </div>`
+        ? `<button class="btn green" style="margin-top:12px" onclick="payout(${p.id})">💰 Подать на вывод</button>`
         : ''}
     </div>
   `;
 }
 
+// PROFILE
 async function renderProfile(){
-  const me = await cached('me', '/api/me');
-  const displayName = me.first_name || me.telegram_username || 'Пользователь';
-  const initial = (displayName[0] || '👤').toUpperCase();
+  const me = await api('/api/me');
+  ME = me;
+  const name = me.first_name || me.telegram_username || 'Пользователь';
+  const initial = (name[0] || '👤').toUpperCase();
 
   $('app').innerHTML = `
-    <div class="topbar"><div class="brand"><div class="logo">👤</div>Профиль</div></div>
-
-    <div class="hero center" style="padding:24px 20px">
-      <div class="avatar lg" style="margin:0 auto 12px">
-        ${me.photo_url ? `<img src="${esc(me.photo_url)}" alt="">` : initial}
-      </div>
-      <h2 style="margin-bottom:4px">${esc(displayName)}</h2>
-      ${me.telegram_username ? `<div class="muted">@${esc(me.telegram_username)}</div>` : ''}
-      <div style="margin-top:10px"><span class="badge active">${esc(me.status)}</span></div>
-    </div>
-
-    <div class="section-title"><h2>Мой аккаунт</h2></div>
-
-    <div class="card" style="padding:0 16px">
-      <div class="menu-item" onclick="openMyOrders()">
-        <div class="left">
-          <div class="emo">📋</div>
-          <div>Мои заказы</div>
-        </div>
-        <div class="arrow">→</div>
-      </div>
-      <div class="menu-item" onclick="openContact()">
-        <div class="left">
-          <div class="emo">💬</div>
-          <div>Связь</div>
-        </div>
-        <div class="arrow">→</div>
-      </div>
-      <div class="menu-item" onclick="openNotifications()">
-        <div class="left">
-          <div class="emo">🔔</div>
-          <div>Уведомления</div>
-        </div>
-        <div class="arrow">→</div>
+    <div class="top"><h1>👤 Профиль</h1></div>
+    <div class="hero" style="flex-direction:column;text-align:center">
+      ${me.photo_url
+        ? `<img src="${esc(me.photo_url)}" style="width:70px;height:70px">`
+        : `<div class="av" style="width:70px;height:70px;font-size:28px">${initial}</div>`}
+      <div>
+        <div style="font-size:18px;font-weight:700">${esc(name)}</div>
+        ${me.telegram_username ? `<div class="muted">@${esc(me.telegram_username)}</div>` : ''}
       </div>
     </div>
 
-    <div class="section-title"><h2>Данные</h2></div>
-
-    <div class="card" style="padding:0 16px">
-      <div class="list-item"><span class="muted">ID</span><b>${me.id}</b></div>
-      <div class="list-item"><span class="muted">Telegram ID</span><b>${me.telegram_id}</b></div>
-      <div class="list-item"><span class="muted">Username</span>
-        <b>@${esc(me.telegram_username||'—')}</b></div>
-      <div class="list-item"><span class="muted">Реферер</span>
-        <b>${me.referrer ? '@' + esc(me.referrer.username || me.referrer.first_name || '—') : '—'}</b></div>
-      <div class="list-item"><span class="muted">Регистрация</span>
-        <b>${fmtDate(me.registered_at)}</b></div>
-      <div class="list-item"><span class="muted">Условия</span>
-        <b>${me.agreed_terms ? '✅ Подтверждены' : '❌ Не подтверждены'}</b></div>
-    </div>
-
-    <div class="section-title"><h2>Информация</h2></div>
-    <div class="card" style="padding:0 16px">
-      <div class="menu-item" onclick="showContent('rules_text','Правила проекта')">
-        <div class="left">
-          <div class="emo">📖</div>
-          <div>Правила проекта</div>
-        </div>
-        <div class="arrow">→</div>
+    <div class="menu">
+      <div class="menu-i" onclick="showMyOrders()">
+        <div><span class="ic">📋</span>Мои заказы</div>
+        <span class="arrow">→</span>
       </div>
-      <div class="menu-item" onclick="showContent('terms_text','Условия участия')">
-        <div class="left">
-          <div class="emo">📄</div>
-          <div>Условия участия</div>
-        </div>
-        <div class="arrow">→</div>
+      <div class="menu-i" onclick="showContact()">
+        <div><span class="ic">💬</span>Связь</div>
+        <span class="arrow">→</span>
       </div>
-      <div class="menu-item" onclick="showMarketing()">
-        <div class="left">
-          <div class="emo">📊</div>
-          <div>Маркетинг проекта</div>
-        </div>
-        <div class="arrow">→</div>
+      <div class="menu-i" onclick="showNotif()">
+        <div><span class="ic">🔔</span>Уведомления</div>
+        <span class="arrow">→</span>
       </div>
     </div>
 
-    <button class="btn ghost" onclick="logout()" style="margin-top:8px">🚪 Выйти</button>
+    <div class="list">
+      <div class="list-i"><span class="l">Telegram ID</span><b>${me.telegram_id}</b></div>
+      <div class="list-i"><span class="l">Username</span><b>@${esc(me.telegram_username||'—')}</b></div>
+      <div class="list-i"><span class="l">Реферер</span>
+        <b>${me.referrer ? '@'+esc(me.referrer.username||'—') : '—'}</b></div>
+      <div class="list-i"><span class="l">Регистрация</span><b>${fmtDate(me.registered_at)}</b></div>
+      <div class="list-i"><span class="l">Условия</span>
+        <b>${me.agreed_terms ? '✅' : '❌'}</b></div>
+    </div>
+
+    <div class="menu">
+      <div class="menu-i" onclick="showContent('rules_text','Правила')">
+        <div><span class="ic">📖</span>Правила проекта</div>
+        <span class="arrow">→</span>
+      </div>
+      <div class="menu-i" onclick="showContent('terms_text','Условия')">
+        <div><span class="ic">📄</span>Условия участия</div>
+        <span class="arrow">→</span>
+      </div>
+    </div>
+
+    <button class="btn gray" onclick="logout()">🚪 Выйти</button>
   `;
 }
 
 // ============================================================
-// ROUTER
+// RENDER
 // ============================================================
-async function renderCurrentTab(){
+async function render(){
   try {
     if (!TOKEN){
-      const result = await tryTelegramAuth();
-      if (!result.ok){ screenAuth(result.reason); return; }
+      const r = await tryAuth();
+      if (!r.ok){ screenAuth(r.reason); return; }
     }
-    showNav();
-    hideLoading();
-
-    const routes = {
-      home: renderHome,
-      buy: renderBuy,
-      purchases: renderPurchases,
-      profile: renderProfile
-    };
-    const fn = routes[CURRENT_TAB] || renderHome;
-    await fn();
+    const routes = { home: renderHome, buy: renderBuy, my: renderMy, profile: renderProfile };
+    await (routes[TAB] || renderHome)();
   } catch(e){
     console.error(e);
     if (e.message === 'Unauthorized'){ screenAuth(); return; }
@@ -1242,63 +736,17 @@ async function renderCurrentTab(){
   }
 }
 
-// ============================================================
-// NAV LISTENER (делегирование, один раз)
-// ============================================================
-(function attachNav(){
-  const nav = document.getElementById('nav');
-  if (!nav) return;
-  nav.addEventListener('click', e => {
-    const b = e.target.closest('button');
-    if (!b || !b.dataset.tab) return;
-    window.setTab(b.dataset.tab);
-  });
-})();
+// NAV
+document.getElementById('nav').addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (b && b.dataset.tab) setTab(b.dataset.tab);
+});
 
-// ============================================================
-// UTILS
-// ============================================================
-function esc(s){
-  return String(s ?? '').replace(/[&<>"']/g,
-    c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-function fmt(n){ return Number(n||0).toLocaleString('ru-RU') + ' ₽'; }
-function fmtDate(s){
-  if (!s) return '—';
-  try {
-    const d = new Date(s);
-    return d.toLocaleDateString('ru-RU',
-      {day:'2-digit',month:'2-digit',year:'numeric'}) +
-      ' ' + d.toLocaleTimeString('ru-RU',
-      {hour:'2-digit',minute:'2-digit'});
-  } catch { return s; }
-}
-function statusLabel(s){
-  return ({
-    awaiting_payment:'Ожидает оплаты',
-    active:'Активен',
-    completed:'Завершён',
-    awaiting_payout:'Ожидает выплаты',
-    paid:'Выплачен',
-    cancelled:'Отменён'
-  })[s] || s;
-}
-
-// ============================================================
 // START
-// ============================================================
-function start(){
-  document.querySelectorAll('#nav button').forEach(b => {
-    b.classList.toggle('active', b.dataset.tab === 'home');
-  });
-  renderCurrentTab();
-}
-
-if (document.readyState === 'loading'){
-  document.addEventListener('DOMContentLoaded', start);
-} else {
-  start();
-}
+document.querySelectorAll('#nav button').forEach(b => {
+  b.classList.toggle('active', b.dataset.tab === 'home');
+});
+render();
 </script>
 </body>
 </html>

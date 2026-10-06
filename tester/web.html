@@ -72,6 +72,12 @@
   a{color:var(--accent)}
   .list-item{padding:12px 0;border-bottom:1px solid var(--border)}
   .list-item:last-child{border-bottom:0}
+  .avatar{width:52px;height:52px;border-radius:50%;background:var(--card2);display:flex;
+    align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--accent);
+    border:2px solid var(--border);overflow:hidden}
+  .avatar img{width:100%;height:100%;object-fit:cover}
+  .dev-info{background:#1a1e26;border:1px dashed #3a4453;border-radius:10px;padding:10px;
+    font-size:12px;color:#8a94a3;margin-top:10px;word-break:break-all}
 </style>
 </head>
 <body>
@@ -94,9 +100,19 @@
 
 <script>
 // ============================================================
-// API
+// ⚙️ НАСТРОЙКИ — ЗАМЕНИТЕ ПОД СЕБЯ
 // ============================================================
-const API = (location.origin.startsWith('http') ? location.origin : 'http://localhost:8000');
+
+// 1️⃣ API: адрес вашего backend (ngrok или Render)
+//    Локально: http://localhost:8000
+//    Ngrok:    https://xxxx-xx-xx.ngrok-free.app
+const API = localStorage.getItem('api_url') || 'http://localhost:8000';
+
+// 2️⃣ Username вашего Telegram-бота БЕЗ @ (для fallback-логина)
+const BOT_USERNAME = 'YOUR_BOT_USERNAME';  // ⬅️ ЗАМЕНИТЕ! Например: 'EraProjectBot'
+
+// ============================================================
+
 let TOKEN = localStorage.getItem('token') || '';
 let ME = null;
 
@@ -109,6 +125,8 @@ function toast(msg, ms=2500){
 async function api(path, opts={}){
   const headers = opts.headers || {};
   if (TOKEN) headers['Authorization'] = 'Bearer ' + TOKEN;
+  // Обход ngrok-заглушки
+  headers['ngrok-skip-browser-warning'] = 'true';
   if (opts.body && !(opts.body instanceof FormData)) {
     headers['Content-Type'] = 'application/json';
     opts.body = JSON.stringify(opts.body);
@@ -127,27 +145,51 @@ function logout(){
 }
 
 // ============================================================
-// АВТОРИЗАЦИЯ
+// АВТОРИЗАЦИЯ ЧЕРЕЗ TELEGRAM WEBAPP
 // ============================================================
 async function tryTelegramAuth(){
   const tg = window.Telegram?.WebApp;
-  if (!tg || !tg.initDataUnsafe?.user) return false;
-  tg.ready(); tg.expand();
+
+  console.log('[WebApp] initData:', tg?.initData);
+  console.log('[WebApp] initDataUnsafe:', tg?.initDataUnsafe);
+
+  if (!tg) {
+    console.warn('[WebApp] Telegram WebApp объект недоступен');
+    return { ok: false, reason: 'no_tg' };
+  }
+
+  tg.ready();
+  tg.expand();
+
+  if (!tg.initDataUnsafe?.user) {
+    console.warn('[WebApp] Нет user в initDataUnsafe — страница открыта не через Telegram');
+    return { ok: false, reason: 'no_user' };
+  }
+
   const u = tg.initDataUnsafe.user;
   const urlRef = new URLSearchParams(location.search).get('ref') || '';
+
   try {
     const res = await api('/api/auth/telegram', {
       method: 'POST',
       body: {
-        id: u.id, first_name: u.first_name || '', last_name: u.last_name || '',
-        username: u.username || '', photo_url: u.photo_url || '',
+        id: u.id,
+        first_name: u.first_name || '',
+        last_name: u.last_name || '',
+        username: u.username || '',
+        photo_url: u.photo_url || '',
         auth_date: tg.initDataUnsafe.auth_date || 0,
-        hash: tg.initDataUnsafe.hash || '', ref: urlRef
+        hash: tg.initDataUnsafe.hash || '',
+        ref: urlRef
       }
     });
-    TOKEN = res.token; localStorage.setItem('token', TOKEN);
-    return true;
-  } catch(e){ console.warn(e); return false; }
+    TOKEN = res.token;
+    localStorage.setItem('token', TOKEN);
+    return { ok: true };
+  } catch(e) {
+    console.error('[WebApp] Auth error:', e);
+    return { ok: false, reason: 'api_error', error: e.message };
+  }
 }
 
 // ============================================================
@@ -168,57 +210,116 @@ document.getElementById('nav').addEventListener('click', e=>{
 });
 
 // ============================================================
-// ЭКРАНЫ
+// ЭКРАН АВТОРИЗАЦИИ
 // ============================================================
-function screenAuth(){
+function screenAuth(reason=''){
   document.getElementById('nav').classList.add('hidden');
+
+  const hint = reason === 'no_tg'
+    ? 'Страница открыта вне Telegram. Откройте её через кнопку в боте.'
+    : reason === 'no_user'
+    ? 'Telegram не передал данные пользователя. Откройте страницу заново через бота.'
+    : '';
+
   document.getElementById('app').innerHTML = `
     <div class="hero center">
       <h1>Проект «Эры»</h1>
       <div class="muted">Войдите через Telegram, чтобы начать</div>
     </div>
+
     <div class="card">
-      <p class="muted">Для входа откройте приложение через Telegram-бота.</p>
-      <div id="tg-login"></div>
+      <div style="text-align:center;padding:20px 0">
+        <div style="font-size:52px;margin-bottom:8px">📱</div>
+        <h3>Вход через Telegram</h3>
+        <p class="muted" style="margin:8px 0 16px">
+          Нажмите кнопку ниже и подтвердите вход
+        </p>
+      </div>
+
+      <div id="tg-login-widget" style="display:flex;justify-content:center"></div>
+
+      ${hint ? `<div class="dev-info">💡 ${hint}</div>` : ''}
+
+      <div class="dev-info" style="margin-top:16px">
+        <b>Отладка:</b><br>
+        API: ${esc(API)}<br>
+        Бот: @${esc(BOT_USERNAME)}<br>
+        ${window.Telegram?.WebApp ? '✅ Telegram WebApp доступен' : '❌ Telegram WebApp недоступен'}
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Как войти правильно</h3>
+      <ol class="muted" style="padding-left:18px;line-height:1.7">
+        <li>Откройте бота @${esc(BOT_USERNAME)} в Telegram</li>
+        <li>Нажмите <b>/start</b></li>
+        <li>Нажмите кнопку <b>«🚀 Открыть приложение»</b></li>
+      </ol>
     </div>
   `;
-  // Telegram Login Widget fallback
-  const container = document.getElementById('tg-login');
-  const script = document.createElement('script');
-  script.src = 'https://telegram.org/js/telegram-widget.js?22';
-  script.setAttribute('data-telegram-login', 'YOUR_BOT_NAME');
-  script.setAttribute('data-size', 'large');
-  script.setAttribute('data-onauth', 'onTelegramAuth(user)');
-  script.setAttribute('data-request-access', 'write');
-  container.appendChild(script);
-  window.onTelegramAuth = async function(user){
-    const urlRef = new URLSearchParams(location.search).get('ref') || '';
-    try {
-      const res = await api('/api/auth/telegram', {method:'POST', body:{...user, ref: urlRef}});
-      TOKEN = res.token; localStorage.setItem('token', TOKEN);
-      location.reload();
-    } catch(e){ toast(e.message); }
-  };
+
+  // Telegram Login Widget (fallback для браузера)
+  if (BOT_USERNAME && BOT_USERNAME !== 'YOUR_BOT_USERNAME') {
+    const container = document.getElementById('tg-login-widget');
+    const script = document.createElement('script');
+    script.src = 'https://telegram.org/js/telegram-widget.js?22';
+    script.setAttribute('data-telegram-login', BOT_USERNAME);
+    script.setAttribute('data-size', 'large');
+    script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+    script.setAttribute('data-request-access', 'write');
+    container.appendChild(script);
+  } else {
+    document.getElementById('tg-login-widget').innerHTML =
+      '<div class="muted">⚠️ Укажите BOT_USERNAME в коде для входа через браузер</div>';
+  }
 }
 
+window.onTelegramAuth = async function(user){
+  const urlRef = new URLSearchParams(location.search).get('ref') || '';
+  try {
+    const res = await api('/api/auth/telegram', {
+      method: 'POST',
+      body: {...user, ref: urlRef}
+    });
+    TOKEN = res.token;
+    localStorage.setItem('token', TOKEN);
+    location.reload();
+  } catch(e){
+    toast('Ошибка входа: ' + e.message);
+  }
+};
+
+// ============================================================
+// ГЛАВНАЯ
+// ============================================================
 async function screenHome(){
-  const [me, purchases, eras] = await Promise.all([
-    api('/api/me'), api('/api/purchases/my'), api('/api/eras')
+  const [me, purchases] = await Promise.all([
+    api('/api/me'), api('/api/purchases/my')
   ]);
   ME = me;
+
   const active = purchases.filter(p=>p.status==='active');
   const expected = purchases.filter(p=>['active','completed'].includes(p.status))
     .reduce((s,p)=>s+Number(p.profit_amount||0),0);
   const available = purchases.filter(p=>p.status==='completed')
     .reduce((s,p)=>s+Number(p.total_amount||0),0);
-  const refLink = `${location.origin}/?ref=${me.referral_code}`;
+  const refLink = `${location.origin}${location.pathname}?ref=${me.referral_code}`;
+
+  const displayName = me.first_name || me.telegram_username || 'друг';
+  const initial = (displayName[0] || '👤').toUpperCase();
 
   document.getElementById('app').innerHTML = `
     <div class="hero">
       <div class="row">
-        <div>
-          <div class="muted">Привет,</div>
-          <h1>${esc(me.first_name||'друг')} 👋</h1>
+        <div style="display:flex;gap:12px;align-items:center">
+          <div class="avatar">
+            ${me.photo_url ? `<img src="${esc(me.photo_url)}" alt="">` : initial}
+          </div>
+          <div>
+            <div class="muted">Привет,</div>
+            <h1 style="margin:0">${esc(displayName)} 👋</h1>
+            ${me.telegram_username ? `<div class="muted">@${esc(me.telegram_username)}</div>` : ''}
+          </div>
         </div>
         <div class="badge active">${me.status}</div>
       </div>
@@ -319,7 +420,7 @@ async function screenPurchases(){
 
 async function screenReferrals(){
   const [me, list] = await Promise.all([api('/api/me'), api('/api/referrals')]);
-  const link = `${location.origin}/?ref=${me.referral_code}`;
+  const link = `${location.origin}${location.pathname}?ref=${me.referral_code}`;
   document.getElementById('app').innerHTML = `
     <h1>Мои приглашённые</h1>
     <div class="card">
@@ -346,8 +447,17 @@ async function screenReferrals(){
 
 async function screenProfile(){
   const me = await api('/api/me');
+  const displayName = me.first_name || me.telegram_username || 'Пользователь';
+  const initial = (displayName[0] || '👤').toUpperCase();
   document.getElementById('app').innerHTML = `
     <h1>Профиль</h1>
+    <div class="card" style="text-align:center">
+      <div class="avatar" style="width:80px;height:80px;font-size:34px;margin:0 auto 12px">
+        ${me.photo_url ? `<img src="${esc(me.photo_url)}" alt="">` : initial}
+      </div>
+      <h2 style="margin:0">${esc(displayName)}</h2>
+      ${me.telegram_username ? `<div class="muted">@${esc(me.telegram_username)}</div>` : ''}
+    </div>
     <div class="card">
       <div class="list-item row"><span class="muted">ID</span><span>${me.id}</span></div>
       <div class="list-item row"><span class="muted">Telegram ID</span><span>${me.telegram_id}</span></div>
@@ -443,8 +553,11 @@ function statusLabel(s){
 async function render(){
   try {
     if (!TOKEN) {
-      const ok = await tryTelegramAuth();
-      if (!ok){ screenAuth(); return; }
+      const result = await tryTelegramAuth();
+      if (!result.ok){
+        screenAuth(result.reason);
+        return;
+      }
     }
     document.getElementById('nav').classList.remove('hidden');
     document.getElementById('loading').classList.add('hidden');

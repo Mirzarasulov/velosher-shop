@@ -13,7 +13,6 @@
     --text:#e8edf3; --text2:#c4ccd6; --muted:#7a8595;
     --accent:#4f8cff; --accent2:#356fd8; --accent-glow:rgba(79,140,255,.35);
     --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c; --info:#63a9ff;
-    --gold:#ffd166;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
   html,body{background:var(--bg);color:var(--text);
@@ -25,7 +24,6 @@
     pointer-events:none;z-index:0}
   .app{max-width:560px;margin:0 auto;padding:0 16px 110px;position:relative;z-index:1}
 
-  /* TOPBAR */
   .topbar{position:sticky;top:0;z-index:40;background:rgba(10,14,20,.88);
     backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     border-bottom:1px solid var(--border);margin:0 -16px 16px;padding:12px 16px;
@@ -38,12 +36,9 @@
   .topbar .actions{display:flex;gap:8px;align-items:center}
   .icon-btn{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);
     background:var(--card2);color:var(--text2);font-size:17px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;transition:all .15s;position:relative}
-  .icon-btn:active{transform:scale(.94);background:var(--card3)}
-  .icon-btn .dot{position:absolute;top:6px;right:6px;width:8px;height:8px;
-    border-radius:50%;background:var(--err);border:2px solid var(--card2)}
+    display:flex;align-items:center;justify-content:center;transition:transform .1s}
+  .icon-btn:active{transform:scale(.94)}
 
-  /* TYPO */
   h1{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.25}
   h2{font-size:18px;font-weight:700;letter-spacing:-.01em}
   h3{font-size:15px;font-weight:600}
@@ -51,11 +46,9 @@
   .muted-sm{color:var(--muted);font-size:11px}
   .section-title{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px}
 
-  /* CARDS */
   .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
   .card2{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px}
 
-  /* HERO */
   .hero{background:linear-gradient(135deg,#1a2540 0%,#161b26 100%);
     border:1px solid var(--border2);border-radius:18px;padding:20px;
     margin-bottom:16px;position:relative;overflow:hidden}
@@ -65,8 +58,7 @@
   .hero .user{display:flex;gap:14px;align-items:center;min-width:0;flex:1}
   .avatar{width:56px;height:56px;border-radius:50%;background:var(--card3);
     display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;
-    color:var(--accent);border:2px solid var(--border2);overflow:hidden;flex-shrink:0;
-    box-shadow:0 4px 12px rgba(0,0,0,.3)}
+    color:var(--accent);border:2px solid var(--border2);overflow:hidden;flex-shrink:0}
   .avatar img{width:100%;height:100%;object-fit:cover}
   .avatar.lg{width:88px;height:88px;font-size:36px}
   .hero .info{min-width:0;flex:1}
@@ -75,38 +67,32 @@
   .hero .info .sub{color:var(--text2);font-size:13px;white-space:nowrap;
     overflow:hidden;text-overflow:ellipsis}
 
-  /* STATS */
   .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px}
   .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;
-    padding:14px;position:relative;overflow:hidden}
-  .stat .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;
-    font-weight:600;margin-bottom:6px}
+    padding:14px}
+  .stat .label{color:var(--muted);font-size:11px;text-transform:uppercase;
+    letter-spacing:.05em;font-weight:600;margin-bottom:6px}
   .stat .value{font-size:22px;font-weight:700;letter-spacing:-.02em}
   .stat .value.sm{font-size:18px}
   .stat .value.ok{color:var(--ok)}
-  .stat .value.warn{color:var(--warn)}
   .stat .value.accent{color:var(--accent)}
 
-  /* BUTTONS */
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;
     padding:14px 18px;border-radius:12px;border:0;
     background:linear-gradient(135deg,var(--accent),var(--accent2));
     color:#fff;font-weight:600;font-size:15px;cursor:pointer;
-    transition:transform .18s, box-shadow .18s;text-align:center;
-    box-shadow:0 4px 14px var(--accent-glow);font-family:inherit}
-  .btn:active{transform:scale(.97);box-shadow:0 2px 6px var(--accent-glow)}
-  .btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+    transition:transform .12s;text-align:center;font-family:inherit;
+    box-shadow:0 4px 14px var(--accent-glow)}
+  .btn:active{transform:scale(.97)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
   .btn.secondary{background:var(--card2);color:var(--text);border:1px solid var(--border2);box-shadow:none}
   .btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text2);box-shadow:none}
   .btn.success{background:linear-gradient(135deg,#39d98a,#22a86b);box-shadow:0 4px 14px rgba(57,217,138,.3)}
-  .btn.danger{background:linear-gradient(135deg,#ff5c5c,#d63a3a);box-shadow:0 4px 14px rgba(255,92,92,.3)}
   .btn.sm{padding:10px 14px;font-size:13px;border-radius:10px;width:auto}
   .btn.xs{padding:7px 12px;font-size:12px;border-radius:8px;width:auto}
 
-  /* ERA CARD */
   .era-card{background:var(--card);border:1px solid var(--border);border-radius:16px;
-    padding:0;margin-bottom:14px;overflow:hidden;transition:border-color .2s;position:relative}
-  .era-card:active{border-color:var(--border2)}
+    padding:0;margin-bottom:14px;overflow:hidden;position:relative}
   .era-card .head{padding:18px 18px 14px;
     background:linear-gradient(135deg,var(--card2),var(--card));
     border-bottom:1px solid var(--border);position:relative;overflow:hidden}
@@ -118,8 +104,7 @@
   .era-card .title-wrap{display:flex;gap:12px;align-items:center;min-width:0;flex:1}
   .era-card .icon{width:48px;height:48px;border-radius:14px;display:flex;
     align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
-    background:var(--card3);border:1px solid var(--border2);
-    box-shadow:0 4px 12px rgba(0,0,0,.2)}
+    background:var(--card3);border:1px solid var(--border2)}
   .era-card .name{font-size:17px;font-weight:700;letter-spacing:-.01em}
   .era-card .tier{font-size:11px;color:var(--muted);text-transform:uppercase;
     letter-spacing:.08em;font-weight:600;margin-top:2px}
@@ -145,7 +130,6 @@
   .badge-tier.premium{background:rgba(255,209,102,.15);color:#ffd166;
     border:1px solid rgba(255,209,102,.3)}
 
-  /* BADGES */
   .badge{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;
     border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.02em;
     text-transform:uppercase;white-space:nowrap}
@@ -157,24 +141,20 @@
   .badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
   .badge.cancelled{background:rgba(255,92,92,.15);color:var(--err)}
 
-  /* SEARCH */
   .searchbar{display:flex;gap:8px;margin-bottom:12px;align-items:center}
   .search-input{flex:1;padding:12px 14px;border-radius:12px;
     border:1px solid var(--border);background:var(--card);color:var(--text);
-    font-size:14px;outline:none;transition:border-color .15s;font-family:inherit}
-  .search-input:focus{border-color:var(--accent)}
+    font-size:14px;outline:none;font-family:inherit}
   .filters{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;
     -webkit-overflow-scrolling:touch;scrollbar-width:none}
   .filters::-webkit-scrollbar{display:none}
   .chip{padding:8px 14px;border-radius:20px;background:var(--card2);
     border:1px solid var(--border);color:var(--text2);font-size:13px;
-    font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;
+    font-weight:600;cursor:pointer;white-space:nowrap;
     font-family:inherit;flex-shrink:0}
   .chip:active{transform:scale(.95)}
-  .chip.active{background:var(--accent);color:#fff;border-color:var(--accent);
-    box-shadow:0 3px 10px var(--accent-glow)}
+  .chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 
-  /* NAV */
   .nav{position:fixed;bottom:0;left:0;right:0;background:rgba(19,24,32,.94);
     backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     border-top:1px solid var(--border);display:flex;justify-content:space-around;
@@ -182,31 +162,24 @@
     max-width:560px;margin:0 auto}
   .nav button{background:none;border:0;color:var(--muted);font-size:11px;
     padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;
-    cursor:pointer;flex:1;transition:color .15s;font-family:inherit;font-weight:600}
+    cursor:pointer;flex:1;font-family:inherit;font-weight:600}
   .nav button.active{color:var(--accent)}
   .nav button .ico{font-size:20px;line-height:1}
 
-  /* MODAL */
-  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.75);
-    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:100;
-    display:flex;align-items:flex-end;justify-content:center;
-    animation:fadeIn .2s ease}
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;
+    display:flex;align-items:flex-end;justify-content:center}
   .modal{background:var(--card);border-radius:22px 22px 0 0;width:100%;
     max-width:560px;max-height:88vh;overflow-y:auto;
-    animation:slideUp .28s cubic-bezier(.2,.8,.3,1);
     border:1px solid var(--border2);border-bottom:0}
   .modal-head{position:sticky;top:0;
     background:linear-gradient(135deg,var(--card2),var(--card));
     padding:20px;border-bottom:1px solid var(--border);z-index:1;
     display:flex;justify-content:space-between;align-items:center}
   .modal-body{padding:20px}
-  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
   .close-x{width:34px;height:34px;border-radius:50%;background:var(--card3);
     border:1px solid var(--border2);color:var(--text2);font-size:18px;
     cursor:pointer;display:flex;align-items:center;justify-content:center}
 
-  /* UTILS */
   .row{display:flex;justify-content:space-between;gap:12px;align-items:center}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -215,10 +188,7 @@
   .toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);
     background:var(--card2);border:1px solid var(--border2);padding:12px 18px;
     border-radius:12px;font-size:13px;font-weight:500;z-index:999;
-    max-width:90%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.4);
-    animation:toastIn .25s ease}
-  @keyframes toastIn{from{opacity:0;transform:translate(-50%,-10px)}
-    to{opacity:1;transform:translate(-50%,0)}}
+    max-width:90%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.4)}
   .spinner{display:inline-block;width:14px;height:14px;
     border:2px solid rgba(255,255,255,.25);border-top-color:#fff;
     border-radius:50%;animation:sp .65s linear infinite;vertical-align:middle}
@@ -238,8 +208,7 @@
 
   .progress{height:8px;background:var(--card3);border-radius:4px;
     overflow:hidden;margin-top:8px}
-  .progress .fill{height:100%;border-radius:4px;
-    transition:width .4s ease;
+  .progress .fill{height:100%;border-radius:4px;transition:width .4s ease;
     background:linear-gradient(90deg,var(--accent),#7b5cff)}
   .progress .fill.ok{background:linear-gradient(90deg,#39d98a,#22a86b)}
   .progress .fill.warn{background:linear-gradient(90deg,#f5b547,#e09a2e)}
@@ -262,10 +231,9 @@
   .days-left.err{background:rgba(255,92,92,.15);color:var(--err)}
   .days-left.info{background:rgba(99,169,255,.15);color:var(--info)}
 
-  /* MENU ITEM */
   .menu-item{display:flex;align-items:center;justify-content:space-between;
     padding:16px 0;border-bottom:1px solid var(--border);cursor:pointer;
-    transition:padding-left .15s}
+    transition:padding-left .12s}
   .menu-item:last-child{border-bottom:0}
   .menu-item:active{padding-left:6px}
   .menu-item .left{display:flex;align-items:center;gap:14px}
@@ -274,12 +242,11 @@
     background:var(--card2);border:1px solid var(--border)}
   .menu-item .arrow{color:var(--muted)}
 
-  /* CONTACT */
   .contact-btn{display:flex;align-items:center;gap:14px;padding:16px;
     background:var(--card2);border:1px solid var(--border);
-    border-radius:12px;cursor:pointer;transition:border-color .15s;
-    text-decoration:none;color:var(--text);margin-bottom:10px}
-  .contact-btn:active{transform:scale(.98);border-color:var(--border2)}
+    border-radius:12px;cursor:pointer;text-decoration:none;color:var(--text);
+    margin-bottom:10px}
+  .contact-btn:active{transform:scale(.98)}
   .contact-btn .emo{width:46px;height:46px;border-radius:12px;display:flex;
     align-items:center;justify-content:center;font-size:22px;
     background:linear-gradient(135deg,var(--accent),#7b5cff);color:#fff;flex-shrink:0}
@@ -316,27 +283,29 @@
 const API = 'http://localhost:8000';   // ⬅️ ЗАМЕНИТЕ на ваш ngrok URL
 const BOT_USERNAME = 'loadingtester1bot';
 const ADMIN_USERNAME = 'loadingtester1bot';
-const SUPPORT_USERNAME = '';
+const CACHE_TTL = 60000; // 60 секунд кэш
 // ============================================================
 
 let TOKEN = localStorage.getItem('token') || '';
 let ME = null;
-let CACHE_ERAS = [];
 let CURRENT_TAB = 'home';
+
+// Кэш данных
+const CACHE = {
+  me: { data: null, time: 0 },
+  purchases: { data: null, time: 0 },
+  eras: { data: null, time: 0 },
+  notifications: { data: null, time: 0 },
+};
 
 // ---------- SAFE HELPERS ----------
 function $(id){ return document.getElementById(id); }
 function hideNav(){ const n = $('nav'); if (n) n.classList.add('hidden'); }
 function showNav(){ const n = $('nav'); if (n) n.classList.remove('hidden'); }
 function hideLoading(){ const l = $('loading'); if (l) l.classList.add('hidden'); }
-function setNavTab(tab){
-  document.querySelectorAll('#nav button').forEach(b=>{
-    if (b && b.dataset) b.classList.toggle('active', b.dataset.tab === tab);
-  });
-}
 
 // ---------- TOAST ----------
-function toast(msg, ms=2800){
+function toast(msg, ms=2500){
   const t = $('toast');
   if (!t) return;
   t.textContent = msg;
@@ -366,15 +335,38 @@ async function api(path, opts={}){
   return data;
 }
 
+// ---------- CACHED API ----------
+async function cached(key, path, force=false){
+  const c = CACHE[key];
+  const now = Date.now();
+  if (!force && c.data && (now - c.time) < CACHE_TTL){
+    return c.data;
+  }
+  const data = await api(path);
+  c.data = data;
+  c.time = now;
+  return data;
+}
+
+function invalidateCache(key){
+  if (key){
+    CACHE[key].data = null;
+    CACHE[key].time = 0;
+  } else {
+    Object.keys(CACHE).forEach(k => {
+      CACHE[k].data = null;
+      CACHE[k].time = 0;
+    });
+  }
+}
+
 // ---------- AUTH ----------
 async function tryTelegramAuth(){
   const tg = window.Telegram?.WebApp;
   if (!tg) return { ok:false, reason:'no_tg' };
   try { tg.ready(); tg.expand(); } catch(e){}
   if (!tg.initDataUnsafe?.user) {
-    return { ok:false, reason:'no_user',
-      info:{ platform:tg.platform, version:tg.version,
-        len:(tg.initData||'').length } };
+    return { ok:false, reason:'no_user' };
   }
   const u = tg.initDataUnsafe.user;
   const urlRef = new URLSearchParams(location.search).get('ref') || '';
@@ -401,31 +393,35 @@ async function tryTelegramAuth(){
 }
 
 // ============================================================
-// GLOBAL ACTIONS — доступны из onclick
+// ACTIONS (глобальные)
 // ============================================================
 window.setTab = function(tab){
+  if (CURRENT_TAB === tab) return;
   CURRENT_TAB = tab;
-  setNavTab(tab);
-  render();
+  document.querySelectorAll('#nav button').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+  renderCurrentTab();
 };
 
 window.logout = function(){
   localStorage.removeItem('token');
   TOKEN = '';
   ME = null;
+  invalidateCache();
   location.reload();
 };
 
 window.copyRef = function(text){
-  if (navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(()=>toast('📋 Скопировано'))
-      .catch(()=>{
-        fallbackCopy(text);
-      });
+  if (navigator.clipboard?.writeText){
+    navigator.clipboard.writeText(text)
+      .then(()=>toast('📋 Скопировано'))
+      .catch(()=>fallbackCopy(text));
   } else {
     fallbackCopy(text);
   }
 };
+
 function fallbackCopy(text){
   const ta = document.createElement('textarea');
   ta.value = text;
@@ -434,15 +430,16 @@ function fallbackCopy(text){
   document.body.appendChild(ta);
   ta.select();
   try { document.execCommand('copy'); toast('📋 Скопировано'); }
-  catch(e){ toast('Не удалось скопировать'); }
+  catch(e){ toast('Не удалось'); }
   ta.remove();
 }
 
 window.agreeTerms = async function(){
   try {
     await api('/api/agree', {method:'POST'});
+    invalidateCache('me');
     toast('✅ Условия подтверждены');
-    render();
+    renderCurrentTab();
   } catch(e){ toast(e.message); }
 };
 
@@ -450,22 +447,27 @@ window.buyEra = async function(id){
   if (!confirm('Создать заявку на покупку?')) return;
   try {
     const res = await api('/api/purchases/create/' + id, {method:'POST'});
+    invalidateCache('purchases');
+    invalidateCache('me');
     toast(`✅ Заявка #${res.purchase_id} создана`);
     window.setTab('purchases');
   } catch(e){ toast('⚠️ ' + e.message); }
 };
 
 window.requestPayout = async function(pid){
-  if (!confirm('Подать заявку на вывод средств?')) return;
+  if (!confirm('Подать заявку на вывод?')) return;
   try {
     await api('/api/payouts/request/' + pid, {method:'POST'});
+    invalidateCache('purchases');
+    invalidateCache('me');
     toast('✅ Заявка на вывод создана');
-    render();
+    renderCurrentTab();
   } catch(e){ toast('⚠️ ' + e.message); }
 };
 
 window.openEraDetail = function(id){
-  const e = CACHE_ERAS.find(x => x.id === id);
+  const eras = CACHE.eras.data || [];
+  const e = eras.find(x => x.id === id);
   if (!e) return;
   const tier = tierOf(e);
   const roi = e.price > 0 ? Math.round((e.profit_amount / e.price) * 100) : 0;
@@ -509,56 +511,55 @@ window.closeModal = function(){
   if (r) r.innerHTML = '';
 };
 
-window.openMyOrders = async function(){
-  try {
-    const list = await api('/api/purchases/my');
-    if (!list.length){
-      showModal(`
-        <div class="modal-head">
-          <h2>📋 Мои заказы</h2>
-          <button class="close-x" onclick="closeModal()">✕</button>
-        </div>
-        <div class="modal-body">
-          <div class="empty"><div class="icon">📭</div><h3>Заказов нет</h3>
-          <p class="muted">Создайте первый заказ в магазине</p></div>
-        </div>
-      `);
-      return;
-    }
+window.openMyOrders = function(){
+  const purchases = CACHE.purchases.data || [];
+  if (!purchases.length){
     showModal(`
       <div class="modal-head">
-        <div>
-          <h2>📋 Мои заказы</h2>
-          <div class="muted-sm">Всего: ${list.length}</div>
-        </div>
+        <h2>📋 Мои заказы</h2>
         <button class="close-x" onclick="closeModal()">✕</button>
       </div>
       <div class="modal-body">
-        ${list.map(p => `
-          <div class="card2" style="margin-bottom:10px">
-            <div class="row" style="margin-bottom:8px">
-              <div class="order-num" style="margin:0">📩 Заявка #${p.id}</div>
-              <span class="badge ${p.status}">${statusLabel(p.status)}</span>
-            </div>
-            <div style="font-weight:600;margin-bottom:4px">${esc(p.era_title)}</div>
-            <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0">
-              <span>Вложено</span><b style="color:var(--text)">${fmt(p.purchase_price)}</b>
-            </div>
-            <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0">
-              <span>Начисление</span><b style="color:var(--ok)">+${fmt(p.profit_amount)}</b>
-            </div>
-            <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0">
-              <span>Итого</span><b style="color:var(--accent)">${fmt(p.total_amount)}</b>
-            </div>
-            <div class="muted-sm" style="margin-top:6px">
-              ${fmtDate(p.created_at)}
-              ${p.last_day ? ' · 🏁 ' + fmtDate(p.last_day) : ''}
-            </div>
-          </div>
-        `).join('')}
+        <div class="empty"><div class="icon">📭</div>
+        <h3>Заказов нет</h3>
+        <p class="muted">Создайте первый заказ в магазине</p></div>
       </div>
     `);
-  } catch(e){ toast(e.message); }
+    return;
+  }
+  showModal(`
+    <div class="modal-head">
+      <div>
+        <h2>📋 Мои заказы</h2>
+        <div class="muted-sm">Всего: ${purchases.length}</div>
+      </div>
+      <button class="close-x" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      ${purchases.map(p => `
+        <div class="card2" style="margin-bottom:10px">
+          <div class="row" style="margin-bottom:8px">
+            <div class="order-num" style="margin:0">📩 Заявка #${p.id}</div>
+            <span class="badge ${p.status}">${statusLabel(p.status)}</span>
+          </div>
+          <div style="font-weight:600;margin-bottom:4px">${esc(p.era_title)}</div>
+          <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0">
+            <span>Вложено</span><b style="color:var(--text)">${fmt(p.purchase_price)}</b>
+          </div>
+          <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0">
+            <span>Начисление</span><b style="color:var(--ok)">+${fmt(p.profit_amount)}</b>
+          </div>
+          <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0">
+            <span>Итого</span><b style="color:var(--accent)">${fmt(p.total_amount)}</b>
+          </div>
+          <div class="muted-sm" style="margin-top:6px">
+            ${fmtDate(p.created_at)}
+            ${p.last_day ? ' · 🏁 ' + fmtDate(p.last_day) : ''}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `);
 };
 
 window.openContact = function(){
@@ -604,7 +605,7 @@ window.openContact = function(){
 
 window.openNotifications = async function(){
   try {
-    const list = await api('/api/notifications');
+    const list = await cached('notifications', '/api/notifications', true);
     showModal(`
       <div class="modal-head">
         <h2>🔔 Уведомления</h2>
@@ -626,37 +627,78 @@ window.openNotifications = async function(){
 };
 
 window.showContent = async function(key, title){
-  const c = await api('/api/content/' + key);
-  const app = $('app');
-  app.innerHTML = `
-    <div class="topbar">
-      <button class="icon-btn" onclick="setTab('${CURRENT_TAB}')">←</button>
-      <div class="brand"><div class="logo">📄</div>${esc(title)}</div>
-      <div style="width:38px"></div>
-    </div>
-    <div class="card"><div style="white-space:pre-wrap;line-height:1.7">${esc(c.value||'')}</div></div>
-  `;
+  try {
+    const c = await api('/api/content/' + key);
+    const app = $('app');
+    app.innerHTML = `
+      <div class="topbar">
+        <button class="icon-btn" onclick="setTab('${CURRENT_TAB}')">←</button>
+        <div class="brand"><div class="logo">📄</div>${esc(title)}</div>
+        <div style="width:38px"></div>
+      </div>
+      <div class="card"><div style="white-space:pre-wrap;line-height:1.7">${esc(c.value||'')}</div></div>
+    `;
+  } catch(e){ toast(e.message); }
 };
 
 window.showMarketing = async function(){
-  const c = await api('/api/content/marketing_image');
-  const app = $('app');
-  app.innerHTML = `
-    <div class="topbar">
-      <button class="icon-btn" onclick="setTab('${CURRENT_TAB}')">←</button>
-      <div class="brand"><div class="logo">📊</div>Маркетинг</div>
-      <div style="width:38px"></div>
-    </div>
-    <div class="card">
-      ${c.value
-        ? `<img class="marketing" src="${API}${c.value}" alt="">`
-        : '<div class="muted center" style="padding:32px 0">Изображение пока не добавлено</div>'}
-    </div>
-  `;
+  try {
+    const c = await api('/api/content/marketing_image');
+    const app = $('app');
+    app.innerHTML = `
+      <div class="topbar">
+        <button class="icon-btn" onclick="setTab('${CURRENT_TAB}')">←</button>
+        <div class="brand"><div class="logo">📊</div>Маркетинг</div>
+        <div style="width:38px"></div>
+      </div>
+      <div class="card">
+        ${c.value
+          ? `<img class="marketing" src="${API}${c.value}" alt="">`
+          : '<div class="muted center" style="padding:32px 0">Изображение пока не добавлено</div>'}
+      </div>
+    `;
+  } catch(e){ toast(e.message); }
+};
+
+// Shop filters (без ре-рендера, только CSS)
+window.shopSetFilter = function(f, btn){
+  document.querySelectorAll('.filters .chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  const cards = document.querySelectorAll('.era-card[data-price]');
+  cards.forEach(card => {
+    const price = parseFloat(card.dataset.price);
+    let show = true;
+    if (f === 'starter') show = price < 10000;
+    else if (f === 'middle') show = price >= 10000 && price < 50000;
+    else if (f === 'premium') show = price >= 50000;
+    card.style.display = show ? '' : 'none';
+  });
+};
+
+window.shopSetSort = function(s, btn){
+  document.querySelectorAll('.filters .chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  const container = document.querySelector('.shop-container');
+  if (!container) return;
+  const cards = Array.from(container.querySelectorAll('.era-card[data-price]'));
+  cards.sort((a, b) => {
+    const pa = parseFloat(a.dataset.price);
+    const pb = parseFloat(b.dataset.price);
+    const ra = parseFloat(a.dataset.profit);
+    const rb = parseFloat(b.dataset.profit);
+    const da = parseInt(a.dataset.duration);
+    const db = parseInt(b.dataset.duration);
+    if (s === 'price_asc') return pa - pb;
+    if (s === 'price_desc') return pb - pa;
+    if (s === 'profit') return rb - ra;
+    if (s === 'duration') return da - db;
+    return parseInt(a.dataset.id) - parseInt(b.dataset.id);
+  });
+  cards.forEach(c => container.appendChild(c));
 };
 
 // ============================================================
-// MODAL + TOAST
+// MODAL
 // ============================================================
 function showModal(html){
   const root = $('modal-root');
@@ -673,8 +715,8 @@ function showModal(html){
 // ============================================================
 function tierOf(era){
   const price = Number(era.price||0);
-  if (price >= 50000) return { key:'premium', label:'PREMIUM', icon:'💎', glow:'rgba(255,209,102,.25)' };
-  if (price >= 10000) return { key:'middle', label:'БИЗНЕС', icon:'🚀', glow:'rgba(79,140,255,.25)' };
+  if (price >= 30000) return { key:'premium', label:'PREMIUM', icon:'💎', glow:'rgba(255,209,102,.25)' };
+  if (price >= 5000) return { key:'middle', label:'БИЗНЕС', icon:'🚀', glow:'rgba(79,140,255,.25)' };
   return { key:'starter', label:'СТАРТ', icon:'⚡', glow:'rgba(99,169,255,.2)' };
 }
 
@@ -690,7 +732,6 @@ function progressOf(p){
 
 function daysLeftClass(days, status){
   if (['completed','awaiting_payout','paid'].includes(status)) return 'info';
-  if (days <= 0) return 'err';
   if (days <= 1) return 'err';
   if (days <= 3) return 'warn';
   return 'ok';
@@ -715,9 +756,9 @@ function daysLeftLabel(p){
 function screenAuth(reason=''){
   hideNav();
   const hint = reason === 'no_tg'
-    ? 'Откройте страницу через кнопку в боте @' + BOT_USERNAME
+    ? 'Откройте через кнопку в боте @' + BOT_USERNAME
     : reason === 'no_user'
-    ? 'Telegram не передал данные. Откройте через кнопку WebApp в боте.'
+    ? 'Telegram не передал данные. Откройте через WebApp-кнопку.'
     : reason === 'api_error'
     ? 'Backend недоступен: ' + API
     : '';
@@ -727,7 +768,7 @@ function screenAuth(reason=''){
     <div class="hero center" style="padding:36px 20px">
       <div style="font-size:56px;margin-bottom:8px">✨</div>
       <h1 style="font-size:26px;margin-bottom:6px">Проект «Эры»</h1>
-      <div class="muted">Войдите через Telegram, чтобы начать</div>
+      <div class="muted">Войдите через Telegram</div>
     </div>
     <div class="card">
       <div id="tg-login-widget" style="display:flex;justify-content:center;padding:8px 0"></div>
@@ -743,18 +784,15 @@ function screenAuth(reason=''){
     </div>
   `;
 
-  if (BOT_USERNAME && BOT_USERNAME !== 'YOUR_BOT_USERNAME') {
-    const container = $('tg-login-widget');
-    if (container){
-      container.innerHTML = '';
-      const script = document.createElement('script');
-      script.src = 'https://telegram.org/js/telegram-widget.js?22';
-      script.setAttribute('data-telegram-login', BOT_USERNAME);
-      script.setAttribute('data-size', 'large');
-      script.setAttribute('data-onauth', 'onTelegramAuth(user)');
-      script.setAttribute('data-request-access', 'write');
-      container.appendChild(script);
-    }
+  const container = $('tg-login-widget');
+  if (container && BOT_USERNAME && BOT_USERNAME !== 'YOUR_BOT_USERNAME') {
+    const script = document.createElement('script');
+    script.src = 'https://telegram.org/js/telegram-widget.js?22';
+    script.setAttribute('data-telegram-login', BOT_USERNAME);
+    script.setAttribute('data-size', 'large');
+    script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+    script.setAttribute('data-request-access', 'write');
+    container.appendChild(script);
   }
 }
 
@@ -769,11 +807,13 @@ window.onTelegramAuth = async function(user){
   } catch(e){ toast('Ошибка: ' + e.message); }
 };
 
-async function screenHome(){
+async function renderHome(){
   const [me, purchases] = await Promise.all([
-    api('/api/me'), api('/api/purchases/my')
+    cached('me', '/api/me'),
+    cached('purchases', '/api/purchases/my'),
   ]);
   ME = me;
+
   const active = purchases.filter(p => p.status === 'active');
   const expected = purchases.filter(p => ['active','completed'].includes(p.status))
     .reduce((s,p) => s + Number(p.profit_amount||0), 0);
@@ -908,17 +948,8 @@ function eraCardActive(p){
   `;
 }
 
-// ---------- SHOP ----------
-let shopFilter = 'all';
-let shopSort = 'default';
-let shopSearch = '';
-
-window.shopSetFilter = function(f){ shopFilter = f; screenBuy(); };
-window.shopSetSort = function(s){ shopSort = s; screenBuy(); };
-window.shopSetSearch = function(v){ shopSearch = v; };
-
-async function screenBuy(){
-  const me = await api('/api/me');
+async function renderBuy(){
+  const me = await cached('me', '/api/me');
   ME = me;
 
   if (!me.agreed_terms){
@@ -936,24 +967,7 @@ async function screenBuy(){
     return;
   }
 
-  const eras = await api('/api/eras');
-  CACHE_ERAS = eras;
-
-  let filtered = eras.slice();
-  if (shopSearch){
-    const q = shopSearch.toLowerCase();
-    filtered = filtered.filter(e =>
-      e.title.toLowerCase().includes(q) ||
-      (e.description||'').toLowerCase().includes(q));
-  }
-  if (shopFilter === 'starter') filtered = filtered.filter(e => e.price < 10000);
-  if (shopFilter === 'middle')  filtered = filtered.filter(e => e.price >= 10000 && e.price < 50000);
-  if (shopFilter === 'premium') filtered = filtered.filter(e => e.price >= 50000);
-
-  if (shopSort === 'price_asc')  filtered.sort((a,b) => a.price - b.price);
-  if (shopSort === 'price_desc') filtered.sort((a,b) => b.price - a.price);
-  if (shopSort === 'profit')     filtered.sort((a,b) => b.profit_amount - a.profit_amount);
-  if (shopSort === 'duration')   filtered.sort((a,b) => a.duration_days - b.duration_days);
+  const eras = await cached('eras', '/api/eras');
 
   $('app').innerHTML = `
     <div class="topbar">
@@ -961,44 +975,25 @@ async function screenBuy(){
       <div class="actions"><span class="muted-sm">${eras.length} эр</span></div>
     </div>
 
-    <div class="searchbar">
-      <input class="search-input" id="shopSearch" placeholder="🔍 Поиск эры…"
-        value="${esc(shopSearch)}"
-        oninput="shopSetSearch(this.value);screenBuy()">
-    </div>
-
     <div class="filters">
-      <button class="chip ${shopFilter==='all'?'active':''}"
-        onclick="shopSetFilter('all')">Все</button>
-      <button class="chip ${shopFilter==='starter'?'active':''}"
-        onclick="shopSetFilter('starter')">⚡ Старт</button>
-      <button class="chip ${shopFilter==='middle'?'active':''}"
-        onclick="shopSetFilter('middle')">🚀 Бизнес</button>
-      <button class="chip ${shopFilter==='premium'?'active':''}"
-        onclick="shopSetFilter('premium')">💎 Premium</button>
+      <button class="chip active" onclick="shopSetFilter('all', this)">Все</button>
+      <button class="chip" onclick="shopSetFilter('starter', this)">⚡ Старт</button>
+      <button class="chip" onclick="shopSetFilter('middle', this)">🚀 Бизнес</button>
+      <button class="chip" onclick="shopSetFilter('premium', this)">💎 Premium</button>
     </div>
 
     <div class="filters">
       <span class="muted-sm" style="align-self:center;padding-right:6px">Сортировка:</span>
-      <button class="chip ${shopSort==='default'?'active':''}"
-        onclick="shopSetSort('default')">По умолч.</button>
-      <button class="chip ${shopSort==='price_asc'?'active':''}"
-        onclick="shopSetSort('price_asc')">Дешевле</button>
-      <button class="chip ${shopSort==='price_desc'?'active':''}"
-        onclick="shopSetSort('price_desc')">Дороже</button>
-      <button class="chip ${shopSort==='profit'?'active':''}"
-        onclick="shopSetSort('profit')">Прибыль</button>
-      <button class="chip ${shopSort==='duration'?'active':''}"
-        onclick="shopSetSort('duration')">Срок</button>
+      <button class="chip active" onclick="shopSetSort('default', this)">По умолч.</button>
+      <button class="chip" onclick="shopSetSort('price_asc', this)">Дешевле</button>
+      <button class="chip" onclick="shopSetSort('price_desc', this)">Дороже</button>
+      <button class="chip" onclick="shopSetSort('profit', this)">Прибыль</button>
+      <button class="chip" onclick="shopSetSort('duration', this)">Срок</button>
     </div>
 
-    ${filtered.length
-      ? filtered.map(e => eraCardShop(e)).join('')
-      : `<div class="card empty">
-           <div class="icon">🔍</div>
-           <h3>Ничего не найдено</h3>
-           <p class="muted">Попробуйте изменить фильтры</p>
-         </div>`}
+    <div class="shop-container">
+      ${eras.map(e => eraCardShop(e)).join('')}
+    </div>
   `;
 }
 
@@ -1006,15 +1001,20 @@ function eraCardShop(e){
   const tier = tierOf(e);
   const roi = e.price > 0 ? Math.round((e.profit_amount / e.price) * 100) : 0;
   return `
-    <div class="era-card" style="--era-glow:${tier.glow}">
+    <div class="era-card"
+         data-id="${e.id}"
+         data-price="${e.price}"
+         data-profit="${e.profit_amount}"
+         data-duration="${e.duration_days}"
+         style="--era-glow:${tier.glow}">
       <span class="badge-tier ${tier.key}">${tier.icon} ${tier.label}</span>
-      <div class="head" style="--era-glow:${tier.glow}">
+      <div class="head">
         <div class="row">
           <div class="title-wrap">
             <div class="icon">${tier.icon}</div>
             <div style="min-width:0">
               <div class="name">${esc(e.title)}</div>
-              <div class="tier">Срок ${e.duration_days} дней · +${roi}% ROI</div>
+              <div class="tier">Срок ${e.duration_days} дней · +${roi}%</div>
             </div>
           </div>
         </div>
@@ -1038,9 +1038,8 @@ function eraCardShop(e){
   `;
 }
 
-// ---------- PURCHASES ----------
-async function screenPurchases(){
-  const list = await api('/api/purchases/my');
+async function renderPurchases(){
+  const list = await cached('purchases', '/api/purchases/my');
   $('app').innerHTML = `
     <div class="topbar">
       <div class="brand"><div class="logo">📦</div>Мои покупки</div>
@@ -1129,9 +1128,8 @@ function eraCardFull(p){
   `;
 }
 
-// ---------- PROFILE ----------
-async function screenProfile(){
-  const me = await api('/api/me');
+async function renderProfile(){
+  const me = await cached('me', '/api/me');
   const displayName = me.first_name || me.telegram_username || 'Пользователь';
   const initial = (displayName[0] || '👤').toUpperCase();
 
@@ -1218,9 +1216,9 @@ async function screenProfile(){
 }
 
 // ============================================================
-// MAIN RENDER
+// ROUTER
 // ============================================================
-async function render(){
+async function renderCurrentTab(){
   try {
     if (!TOKEN){
       const result = await tryTelegramAuth();
@@ -1228,15 +1226,14 @@ async function render(){
     }
     showNav();
     hideLoading();
-    setNavTab(CURRENT_TAB);
 
     const routes = {
-      home: screenHome,
-      buy: screenBuy,
-      purchases: screenPurchases,
-      profile: screenProfile
+      home: renderHome,
+      buy: renderBuy,
+      purchases: renderPurchases,
+      profile: renderProfile
     };
-    const fn = routes[CURRENT_TAB] || screenHome;
+    const fn = routes[CURRENT_TAB] || renderHome;
     await fn();
   } catch(e){
     console.error(e);
@@ -1246,7 +1243,7 @@ async function render(){
 }
 
 // ============================================================
-// NAV LISTENER (делегирование)
+// NAV LISTENER (делегирование, один раз)
 // ============================================================
 (function attachNav(){
   const nav = document.getElementById('nav');
@@ -1291,12 +1288,10 @@ function statusLabel(s){
 // START
 // ============================================================
 function start(){
-  setNavTab('home');
-  render();
-  // Автообновление на главной и покупках
-  setInterval(() => {
-    if (TOKEN && ['home','purchases'].includes(CURRENT_TAB)) render();
-  }, 30000);
+  document.querySelectorAll('#nav button').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === 'home');
+  });
+  renderCurrentTab();
 }
 
 if (document.readyState === 'loading'){

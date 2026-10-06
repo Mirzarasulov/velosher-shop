@@ -9,42 +9,30 @@
     --bg:#0d1117; --card:#161b22; --card2:#1c2330; --card3:#232b38;
     --border:#252e3a; --border2:#2f3a48;
     --text:#e6edf3; --text2:#c4ccd6; --muted:#8b949e;
-    --accent:#4f8cff; --accent2:#356fd8;
-    --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c; --info:#63a9ff;
+    --accent:#4f8cff; --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c; --info:#63a9ff;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{background:var(--bg);color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-    font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:14px;line-height:1.5}
   button,input,textarea,select{font-family:inherit}
   .layout{display:flex;min-height:100vh}
-
-  .side{width:220px;background:var(--card);border-right:1px solid var(--border);
-    padding:16px 10px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
-  .side .logo{display:flex;align-items:center;gap:10px;padding:0 8px 16px;
-    border-bottom:1px solid var(--border);margin-bottom:12px}
-  .side .logo .ic{width:34px;height:34px;border-radius:9px;background:var(--accent);
-    display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff}
+  .side{width:220px;background:var(--card);border-right:1px solid var(--border);padding:16px 10px;
+    flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .side .logo{display:flex;align-items:center;gap:10px;padding:0 8px 16px;border-bottom:1px solid var(--border);margin-bottom:12px}
+  .side .logo .ic{width:34px;height:34px;border-radius:9px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff}
   .side .logo .t{font-weight:700;font-size:14px}
-  .side .logo .s{font-size:10px;color:var(--muted);text-transform:uppercase;
-    letter-spacing:.06em;font-weight:600}
-  .side .nav-item{display:flex;align-items:center;gap:9px;width:100%;text-align:left;
-    background:none;border:0;color:var(--text2);padding:10px 12px;border-radius:8px;
-    cursor:pointer;font-size:13px;margin-bottom:1px;font-weight:500;transition:background .1s}
+  .side .logo .s{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+  .side .nav-item{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:none;border:0;color:var(--text2);
+    padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;margin-bottom:1px;font-weight:500}
   .side .nav-item:hover{background:var(--card2)}
   .side .nav-item.active{background:var(--accent);color:#fff}
   .side .nav-item .emo{font-size:15px;width:18px;text-align:center}
-  .side .nav-item .count{margin-left:auto;padding:1px 7px;border-radius:9px;
-    background:rgba(255,255,255,.14);font-size:10px;font-weight:700;min-width:18px;text-align:center}
-  .side .section{font-size:10px;color:var(--muted);text-transform:uppercase;
-    letter-spacing:.06em;font-weight:700;padding:12px 12px 4px}
-
+  .side .nav-item .count{margin-left:auto;padding:1px 7px;border-radius:9px;background:rgba(255,255,255,.14);font-size:10px;font-weight:700;min-width:18px;text-align:center}
+  .side .section{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700;padding:12px 12px 4px}
   .main{flex:1;min-width:0;padding:20px 24px;overflow-x:hidden}
-  .header{display:flex;justify-content:space-between;align-items:flex-start;
-    gap:16px;margin-bottom:20px;flex-wrap:wrap}
+  .header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px;flex-wrap:wrap}
   .header h1{font-size:22px;font-weight:700;margin-bottom:2px}
   .header .sub{font-size:12px;color:var(--muted)}
-
   .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:20px}
   .stat{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px}
   .stat .ic{font-size:22px;margin-bottom:6px}
@@ -52,126 +40,68 @@
   .stat .v{font-size:20px;font-weight:700}
   .stat .v.ok{color:var(--ok)} .stat .v.warn{color:var(--warn)}
   .stat .v.info{color:var(--info)} .stat .v.accent{color:var(--accent)}
-
   .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
-
-  .btn{padding:8px 14px;border-radius:8px;border:0;background:var(--accent);color:#fff;
-    font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;
-    gap:6px;transition:opacity .15s}
-  .btn:hover{opacity:.9}
-  .btn:active{transform:scale(.97)}
+  .btn{padding:8px 14px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-size:12.5px;font-weight:600;
+    cursor:pointer;display:inline-flex;align-items:center;gap:6px}
   .btn:disabled{opacity:.5;cursor:not-allowed}
   .btn.secondary{background:var(--card2);border:1px solid var(--border2);color:var(--text)}
   .btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
   .btn.danger{background:var(--err)}
   .btn.ok{background:var(--ok);color:#04241a}
   .btn.sm{padding:5px 10px;font-size:11.5px}
-
-  .input{width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--border);
-    background:var(--card2);color:var(--text);font-size:13px;outline:none;transition:border-color .15s}
-  .input:focus{border-color:var(--accent)}
-  .form-row{margin-bottom:11px}
-  .form-row label{display:block;font-size:10.5px;color:var(--muted);margin-bottom:4px;
-    text-transform:uppercase;letter-spacing:.04em;font-weight:600}
-
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10.5px;
+    font-weight:700;text-transform:uppercase;white-space:nowrap}
+  .badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+  .badge.created{background:rgba(99,169,255,.15);color:var(--info)}
+  .badge.in_progress{background:rgba(245,181,71,.15);color:var(--warn)}
+  .badge.approved,.badge.completed{background:rgba(57,217,138,.15);color:var(--ok)}
+  .badge.cancelled{background:rgba(255,92,92,.15);color:var(--err)}
+  .order-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+  .order-card .on{font-size:15px;font-weight:700;color:var(--accent);margin-bottom:8px}
+  .order-card .meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:7px;margin-bottom:11px}
+  .meta-item{background:var(--card2);border-radius:8px;padding:8px 10px}
+  .meta-item .l{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:600;margin-bottom:2px}
+  .meta-item .v{font-size:12.5px;font-weight:600;word-break:break-word}
+  .meta-item .v.ok{color:var(--ok)} .meta-item .v.accent{color:var(--accent)}
   .flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
   .muted{color:var(--muted);font-size:12px}
   .muted-sm{color:var(--muted);font-size:11px}
-
-  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;
-    font-size:10.5px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap}
-  .badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
-  .badge.awaiting_payment,.badge.awaiting_payout,.badge.pending{background:rgba(245,181,71,.15);color:var(--warn)}
-  .badge.active,.badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
-  .badge.completed{background:rgba(99,169,255,.15);color:var(--info)}
-  .badge.cancelled{background:rgba(255,92,92,.15);color:var(--err)}
-
-  .user-card,.order-card{background:var(--card);border:1px solid var(--border);
-    border-radius:12px;padding:14px;margin-bottom:10px;
-    content-visibility:auto;contain-intrinsic-size:auto 230px}
-  .order-card.processed{background:var(--card2)}
-  .user-head{display:flex;gap:12px;align-items:center;margin-bottom:12px}
-  .avatar{width:44px;height:44px;border-radius:50%;background:var(--card3);display:flex;
-    align-items:center;justify-content:center;font-size:17px;font-weight:700;color:var(--accent);
-    border:2px solid var(--border2);overflow:hidden;flex-shrink:0}
-  .avatar img{width:100%;height:100%;object-fit:cover}
-  .user-info{min-width:0;flex:1}
-  .user-info .n{font-size:14px;font-weight:700;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .user-info .u{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .user-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));gap:7px;margin-bottom:11px}
-  .user-stat{background:var(--card2);border-radius:8px;padding:8px 10px;border:1px solid var(--border)}
-  .user-stat .l,.meta-item .l{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:600;margin-bottom:2px}
-  .user-stat .v{font-size:14px;font-weight:700}
-  .v.ok{color:var(--ok)} .v.accent{color:var(--accent)} .v.warn{color:var(--warn)}
-  .order-card .on{font-size:15px;font-weight:700;color:var(--accent);margin-bottom:8px}
-  .order-card .meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:7px;margin-bottom:11px}
-  .meta-item{background:var(--card2);border-radius:8px;padding:8px 10px}
-  .order-card.processed .meta-item{background:var(--card3)}
-  .meta-item .v{font-size:12.5px;font-weight:600;word-break:break-word}
-
-  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999;display:flex;
-    align-items:center;justify-content:center;padding:20px;overflow-y:auto}
-  .modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;width:100%;
-    max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.5)}
-  .modal-head{padding:18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;
-    align-items:center;position:sticky;top:0;background:var(--card);z-index:1}
-  .modal-head h2{font-size:17px;font-weight:700}
-  .modal-body{padding:18px}
-  .modal-foot{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px;
-    justify-content:flex-end;position:sticky;bottom:0;background:var(--card)}
-  .close-x{width:32px;height:32px;border-radius:50%;background:var(--card2);border:1px solid var(--border2);
-    color:var(--text2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-
-  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-  .login-box{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:32px;width:100%;max-width:380px}
-  .login-box .ic{width:56px;height:56px;border-radius:14px;margin:0 auto 16px;background:var(--accent);
-    display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff}
-  .login-box h1{font-size:20px;margin-bottom:4px;text-align:center}
-  .login-box .s{font-size:12px;color:var(--muted);text-align:center;margin-bottom:20px}
-
   .tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
   .tabs::-webkit-scrollbar{display:none}
-  .tab{padding:7px 13px;border-radius:18px;background:var(--card2);border:1px solid var(--border);
-    color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .tab{padding:7px 13px;border-radius:18px;background:var(--card2);border:1px solid var(--border);color:var(--text2);
+    font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
   .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-
-  .toast{position:fixed;top:16px;right:16px;background:var(--card2);border:1px solid var(--border2);
-    padding:12px 18px;border-radius:10px;z-index:9999;font-size:13px;font-weight:500;max-width:300px;
-    box-shadow:0 8px 24px rgba(0,0,0,.4);animation:toastIn .2s ease}
+  .toast{position:fixed;top:16px;right:16px;background:var(--card2);border:1px solid var(--border2);padding:12px 18px;
+    border-radius:10px;z-index:9999;font-size:13px;max-width:300px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
   .toast.ok{border-color:rgba(57,217,138,.4);background:#13281f}
   .toast.err{border-color:rgba(255,92,92,.4);background:#2a1618}
-  @keyframes toastIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-
   .empty{padding:50px 20px;text-align:center;color:var(--muted)}
   .empty .ic{font-size:44px;margin-bottom:10px;opacity:.4}
   .hidden{display:none !important}
-  .search-bar{position:relative;margin-bottom:14px}
-  .search-bar input{padding-left:34px}
-  .search-bar::before{content:'🔍';position:absolute;left:11px;top:50%;transform:translateY(-50%);
-    font-size:13px;opacity:.6;pointer-events:none}
-
-  .skel{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);
-    background-size:200% 100%;animation:sh 1.2s infinite;border-radius:12px;
-    border:1px solid var(--border);margin-bottom:10px}
-  @keyframes sh{to{background-position:-200% 0}}
-
-  table{width:100%;border-collapse:collapse;font-size:12.5px}
-  th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--border)}
-  th{color:var(--muted);font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em}
-  pre.raw{background:var(--card2);padding:12px;border-radius:9px;font-size:11.5px;overflow:auto;
-    max-height:400px;line-height:1.5;white-space:pre-wrap;word-break:break-all}
-
+  .input{width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);
+    color:var(--text);font-size:13px;outline:none}
+  .input:focus{border-color:var(--accent)}
+  .form-row{margin-bottom:11px}
+  .form-row label{display:block;font-size:10.5px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;
+    letter-spacing:.04em;font-weight:600}
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
+  .modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+  .modal-head{padding:18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+  .modal-head h2{font-size:17px;font-weight:700}
+  .modal-body{padding:18px}
+  .modal-foot{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+  .close-x{width:32px;height:32px;border-radius:50%;background:var(--card2);border:1px solid var(--border2);color:var(--text2);
+    font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   @media(max-width:768px){
     .layout{flex-direction:column}
-    .side{width:100%;height:auto;position:relative;padding:10px;border-right:0;
-      border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:4px}
+    .side{width:100%;height:auto;position:relative;padding:10px;border-right:0;border-bottom:1px solid var(--border);
+      display:flex;flex-wrap:wrap;gap:4px}
     .side .logo{width:100%;padding-bottom:10px;margin-bottom:8px}
     .side .section{display:none}
     .side .nav-item{width:auto;padding:8px 12px;font-size:12px;margin-bottom:0}
     .main{padding:14px}
-    .header h1{font-size:19px}
     .grid2{grid-template-columns:1fr}
   }
 </style>
@@ -183,194 +113,106 @@
 <div id="modal-root"></div>
 
 <script>
-// ============================================================
-// КОНФИГ
-// ============================================================
-let API = (localStorage.getItem('admin_api') || 'http://localhost:8000').replace(/\/+$/, '');
-const LOG_CHANNEL_URL = 'https://t.me/c/4305451466';
-const TTL = 20000;          // сколько секунд данные считаются свежими
-const PAGE = 50;            // карточек за раз в длинных списках
-const POLL_MS = 45000;      // фоновое автообновление
-// ============================================================
+const FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app';
+const TTL = 15000;
+const POLL_MS = 20000;
 
-let TOKEN = localStorage.getItem('admin_token') || '';
+const $ = id => document.getElementById(id);
 let TAB = 'dashboard';
-let RID = 0;                                   // защита от «гонок» ответов
-let DASH = null, CONTENT = null, LOGS = null;
-const DATA = { users: [], purchases: [], payouts: [], eras: [] };
-const LOADED = {};
+let RID = 0;
+const DATA = { purchases: [], eras: [], users: [] };
 const SIG = {};
-const FILTER = { purchases: 'pending', payouts: 'pending', search: '' };
-const LIM = { purchases: PAGE, users: PAGE };
-let UIDX = { P: {}, R: {} };
-let store = {};                                // path -> {t, raw}
+let FILTER = { purchases: 'all', search: '' };
+let store = {};
 const inflight = {};
 const BUSY = new Set();
 
-// ---------- helpers ----------
-const $ = id => document.getElementById(id);
-function esc(s){ return String(s ?? '').replace(/[&<>"']/g,
-  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-// безопасная передача значения (число/строка) в inline-обработчик
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function q(v){ return esc(JSON.stringify(v ?? '')); }
 const num = v => { const n = Number(v); return isFinite(n) ? n : 0; };
-const bool = v => (v === undefined || v === null) ? true : (v === true || v === 1 || v === '1' || v === 'true');
 function fmt(n){ return num(n).toLocaleString('ru-RU') + ' ₽'; }
 function fmtDate(s){
   if (!s) return '—';
-  try {
-    const d = new Date(s);
-    if (isNaN(d)) return String(s);
-    return d.toLocaleString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-  } catch { return String(s); }
+  const d = new Date(s);
+  if (isNaN(d)) return String(s);
+  return d.toLocaleString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
 }
 function statusLabel(s){
-  return ({awaiting_payment:'⏳ Ожидает оплаты', active:'🟢 Активен', completed:'🏁 Завершён',
-    awaiting_payout:'💸 Ожидает выплаты', paid:'💰 Выплачен', cancelled:'❌ Отменён'})[s] || s;
+  return ({created:'Создан', in_progress:'В процессе', approved:'Одобрен',
+    completed:'Завершён', cancelled:'Отменён'})[s] || s;
 }
 
-// ---------- TOAST ----------
 function toast(msg, type='ok', ms=2500){
-  const t = $('toast'); if (!t) return;
+  const t = $('toast');
   t.textContent = msg;
   t.className = 'toast ' + type;
   clearTimeout(t._t);
-  t._t = setTimeout(() => { t.className = 'toast hidden'; }, ms);
+  t._t = setTimeout(() => t.className = 'toast hidden', ms);
 }
-
-// ---------- MODAL ----------
 function showModal(html){
-  $('modal-root').innerHTML =
-    `<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`;
+  $('modal-root').innerHTML = `<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`;
 }
 function closeModal(){ $('modal-root').innerHTML = ''; }
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeModal();
-  if (e.key === 'Enter' && e.target && e.target.closest && e.target.closest('.modal') &&
-      e.target.tagName === 'INPUT' && $('f_submit')) $('f_submit').click();
-});
-
-// ============================================================
-// API + КЭШ
-// ============================================================
-async function api(path, opts = {}){
-  const headers = {...(opts.headers || {})};
-  if (TOKEN) headers['Authorization'] = 'Bearer ' + TOKEN;
-  headers['ngrok-skip-browser-warning'] = 'true';
-  let body = opts.body;
-  if (body && !(body instanceof FormData)) {
-    headers['Content-Type'] = 'application/json';
-    body = JSON.stringify(body);
-  }
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 20000);
-  let res;
-  try {
-    res = await fetch(API + path, {...opts, body, headers, signal: ctrl.signal});
-  } catch (e) {
-    throw new Error(e.name === 'AbortError' ? 'Сервер не отвечает (таймаут)' : 'Сервер недоступен');
-  } finally { clearTimeout(timer); }
-  if (res.status === 401 && !path.includes('/login')) { logout(); throw new Error('Unauthorized'); }
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.detail || 'Ошибка ' + res.status);
-  return data;
+async function once(key, fn){
+  if (BUSY.has(key)) return;
+  BUSY.add(key);
+  try { await fn(); } catch(e){ toast(e.message, 'err'); }
+  finally { BUSY.delete(key); }
 }
 
-// GET с кэшем и склейкой одинаковых запросов
-function get(path, force = false){
+async function fbGet(path){
+  const r = await fetch(`${FIREBASE}/${path}.json`);
+  if (!r.ok) throw new Error('Firebase ' + r.status);
+  return r.json();
+}
+async function fbPatch(path, data){
+  const r = await fetch(`${FIREBASE}/${path}.json`, {method:'PATCH', body: JSON.stringify(data)});
+  if (!r.ok) throw new Error('Firebase ' + r.status);
+  return r.json();
+}
+async function fbPut(path, data){
+  const r = await fetch(`${FIREBASE}/${path}.json`, {method:'PUT', body: JSON.stringify(data)});
+  if (!r.ok) throw new Error('Firebase ' + r.status);
+  return r.json();
+}
+async function fbDelete(path){
+  const r = await fetch(`${FIREBASE}/${path}.json`, {method:'DELETE'});
+  if (!r.ok) throw new Error('Firebase ' + r.status);
+  return r.json();
+}
+function toList(raw){
+  if (Array.isArray(raw)) return raw.filter(x => x && typeof x === 'object').map((v, i) => ({...v, _key: String(i)}));
+  if (raw && typeof raw === 'object')
+    return Object.entries(raw).filter(([, v]) => v && typeof v === 'object').map(([k, v]) => ({...v, _key: k}));
+  return [];
+}
+
+async function get(path, force){
   const c = store[path];
-  if (!force && c && Date.now() - c.t < TTL) return Promise.resolve(c.raw);
+  if (!force && c && Date.now() - c.t < TTL) return c.raw;
   if (inflight[path]) return inflight[path];
-  inflight[path] = api(path)
-    .then(raw => { store[path] = {t: Date.now(), raw}; return raw; })
+  inflight[path] = fbGet(path).then(raw => { store[path] = {t: Date.now(), raw}; return raw; })
     .finally(() => { delete inflight[path]; });
   return inflight[path];
 }
 function invalidate(){ store = {}; }
 
-function logout(){
-  localStorage.removeItem('admin_token'); TOKEN = ''; location.reload();
-}
-
-// Firebase отдаёт то массив, то объект {key: {...}}, то массив с null.
-// Приводим всё к обычному массиву.
-function toList(raw){
-  if (Array.isArray(raw))
-    return raw.map((v, i) => (v && typeof v === 'object') ? {...v, id: v.id ?? i} : null).filter(Boolean);
-  if (raw && typeof raw === 'object') {
-    for (const k of ['items','data','results','list','eras','products','purchases','payouts','users','actions','logs'])
-      if (raw[k] && typeof raw[k] === 'object') return toList(raw[k]);
-    return Object.entries(raw)
-      .filter(([, v]) => v && typeof v === 'object' && !Array.isArray(v))
-      .map(([k, v]) => ({...v, id: v.id ?? k}));
-  }
-  return [];
-}
-
-const PATHS = {
-  users: '/api/admin/users', purchases: '/api/admin/purchases',
-  payouts: '/api/admin/payouts', eras: '/api/admin/eras',
-};
-const NORM = {
-  users: l => l.map(u => ({...u, id: u.id ?? u._id})),
-  purchases: l => l,
-  payouts: l => l,
-  eras: l => l.map(e => ({
-    ...e,
-    title: e.title || e.name || 'Без названия',
-    price: num(e.price),
-    profit_amount: num(e.profit_amount ?? e.profit),
-    duration_days: num(e.duration_days ?? e.days),
-    is_active: bool(e.is_active ?? e.active),
-    sort_order: num(e.sort_order),
-  })).sort((a, b) => (a.sort_order - b.sort_order) || String(a.id).localeCompare(String(b.id), 'ru', {numeric:true})),
-};
-
-// возвращает true, если данные изменились
-async function loadList(name, force = false){
-  const raw = await get(PATHS[name], force);
-  const sig = JSON.stringify(raw);
-  const changed = SIG[name] !== sig || !LOADED[name];
-  if (changed) { DATA[name] = NORM[name](toList(raw)); SIG[name] = sig; }
-  LOADED[name] = true;
+async function loadAll(force){
+  const [pRaw, eRaw, uRaw] = await Promise.all([
+    get('purchases', force),
+    get('eras', force),
+    get('users', force),
+  ]);
+  const sigP = JSON.stringify(pRaw), sigE = JSON.stringify(eRaw), sigU = JSON.stringify(uRaw);
+  let changed = false;
+  if (sigP !== SIG.p){ SIG.p = sigP; DATA.purchases = toList(pRaw).sort((a,b) => num(b.id) - num(a.id)); changed = true; }
+  if (sigE !== SIG.e){ SIG.e = sigE; DATA.eras = toList(eRaw).sort((a,b) => (num(a.sort_order) - num(b.sort_order)) || (num(a.id) - num(b.id))); changed = true; }
+  if (sigU !== SIG.u){ SIG.u = sigU; DATA.users = toList(uRaw); changed = true; }
   return changed;
 }
 
 // ============================================================
-// LOGIN
-// ============================================================
-function renderLogin(){
-  $('root').innerHTML = `
-    <div class="login-wrap"><div class="login-box">
-      <div class="ic">⚡</div>
-      <h1>Era Admin</h1>
-      <div class="s">Панель управления проектом</div>
-      <div class="form-row"><label>Логин</label><input class="input" id="login" value="admin"></div>
-      <div class="form-row"><label>Пароль</label>
-        <input class="input" id="password" type="password" onkeydown="if(event.key==='Enter')doLogin()"></div>
-      <button class="btn" id="login_btn" style="width:100%;justify-content:center;padding:11px;font-size:13.5px"
-        onclick="doLogin()">Войти</button>
-      <div class="form-row" style="margin-top:14px"><label>API URL</label>
-        <input class="input" id="api_url" value="${esc(API)}"></div>
-    </div></div>`;
-}
-
-async function doLogin(){
-  const login = $('login').value, password = $('password').value;
-  const apiUrl = $('api_url').value.trim().replace(/\/+$/, '');
-  if (apiUrl) { API = apiUrl; localStorage.setItem('admin_api', apiUrl); }
-  const btn = $('login_btn'); btn.disabled = true;
-  try {
-    const res = await api('/api/admin/login', {method:'POST', body:{login, password}});
-    TOKEN = res.token;
-    localStorage.setItem('admin_token', TOKEN);
-    toast('Добро пожаловать');
-    start();
-  } catch (e) { toast(e.message, 'err'); btn.disabled = false; }
-}
-
-// ============================================================
-// ОБОЛОЧКА (рисуется один раз) 
+// ОБОЛОЧКА
 // ============================================================
 function shell(){
   if ($('main')) return;
@@ -387,167 +229,90 @@ function shell(){
         ${nav('dashboard','📊','Дашборд')}
         <div class="section">Операции</div>
         ${nav('purchases','📩','Заявки',1)}
-        ${nav('payouts','💸','Выплаты',1)}
         <div class="section">Управление</div>
-        ${nav('users','👥','Пользователи',1)}
+        ${nav('users','👥','Пользователи')}
         ${nav('eras','🧩','Товары')}
-        ${nav('content','📝','Контент')}
-        <div class="section">Система</div>
-        ${nav('logs','📜','Журнал')}
-        <button class="nav-item" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">
-          <span class="emo">📢</span>Канал логов</button>
         <div class="section"></div>
-        <button class="nav-item" onclick="logout()" style="color:var(--err)">
-          <span class="emo">🚪</span>Выйти</button>
+        <button class="nav-item" onclick="window.location.reload()">
+          <span class="emo">🔄</span>Обновить</button>
       </aside>
       <main class="main" id="main"></main>
     </div>`;
 }
-
 function updateNav(){
   document.querySelectorAll('.nav-item[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === TAB));
-  const c = {
-    purchases: DATA.purchases.filter(p => p.status === 'awaiting_payment').length,
-    payouts: DATA.payouts.filter(p => p.status === 'pending').length,
-    users: DATA.users.length,
-  };
-  for (const k in c) {
+  const c = { purchases: DATA.purchases.filter(p => p.status === 'created').length };
+  for (const k in c){
     const el = $('cnt-' + k);
-    if (el) { el.textContent = c[k]; el.classList.toggle('hidden', !c[k]); }
+    if (el){ el.textContent = c[k]; el.classList.toggle('hidden', !c[k]); }
   }
 }
-
-function setMain(html){ shell(); $('main').innerHTML = html; updateNav(); window.scrollTo(0, 0); }
-
-function skeleton(){
-  return `<div class="skel" style="height:34px;width:240px"></div>
-    ${'<div class="skel" style="height:150px"></div>'.repeat(3)}`;
-}
-
-function emptyBlock(icon, title, text, extra = ''){
+function setMain(html){ shell(); $('main').innerHTML = html; updateNav(); }
+function emptyBlock(icon, title, text='', extra=''){
   return `<div class="empty"><div class="ic">${icon}</div><h3>${title}</h3>
     ${text ? `<p class="muted" style="margin:8px 0">${text}</p>` : ''}${extra}</div>`;
 }
 
 // ============================================================
-// РОУТИНГ / РЕНДЕР
+// РОУТИНГ
 // ============================================================
-const TABS = {
-  dashboard: { ready: () => !!DASH,
-    load: async f => { const raw = await get('/api/admin/dashboard', f); const s = JSON.stringify(raw);
-      const ch = s !== SIG.dash; SIG.dash = s; DASH = raw || {}; return ch; },
-    draw: drawDashboard },
-  purchases: { ready: () => LOADED.purchases,
-    load: async f => { const [a] = await Promise.all([loadList('purchases', f), LOADED.users ? 0 : loadList('users').catch(()=>0)]); return a; },
-    draw: drawPurchases },
-  payouts: { ready: () => LOADED.payouts, load: f => loadList('payouts', f), draw: drawPayouts },
-  users: { ready: () => LOADED.users && LOADED.purchases,
-    load: async f => { const r = await Promise.all([loadList('users', f), loadList('purchases', f)]); return r[0] || r[1]; },
-    draw: drawUsers },
-  eras: { ready: () => LOADED.eras, load: f => loadList('eras', f), draw: drawEras },
-  content: { ready: () => !!CONTENT, load: loadContent, draw: drawContent },
-  logs: { ready: () => !!LOGS,
-    load: async f => { const raw = await get('/api/admin/actions', f); const s = JSON.stringify(raw);
-      const ch = s !== SIG.logs; SIG.logs = s; LOGS = toList(raw); return ch; },
-    draw: drawLogs },
-};
+const TABS = { dashboard: drawDashboard, purchases: drawPurchases, users: drawUsers, eras: drawEras };
 
-function isTyping(){
-  const a = document.activeElement;
-  return a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && $('main') && $('main').contains(a);
-}
-
-async function render(force = false, silent = false){
-  if (!TOKEN) { renderLogin(); return; }
+async function render(force){
   const my = ++RID;
-  const t = TABS[TAB] || TABS.dashboard;
-  const wasReady = t.ready();
-  if (!silent) { wasReady ? t.draw() : setMain(skeleton()); }
+  const wasReady = Object.keys(SIG).length > 0;
+  if (!wasReady || force) setMain('<div class="card">Загрузка…</div>');
   try {
-    const changed = await t.load(force);
+    const changed = await loadAll(force);
     if (my !== RID) return;
-    if (!wasReady || (changed && !(silent && (isTyping() || $('modal-root').innerHTML)))) t.draw();
+    if (!wasReady || changed) (TABS[TAB] || drawDashboard)();
     else updateNav();
-  } catch (e) {
-    console.error(e);
-    if (my !== RID || e.message === 'Unauthorized') return;
-    if (!wasReady) setMain(emptyBlock('⚠️', 'Не удалось загрузить', esc(e.message),
-      `<button class="btn" onclick="render(true)">🔄 Повторить</button>`));
-    else if (!silent) toast(e.message, 'err');
+  } catch(e){
+    if (my !== RID) return;
+    setMain(emptyBlock('⚠️', 'Ошибка', esc(e.message), `<button class="btn" onclick="render(true)">🔄 Повторить</button>`));
   }
 }
-
-function setTab(t){ TAB = t; FILTER.search = ''; LIM.purchases = LIM.users = PAGE; render(); }
+function setTab(t){ TAB = t; FILTER.search = ''; render(); }
 function refresh(){ invalidate(); render(true); }
-
-function start(){
-  shell();
-  render();
-  // подгружаем остальное в фоне — бейджи и переключение вкладок становятся мгновенными
-  setTimeout(() => {
-    Promise.allSettled(['purchases','payouts','users','eras'].map(n => loadList(n))).then(updateNav);
-  }, 400);
-}
-
-// фоновое автообновление
-setInterval(() => {
-  if (!TOKEN || document.hidden) return;
-  invalidate();
-  render(true, true);
-  if (TAB !== 'purchases') loadList('purchases', true).then(updateNav).catch(()=>{});
-  if (TAB !== 'payouts') loadList('payouts', true).then(updateNav).catch(()=>{});
-}, POLL_MS);
-document.addEventListener('visibilitychange', () => { if (!document.hidden && TOKEN) render(true, true); });
-
-// выполнить действие один раз (защита от двойных кликов)
-async function once(key, fn){
-  if (BUSY.has(key)) return;
-  BUSY.add(key);
-  try { await fn(); } catch (e) { toast(e.message, 'err'); } finally { BUSY.delete(key); }
-}
+window.setTab = setTab; window.refresh = refresh; window.closeModal = closeModal;
 
 // ============================================================
 // DASHBOARD
 // ============================================================
 function drawDashboard(){
-  const d = DASH || {};
+  const P = DATA.purchases;
+  const byStatus = k => P.filter(p => p.status === k).length;
+  const totalSum = P.filter(p => p.status !== 'cancelled').reduce((s,p) => s + num(p.purchase_price), 0);
+  const profit = P.filter(p => p.status === 'approved' || p.status === 'completed').reduce((s,p) => s + num(p.profit_amount), 0);
   setMain(`
     <div class="header">
-      <div><h1>📊 Дашборд</h1><div class="sub">Общая статистика проекта</div></div>
-      <div class="flex">
-        <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button>
-        <button class="btn sm" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">📢 Канал</button>
-      </div>
+      <div><h1>📊 Дашборд</h1><div class="sub">Общая статистика</div></div>
+      <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button>
     </div>
     <div class="stats">
-      <div class="stat"><div class="ic">👥</div><div class="l">Пользователей</div><div class="v">${num(d.users)}</div></div>
-      <div class="stat"><div class="ic">🟢</div><div class="l">Активных эр</div><div class="v ok">${num(d.active_eras)}</div></div>
-      <div class="stat"><div class="ic">🏁</div><div class="l">Завершённых</div><div class="v info">${num(d.completed_eras)}</div></div>
-      <div class="stat"><div class="ic">⏳</div><div class="l">Заявок ждут</div><div class="v warn">${num(d.purchase_requests)}</div></div>
-      <div class="stat"><div class="ic">💸</div><div class="l">Выплат ждут</div><div class="v warn">${num(d.payout_requests)}</div></div>
-      <div class="stat"><div class="ic">💵</div><div class="l">Сумма покупок</div><div class="v accent">${fmt(d.total_purchases_sum)}</div></div>
-      <div class="stat"><div class="ic">📈</div><div class="l">Начислено</div><div class="v ok">${fmt(d.total_profit_sum)}</div></div>
-      <div class="stat"><div class="ic">💰</div><div class="l">Выплачено</div><div class="v">${fmt(d.total_paid_sum)}</div></div>
+      <div class="stat"><div class="ic">👥</div><div class="l">Пользователей</div><div class="v">${DATA.users.length}</div></div>
+      <div class="stat"><div class="ic">📩</div><div class="l">Всего заявок</div><div class="v">${P.length}</div></div>
+      <div class="stat"><div class="ic">🔵</div><div class="l">Созданных</div><div class="v info">${byStatus('created')}</div></div>
+      <div class="stat"><div class="ic">🟡</div><div class="l">В процессе</div><div class="v warn">${byStatus('in_progress')}</div></div>
+      <div class="stat"><div class="ic">🟢</div><div class="l">Одобрено</div><div class="v ok">${byStatus('approved')}</div></div>
+      <div class="stat"><div class="ic">🏁</div><div class="l">Завершено</div><div class="v ok">${byStatus('completed')}</div></div>
+      <div class="stat"><div class="ic">💵</div><div class="l">Сумма покупок</div><div class="v accent">${fmt(totalSum)}</div></div>
+      <div class="stat"><div class="ic">📈</div><div class="l">Начислено</div><div class="v ok">${fmt(profit)}</div></div>
     </div>`);
 }
 
 // ============================================================
 // PURCHASES
 // ============================================================
-const donePurchase = s => ['completed','awaiting_payout','paid'].includes(s);
-
 function purchaseFiltered(){
   const f = FILTER.purchases, s = FILTER.search.trim().toLowerCase();
   return DATA.purchases.filter(p => {
-    if (f === 'pending' && p.status !== 'awaiting_payment') return false;
-    if (f === 'active' && p.status !== 'active') return false;
-    if (f === 'completed' && !donePurchase(p.status)) return false;
-    if (f === 'cancelled' && p.status !== 'cancelled') return false;
+    if (f !== 'all' && p.status !== f) return false;
     if (!s) return true;
-    return (p.first_name||'').toLowerCase().includes(s) ||
-           (p.last_name||'').toLowerCase().includes(s) ||
-           (p.telegram_username||'').toLowerCase().includes(s) ||
-           String(p.id).includes(s) || String(p.telegram_id||'').includes(s);
+    return (p.user_first_name || '').toLowerCase().includes(s) ||
+           (p.user_username || '').toLowerCase().includes(s) ||
+           String(p.id).includes(s) ||
+           String(p.user_telegram_id || '').includes(s);
   });
 }
 
@@ -555,329 +320,153 @@ function drawPurchases(){
   const P = DATA.purchases;
   const c = {
     all: P.length,
-    pending: P.filter(p => p.status === 'awaiting_payment').length,
-    active: P.filter(p => p.status === 'active').length,
-    completed: P.filter(p => donePurchase(p.status)).length,
+    created: P.filter(p => p.status === 'created').length,
+    in_progress: P.filter(p => p.status === 'in_progress').length,
+    approved: P.filter(p => p.status === 'approved').length,
+    completed: P.filter(p => p.status === 'completed').length,
     cancelled: P.filter(p => p.status === 'cancelled').length,
   };
-  const tabs = [['pending','⏳ Ждут'],['active','🟢 Активные'],['completed','✅ Завершённые'],['cancelled','❌ Отменённые'],['all','📋 Все']];
+  const tabs = [
+    ['all','📋 Все'],['created','🔵 Созданные'],['in_progress','🟡 В процессе'],
+    ['approved','🟢 Одобренные'],['completed','🏁 Завершённые'],['cancelled','❌ Отменённые']
+  ];
+  const list = purchaseFiltered();
   setMain(`
-    <div class="header"><div><h1>📩 Заявки</h1><div class="sub" id="sub"></div></div>
-      <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button></div>
-    <div class="search-bar"><input class="input" placeholder="Поиск: имя, @username, ID…"
-      value="${esc(FILTER.search)}" oninput="onSearch(this.value,'purchases')"></div>
-    <div class="tabs">${tabs.map(([k,l]) =>
-      `<button class="tab ${FILTER.purchases===k?'active':''}" onclick="setFilter('purchases','${k}')">${l} (${c[k]})</button>`).join('')}</div>
-    <div id="list"></div>`);
-  fillPurchases();
+    <div class="header">
+      <div><h1>📩 Заявки</h1><div class="sub">Всего: ${c.all} · Показано: ${list.length}</div></div>
+      <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button>
+    </div>
+    <div class="tabs">${tabs.map(([k, l]) =>
+      `<button class="tab ${FILTER.purchases === k ? 'active' : ''}" onclick="setFilter('${k}')">${l} (${c[k]})</button>`).join('')}</div>
+    <div class="card" style="padding:10px">
+      <input class="input" placeholder="🔍 Поиск: имя, @username, ID…" value="${esc(FILTER.search)}"
+        oninput="onSearch(this.value)">
+    </div>
+    ${list.length ? list.map(orderCard).join('') : emptyBlock('📭', 'Заявок нет')}`);
 }
-
-function fillPurchases(){
-  const f = purchaseFiltered(), lim = LIM.purchases;
-  $('sub').textContent = `Всего: ${DATA.purchases.length} · Показано: ${f.length}`;
-  $('list').innerHTML = f.length
-    ? f.slice(0, lim).map(orderCard).join('') + moreBtn('purchases', f.length - lim)
-    : emptyBlock('📭', 'Заявок нет');
-}
-
-function moreBtn(name, left){
-  return left > 0 ? `<div style="text-align:center;margin:14px 0">
-    <button class="btn secondary" onclick="more('${name}')">Показать ещё (${left})</button></div>` : '';
-}
-function more(name){ LIM[name] += PAGE; name === 'purchases' ? fillPurchases() : fillUsers(); }
-function setFilter(name, v){ FILTER[name] = v; LIM[name] = PAGE; TABS[name].draw(); }
-
+function setFilter(f){ FILTER.purchases = f; drawPurchases(); }
 let SEARCH_TIMER;
-function onSearch(value, tab){
-  FILTER.search = value;
-  LIM[tab] = PAGE;
-  clearTimeout(SEARCH_TIMER);
-  SEARCH_TIMER = setTimeout(() => tab === 'purchases' ? fillPurchases() : fillUsers(), 120);
-}
+function onSearch(v){ FILTER.search = v; clearTimeout(SEARCH_TIMER); SEARCH_TIMER = setTimeout(drawPurchases, 150); }
+window.setFilter = setFilter; window.onSearch = onSearch;
 
 function orderCard(p){
-  const processed = p.status !== 'awaiting_payment';
   return `
-    <div class="order-card ${processed?'processed':''}">
+    <div class="order-card">
       <div class="row" style="align-items:flex-start;margin-bottom:10px">
         <div class="on">📩 Заявка #${esc(p.id)}</div>
         <span class="badge ${esc(p.status)}">${esc(statusLabel(p.status))}</span>
       </div>
       <div class="meta">
-        <div class="meta-item"><div class="l">👤 Участник</div><div class="v">${esc(p.first_name)} ${esc(p.last_name)}</div></div>
-        <div class="meta-item"><div class="l">🔗 Никнейм</div><div class="v">@${esc(p.telegram_username||'—')}</div></div>
-        <div class="meta-item"><div class="l">🆔 TG ID</div><div class="v">${esc(p.telegram_id||'—')}</div></div>
+        <div class="meta-item"><div class="l">👤 Имя</div><div class="v">${esc(p.user_first_name || '—')}</div></div>
+        <div class="meta-item"><div class="l">🔗 Username</div><div class="v">@${esc(p.user_username || '—')}</div></div>
+        <div class="meta-item"><div class="l">🆔 TG ID</div><div class="v">${esc(p.user_telegram_id || '—')}</div></div>
         <div class="meta-item"><div class="l">💳 Эра</div><div class="v">${esc(p.era_title)}</div></div>
-        <div class="meta-item"><div class="l">💵 Номинал</div><div class="v accent">${fmt(p.purchase_price)}</div></div>
-        <div class="meta-item"><div class="l">💰 Начисление</div><div class="v ok">+${fmt(p.profit_amount)}</div></div>
+        <div class="meta-item"><div class="l">💵 Цена</div><div class="v accent">${fmt(p.purchase_price)}</div></div>
+        <div class="meta-item"><div class="l">💰 Начисл.</div><div class="v ok">+${fmt(p.profit_amount)}</div></div>
         <div class="meta-item"><div class="l">🏆 Итого</div><div class="v ok">${fmt(p.total_amount)}</div></div>
         <div class="meta-item"><div class="l">📅 Срок</div><div class="v">${num(p.duration_days)} дней</div></div>
       </div>
       <div class="muted-sm" style="margin-bottom:10px">
-        🕐 ${fmtDate(p.created_at)}
-        ${p.activated_at ? ' · ✅ ' + fmtDate(p.activated_at) : ''}
-        ${p.last_day ? ' · 🏁 ' + fmtDate(p.last_day) : ''}
-        ${p.cancelled_at ? ' · ❌ ' + fmtDate(p.cancelled_at) : ''}
+        🕐 Создано: ${fmtDate(p.created_at)}
+        ${p.status_changed_at && p.status_changed_at !== p.created_at ? ' · 🔄 Изменено: ' + fmtDate(p.status_changed_at) : ''}
       </div>
       <div class="flex">
-        ${!processed ? `
-          <button class="btn ok sm" onclick="confirmPurchase(${q(p.id)})">✅ Подтвердить</button>
-          <button class="btn danger sm" onclick="cancelPurchase(${q(p.id)})">❌ Отменить</button>` : ''}
-        <button class="btn ghost sm" onclick="writeUser(${q(p.telegram_username||'')}, ${q(p.telegram_id||0)})">💬 Написать</button>
+        ${p.status !== 'in_progress' && p.status !== 'cancelled' && p.status !== 'completed'
+          ? `<button class="btn secondary sm" onclick="setStatus(${q(p._key)}, 'in_progress')">🟡 В процессе</button>` : ''}
+        ${p.status !== 'approved' && p.status !== 'cancelled' && p.status !== 'completed'
+          ? `<button class="btn ok sm" onclick="setStatus(${q(p._key)}, 'approved')">🟢 Одобрить</button>` : ''}
+        ${p.status === 'approved'
+          ? `<button class="btn sm" onclick="setStatus(${q(p._key)}, 'completed')">🏁 Завершить</button>` : ''}
+        ${p.status !== 'cancelled' && p.status !== 'completed'
+          ? `<button class="btn danger sm" onclick="setStatus(${q(p._key)}, 'cancelled')">❌ Отменить</button>` : ''}
+        ${p.user_username ? `<button class="btn ghost sm" onclick="writeUser(${q(p.user_username)}, ${q(p.user_telegram_id || 0)})">💬 Написать</button>` : ''}
       </div>
     </div>`;
 }
 
-function confirmPurchase(id){
-  if (!confirm(`✅ Подтвердить заявку #${id}?`)) return;
-  once('p' + id, async () => {
-    await api(`/api/admin/purchases/${encodeURIComponent(id)}/confirm`, {method:'POST'});
-    toast(`✅ Заявка #${id} подтверждена`); refresh();
-  });
-}
-function cancelPurchase(id){
-  if (!confirm(`❌ Отменить заявку #${id}?`)) return;
-  once('p' + id, async () => {
-    await api(`/api/admin/purchases/${encodeURIComponent(id)}/cancel`, {method:'POST'});
-    toast(`❌ Заявка #${id} отменена`); refresh();
-  });
-}
+window.setStatus = (key, status) => once('p' + key + status, async () => {
+  if (!confirm(`Изменить статус заявки на "${statusLabel(status)}"?`)) return;
+  await fbPatch(`purchases/${key}`, {status, status_changed_at: new Date().toISOString()});
+  toast(`✅ Статус → ${statusLabel(status)}`);
+  invalidate();
+  await render(true);
+});
 
-// ============================================================
-// PAYOUTS
-// ============================================================
-function drawPayouts(){
-  const P = DATA.payouts, f = FILTER.payouts;
-  const c = { all: P.length, pending: P.filter(p => p.status === 'pending').length, paid: P.filter(p => p.status === 'paid').length };
-  const list = P.filter(p => f === 'all' || p.status === f);
-  const tabs = [['pending','⏳ Ждут'],['paid','✅ Выплачено'],['all','📋 Все']];
-  setMain(`
-    <div class="header"><div><h1>💸 Выплаты</h1><div class="sub">Всего: ${c.all}</div></div>
-      <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button></div>
-    <div class="tabs">${tabs.map(([k,l]) =>
-      `<button class="tab ${f===k?'active':''}" onclick="setFilter('payouts','${k}')">${l} (${c[k]})</button>`).join('')}</div>
-    ${list.length ? list.map(payoutCard).join('') : emptyBlock('📭', 'Заявок нет')}`);
-}
-
-function payoutCard(po){
-  const processed = po.status === 'paid';
-  return `
-    <div class="order-card ${processed?'processed':''}">
-      <div class="row" style="align-items:flex-start;margin-bottom:10px">
-        <div class="on">💸 Выплата #${esc(po.id)}</div>
-        <span class="badge ${esc(po.status)}">${processed ? '✅ Выплачено' : '⏳ Ожидает'}</span>
-      </div>
-      <div class="meta">
-        <div class="meta-item"><div class="l">👤 Участник</div><div class="v">${esc(po.first_name)}</div></div>
-        <div class="meta-item"><div class="l">🔗 Никнейм</div><div class="v">@${esc(po.telegram_username||'—')}</div></div>
-        <div class="meta-item"><div class="l">🆔 TG ID</div><div class="v">${esc(po.telegram_id||'—')}</div></div>
-        <div class="meta-item"><div class="l">💳 Эра</div><div class="v">${esc(po.era_title)}</div></div>
-        <div class="meta-item"><div class="l">💰 Сумма</div><div class="v ok">${fmt(po.amount)}</div></div>
-        <div class="meta-item"><div class="l">📄 Покупка</div><div class="v">#${esc(po.purchase_id)}</div></div>
-      </div>
-      <div class="muted-sm" style="margin-bottom:10px">
-        🕐 ${fmtDate(po.requested_at)}${po.paid_at ? ' · 💰 ' + fmtDate(po.paid_at) : ''}
-      </div>
-      <div class="flex">
-        ${!processed ? `
-          <button class="btn ok sm" onclick="markPaid(${q(po.id)})">✅ Выплачено</button>
-          <button class="btn danger sm" onclick="cancelPayout(${q(po.id)})">❌ Отменить</button>` : ''}
-        <button class="btn ghost sm" onclick="writeUser(${q(po.telegram_username||'')}, ${q(po.telegram_id||0)})">💬 Написать</button>
-      </div>
-    </div>`;
-}
-
-function markPaid(id){
-  if (!confirm(`💰 Отметить выплату #${id} как выполненную?`)) return;
-  once('o' + id, async () => {
-    await api(`/api/admin/payouts/${encodeURIComponent(id)}/mark_paid`, {method:'POST'});
-    toast('💰 Выплата отмечена'); refresh();
-  });
-}
-function cancelPayout(id){
-  if (!confirm(`❌ Отменить заявку #${id}?`)) return;
-  once('o' + id, async () => {
-    await api(`/api/admin/payouts/${encodeURIComponent(id)}/cancel`, {method:'POST'});
-    toast('Отменено'); refresh();
-  });
-}
-
-// ============================================================
-// USERS
-// ============================================================
-function buildUserIdx(){
-  const P = {}, R = {}, B = {};
-  DATA.purchases.forEach(p => { (P[String(p.user_uid)] ||= []).push(p); });
-  DATA.users.forEach(u => {
-    B[String(u.id)] = u;
-    const r = String(u.referrer_uid || ''); if (r) (R[r] ||= []).push(u);
-  });
-  UIDX = {P, R, B};
-}
-function refUser(u){
-  const r = u.referrer_uid ? (UIDX.B || {})[String(u.referrer_uid)] : null;
-  return r ? ' · 🎁 @' + esc(r.telegram_username || r.first_name || '—') : '';
-}
-
-function userFiltered(){
-  const s = FILTER.search.trim().toLowerCase();
-  if (!s) return DATA.users;
-  return DATA.users.filter(u =>
-    (u.first_name||'').toLowerCase().includes(s) || (u.last_name||'').toLowerCase().includes(s) ||
-    (u.telegram_username||'').toLowerCase().includes(s) || String(u.telegram_id||'').includes(s));
-}
-
-function drawUsers(){
-  buildUserIdx();
-  setMain(`
-    <div class="header"><div><h1>👥 Пользователи</h1><div class="sub" id="sub"></div></div>
-      <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button></div>
-    <div class="search-bar"><input class="input" placeholder="Поиск: имя, @username, Telegram ID…"
-      value="${esc(FILTER.search)}" oninput="onSearch(this.value,'users')"></div>
-    <div id="list"></div>`);
-  fillUsers();
-}
-
-function fillUsers(){
-  const f = userFiltered(), lim = LIM.users;
-  $('sub').textContent = `Всего: ${DATA.users.length} · Показано: ${f.length}`;
-  $('list').innerHTML = f.length
-    ? f.slice(0, lim).map(userCard).join('') + moreBtn('users', f.length - lim)
-    : emptyBlock('👤', DATA.users.length ? 'Никого не найдено' : 'Пользователей пока нет',
-        DATA.users.length ? 'Измените поиск' : 'Зарегистрируйтесь через бота');
-}
-
-function userStats(uid){
-  const ps = UIDX.P[uid] || [];
-  return {
-    ps,
-    active: ps.filter(p => p.status === 'active').length,
-    invested: ps.filter(p => !['awaiting_payment','cancelled'].includes(p.status)).reduce((s,p) => s + num(p.purchase_price), 0),
-    toPayout: ps.filter(p => p.status === 'completed').reduce((s,p) => s + num(p.total_amount), 0),
-    paid: ps.filter(p => p.status === 'paid').reduce((s,p) => s + num(p.total_amount), 0),
-    refs: UIDX.R[uid] || [],
-  };
-}
-
-function userCard(u){
-  const uid = String(u.id ?? '');
-  const st = userStats(uid);
-  const initial = (u.first_name || u.telegram_username || '?')[0].toUpperCase();
-  const name = [u.first_name, u.last_name].filter(Boolean).join(' ') || 'Без имени';
-  const status = u.status || 'active';
-  return `
-    <div class="user-card">
-      <div class="user-head">
-        <div class="avatar">${u.photo_url ? `<img src="${esc(u.photo_url)}" alt="" loading="lazy">` : esc(initial)}</div>
-        <div class="user-info">
-          <div class="n">${esc(name)}</div>
-          <div class="u">@${esc(u.telegram_username||'—')} · ID ${esc(u.telegram_id||'—')}</div>
-        </div>
-        <span class="badge ${status==='active'?'active':'cancelled'}">${esc(status)}</span>
-      </div>
-      <div class="user-stats">
-        <div class="user-stat"><div class="l">Вложено</div><div class="v accent">${fmt(st.invested)}</div></div>
-        <div class="user-stat"><div class="l">К выводу</div><div class="v ok">${fmt(st.toPayout)}</div></div>
-        <div class="user-stat"><div class="l">Выплачено</div><div class="v ok">${fmt(st.paid)}</div></div>
-        <div class="user-stat"><div class="l">Активных</div><div class="v">${st.active}</div></div>
-        <div class="user-stat"><div class="l">Покупок</div><div class="v">${st.ps.length}</div></div>
-        <div class="user-stat"><div class="l">Рефералов</div><div class="v">${st.refs.length}</div></div>
-      </div>
-      <div class="muted-sm" style="margin-bottom:10px">
-        📅 ${fmtDate(u.registered_at)}
-        ${refUser(u)}
-        ${u.agreed_terms ? ' · ✅ Условия приняты' : ' · ⚠️ Условия не приняты'}
-      </div>
-      <div class="flex">
-        <button class="btn sm" onclick="openUserDetail(${q(uid)})">📊 Детали</button>
-        <button class="btn ghost sm" onclick="writeUser(${q(u.telegram_username||'')}, ${q(u.telegram_id||0)})">💬 Написать</button>
-        <button class="btn secondary sm" onclick="showRefTree(${q(uid)})">🌳 Рефералы</button>
-      </div>
-    </div>`;
-}
-
-function openUserDetail(uid){
-  uid = String(uid);
-  const u = DATA.users.find(x => String(x.id) === uid);
-  if (!u) { toast('Пользователь не найден', 'err'); return; }
-  const st = userStats(uid);
-  const pHtml = st.ps.length ? st.ps.map(p => `
-    <div class="meta-item" style="margin-bottom:8px">
-      <div class="row" style="margin-bottom:5px">
-        <div style="font-weight:700;color:var(--accent)">📩 Заявка #${esc(p.id)}</div>
-        <span class="badge ${esc(p.status)}">${esc(statusLabel(p.status))}</span>
-      </div>
-      <div style="font-size:12px;font-weight:600;margin-bottom:3px">${esc(p.era_title)}</div>
-      <div class="muted-sm">${fmt(p.purchase_price)} → +${fmt(p.profit_amount)} = ${fmt(p.total_amount)}</div>
-      <div class="muted-sm">${fmtDate(p.created_at)}${p.activated_at ? ' · ✅ ' + fmtDate(p.activated_at) : ''}</div>
-    </div>`).join('') : '<div class="muted" style="padding:14px;text-align:center">Покупок нет</div>';
-  const rHtml = st.refs.length ? st.refs.map(r => `
-    <div style="padding:10px 0;border-bottom:1px solid var(--border)">
-      <div>${esc(r.first_name)} <span class="muted">@${esc(r.telegram_username||'—')}</span></div>
-      <div class="muted-sm">${fmtDate(r.registered_at)}</div>
-    </div>`).join('') : '<div class="muted" style="padding:14px;text-align:center">Рефералов нет</div>';
-  const name = [u.first_name, u.last_name].filter(Boolean).join(' ') || 'Без имени';
-  showModal(`
-    <div class="modal-head"><h2>👤 ${esc(name)}</h2><button class="close-x" onclick="closeModal()">✕</button></div>
-    <div class="modal-body">
-      <div class="user-stats" style="margin-bottom:14px">
-        <div class="user-stat"><div class="l">Вложено</div><div class="v accent">${fmt(st.invested)}</div></div>
-        <div class="user-stat"><div class="l">К выводу</div><div class="v ok">${fmt(st.toPayout)}</div></div>
-        <div class="user-stat"><div class="l">Выплачено</div><div class="v ok">${fmt(st.paid)}</div></div>
-      </div>
-      <h3 style="margin:14px 0 8px;font-size:13px">📦 Покупки (${st.ps.length})</h3>${pHtml}
-      <h3 style="margin:14px 0 8px;font-size:13px">🌳 Рефералы (${st.refs.length})</h3>${rHtml}
-    </div>
-    <div class="modal-foot">
-      <button class="btn ghost" onclick="closeModal()">Закрыть</button>
-      <button class="btn" onclick="writeUser(${q(u.telegram_username||'')}, ${q(u.telegram_id||0)})">💬 Написать</button>
-    </div>`);
-}
-
-function treeText(uid, depth, seen){
-  return (UIDX.R[uid] || []).map(c => {
-    const id = String(c.id);
-    if (seen.has(id)) return '';
-    seen.add(id);
-    const nm = [c.first_name, c.last_name].filter(Boolean).join(' ') || '—';
-    return '  '.repeat(depth) + `• ${esc(nm)} @${esc(c.telegram_username || '—')}\n` + treeText(id, depth + 1, seen);
-  }).join('');
-}
-function showRefTree(uid){
-  uid = String(uid);
-  if (!UIDX.B) buildUserIdx();
-  const text = treeText(uid, 0, new Set([uid]));
-  showModal(`
-    <div class="modal-head"><h2>🌳 Рефералы</h2><button class="close-x" onclick="closeModal()">✕</button></div>
-    <div class="modal-body"><pre class="raw">${text || 'Нет рефералов'}</pre></div>`);
-}
-
-function writeUser(username, tgId){
+window.writeUser = function(username, tgId){
   let url;
   if (username) url = `https://t.me/${username}`;
   else if (tgId) url = `tg://user?id=${tgId}`;
   else { toast('Нет username или ID', 'err'); return; }
   window.open(url, '_blank');
+};
+
+// ============================================================
+// USERS
+// ============================================================
+function drawUsers(){
+  const s = FILTER.search.trim().toLowerCase();
+  const list = s ? DATA.users.filter(u =>
+    (u.first_name || '').toLowerCase().includes(s) ||
+    (u.username || '').toLowerCase().includes(s) ||
+    String(u.telegram_id || '').includes(s)
+  ) : DATA.users;
+  setMain(`
+    <div class="header">
+      <div><h1>👥 Пользователи</h1><div class="sub">Всего: ${DATA.users.length} · Показано: ${list.length}</div></div>
+      <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button>
+    </div>
+    <div class="card" style="padding:10px">
+      <input class="input" placeholder="🔍 Поиск: имя, @username, ID…" value="${esc(FILTER.search)}"
+        oninput="FILTER.search=this.value;drawUsers()">
+    </div>
+    ${list.length ? list.map(userCard).join('') : emptyBlock('👤', 'Пользователей нет')}`);
+}
+
+function userCard(u){
+  const ps = DATA.purchases.filter(p => String(p.user_telegram_id) === String(u.telegram_id));
+  const invested = ps.filter(p => p.status !== 'cancelled').reduce((s,p) => s + num(p.purchase_price), 0);
+  const earned = ps.filter(p => p.status === 'completed').reduce((s,p) => s + num(p.total_amount), 0);
+  const initial = (u.first_name || u.username || '?')[0].toUpperCase();
+  const name = u.first_name || 'Без имени';
+  return `
+    <div class="order-card">
+      <div class="flex" style="margin-bottom:10px">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--card3);display:flex;align-items:center;
+          justify-content:center;font-size:17px;font-weight:700;color:var(--accent);overflow:hidden;flex-shrink:0">
+          ${u.photo_url ? `<img src="${esc(u.photo_url)}" style="width:100%;height:100%;object-fit:cover">` : esc(initial)}
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:14px">${esc(name)}</div>
+          <div class="muted-sm">@${esc(u.username || '—')} · ID ${esc(u.telegram_id || '—')}</div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="meta-item"><div class="l">Вложено</div><div class="v accent">${fmt(invested)}</div></div>
+        <div class="meta-item"><div class="l">Выплачено</div><div class="v ok">${fmt(earned)}</div></div>
+        <div class="meta-item"><div class="l">Заявок</div><div class="v">${ps.length}</div></div>
+      </div>
+      <div class="muted-sm">📅 ${fmtDate(u.registered_at)}</div>
+      ${u.username ? `<div class="flex" style="margin-top:10px">
+        <button class="btn ghost sm" onclick="writeUser(${q(u.username)}, ${q(u.telegram_id || 0)})">💬 Написать</button>
+      </div>` : ''}
+    </div>`;
 }
 
 // ============================================================
-// ERAS (товары)
+// ERAS
 // ============================================================
 function drawEras(){
   const E = DATA.eras;
   setMain(`
     <div class="header">
-      <div><h1>🧩 Товары (Эры)</h1>
-        <div class="sub">Всего: ${E.length} · Изменения влияют только на новые покупки</div></div>
+      <div><h1>🧩 Товары (Эры)</h1><div class="sub">Всего: ${E.length}</div></div>
       <div class="flex">
         <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button>
         <button class="btn" onclick="openEraModal()">➕ Создать</button>
       </div>
     </div>
-    ${E.length ? E.map(eraCard).join('') : emptyBlock('📦', 'Товаров нет', 'Если в Firebase они есть — нажмите «Ответ сервера» и посмотрите, что приходит с API',
-      `<div class="flex" style="justify-content:center;margin-top:12px">
-        <button class="btn" onclick="openEraModal()">➕ Создать</button>
-        <button class="btn ghost" onclick="showRaw('${PATHS.eras}')">🔍 Ответ сервера</button></div>`)}`);
+    ${E.length ? E.map(eraCard).join('') : emptyBlock('📦', 'Товаров нет',
+      'Создайте первую эру', `<button class="btn" onclick="openEraModal()" style="margin-top:12px">➕ Создать</button>`)}`);
 }
 
 function eraCard(e){
@@ -886,45 +475,39 @@ function eraCard(e){
     <div class="order-card">
       <div class="row" style="align-items:flex-start;margin-bottom:10px">
         <div><div class="on">🧩 ${esc(e.title)}</div><div class="muted-sm">ID ${esc(e.id)}</div></div>
-        <span class="badge ${e.is_active ? 'active' : 'cancelled'}">${e.is_active ? '🟢 Активна' : '⚫ Отключена'}</span>
+        <span class="badge ${e.is_active ? 'approved' : 'cancelled'}">${e.is_active ? '🟢 Активна' : '⚫ Отключена'}</span>
       </div>
       <div class="meta">
-        <div class="meta-item"><div class="l">💵 Стоимость</div><div class="v accent">${fmt(e.price)}</div></div>
-        <div class="meta-item"><div class="l">💰 Начисление</div><div class="v ok">+${fmt(e.profit_amount)}</div></div>
+        <div class="meta-item"><div class="l">💵 Цена</div><div class="v accent">${fmt(e.price)}</div></div>
+        <div class="meta-item"><div class="l">💰 Начисл.</div><div class="v ok">+${fmt(e.profit_amount)}</div></div>
         <div class="meta-item"><div class="l">🏆 Итого</div><div class="v ok">${fmt(e.price + e.profit_amount)}</div></div>
-        <div class="meta-item"><div class="l">📅 Срок</div><div class="v">${e.duration_days} дней</div></div>
+        <div class="meta-item"><div class="l">📅 Срок</div><div class="v">${num(e.duration_days)} дней</div></div>
         <div class="meta-item"><div class="l">📈 ROI</div><div class="v ok">+${roi}%</div></div>
       </div>
       ${e.description ? `<div class="muted-sm" style="margin-bottom:10px">${esc(e.description)}</div>` : ''}
       <div class="flex">
-        <button class="btn sm" onclick="openEraModal(${q(e.id)})">✏️ Изменить</button>
-        <button class="btn secondary sm" onclick="toggleEra(${q(e.id)})">${e.is_active ? '⚫ Отключить' : '🟢 Включить'}</button>
-        <button class="btn danger sm" onclick="deleteEra(${q(e.id)})">🗑 Удалить</button>
+        <button class="btn sm" onclick="openEraModal(${q(e._key)})">✏️ Изменить</button>
+        <button class="btn danger sm" onclick="deleteEra(${q(e._key)}, ${q(e.title)})">🗑 Удалить</button>
       </div>
     </div>`;
 }
 
-const findEra = id => DATA.eras.find(x => String(x.id) === String(id));
-
-function openEraModal(id){
-  const e = (id !== undefined && id !== '') ? findEra(id) : null;
-  const isEdit = !!e;
+window.openEraModal = function(key){
+  const e = key ? DATA.eras.find(x => x._key === key) : null;
   showModal(`
-    <div class="modal-head"><h2>${isEdit ? '✏️ Изменить эру' : '➕ Создать эру'}</h2>
+    <div class="modal-head"><h2>${e ? '✏️ Изменить' : '➕ Создать'} эру</h2>
       <button class="close-x" onclick="closeModal()">✕</button></div>
     <div class="modal-body">
       <div class="form-row"><label>Название</label>
-        <input class="input" id="f_title" value="${esc(e ? e.title : 'Новая эра')}"></div>
+        <input class="input" id="f_title" value="${esc(e?.title || 'Новая эра')}"></div>
       <div class="grid2">
-        <div class="form-row"><label>Стоимость (₽)</label>
-          <input class="input" id="f_price" type="number" min="0" value="${e ? e.price : 1500}"></div>
+        <div class="form-row"><label>Цена (₽)</label>
+          <input class="input" id="f_price" type="number" value="${e?.price || 1500}"></div>
         <div class="form-row"><label>Срок (дней)</label>
-          <input class="input" id="f_duration" type="number" min="0" value="${e ? e.duration_days : 20}"></div>
+          <input class="input" id="f_duration" type="number" value="${e?.duration_days || 20}"></div>
       </div>
       <div class="form-row"><label>Начисление (₽)</label>
-        <input class="input" id="f_profit" type="number" min="0" value="${e ? e.profit_amount : 1000}"></div>
-      <div class="form-row"><label>Итоговая сумма (авто)</label>
-        <input class="input" id="f_total" disabled value=""></div>
+        <input class="input" id="f_profit" type="number" value="${e?.profit_amount || 1000}"></div>
       <div class="form-row"><label>Описание</label>
         <textarea class="input" id="f_description" rows="3">${esc(e?.description || '')}</textarea></div>
       <div class="form-row"><label>Активна</label>
@@ -935,185 +518,51 @@ function openEraModal(id){
     </div>
     <div class="modal-foot">
       <button class="btn ghost" onclick="closeModal()">Отмена</button>
-      <button class="btn" id="f_submit" onclick="saveEra(${q(isEdit ? e.id : '')})">${isEdit ? '💾 Сохранить' : '✅ Создать'}</button>
+      <button class="btn" onclick="saveEra(${q(key || '')})">💾 Сохранить</button>
     </div>`);
-  const recalc = () => { $('f_total').value = num($('f_price').value) + num($('f_profit').value); };
-  $('f_price').addEventListener('input', recalc);
-  $('f_profit').addEventListener('input', recalc);
-  recalc();
-}
+};
 
-function eraBody(e, over = {}){
-  return {
-    title: e.title, price: e.price, duration_days: e.duration_days, profit_amount: e.profit_amount,
-    description: e.description || '', is_active: e.is_active ? 1 : 0,
-    sort_order: e.sort_order || num(e.id) || DATA.eras.length + 1, ...over,
-  };
-}
-
-function saveEra(id){
+window.saveEra = key => once('save' + (key || 'new'), async () => {
   const title = $('f_title').value.trim();
-  if (!title) { toast('Введите название', 'err'); return; }
-  const old = id !== '' ? findEra(id) : null;
+  if (!title){ toast('Введите название', 'err'); return; }
   const body = {
     title,
     price: num($('f_price').value),
     duration_days: Math.round(num($('f_duration').value)),
     profit_amount: num($('f_profit').value),
+    total_amount: num($('f_price').value) + num($('f_profit').value),
     description: $('f_description').value,
-    is_active: $('f_active').value === '0' ? 0 : 1,   // раньше "0" превращался в 1
-    sort_order: old ? (old.sort_order || num(old.id) || DATA.eras.length + 1) : DATA.eras.length + 1,
+    is_active: $('f_active').value === '0' ? 0 : 1,
   };
-  const btn = $('f_submit');
-  once('era-save', async () => {
-    btn.disabled = true; btn.textContent = '⏳ Сохранение…';
-    try {
-      if (old) {
-        await api('/api/admin/eras/' + encodeURIComponent(old.id), {method:'PUT', body});
-        toast('💾 Эра обновлена');
-      } else {
-        const res = await api('/api/admin/eras', {method:'POST', body});
-        toast(`✅ Эра ${res.id !== undefined ? '#' + res.id + ' ' : ''}создана`);
-      }
-      closeModal(); refresh();
-    } catch (e) {
-      btn.disabled = false; btn.textContent = old ? '💾 Сохранить' : '✅ Создать';
-      throw e;
-    }
-  });
-}
+  if (key){
+    const old = DATA.eras.find(x => x._key === key);
+    body.id = old?.id || num(key);
+    body.sort_order = old?.sort_order || body.id;
+    await fbPut(`eras/${key}`, body);
+    toast('💾 Обновлено');
+  } else {
+    const newId = DATA.eras.length ? Math.max(...DATA.eras.map(x => num(x.id))) + 1 : 1;
+    body.id = newId;
+    body.sort_order = newId;
+    await fbPut(`eras/${newId}`, body);
+    toast(`✅ Эра #${newId} создана`);
+  }
+  closeModal(); invalidate(); await render(true);
+});
 
-function toggleEra(id){
-  const e = findEra(id); if (!e) return;
-  const next = !e.is_active;
-  once('era-' + id, async () => {
-    e.is_active = next; drawEras();                      // мгновенно, не ждём сервер
-    try {
-      await api('/api/admin/eras/' + encodeURIComponent(e.id), {method:'PUT', body: eraBody(e, {is_active: next ? 1 : 0})});
-      toast(next ? '🟢 Включена' : '⚫ Отключена');
-      invalidate(); delete SIG.eras;
-    } catch (err) { e.is_active = !next; drawEras(); throw err; }
-  });
-}
-
-function deleteEra(id){
-  if (!confirm(`🗑 Удалить эру #${id}?\n\nДействие необратимо.`)) return;
-  once('era-' + id, async () => {
-    await api('/api/admin/eras/' + encodeURIComponent(id), {method:'DELETE'});
-    toast('🗑 Эра удалена'); refresh();
-  });
-}
-
-// диагностика: что реально отдаёт API
-async function showRaw(path){
-  try {
-    const raw = await api(path);
-    let s = JSON.stringify(raw, null, 2);
-    if (s.length > 6000) s = s.slice(0, 6000) + '\n… (обрезано)';
-    showModal(`
-      <div class="modal-head"><h2>🔍 ${esc(path)}</h2><button class="close-x" onclick="closeModal()">✕</button></div>
-      <div class="modal-body"><pre class="raw">${esc(s)}</pre></div>`);
-  } catch (e) { toast(e.message, 'err'); }
-}
-
-// ============================================================
-// CONTENT
-// ============================================================
-const CONTENT_KEYS = [
-  {k:'marketing_image', t:'Маркетинговое изображение', upload:true},
-  {k:'rules_text', t:'Правила проекта', textarea:true},
-  {k:'terms_text', t:'Условия участия', textarea:true},
-  {k:'notif_registration', t:'Уведомление: регистрация'},
-  {k:'notif_purchase_created', t:'Уведомление: заявка'},
-  {k:'notif_purchase_activated', t:'Уведомление: активация'},
-  {k:'notif_purchase_cancelled', t:'Уведомление: отмена'},
-  {k:'notif_payout_requested', t:'Уведомление: вывод'},
-  {k:'notif_payout_paid', t:'Уведомление: выплата'},
-];
-
-async function loadContent(force){
-  const res = await Promise.allSettled(CONTENT_KEYS.map(({k}) => get('/api/content/' + k, force)));
-  const values = {};
-  res.forEach((r, i) => { values[CONTENT_KEYS[i].k] = r.status === 'fulfilled' ? (r.value?.value ?? '') : ''; });
-  if (res.every(r => r.status === 'rejected')) throw new Error(res[0].reason?.message || 'Ошибка');
-  const s = JSON.stringify(values), ch = s !== SIG.content;
-  SIG.content = s; CONTENT = values;
-  return ch;
-}
-
-const imgUrl = v => /^https?:|^data:/.test(v) ? v : API + v;
-
-function drawContent(){
-  setMain(`
-    <div class="header"><div><h1>📝 Контент</h1><div class="sub">Тексты и изображения</div></div>
-      <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button></div>
-    ${CONTENT_KEYS.map(({k, t, textarea, upload}) => `
-      <div class="card">
-        <h3 style="margin-bottom:10px;font-size:13.5px">${t}</h3>
-        ${upload ? `
-          ${CONTENT[k] ? `<img src="${esc(imgUrl(CONTENT[k]))}" loading="lazy"
-              style="max-width:100%;max-height:200px;border-radius:9px;margin-bottom:10px">`
-            : '<div class="muted" style="margin-bottom:10px">Не загружено</div>'}
-          <input type="file" accept="image/*" id="f_${k}" class="input">
-          <button class="btn sm" style="margin-top:8px" onclick="uploadFile('${k}')">⬆️ Загрузить</button>
-        ` : `
-          ${textarea ? `<textarea class="input" id="c_${k}" rows="5">${esc(CONTENT[k])}</textarea>`
-                     : `<input class="input" id="c_${k}" value="${esc(CONTENT[k])}">`}
-          <button class="btn sm" style="margin-top:8px" onclick="saveContent('${k}')">💾 Сохранить</button>
-        `}
-      </div>`).join('')}`);
-}
-
-function saveContent(key){
-  const value = $('c_' + key)?.value || '';
-  once('c-' + key, async () => {
-    await api('/api/admin/content', {method:'POST', body:{key, value}});
-    CONTENT[key] = value; invalidate();
-    toast('💾 Сохранено');
-  });
-}
-
-function uploadFile(key){
-  const f = $('f_' + key)?.files?.[0];
-  if (!f) return toast('Выберите файл', 'err');
-  once('up-' + key, async () => {
-    const fd = new FormData(); fd.append('file', f);
-    await api('/api/admin/upload/marketing', {method:'POST', body: fd});
-    toast('⬆️ Загружено'); invalidate(); CONTENT = null; render(true);
-  });
-}
-
-// ============================================================
-// LOGS
-// ============================================================
-function drawLogs(){
-  const list = LOGS || [];
-  const cell = v => esc(v && typeof v === 'object' ? JSON.stringify(v) : v);
-  setMain(`
-    <div class="header">
-      <div><h1>📜 Журнал</h1><div class="sub">Последние ${list.length} действий</div></div>
-      <div class="flex">
-        <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button>
-        <button class="btn sm" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">📢 Канал</button>
-      </div>
-    </div>
-    <div class="card" style="padding:0;overflow:auto">
-      <table>
-        <thead><tr><th>#</th><th>Админ</th><th>Действие</th><th>Детали</th><th>Дата</th></tr></thead>
-        <tbody>
-        ${list.length ? list.map(a => `
-          <tr><td>${cell(a.id)}</td><td>${cell(a.admin)}</td><td>${cell(a.action)}</td>
-              <td>${cell(a.details)}</td><td>${fmtDate(a.created_at)}</td></tr>`).join('') : `
-          <tr><td colspan="5" style="text-align:center;padding:30px;color:var(--muted)">Журнал пуст</td></tr>`}
-        </tbody>
-      </table>
-    </div>`);
-}
+window.deleteEra = (key, title) => once('del' + key, async () => {
+  if (!confirm(`🗑 Удалить "${title}"?`)) return;
+  await fbDelete(`eras/${key}`);
+  toast('🗑 Удалено');
+  invalidate(); await render(true);
+});
 
 // ============================================================
 // СТАРТ
 // ============================================================
-if (TOKEN) start(); else renderLogin();
+render();
+setInterval(() => { if (!document.hidden) { invalidate(); render(true); } }, POLL_MS);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { invalidate(); render(true); } });
 </script>
 </body>
 </html>

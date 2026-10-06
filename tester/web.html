@@ -56,7 +56,7 @@ body{background:#0a0e14;color:#e8edf3;
 .badge.completed{background:rgba(99,169,255,.15);color:#63a9ff}
 .badge.cancelled{background:rgba(255,92,92,.15);color:#ff5c5c}
 .bar{height:6px;background:#232b38;border-radius:3px;overflow:hidden;margin-top:8px}
-.bar .f{height:100%;background:#4f8cff;border-radius:3px;transition:width .4s}
+.bar .f{height:100%;background:#4f8cff;border-radius:3px}
 .bar .f.ok{background:#39d98a}.bar .f.warn{background:#f5b547}.bar .f.err{background:#ff5c5c}
 .nav{position:fixed;bottom:0;left:0;right:0;background:#131820;border-top:1px solid #252e3a;
   display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:50;max-width:560px;margin:0 auto}
@@ -67,8 +67,7 @@ body{background:#0a0e14;color:#e8edf3;
 .nav .bdot{top:-4px;right:-10px}
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;align-items:flex-end;justify-content:center}
 .modal{background:#131820;border-radius:20px 20px 0 0;width:100%;max-width:560px;max-height:85vh;
-  overflow-y:auto;padding:20px 20px calc(20px + env(safe-area-inset-bottom));animation:up .2s ease}
-@keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+  overflow-y:auto;padding:20px 20px calc(20px + env(safe-area-inset-bottom))}
 .modal-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .modal-h h2{font-size:17px}
 .modal-x{width:32px;height:32px;border-radius:50%;background:#232b38;border:0;color:#c4ccd6;font-size:16px;cursor:pointer}
@@ -77,8 +76,7 @@ body{background:#0a0e14;color:#e8edf3;
 .empty .ic{font-size:42px;margin-bottom:8px;opacity:.5}
 .toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#1a212c;
   border:1px solid #2f3a48;padding:11px 16px;border-radius:10px;font-size:13px;z-index:999;
-  max-width:90%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.5);animation:tin .2s ease}
-@keyframes tin{from{opacity:0;transform:translate(-50%,-10px)}to{opacity:1;transform:translate(-50%,0)}}
+  max-width:90%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.5)}
 .toast.err{border-color:#ff5c5c;color:#ffb3b3}
 .toast.ok{border-color:#39d98a;color:#a8f0cc}
 .toast.info{border-color:#4f8cff;color:#cfe0ff}
@@ -117,22 +115,15 @@ body{background:#0a0e14;color:#e8edf3;
 
 <script>
 // ============================================================
-// ⚠️ ЗАМЕНИТЕ НА ВАШ NGROK / СЕРВЕРНЫЙ URL (https://...)
+// ⚠️⚠️⚠️ ЗАМЕНИТЕ НА ВАШ NGROK URL (https://...) ⚠️⚠️⚠️
 // ============================================================
-const DEFAULT_API = 'http://localhost:8000';
+const API = 'http://localhost:8000';
 const BOT = 'loadingtester1bot';
 const ADMIN = 'loadingtester1bot';
 // ============================================================
 
-const TTL = 15000;          // кэш GET-запросов
-const NOTIF_POLL = 20000;   // проверка уведомлений
-
-// API можно задать ссылкой: ?api=https://xxx.ngrok-free.app (запомнится)
-(function(){
-  const a = new URLSearchParams(location.search).get('api');
-  if (a) localStorage.setItem('api', a.replace(/\/+$/, ''));
-})();
-const API = (localStorage.getItem('api') || DEFAULT_API).replace(/\/+$/, '');
+const TTL = 30000;         // кэш 30 секунд
+const NOTIF_POLL = 30000;  // проверка уведомлений
 
 const tg = window.Telegram && window.Telegram.WebApp;
 const $ = id => document.getElementById(id);
@@ -140,7 +131,7 @@ const $ = id => document.getElementById(id);
 let TOKEN = localStorage.getItem('token') || '';
 let TAB = 'home';
 let RID = 0;
-let SUB = false;                       // открыт подэкран (правила/условия)
+let SUB = false;
 let ME = null, PURCHASES = [], ERAS = [], NOTIFS = [];
 const HAVE = {}, SIG = {};
 let store = {};
@@ -187,13 +178,11 @@ async function once(key, fn){
   finally { BUSY.delete(key); }
 }
 
-// Firebase может вернуть объект {key:{...}} вместо массива — приводим к массиву
+// Firebase может вернуть объект — приводим к массиву
 function toList(raw){
   if (Array.isArray(raw))
     return raw.map((v, i) => (v && typeof v === 'object') ? {...v, id: v.id ?? i} : null).filter(Boolean);
   if (raw && typeof raw === 'object') {
-    for (const k of ['items','data','results','list','eras','products','purchases','notifications'])
-      if (raw[k] && typeof raw[k] === 'object') return toList(raw[k]);
     return Object.entries(raw).filter(([, v]) => v && typeof v === 'object' && !Array.isArray(v))
       .map(([k, v]) => ({...v, id: v.id ?? k}));
   }
@@ -223,7 +212,7 @@ async function api(path, opts){
   const timer = setTimeout(() => ctrl.abort(), 15000);
   let res;
   try { res = await fetch(API + path, {...opts, headers, signal: ctrl.signal}); }
-  catch(e){ throw new Error(e.name === 'AbortError' ? 'Сервер не отвечает' : 'Сервер недоступен'); }
+  catch(e){ throw new Error(e.name === 'AbortError' ? 'Сервер не отвечает' : 'Сервер недоступен: ' + API); }
   finally { clearTimeout(timer); }
   if (res.status === 401 && !path.includes('/auth/')) {
     TOKEN = ''; localStorage.removeItem('token'); throw new Error('Сессия истекла');
@@ -252,14 +241,14 @@ async function fetchKey(k, force){
     if (k === 'me') ME = raw;
     else if (k === 'purchases') PURCHASES = toList(raw);
     else if (k === 'eras') ERAS = toList(raw).map(normEra).filter(e => e.is_active)
-      .sort((a, b) => (a.sort_order - b.sort_order) || String(a.id).localeCompare(String(b.id), 'ru', {numeric:true}));
+      .sort((a, b) => (a.sort_order - b.sort_order));
   }
   HAVE[k] = true;
   return changed;
 }
 
 // ============================================================
-// Авторизация через Telegram
+// Авторизация
 // ============================================================
 function tgUser(){ return tg && tg.initDataUnsafe && tg.initDataUnsafe.user; }
 function refCode(){
@@ -285,7 +274,6 @@ async function tryAuth(){
 }
 async function ensureAuth(){
   const u = tgUser();
-  // сменился аккаунт Telegram — старый токен недействителен
   if (TOKEN && u && localStorage.getItem('uid') && localStorage.getItem('uid') !== String(u.id)) {
     TOKEN = ''; localStorage.removeItem('token'); resetData();
   }
@@ -324,16 +312,14 @@ async function pollNotifs(force){
         fresh.forEach(n => KNOWN.add(nid(n)));
         toast('🔔 ' + ntext(fresh[0]), 'info', 4000);
         haptic('success');
-        invalidate();                       // статус заявок мог измениться
-        if (!SUB && !$('modal').innerHTML) render(true, true);
       }
     }
     updateBadges();
-  } catch(e){ /* тихо */ }
+  } catch(e){}
 }
-setInterval(() => { if (!document.hidden) pollNotifs(true); }, NOTIF_POLL);
+setInterval(() => { if (!document.hidden && TOKEN) pollNotifs(true); }, NOTIF_POLL);
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && TOKEN) { pollNotifs(true); render(true, true); }
+  if (!document.hidden && TOKEN) pollNotifs(true);
 });
 
 window.showNotif = async function(){
@@ -348,7 +334,6 @@ window.showNotif = async function(){
   draw(before);
   await pollNotifs(true);
   draw(before);
-  // всё показанное считаем прочитанным
   const all = new Set([...before, ...NOTIFS.map(nid)]);
   localStorage.setItem('seen_n', JSON.stringify([...all].slice(-300)));
   updateBadges();
@@ -390,7 +375,7 @@ window.buyEra = id => once('buy' + id, async () => {
   if (!await ask('Создать заявку на покупку?')) return;
   const r = await api('/api/purchases/create/' + encodeURIComponent(id), {method:'POST'});
   toast('✅ Заявка #' + (r.purchase_id ?? '') + ' создана', 'ok'); haptic();
-  invalidate(); window.setTab('my'); render(true);
+  invalidate(); window.setTab('my');
 });
 window.requestPayout = id => once('pay' + id, async () => {
   if (!await ask('Подать заявку на вывод?')) return;
@@ -424,8 +409,7 @@ window.showContact = function(){
     '<div class="card" style="margin-top:12px;background:#1a212c"><div class="muted" style="line-height:1.7"><b style="color:#e8edf3">По вопросам:</b><br>• Покупка<br>• Активация<br>• Вывод<br>• Техподдержка</div></div>');
 };
 
-// подэкраны (Правила / Условия) с кнопкой «Назад» Telegram
-function showBack(){ try { if (tg && tg.BackButton) { tg.BackButton.show(); } } catch(e){} }
+function showBack(){ try { if (tg && tg.BackButton) tg.BackButton.show(); } catch(e){} }
 function hideBack(){ try { if (tg && tg.BackButton) tg.BackButton.hide(); } catch(e){} }
 window.closeSub = function(){ SUB = false; hideBack(); delete $('app').dataset.sub; render(); };
 try { tg && tg.BackButton && tg.BackButton.onClick(() => window.closeSub()); } catch(e){}
@@ -637,7 +621,7 @@ function drawProfile(){
 }
 
 // ============================================================
-// Рендер: сначала из кэша (мгновенно), потом обновляем
+// Рендер
 // ============================================================
 const SCREENS = {
   home:    { need: ['me','purchases'], soft: [],       draw: drawHome },
@@ -667,7 +651,7 @@ async function render(force, silent){
     ]);
     if (my !== RID || SUB) return;
     const changed = res.some(Boolean);
-    if (!ready || changed || (!silent && sc.soft.some(k => !HAVE[k]))) {
+    if (!ready || changed) {
       if (!(silent && $('modal').innerHTML)) { const y = window.scrollY; sc.draw(); if (silent) window.scrollTo(0, y); }
     }
     if (KNOWN === null) pollNotifs();

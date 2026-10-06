@@ -26,8 +26,8 @@
     display:flex;align-items:center;justify-content:center;font-size:16px}
   .topbar .actions{display:flex;gap:8px;align-items:center}
   .icon-btn{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);background:var(--card2);
-    color:var(--text2);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative}
-  h1{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.25}
+    color:var(--text2);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  h1{font-size:24px;font-weight:700;line-height:1.25}
   h2{font-size:18px;font-weight:700}
   h3{font-size:15px;font-weight:600}
   .muted{color:var(--muted);font-size:13px}
@@ -45,11 +45,11 @@
   .avatar.lg{width:88px;height:88px;font-size:36px}
   .hero .info{min-width:0;flex:1}
   .hero .info h1{font-size:20px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .hero .info .sub{color:var(--text2);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hero .info .sub{color:var(--text2);font-size:13px}
   .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px}
   .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
   .stat .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:6px}
-  .stat .value{font-size:22px;font-weight:700;letter-spacing:-.02em}
+  .stat .value{font-size:22px;font-weight:700}
   .stat .value.sm{font-size:18px}
   .stat .value.ok{color:var(--ok)} .stat .value.accent{color:var(--accent)}
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 18px;
@@ -62,48 +62,45 @@
   .btn.success{background:#39d98a;color:#04241a}
   .btn.sm{padding:10px 14px;font-size:13px;border-radius:10px;width:auto}
   .btn.xs{padding:7px 12px;font-size:12px;border-radius:8px;width:auto}
-  .era-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:0;margin-bottom:14px;
-    overflow:hidden;content-visibility:auto;contain-intrinsic-size:auto 260px}
+  .era-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:0;margin-bottom:14px;overflow:hidden}
   .era-card .head{padding:18px 18px 14px;background:var(--card2);border-bottom:1px solid var(--border)}
-  .era-card .head .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
   .era-card .title-wrap{display:flex;gap:12px;align-items:center;min-width:0;flex:1}
   .era-card .icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;
-    font-size:22px;flex-shrink:0;background:var(--card3);border:1px solid var(--border2)}
+    font-size:22px;background:var(--card3);border:1px solid var(--border2);flex-shrink:0}
   .era-card .name{font-size:17px;font-weight:700}
   .era-card .tier{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-top:2px}
   .era-card .body{padding:16px 18px}
   .era-card .desc{color:var(--text2);font-size:13px;margin-bottom:14px;line-height:1.5}
   .era-card .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
   .metric{background:var(--card2);border-radius:10px;padding:10px 8px;text-align:center;border:1px solid var(--border)}
-  .metric .l{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:4px}
+  .metric .l{color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:4px}
   .metric .v{font-size:14px;font-weight:700}
   .metric .v.profit{color:var(--ok)} .metric .v.total{color:var(--accent)}
   .era-card .actions{padding:0 18px 18px;display:flex;gap:8px}
   .era-card .actions .btn{flex:1}
   .badge{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:11px;
-    font-weight:700;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap}
+    font-weight:700;text-transform:uppercase;white-space:nowrap}
   .badge.created{background:rgba(99,169,255,.15);color:var(--info)}
   .badge.in_progress{background:rgba(245,181,71,.15);color:var(--warn)}
-  .badge.approved{background:rgba(57,217,138,.15);color:var(--ok)}
-  .badge.completed{background:rgba(57,217,138,.15);color:var(--ok)}
-  .badge.cancelled{background:rgba(255,92,92,.15);color:var(--err)}
-  .searchbar{display:flex;gap:8px;margin-bottom:12px;align-items:center}
+  .badge.approved,.badge.completed,.badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
+  .badge.cancelled,.badge.rejected{background:rgba(255,92,92,.15);color:var(--err)}
+  .badge.pending{background:rgba(245,181,71,.15);color:var(--warn)}
+  .searchbar{display:flex;gap:8px;margin-bottom:12px}
   .search-input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--card);
-    color:var(--text);font-size:14px;outline:none;font-family:inherit}
+    color:var(--text);font-size:14px;outline:none}
   .filters{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
   .filters::-webkit-scrollbar{display:none}
   .chip{padding:8px 14px;border-radius:20px;background:var(--card2);border:1px solid var(--border);color:var(--text2);
-    font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;flex-shrink:0}
+    font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0}
   .chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
   .nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);display:flex;
     justify-content:space-around;padding:8px 8px calc(8px + env(safe-area-inset-bottom));z-index:50;max-width:560px;margin:0 auto}
   .nav button{background:none;border:0;color:var(--muted);font-size:11px;padding:8px 4px;display:flex;flex-direction:column;
-    align-items:center;gap:4px;cursor:pointer;flex:1;font-family:inherit;font-weight:600}
+    align-items:center;gap:4px;cursor:pointer;flex:1;font-weight:600}
   .nav button.active{color:var(--accent)}
   .nav button .ico{font-size:20px;line-height:1}
   .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;align-items:flex-end;justify-content:center}
-  .modal{background:var(--card);border-radius:22px 22px 0 0;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;
-    border:1px solid var(--border2);border-bottom:0;padding-bottom:env(safe-area-inset-bottom)}
+  .modal{background:var(--card);border-radius:22px 22px 0 0;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;border:1px solid var(--border2);border-bottom:0}
   .modal-head{position:sticky;top:0;background:var(--card2);padding:20px;border-bottom:1px solid var(--border);z-index:1;
     display:flex;justify-content:space-between;align-items:center}
   .modal-body{padding:20px}
@@ -114,17 +111,16 @@
   .hidden{display:none !important}
   .center{text-align:center}
   .toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--border2);
-    padding:12px 18px;border-radius:12px;font-size:13px;font-weight:500;z-index:999;max-width:90%;text-align:center;
-    box-shadow:0 8px 24px rgba(0,0,0,.5)}
+    padding:12px 18px;border-radius:12px;font-size:13px;z-index:999;max-width:90%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.5)}
   .toast.ok{border-color:var(--ok);color:#a8f0cc}
   .toast.err{border-color:var(--err);color:#ffb3b3}
   .toast.info{border-color:var(--accent);color:#cfe0ff}
   a{color:var(--accent);text-decoration:none}
   .ref-box{background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;font-size:13px;
-    font-family:ui-monospace,monospace;word-break:break-all;color:var(--text2);line-height:1.5}
+    font-family:ui-monospace,monospace;word-break:break-all;color:var(--text2)}
   .order-num{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(79,140,255,.12);
     border:1px solid rgba(79,140,255,.25);border-radius:8px;font-size:11px;font-weight:700;color:var(--accent);margin-bottom:8px}
-  .list-item{padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .list-item{padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
   .list-item:last-child{border-bottom:0}
   .empty{padding:44px 20px;text-align:center}
   .empty .icon{font-size:52px;margin-bottom:12px;opacity:.5}
@@ -133,14 +129,16 @@
   .menu-item .left{display:flex;align-items:center;gap:14px}
   .menu-item .emo{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;
     background:var(--card2);border:1px solid var(--border)}
-  .menu-item .arrow{color:var(--muted)}
   .contact-btn{display:flex;align-items:center;gap:14px;padding:16px;background:var(--card2);border:1px solid var(--border);
     border-radius:12px;cursor:pointer;color:var(--text);margin-bottom:10px}
   .contact-btn .emo{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;
     background:var(--accent);color:#fff;flex-shrink:0}
   .contact-btn .info{flex:1;min-width:0}
-  .contact-btn .info .t{font-weight:600;font-size:14px;margin-bottom:2px}
+  .contact-btn .info .t{font-weight:600;font-size:14px}
   .contact-btn .info .s{font-size:12px;color:var(--muted)}
+  .progress{height:8px;background:var(--card3);border-radius:4px;overflow:hidden;margin-top:8px}
+  .progress .fill{height:100%;border-radius:4px;background:var(--accent)}
+  .progress .fill.ok{background:#39d98a} .progress .fill.warn{background:#f5b547} .progress .fill.err{background:#ff5c5c}
   .skel{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);background-size:200% 100%;
     animation:sh 1.2s infinite;border-radius:14px;border:1px solid var(--border);margin-bottom:12px}
   @keyframes sh{to{background-position:-200% 0}}
@@ -165,24 +163,20 @@
 <div id="toast" class="toast hidden"></div>
 
 <script>
-// ============================================================
-// КОНФИГ
-// ============================================================
 const FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app';
 const BOT_USERNAME = 'loadingtester1bot';
 const ADMIN_USERNAME = 'loadingtester1bot';
-const TTL = 15000;
 const POLL_MS = 20000;
 
 const tg = window.Telegram && window.Telegram.WebApp;
 const $ = id => document.getElementById(id);
 let CURRENT_TAB = 'home';
-let ME = null, PURCHASES = [], ERAS = [], USER_UID = '';
-let HAVE = {}, SIG = {};
-const BUSY = new Set();
+let ME = null, PURCHASES = [], PAYOUTS = [], ERAS = [], USER_UID = '';
+let HAVE = {};
+let BUSY = new Set();
 let shopFilter = 'all', shopSearch = '';
+let RID = 0;
 
-// ---------- утилиты ----------
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function q(v){ return esc(JSON.stringify(v ?? '')); }
 const num = v => { const n = Number(v); return isFinite(n) ? n : 0; };
@@ -191,12 +185,19 @@ function fmtDate(s){
   if (!s) return '—';
   const d = new Date(s);
   if (isNaN(d)) return String(s);
+  return d.toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric'});
+}
+function fmtDT(s){
+  if (!s) return '—';
+  const d = new Date(s);
+  if (isNaN(d)) return String(s);
   return d.toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' +
          d.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
 }
 function statusLabel(s){
   return ({created:'Создан', in_progress:'В процессе', approved:'Одобрен',
-    completed:'Завершён', cancelled:'Отменён'})[s] || s;
+    completed:'Завершён', paid:'Выплачен', cancelled:'Отменён',
+    pending:'Ожидает', rejected:'Отклонён'})[s] || s;
 }
 function haptic(k){ try { tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(k || 'success'); } catch(e){} }
 function toast(msg, type, ms){
@@ -208,7 +209,7 @@ function toast(msg, type, ms){
 }
 function ask(msg){
   return new Promise(res => {
-    if (tg && tg.showConfirm) { try { tg.showConfirm(msg, ok => res(!!ok)); return; } catch(e){} }
+    if (tg && tg.showConfirm){ try { tg.showConfirm(msg, ok => res(!!ok)); return; } catch(e){} }
     res(confirm(msg));
   });
 }
@@ -219,9 +220,7 @@ async function once(key, fn){
   finally { BUSY.delete(key); }
 }
 
-// ============================================================
-// FIREBASE REST
-// ============================================================
+// Firebase
 async function fbGet(path){
   const r = await fetch(`${FIREBASE}/${path}.json`);
   if (!r.ok) throw new Error('Firebase ' + r.status);
@@ -238,15 +237,12 @@ async function fbPut(path, data){
   return r.json();
 }
 function toList(raw){
-  if (Array.isArray(raw)) return raw.filter(x => x && typeof x === 'object');
+  if (Array.isArray(raw)) return raw.filter(x => x && typeof x === 'object').map((v, i) => ({...v, _key: String(i)}));
   if (raw && typeof raw === 'object')
     return Object.entries(raw).filter(([, v]) => v && typeof v === 'object').map(([k, v]) => ({...v, _key: k}));
   return [];
 }
 
-// ============================================================
-// ДАННЫЕ
-// ============================================================
 function tgUser(){ return tg && tg.initDataUnsafe && tg.initDataUnsafe.user; }
 
 async function loadMe(){
@@ -255,22 +251,18 @@ async function loadMe(){
   USER_UID = String(u.id);
   const existing = await fbGet(`users/${u.id}`);
   const now = new Date().toISOString();
-  if (!existing){
-    const data = {
-      telegram_id: u.id,
-      username: u.username || '',
-      first_name: u.first_name || '',
-      last_name: u.last_name || '',
-      photo_url: u.photo_url || '',
-      registered_at: now
-    };
+  const data = {
+    telegram_id: u.id,
+    username: u.username || '',
+    first_name: u.first_name || '',
+    last_name: u.last_name || '',
+    photo_url: u.photo_url || (existing && existing.photo_url) || '',
+    registered_at: (existing && existing.registered_at) || now,
+  };
+  if (!existing || existing.photo_url !== data.photo_url || existing.username !== data.username){
     await fbPut(`users/${u.id}`, data);
-    return data;
-  } else {
-    const data = {...existing, photo_url: u.photo_url || existing.photo_url || ''};
-    if (existing.photo_url !== data.photo_url) await fbPut(`users/${u.id}`, data);
-    return data;
   }
+  return data;
 }
 
 async function loadEras(){
@@ -291,9 +283,25 @@ async function loadPurchases(){
     .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 }
 
-// ============================================================
-// ДЕЙСТВИЯ
-// ============================================================
+async function loadPayouts(){
+  if (!USER_UID) return [];
+  const raw = await fbGet('payouts');
+  return toList(raw)
+    .filter(p => String(p.user_telegram_id) === String(USER_UID))
+    .sort((a, b) => new Date(b.requested_at || 0) - new Date(a.requested_at || 0));
+}
+
+function isEraFinished(p){
+  if (p.status !== 'approved') return false;
+  const exp = p.expires_at ? new Date(p.expires_at) : null;
+  if (!exp || isNaN(exp)) return false;
+  return Date.now() >= exp.getTime();
+}
+
+function hasPayout(pid){
+  return PAYOUTS.some(po => String(po.purchase_id) === String(pid) && (po.status === 'pending' || po.status === 'paid'));
+}
+
 window.setTab = function(tab){
   CURRENT_TAB = tab;
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
@@ -306,7 +314,7 @@ window.buyEra = id => once('buy' + id, async () => {
   if (!await ask(`Создать заявку на покупку?\n\n${era.title} — ${fmt(era.price)}`)) return;
   const u = tgUser() || {};
   const now = new Date().toISOString();
-  const nextId = await getNextPurchaseId();
+  const nextId = await getNextId('purchase');
   await fbPost('purchases', {
     id: nextId,
     user_telegram_id: u.id,
@@ -320,18 +328,42 @@ window.buyEra = id => once('buy' + id, async () => {
     duration_days: era.duration_days,
     status: 'created',
     created_at: now,
-    status_changed_at: now
+    status_changed_at: now,
   });
-  toast(`✅ Заявка #${nextId} создана`, 'ok', 4000); haptic();
-  await loadPurchases();
+  toast(`✅ Заявка #${nextId} создана. Ждите связи админа.`, 'ok', 4500);
+  haptic();
+  await reload();
   window.setTab('purchases');
 });
 
-async function getNextPurchaseId(){
-  const raw = await fbGet('counters/purchase');
-  const next = (Number(raw) || 0) + 1;
-  await fbPut('counters/purchase', next);
-  return next;
+window.requestPayout = pid => once('po' + pid, async () => {
+  if (!await ask('Подать заявку на вывод?')) return;
+  const p = PURCHASES.find(x => String(x.id) === String(pid));
+  if (!p) return;
+  const u = tgUser() || {};
+  const nextId = await getNextId('payout');
+  await fbPost('payouts', {
+    id: nextId,
+    purchase_id: p.id,
+    user_telegram_id: u.id,
+    user_username: u.username || '',
+    user_first_name: u.first_name || '',
+    era_title: p.era_title,
+    purchase_price: p.purchase_price,
+    amount: p.total_amount,
+    status: 'pending',
+    requested_at: new Date().toISOString(),
+  });
+  toast(`✅ Заявка на вывод #${nextId} создана`, 'ok', 4000);
+  haptic();
+  await reload();
+});
+
+async function getNextId(counter){
+  const cur = await fbGet(`counters/${counter}`);
+  const nxt = (Number(cur) || 0) + 1;
+  await fbPut(`counters/${counter}`, nxt);
+  return nxt;
 }
 
 window.copyRef = function(){
@@ -346,7 +378,7 @@ function fallbackCopy(text, ok){
   const ta = document.createElement('textarea');
   ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
   document.body.appendChild(ta); ta.select();
-  try { document.execCommand('copy'); ok(); } catch(e){ toast('Не удалось скопировать', 'err'); }
+  try { document.execCommand('copy'); ok(); } catch(e){ toast('Не удалось', 'err'); }
   ta.remove();
 }
 
@@ -360,17 +392,15 @@ window.openEraDetail = function(id){
   if (!e) return;
   const roi = e.price > 0 ? Math.round((e.profit_amount / e.price) * 100) : 0;
   showModal(`
-    <div class="modal-head">
-      <div><div class="muted-sm">ЭРА</div><h2>${esc(e.title)}</h2></div>
-      <button class="close-x" onclick="closeModal()">✕</button>
-    </div>
+    <div class="modal-head"><div><div class="muted-sm">ЭРА</div><h2>${esc(e.title)}</h2></div>
+      <button class="close-x" onclick="closeModal()">✕</button></div>
     <div class="modal-body">
       <p class="muted" style="margin-bottom:16px;line-height:1.6">${esc(e.description || '')}</p>
       <div class="grid2" style="margin-bottom:14px">
         <div class="stat"><div class="label">Стоимость</div><div class="value sm">${fmt(e.price)}</div></div>
         <div class="stat"><div class="label">Начисление</div><div class="value sm ok">+${fmt(e.profit_amount)}</div></div>
-        <div class="stat"><div class="label">Итоговая сумма</div><div class="value sm accent">${fmt(e.total_amount)}</div></div>
-        <div class="stat"><div class="label">Доходность</div><div class="value sm ok">+${roi}%</div></div>
+        <div class="stat"><div class="label">Итого</div><div class="value sm accent">${fmt(e.total_amount)}</div></div>
+        <div class="stat"><div class="label">ROI</div><div class="value sm ok">+${roi}%</div></div>
       </div>
       <div class="card2" style="margin-bottom:16px">
         <div class="row"><span class="muted">Срок</span><b>${e.duration_days} дней</b></div>
@@ -392,12 +422,9 @@ window.openContact = function(){
     </div>`);
 };
 
-// ============================================================
-// ЭКРАНЫ
-// ============================================================
 function skeleton(){
   return '<div class="skel" style="height:56px"></div><div class="skel" style="height:110px"></div>' +
-    '<div class="skel" style="height:150px"></div><div class="skel" style="height:150px"></div>';
+    '<div class="skel" style="height:150px"></div>';
 }
 function setApp(html){
   $('app').innerHTML = html;
@@ -422,20 +449,16 @@ function screenNoTg(){
 function drawHome(){
   const me = ME || {}, P = PURCHASES, u = tgUser() || {};
   const active = P.filter(p => ['created','in_progress','approved'].includes(p.status));
-  const approved = P.filter(p => p.status === 'approved');
   const completed = P.filter(p => p.status === 'completed');
   const invested = P.filter(p => p.status !== 'cancelled').reduce((s, p) => s + num(p.purchase_price), 0);
-  const expected = approved.reduce((s, p) => s + num(p.profit_amount), 0);
   const available = completed.reduce((s, p) => s + num(p.total_amount), 0);
   const name = me.first_name || u.first_name || me.username || 'друг';
   const photo = me.photo_url || u.photo_url || '';
   const refLink = location.origin + location.pathname + '?ref=' + (me.telegram_id || '');
 
   setApp(`
-    <div class="topbar">
-      <div class="brand"><div class="logo">✨</div>Эры</div>
-      <div class="actions"><button class="icon-btn" onclick="refresh()">🔄</button></div>
-    </div>
+    <div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div>
+      <div class="actions"><button class="icon-btn" onclick="refresh()">🔄</button></div></div>
     <div class="hero"><div class="row">
       <div class="user">
         <div class="avatar">${photo ? `<img src="${esc(photo)}" alt="">` : esc((name[0] || '?').toUpperCase())}</div>
@@ -446,8 +469,8 @@ function drawHome(){
     <div class="stats">
       <div class="stat"><div class="label">Инвестировано</div><div class="value sm accent">${fmt(invested)}</div></div>
       <div class="stat"><div class="label">Активных</div><div class="value">${active.length}</div></div>
-      <div class="stat"><div class="label">Начислено</div><div class="value sm ok">+${fmt(expected)}</div></div>
-      <div class="stat"><div class="label">Доступно</div><div class="value sm ${available > 0 ? 'ok' : ''}">${fmt(available)}</div></div>
+      <div class="stat"><div class="label">Завершено</div><div class="value">${completed.length}</div></div>
+      <div class="stat"><div class="label">К выводу</div><div class="value sm ${available > 0 ? 'ok' : ''}">${fmt(available)}</div></div>
     </div>
     <div class="card">
       <div class="row" style="margin-bottom:10px"><h3>🔗 Реферальная ссылка</h3></div>
@@ -456,7 +479,7 @@ function drawHome(){
     </div>
     <div class="section-title"><h2>Мои заявки</h2>
       ${P.length ? `<button class="btn ghost xs" onclick="setTab('purchases')">Все →</button>` : ''}</div>
-    ${P.length ? P.slice(0, 3).map(p => eraCardPurchase(p)).join('') : `
+    ${P.length ? P.slice(0, 3).map(eraCardPurchase).join('') : `
       <div class="card empty"><div class="icon">🌱</div><h3>Пока нет заявок</h3>
         <p class="muted" style="margin-bottom:16px">Выберите эру и начните</p>
         <button class="btn" style="max-width:240px;margin:0 auto" onclick="setTab('buy')">🛒 Открыть магазин</button></div>`}
@@ -464,6 +487,7 @@ function drawHome(){
 }
 
 function eraCardPurchase(p){
+  const canWithdraw = isEraFinished(p) && !hasPayout(p.id);
   return `
     <div class="era-card">
       <div class="head">
@@ -481,18 +505,23 @@ function eraCardPurchase(p){
           <div class="metric"><div class="l">Начисл.</div><div class="v profit">+${fmt(p.profit_amount)}</div></div>
           <div class="metric"><div class="l">Итого</div><div class="v total">${fmt(p.total_amount)}</div></div>
         </div>
-        <div class="muted-sm" style="margin-top:12px">🕐 ${fmtDate(p.created_at)}</div>
+        <div class="muted-sm" style="margin-top:12px">
+          🕐 Создано: ${fmtDT(p.created_at)}
+          ${p.start_date ? '<br>📅 Начало: ' + fmtDate(p.start_date) : ''}
+          ${p.last_day ? ' · 🏁 Последний: ' + fmtDate(p.last_day) : ''}
+        </div>
       </div>
+      ${canWithdraw ? `<div class="actions">
+        <button class="btn success" onclick="requestPayout(${q(p.id)})">💸 Подать заявку на вывод</button>
+      </div>` : ''}
     </div>`;
 }
 
 function drawBuy(){
   const chips = [['all','Все'],['starter','⚡ Старт'],['middle','🚀 Бизнес'],['premium','💎 Premium']];
   setApp(`
-    <div class="topbar">
-      <div class="brand"><div class="logo">🛒</div>Магазин</div>
-      <div class="actions"><span class="muted-sm">${ERAS.length} эр</span></div>
-    </div>
+    <div class="topbar"><div class="brand"><div class="logo">🛒</div>Магазин</div>
+      <div class="actions"><span class="muted-sm">${ERAS.length} эр</span></div></div>
     <div class="searchbar"><input class="search-input" placeholder="🔍 Поиск…" value="${esc(shopSearch)}"
       oninput="shopSearch=this.value;fillShop()"></div>
     <div class="filters">${chips.map(([k, l]) =>
@@ -518,9 +547,9 @@ function eraCardShop(e){
   const roi = e.price > 0 ? Math.round((e.profit_amount / e.price) * 100) : 0;
   return `
     <div class="era-card">
-      <div class="head"><div class="row"><div class="title-wrap"><div class="icon">⚡</div>
+      <div class="head"><div class="title-wrap"><div class="icon">⚡</div>
         <div style="min-width:0"><div class="name">${esc(e.title)}</div>
-          <div class="tier">Срок ${e.duration_days} дней · +${roi}% ROI</div></div></div></div></div>
+          <div class="tier">Срок ${e.duration_days} дней · +${roi}% ROI</div></div></div></div>
       <div class="body">
         ${e.description ? `<div class="desc">${esc(e.description)}</div>` : ''}
         <div class="metrics">
@@ -538,13 +567,34 @@ function eraCardShop(e){
 
 function drawPurchases(){
   setApp(`
-    <div class="topbar">
-      <div class="brand"><div class="logo">📦</div>Мои покупки</div>
-      <div class="actions"><button class="icon-btn" onclick="refresh()">🔄</button></div>
-    </div>
+    <div class="topbar"><div class="brand"><div class="logo">📦</div>Мои покупки</div>
+      <div class="actions"><button class="icon-btn" onclick="refresh()">🔄</button></div></div>
     ${PURCHASES.length ? PURCHASES.map(eraCardPurchase).join('') : `
       <div class="card empty"><div class="icon">📦</div><h3>Покупок пока нет</h3>
-        <button class="btn" style="max-width:240px;margin:16px auto 0" onclick="setTab('buy')">🛒 В магазин</button></div>`}`);
+        <button class="btn" style="max-width:240px;margin:16px auto 0" onclick="setTab('buy')">🛒 В магазин</button></div>`}
+    ${PAYOUTS.length ? `
+      <div class="section-title"><h2>Заявки на вывод</h2></div>
+      ${PAYOUTS.map(payoutCard).join('')}` : ''}
+  `);
+}
+
+function payoutCard(po){
+  return `
+    <div class="era-card">
+      <div class="head">
+        <div class="order-num">📤 Вывод #${esc(po.id)}</div>
+        <div class="row">
+          <div class="title-wrap"><div class="icon">💸</div>
+            <div><div class="name">${esc(po.era_title || '—')}</div>
+              <div class="tier">от заявки #${esc(po.purchase_id)}</div></div></div>
+          <span class="badge ${esc(po.status)}">${esc(statusLabel(po.status))}</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="row"><span class="muted">Сумма</span><b style="color:var(--ok)">${fmt(po.amount)}</b></div>
+        <div class="muted-sm" style="margin-top:8px">🕐 ${fmtDT(po.requested_at)}${po.paid_at ? ' · ✅ ' + fmtDT(po.paid_at) : ''}</div>
+      </div>
+    </div>`;
 }
 
 function drawProfile(){
@@ -567,19 +617,15 @@ function drawProfile(){
     <div class="card" style="padding:0 16px">
       <div class="list-item"><span class="muted">Telegram ID</span><b>${esc(me.telegram_id || u.id || '—')}</b></div>
       <div class="list-item"><span class="muted">Username</span><b>@${esc(me.username || u.username || '—')}</b></div>
-      <div class="list-item"><span class="muted">Регистрация</span><b>${fmtDate(me.registered_at)}</b></div>
+      <div class="list-item"><span class="muted">Регистрация</span><b>${fmtDT(me.registered_at)}</b></div>
     </div>`);
 }
 
-// ============================================================
-// РЕНДЕР
-// ============================================================
 const SCREENS = { home: drawHome, buy: drawBuy, purchases: drawPurchases, profile: drawProfile };
 
-async function refreshData(){
-  if (!ME){ ME = await loadMe(); }
-  ERAS = await loadEras();
-  PURCHASES = await loadPurchases();
+async function reload(){
+  [ERAS, PURCHASES, PAYOUTS] = await Promise.all([loadEras(), loadPurchases(), loadPayouts()]);
+  HAVE = { eras: true, purchases: true, payouts: true };
 }
 
 let RENDER_LOCK = false;
@@ -593,21 +639,15 @@ async function render(force){
       $('nav').classList.remove('hidden');
       ME = await loadMe();
     }
-    const need = !HAVE.eras || !HAVE.purchases || force;
-    if (need){
-      if (HAVE.eras && HAVE.purchases && !force){
-        SCREENS[CURRENT_TAB] ? SCREENS[CURRENT_TAB]() : drawHome();
-      }
-      await refreshData();
-      HAVE.eras = HAVE.purchases = true;
+    if (!HAVE.eras || force){
+      await reload();
     }
     const y = window.scrollY;
     (SCREENS[CURRENT_TAB] || drawHome)();
     window.scrollTo(0, y);
   } catch(e){
     console.error(e);
-    $('app').innerHTML = `
-      <div class="topbar"><div class="brand"><div class="logo">⚠️</div>Ошибка</div></div>
+    $('app').innerHTML = `<div class="topbar"><div class="brand"><div class="logo">⚠️</div>Ошибка</div></div>
       <div class="card"><p style="margin-bottom:12px">${esc(e.message)}</p>
         <button class="btn" onclick="refresh()">🔄 Повторить</button></div>`;
   } finally {
@@ -618,11 +658,8 @@ async function render(force){
 window.refresh = function(){ HAVE = {}; render(true); };
 window.logout = function(){ try { tg.close(); } catch(e){} };
 
-// ============================================================
-// СТАРТ
-// ============================================================
 (function init(){
-  try { if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor && tg.setHeaderColor('#0a0e14'); tg.setBackgroundColor && tg.setBackgroundColor('#0a0e14'); } } catch(e){}
+  try { if (tg){ tg.ready(); tg.expand(); tg.setHeaderColor && tg.setHeaderColor('#0a0e14'); tg.setBackgroundColor && tg.setBackgroundColor('#0a0e14'); } } catch(e){}
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === CURRENT_TAB));
   $('nav').addEventListener('click', e => {
     const b = e.target.closest('button');

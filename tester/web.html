@@ -19,7 +19,6 @@
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
     font-size:15px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
   .app{max-width:560px;margin:0 auto;padding:0 16px calc(100px + env(safe-area-inset-bottom))}
-
   .topbar{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:1px solid var(--border);
     margin:0 -16px 16px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
   .topbar .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}
@@ -28,19 +27,14 @@
   .topbar .actions{display:flex;gap:8px;align-items:center}
   .icon-btn{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);background:var(--card2);
     color:var(--text2);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative}
-  .bdot{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;
-    background:var(--err);color:#fff;font:700 10px/18px inherit;text-align:center}
-
   h1{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.25}
-  h2{font-size:18px;font-weight:700;letter-spacing:-.01em}
+  h2{font-size:18px;font-weight:700}
   h3{font-size:15px;font-weight:600}
   .muted{color:var(--muted);font-size:13px}
   .muted-sm{color:var(--muted);font-size:11px}
   .section-title{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px}
-
   .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
   .card2{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px}
-
   .hero{background:#1a2540;border:1px solid var(--border2);border-radius:18px;padding:20px;margin-bottom:16px}
   .hero .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
   .hero .user{display:flex;gap:14px;align-items:center;min-width:0;flex:1}
@@ -52,14 +46,12 @@
   .hero .info{min-width:0;flex:1}
   .hero .info h1{font-size:20px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .hero .info .sub{color:var(--text2);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
   .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px}
   .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
   .stat .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:6px}
   .stat .value{font-size:22px;font-weight:700;letter-spacing:-.02em}
   .stat .value.sm{font-size:18px}
   .stat .value.ok{color:var(--ok)} .stat .value.accent{color:var(--accent)}
-
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 18px;
     border-radius:12px;border:0;background:var(--accent);color:#fff;font-weight:600;font-size:15px;
     cursor:pointer;text-align:center;font-family:inherit}
@@ -70,15 +62,14 @@
   .btn.success{background:#39d98a;color:#04241a}
   .btn.sm{padding:10px 14px;font-size:13px;border-radius:10px;width:auto}
   .btn.xs{padding:7px 12px;font-size:12px;border-radius:8px;width:auto}
-
   .era-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:0;margin-bottom:14px;
-    overflow:hidden;position:relative;content-visibility:auto;contain-intrinsic-size:auto 260px}
+    overflow:hidden;content-visibility:auto;contain-intrinsic-size:auto 260px}
   .era-card .head{padding:18px 18px 14px;background:var(--card2);border-bottom:1px solid var(--border)}
   .era-card .head .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
   .era-card .title-wrap{display:flex;gap:12px;align-items:center;min-width:0;flex:1}
   .era-card .icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;
     font-size:22px;flex-shrink:0;background:var(--card3);border:1px solid var(--border2)}
-  .era-card .name{font-size:17px;font-weight:700;letter-spacing:-.01em}
+  .era-card .name{font-size:17px;font-weight:700}
   .era-card .tier{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-top:2px}
   .era-card .body{padding:16px 18px}
   .era-card .desc{color:var(--text2);font-size:13px;margin-bottom:14px;line-height:1.5}
@@ -89,14 +80,13 @@
   .metric .v.profit{color:var(--ok)} .metric .v.total{color:var(--accent)}
   .era-card .actions{padding:0 18px 18px;display:flex;gap:8px}
   .era-card .actions .btn{flex:1}
-
   .badge{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:11px;
     font-weight:700;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap}
-  .badge.awaiting_payment,.badge.awaiting_payout{background:rgba(245,181,71,.15);color:var(--warn)}
-  .badge.active,.badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
-  .badge.completed{background:rgba(99,169,255,.15);color:var(--info)}
+  .badge.created{background:rgba(99,169,255,.15);color:var(--info)}
+  .badge.in_progress{background:rgba(245,181,71,.15);color:var(--warn)}
+  .badge.approved{background:rgba(57,217,138,.15);color:var(--ok)}
+  .badge.completed{background:rgba(57,217,138,.15);color:var(--ok)}
   .badge.cancelled{background:rgba(255,92,92,.15);color:var(--err)}
-
   .searchbar{display:flex;gap:8px;margin-bottom:12px;align-items:center}
   .search-input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--card);
     color:var(--text);font-size:14px;outline:none;font-family:inherit}
@@ -105,83 +95,55 @@
   .chip{padding:8px 14px;border-radius:20px;background:var(--card2);border:1px solid var(--border);color:var(--text2);
     font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;flex-shrink:0}
   .chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-
   .nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);display:flex;
     justify-content:space-around;padding:8px 8px calc(8px + env(safe-area-inset-bottom));z-index:50;max-width:560px;margin:0 auto}
   .nav button{background:none;border:0;color:var(--muted);font-size:11px;padding:8px 4px;display:flex;flex-direction:column;
     align-items:center;gap:4px;cursor:pointer;flex:1;font-family:inherit;font-weight:600}
   .nav button.active{color:var(--accent)}
-  .nav button .ico{font-size:20px;line-height:1;position:relative}
-  .nav .bdot{top:-6px;right:-12px}
-
+  .nav button .ico{font-size:20px;line-height:1}
   .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;align-items:flex-end;justify-content:center}
   .modal{background:var(--card);border-radius:22px 22px 0 0;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;
-    border:1px solid var(--border2);border-bottom:0;animation:up .2s ease;padding-bottom:env(safe-area-inset-bottom)}
-  @keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+    border:1px solid var(--border2);border-bottom:0;padding-bottom:env(safe-area-inset-bottom)}
   .modal-head{position:sticky;top:0;background:var(--card2);padding:20px;border-bottom:1px solid var(--border);z-index:1;
     display:flex;justify-content:space-between;align-items:center}
   .modal-body{padding:20px}
   .close-x{width:34px;height:34px;border-radius:50%;background:var(--card3);border:1px solid var(--border2);color:var(--text2);
     font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-
   .row{display:flex;justify-content:space-between;gap:12px;align-items:center}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .hidden{display:none !important}
   .center{text-align:center}
   .toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--border2);
     padding:12px 18px;border-radius:12px;font-size:13px;font-weight:500;z-index:999;max-width:90%;text-align:center;
-    box-shadow:0 8px 24px rgba(0,0,0,.5);animation:tin .2s ease}
-  @keyframes tin{from{opacity:0;transform:translate(-50%,-10px)}to{opacity:1;transform:translate(-50%,0)}}
+    box-shadow:0 8px 24px rgba(0,0,0,.5)}
   .toast.ok{border-color:var(--ok);color:#a8f0cc}
   .toast.err{border-color:var(--err);color:#ffb3b3}
   .toast.info{border-color:var(--accent);color:#cfe0ff}
-
-  img.marketing{width:100%;border-radius:12px;display:block}
   a{color:var(--accent);text-decoration:none}
-  .list-item{padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px}
-  .list-item:last-child{border-bottom:0}
-  .empty{padding:44px 20px;text-align:center}
-  .empty .icon{font-size:52px;margin-bottom:12px;opacity:.5}
-
-  .progress{height:8px;background:var(--card3);border-radius:4px;overflow:hidden;margin-top:8px}
-  .progress .fill{height:100%;border-radius:4px;background:var(--accent);transition:width .4s}
-  .progress .fill.ok{background:#39d98a} .progress .fill.warn{background:#f5b547} .progress .fill.err{background:#ff5c5c}
-
   .ref-box{background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;font-size:13px;
     font-family:ui-monospace,monospace;word-break:break-all;color:var(--text2);line-height:1.5}
   .order-num{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(79,140,255,.12);
     border:1px solid rgba(79,140,255,.25);border-radius:8px;font-size:11px;font-weight:700;color:var(--accent);margin-bottom:8px}
-  .days-left{padding:6px 12px;border-radius:10px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
-  .days-left.ok{background:rgba(57,217,138,.15);color:var(--ok)}
-  .days-left.warn{background:rgba(245,181,71,.15);color:var(--warn)}
-  .days-left.err{background:rgba(255,92,92,.15);color:var(--err)}
-  .days-left.info{background:rgba(99,169,255,.15);color:var(--info)}
-
+  .list-item{padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .list-item:last-child{border-bottom:0}
+  .empty{padding:44px 20px;text-align:center}
+  .empty .icon{font-size:52px;margin-bottom:12px;opacity:.5}
   .menu-item{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);cursor:pointer}
   .menu-item:last-child{border-bottom:0}
   .menu-item .left{display:flex;align-items:center;gap:14px}
-  .menu-item .emo{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;
-    font-size:19px;background:var(--card2);border:1px solid var(--border)}
+  .menu-item .emo{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;
+    background:var(--card2);border:1px solid var(--border)}
   .menu-item .arrow{color:var(--muted)}
-
   .contact-btn{display:flex;align-items:center;gap:14px;padding:16px;background:var(--card2);border:1px solid var(--border);
     border-radius:12px;cursor:pointer;color:var(--text);margin-bottom:10px}
-  .contact-btn .emo{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;
-    font-size:22px;background:var(--accent);color:#fff;flex-shrink:0}
+  .contact-btn .emo{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;
+    background:var(--accent);color:#fff;flex-shrink:0}
   .contact-btn .info{flex:1;min-width:0}
   .contact-btn .info .t{font-weight:600;font-size:14px;margin-bottom:2px}
   .contact-btn .info .s{font-size:12px;color:var(--muted)}
-
-  .notif{padding:12px 0;border-bottom:1px solid var(--border);display:flex;gap:10px}
-  .notif:last-child{border-bottom:0}
-  .notif .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:7px;flex-shrink:0}
-  .notif .dot.off{background:transparent}
-
   .skel{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);background-size:200% 100%;
     animation:sh 1.2s infinite;border-radius:14px;border:1px solid var(--border);margin-bottom:12px}
   @keyframes sh{to{background-position:-200% 0}}
-  .api-input{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--border2);background:var(--card2);
-    color:var(--text);font-size:13px;outline:none;margin-bottom:8px;font-family:inherit}
 </style>
 </head>
 <body>
@@ -196,7 +158,7 @@
   <button data-tab="home"><span class="ico">🏠</span>Главная</button>
   <button data-tab="buy"><span class="ico">🛒</span>Купить</button>
   <button data-tab="purchases"><span class="ico">📦</span>Покупки</button>
-  <button data-tab="profile"><span class="ico">👤<span class="bdot hidden" id="nb"></span></span>Профиль</button>
+  <button data-tab="profile"><span class="ico">👤</span>Профиль</button>
 </nav>
 
 <div id="modal-root"></div>
@@ -204,40 +166,24 @@
 
 <script>
 // ============================================================
-// НАСТРОЙКИ
+// КОНФИГ
 // ============================================================
-const DEFAULT_API = 'http://localhost:8000';   // ⬅️ ваш https/ngrok адрес (можно задать и в самом приложении)
+const FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app';
 const BOT_USERNAME = 'loadingtester1bot';
 const ADMIN_USERNAME = 'loadingtester1bot';
-// ============================================================
-
-const TTL = 15000;         // кэш запросов
-const NOTIF_POLL = 20000;  // опрос уведомлений
-
-// адрес API можно передать ссылкой ?api=https://xxx.ngrok-free.app — запомнится
-(function(){
-  const a = new URLSearchParams(location.search).get('api');
-  if (a) localStorage.setItem('api', a.trim().replace(/\/+$/, ''));
-})();
-const API = (localStorage.getItem('api') || DEFAULT_API).replace(/\/+$/, '');
+const TTL = 15000;
+const POLL_MS = 20000;
 
 const tg = window.Telegram && window.Telegram.WebApp;
 const $ = id => document.getElementById(id);
-
-let TOKEN = localStorage.getItem('token') || '';
 let CURRENT_TAB = 'home';
-let RID = 0;
-let SUB = false;
-let ME = null, PURCHASES = [], ERAS = [], NOTIFS = [];
-const HAVE = {}, SIG = {};
-let store = {};
-const inflight = {};
+let ME = null, PURCHASES = [], ERAS = [], USER_UID = '';
+let HAVE = {}, SIG = {};
 const BUSY = new Set();
 let shopFilter = 'all', shopSearch = '';
 
 // ---------- утилиты ----------
-function esc(s){ return String(s ?? '').replace(/[&<>"']/g,
-  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function q(v){ return esc(JSON.stringify(v ?? '')); }
 const num = v => { const n = Number(v); return isFinite(n) ? n : 0; };
 function fmt(n){ return num(n).toLocaleString('ru-RU') + ' ₽'; }
@@ -249,10 +195,10 @@ function fmtDate(s){
          d.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
 }
 function statusLabel(s){
-  return ({awaiting_payment:'Ожидает оплаты', active:'Активен', completed:'Завершён',
-    awaiting_payout:'Ожидает выплаты', paid:'Выплачен', cancelled:'Отменён'})[s] || s;
+  return ({created:'Создан', in_progress:'В процессе', approved:'Одобрен',
+    completed:'Завершён', cancelled:'Отменён'})[s] || s;
 }
-function haptic(kind){ try { tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(kind || 'success'); } catch(e){} }
+function haptic(k){ try { tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(k || 'success'); } catch(e){} }
 function toast(msg, type, ms){
   const t = $('toast');
   t.textContent = msg;
@@ -272,191 +218,128 @@ async function once(key, fn){
   try { await fn(); } catch(e){ toast('⚠️ ' + e.message, 'err'); haptic('error'); }
   finally { BUSY.delete(key); }
 }
+
+// ============================================================
+// FIREBASE REST
+// ============================================================
+async function fbGet(path){
+  const r = await fetch(`${FIREBASE}/${path}.json`);
+  if (!r.ok) throw new Error('Firebase ' + r.status);
+  return r.json();
+}
+async function fbPost(path, data){
+  const r = await fetch(`${FIREBASE}/${path}.json`, {method:'POST', body: JSON.stringify(data)});
+  if (!r.ok) throw new Error('Firebase ' + r.status);
+  return r.json();
+}
+async function fbPut(path, data){
+  const r = await fetch(`${FIREBASE}/${path}.json`, {method:'PUT', body: JSON.stringify(data)});
+  if (!r.ok) throw new Error('Firebase ' + r.status);
+  return r.json();
+}
 function toList(raw){
   if (Array.isArray(raw)) return raw.filter(x => x && typeof x === 'object');
   if (raw && typeof raw === 'object')
-    return Object.entries(raw).filter(([, v]) => v && typeof v === 'object').map(([k, v]) => ({...v, id: v.id ?? k}));
+    return Object.entries(raw).filter(([, v]) => v && typeof v === 'object').map(([k, v]) => ({...v, _key: k}));
   return [];
 }
 
 // ============================================================
-// API + кэш
-// ============================================================
-async function api(path, opts){
-  opts = {...(opts || {})};
-  const headers = {...(opts.headers || {})};
-  if (TOKEN) headers['Authorization'] = 'Bearer ' + TOKEN;
-  headers['ngrok-skip-browser-warning'] = 'true';
-  if (opts.body && !(opts.body instanceof FormData)) {
-    headers['Content-Type'] = 'application/json';
-    opts.body = JSON.stringify(opts.body);
-  }
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 20000);
-  let res;
-  try { res = await fetch(API + path, {...opts, headers, signal: ctrl.signal}); }
-  catch(e){ throw new Error(e.name === 'AbortError' ? 'Сервер не отвечает' : 'Сервер недоступен'); }
-  finally { clearTimeout(timer); }
-  if (res.status === 401 && !path.includes('/auth/')) {
-    TOKEN = ''; localStorage.removeItem('token'); throw new Error('Unauthorized');
-  }
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(typeof data.detail === 'string' ? data.detail : ('Ошибка ' + res.status));
-  return data;
-}
-function get(path, force){
-  const c = store[path];
-  if (!force && c && Date.now() - c.t < TTL) return Promise.resolve(c.raw);
-  if (inflight[path]) return inflight[path];
-  inflight[path] = api(path).then(raw => { store[path] = {t: Date.now(), raw}; return raw; })
-    .finally(() => { delete inflight[path]; });
-  return inflight[path];
-}
-function invalidate(){ store = {}; }
-
-const PATH = { me: '/api/me', purchases: '/api/purchases/my', eras: '/api/eras' };
-async function fetchKey(k, force){
-  const raw = await get(PATH[k], force);
-  const s = JSON.stringify(raw);
-  const changed = SIG[k] !== s || !HAVE[k];
-  if (changed) {
-    SIG[k] = s;
-    if (k === 'me') ME = raw;
-    else if (k === 'purchases') PURCHASES = toList(raw);
-    else if (k === 'eras') ERAS = toList(raw).filter(e => e.is_active !== 0 && e.is_active !== false)
-      .map(e => ({...e, price: num(e.price), profit_amount: num(e.profit_amount),
-        total_amount: num(e.total_amount) || num(e.price) + num(e.profit_amount), duration_days: num(e.duration_days)}));
-  }
-  HAVE[k] = true;
-  return changed;
-}
-
-// ============================================================
-// Авторизация Telegram
+// ДАННЫЕ
 // ============================================================
 function tgUser(){ return tg && tg.initDataUnsafe && tg.initDataUnsafe.user; }
-function refCode(){
-  return new URLSearchParams(location.search).get('ref') ||
-    (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) || '';
-}
-async function tryAuth(){
-  if (!tg) return {ok:false, reason:'no_tg'};
+
+async function loadMe(){
   const u = tgUser();
-  if (!u) return {ok:false, reason:'no_user'};
-  try {
-    const res = await api('/api/auth/telegram', {method:'POST', body:{
-      id: u.id, first_name: u.first_name || '', last_name: u.last_name || '',
-      username: u.username || '', photo_url: u.photo_url || '',
-      auth_date: tg.initDataUnsafe.auth_date || 0, hash: tg.initDataUnsafe.hash || '', ref: refCode()
-    }});
-    TOKEN = res.token;
-    localStorage.setItem('token', TOKEN);
-    localStorage.setItem('uid', String(u.id));
-    return {ok:true};
-  } catch(e){ return {ok:false, reason:'api_error', error:e.message}; }
-}
-async function ensureAuth(){
-  const u = tgUser();
-  if (TOKEN && u && localStorage.getItem('uid') && localStorage.getItem('uid') !== String(u.id)) {
-    TOKEN = ''; localStorage.removeItem('token'); resetData();      // другой аккаунт Telegram
+  if (!u) return null;
+  USER_UID = String(u.id);
+  const existing = await fbGet(`users/${u.id}`);
+  const now = new Date().toISOString();
+  if (!existing){
+    const data = {
+      telegram_id: u.id,
+      username: u.username || '',
+      first_name: u.first_name || '',
+      last_name: u.last_name || '',
+      photo_url: u.photo_url || '',
+      registered_at: now
+    };
+    await fbPut(`users/${u.id}`, data);
+    return data;
+  } else {
+    const data = {...existing, photo_url: u.photo_url || existing.photo_url || ''};
+    if (existing.photo_url !== data.photo_url) await fbPut(`users/${u.id}`, data);
+    return data;
   }
-  if (TOKEN) return {ok:true};
-  return tryAuth();
 }
-function resetData(){
-  ME = null; PURCHASES = []; ERAS = []; NOTIFS = []; store = {}; KNOWN = null;
-  for (const k in HAVE) delete HAVE[k];
-  for (const k in SIG) delete SIG[k];
+
+async function loadEras(){
+  const raw = await fbGet('eras');
+  return toList(raw)
+    .filter(e => e.is_active !== 0 && e.is_active !== false)
+    .map(e => ({...e, price: num(e.price), profit_amount: num(e.profit_amount),
+      total_amount: num(e.total_amount) || num(e.price) + num(e.profit_amount),
+      duration_days: num(e.duration_days)}))
+    .sort((a, b) => (num(a.sort_order) - num(b.sort_order)) || (num(a.id) - num(b.id)));
 }
-window.logout = function(){
-  localStorage.removeItem('token'); localStorage.removeItem('uid'); TOKEN = '';
-  location.reload();
-};
-window.saveApi = function(){
-  const v = ($('apiInput').value || '').trim().replace(/\/+$/, '');
-  if (!v) return;
-  localStorage.setItem('api', v);
-  location.reload();
-};
-function apiBox(){
-  return `<div class="card2" style="margin-top:12px">
-    <div class="muted-sm" style="margin-bottom:6px">Адрес сервера (API)</div>
-    <input class="api-input" id="apiInput" value="${esc(API)}" placeholder="https://xxxx.ngrok-free.app">
-    <button class="btn secondary sm" style="width:100%" onclick="saveApi()">💾 Сохранить и перезагрузить</button>
-  </div>`;
+
+async function loadPurchases(){
+  if (!USER_UID) return [];
+  const raw = await fbGet('purchases');
+  return toList(raw)
+    .filter(p => String(p.user_telegram_id) === String(USER_UID))
+    .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 }
 
 // ============================================================
-// Уведомления
-// ============================================================
-let KNOWN = null;
-const nid = n => String(n.id ?? (n.created_at + '|' + n.text));
-function seenSet(){ try { return new Set(JSON.parse(localStorage.getItem('seen_n') || '[]')); } catch(e){ return new Set(); } }
-function updateBadges(){
-  const s = seenSet();
-  const c = NOTIFS.filter(n => !s.has(nid(n))).length;
-  document.querySelectorAll('.bdot[data-n]').forEach(el => { el.textContent = c; el.classList.toggle('hidden', !c); });
-  const nb = $('nb'); if (nb) { nb.textContent = c; nb.classList.toggle('hidden', !c); }
-}
-async function pollNotifs(force){
-  if (!TOKEN) return;
-  try {
-    const list = toList(await get('/api/notifications', force));
-    NOTIFS = list;
-    if (KNOWN === null) KNOWN = new Set(list.map(nid));
-    else {
-      const fresh = list.filter(n => !KNOWN.has(nid(n)));
-      if (fresh.length) {
-        fresh.forEach(n => KNOWN.add(nid(n)));
-        toast('🔔 ' + (fresh[0].text || 'Новое уведомление'), 'info', 4500);
-        haptic('success');
-        invalidate();
-        if (!SUB && !$('modal-root').innerHTML) render(true, true);
-      }
-    }
-    updateBadges();
-  } catch(e){}
-}
-setInterval(() => { if (!document.hidden) pollNotifs(true); }, NOTIF_POLL);
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && TOKEN) { pollNotifs(true); render(true, true); }
-});
-
-window.openNotifications = async function(){
-  const before = seenSet();
-  const draw = () => showModal(`
-    <div class="modal-head"><h2>🔔 Уведомления</h2><button class="close-x" onclick="closeModal()">✕</button></div>
-    <div class="modal-body">
-      ${NOTIFS.length ? NOTIFS.map(n => `
-        <div class="notif"><div class="dot ${before.has(nid(n)) ? 'off' : ''}"></div><div>
-          <div style="font-size:13px">${esc(n.text || 'Уведомление')}</div>
-          <div class="muted-sm" style="margin-top:4px">${fmtDate(n.created_at)}</div></div></div>`).join('')
-        : '<div class="empty"><div class="icon">🔔</div><p class="muted">Уведомлений нет</p></div>'}
-    </div>`);
-  draw();
-  await pollNotifs(true);
-  draw();
-  const all = new Set([...before, ...NOTIFS.map(nid)]);
-  localStorage.setItem('seen_n', JSON.stringify([...all].slice(-300)));
-  updateBadges();
-};
-
-// ============================================================
-// Действия
+// ДЕЙСТВИЯ
 // ============================================================
 window.setTab = function(tab){
-  SUB = false; hideBack();
   CURRENT_TAB = tab;
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   render();
 };
-window.refresh = function(){ invalidate(); render(true); };
+
+window.buyEra = id => once('buy' + id, async () => {
+  const era = ERAS.find(e => String(e.id) === String(id));
+  if (!era) return;
+  if (!await ask(`Создать заявку на покупку?\n\n${era.title} — ${fmt(era.price)}`)) return;
+  const u = tgUser() || {};
+  const now = new Date().toISOString();
+  const nextId = await getNextPurchaseId();
+  await fbPost('purchases', {
+    id: nextId,
+    user_telegram_id: u.id,
+    user_username: u.username || '',
+    user_first_name: u.first_name || '',
+    era_id: era.id,
+    era_title: era.title,
+    purchase_price: era.price,
+    profit_amount: era.profit_amount,
+    total_amount: era.total_amount,
+    duration_days: era.duration_days,
+    status: 'created',
+    created_at: now,
+    status_changed_at: now
+  });
+  toast(`✅ Заявка #${nextId} создана`, 'ok', 4000); haptic();
+  await loadPurchases();
+  window.setTab('purchases');
+});
+
+async function getNextPurchaseId(){
+  const raw = await fbGet('counters/purchase');
+  const next = (Number(raw) || 0) + 1;
+  await fbPut('counters/purchase', next);
+  return next;
+}
 
 window.copyRef = function(){
   if (!ME) return;
-  const link = location.origin + location.pathname + '?ref=' + ME.referral_code;
+  const link = location.origin + location.pathname + '?ref=' + ME.telegram_id;
   const ok = () => { toast('📋 Скопировано', 'ok'); haptic(); };
-  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(link).then(ok).catch(() => fallbackCopy(link, ok));
+  if (navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(link).then(ok).catch(() => fallbackCopy(link, ok));
   else fallbackCopy(link, ok);
 };
 function fallbackCopy(text, ok){
@@ -466,24 +349,6 @@ function fallbackCopy(text, ok){
   try { document.execCommand('copy'); ok(); } catch(e){ toast('Не удалось скопировать', 'err'); }
   ta.remove();
 }
-
-window.agreeTerms = () => once('agree', async () => {
-  await api('/api/agree', {method:'POST'});
-  toast('✅ Условия подтверждены', 'ok'); haptic();
-  invalidate(); render(true);
-});
-window.buyEra = id => once('buy' + id, async () => {
-  if (!await ask('Создать заявку на покупку?')) return;
-  const res = await api('/api/purchases/create/' + encodeURIComponent(id), {method:'POST'});
-  toast('✅ Заявка #' + res.purchase_id + ' создана', 'ok'); haptic();
-  invalidate(); window.setTab('purchases');
-});
-window.requestPayout = id => once('pay' + id, async () => {
-  if (!await ask('Подать заявку на вывод средств?')) return;
-  await api('/api/payouts/request/' + encodeURIComponent(id), {method:'POST'});
-  toast('✅ Заявка на вывод создана', 'ok'); haptic();
-  invalidate(); render(true);
-});
 
 window.closeModal = function(){ $('modal-root').innerHTML = ''; };
 function showModal(html){
@@ -510,226 +375,103 @@ window.openEraDetail = function(id){
       <div class="card2" style="margin-bottom:16px">
         <div class="row"><span class="muted">Срок</span><b>${e.duration_days} дней</b></div>
       </div>
-      <button class="btn" onclick="closeModal();buyEra(${q(e.id)})">🛒 Подать заявку на покупку</button>
-      <div class="muted-sm" style="text-align:center;margin-top:10px">После подачи заявки администратор свяжется с вами для оплаты</div>
-    </div>`);
-};
-
-window.openMyOrders = async function(){
-  if (!HAVE.purchases) { try { await fetchKey('purchases'); } catch(e){ toast(e.message, 'err'); return; } }
-  const list = PURCHASES;
-  showModal(`
-    <div class="modal-head">
-      <div><h2>📋 Мои заказы</h2><div class="muted-sm">Всего: ${list.length}</div></div>
-      <button class="close-x" onclick="closeModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      ${list.length ? list.map(p => `
-        <div class="card2" style="margin-bottom:10px">
-          <div class="row" style="margin-bottom:8px">
-            <div class="order-num" style="margin:0">📩 Заявка #${esc(p.id)}</div>
-            <span class="badge ${esc(p.status)}">${esc(statusLabel(p.status))}</span>
-          </div>
-          <div style="font-weight:600;margin-bottom:4px">${esc(p.era_title)}</div>
-          <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0"><span>Вложено</span><b style="color:var(--text)">${fmt(p.purchase_price)}</b></div>
-          <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0"><span>Начисление</span><b style="color:var(--ok)">+${fmt(p.profit_amount)}</b></div>
-          <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0"><span>Итого</span><b style="color:var(--accent)">${fmt(p.total_amount)}</b></div>
-          <div class="muted-sm" style="margin-top:6px">${fmtDate(p.created_at)}${p.last_day ? ' · 🏁 ' + fmtDate(p.last_day) : ''}</div>
-        </div>`).join('')
-        : '<div class="empty"><div class="icon">📭</div><h3>Заказов нет</h3><p class="muted">Создайте первый заказ в магазине</p></div>'}
+      <button class="btn" onclick="closeModal();buyEra(${q(e.id)})">🛒 Подать заявку</button>
     </div>`);
 };
 
 window.openContact = function(){
   showModal(`
-    <div class="modal-head">
-      <div><h2>💬 Связь</h2><div class="muted-sm">Мы всегда на связи</div></div>
-      <button class="close-x" onclick="closeModal()">✕</button>
-    </div>
+    <div class="modal-head"><h2>💬 Связь</h2><button class="close-x" onclick="closeModal()">✕</button></div>
     <div class="modal-body">
-      <a class="contact-btn" href="https://t.me/${esc(ADMIN_USERNAME)}" target="_blank" rel="noopener">
-        <div class="emo">👨‍💼</div><div class="info"><div class="t">Администратор</div><div class="s">@${esc(ADMIN_USERNAME)}</div></div><div style="color:var(--muted)">→</div></a>
-      <a class="contact-btn" href="https://t.me/${esc(BOT_USERNAME)}" target="_blank" rel="noopener">
-        <div class="emo">🤖</div><div class="info"><div class="t">Бот проекта</div><div class="s">@${esc(BOT_USERNAME)}</div></div><div style="color:var(--muted)">→</div></a>
+      <a class="contact-btn" href="https://t.me/${esc(ADMIN_USERNAME)}" target="_blank">
+        <div class="emo">👨‍💼</div><div class="info"><div class="t">Администратор</div><div class="s">@${esc(ADMIN_USERNAME)}</div></div>
+        <div style="color:var(--muted)">→</div></a>
+      <a class="contact-btn" href="https://t.me/${esc(BOT_USERNAME)}" target="_blank">
+        <div class="emo">🤖</div><div class="info"><div class="t">Бот проекта</div><div class="s">@${esc(BOT_USERNAME)}</div></div>
+        <div style="color:var(--muted)">→</div></a>
     </div>`);
 };
 
-// подэкраны с системной кнопкой «Назад» Telegram
-function showBack(){ try { tg && tg.BackButton && tg.BackButton.show(); } catch(e){} }
-function hideBack(){ try { tg && tg.BackButton && tg.BackButton.hide(); } catch(e){} }
-window.closeSub = function(){ SUB = false; hideBack(); render(); };
-try { tg && tg.BackButton && tg.BackButton.onClick(() => window.closeSub()); } catch(e){}
-
-function subScreen(icon, title, inner){
-  return `<div class="topbar">
-      <button class="icon-btn" onclick="closeSub()">←</button>
-      <div class="brand"><div class="logo">${icon}</div>${esc(title)}</div>
-      <div style="width:38px"></div></div>${inner}`;
-}
-window.showContent = async function(key, title){
-  SUB = true; showBack(); window.scrollTo(0, 0);
-  $('app').innerHTML = subScreen('📄', title, '<div class="skel" style="height:160px"></div>');
-  try {
-    const c = await get('/api/content/' + key);
-    if (!SUB) return;
-    $('app').innerHTML = subScreen('📄', title,
-      `<div class="card"><div style="white-space:pre-wrap;line-height:1.7">${esc(c.value || 'Пока пусто')}</div></div>`);
-  } catch(e){ toast(e.message, 'err'); }
-};
-window.showMarketing = async function(){
-  SUB = true; showBack(); window.scrollTo(0, 0);
-  $('app').innerHTML = subScreen('📊', 'Маркетинг', '<div class="skel" style="height:200px"></div>');
-  try {
-    const c = await get('/api/content/marketing_image');
-    if (!SUB) return;
-    const src = c.value ? (/^https?:/.test(c.value) ? c.value : API + c.value) : '';
-    $('app').innerHTML = subScreen('📊', 'Маркетинг', `<div class="card">${src
-      ? `<img class="marketing" src="${esc(src)}" alt="">`
-      : '<div class="muted center" style="padding:32px 0">Изображение пока не добавлено</div>'}</div>`);
-  } catch(e){ toast(e.message, 'err'); }
-};
-
 // ============================================================
-// Вычисления
-// ============================================================
-function daysLeft(p){
-  if (p.expires_at) {
-    const e = new Date(p.expires_at).getTime();
-    if (!isNaN(e)) return Math.max(0, Math.ceil((e - Date.now()) / 86400000));
-  }
-  return num(p.days_left);
-}
-function progressOf(p){
-  if (!p.activated_at || !p.expires_at) return 0;
-  const a = new Date(p.activated_at).getTime(), e = new Date(p.expires_at).getTime(), n = Date.now();
-  if (isNaN(a) || isNaN(e)) return 0;
-  if (n >= e) return 100;
-  if (n <= a) return 0;
-  return Math.round(((n - a) / (e - a)) * 100);
-}
-function daysLeftClass(p){
-  if (['completed','awaiting_payout','paid'].includes(p.status)) return 'info';
-  const d = daysLeft(p);
-  return d <= 1 ? 'err' : d <= 3 ? 'warn' : 'ok';
-}
-function daysLeftLabel(p){
-  if (p.status === 'completed') return '🏁 Завершён';
-  if (p.status === 'awaiting_payout') return '💸 Ждёт выплату';
-  if (p.status === 'paid') return '💰 Выплачен';
-  if (p.status === 'awaiting_payment') return '⏳ Ожидает оплаты';
-  if (p.status === 'cancelled') return '❌ Отменён';
-  const d = daysLeft(p);
-  if (d <= 0) return '🏁 Завершение';
-  if (d === 1) return '⏰ Остался 1 день';
-  if (d === 2) return '⏰ Осталось 2 дня';
-  if (d <= 3) return `⏰ Осталось ${d} дня`;
-  return `✅ Осталось ${d} дн.`;
-}
-
-// ============================================================
-// Экраны
+// ЭКРАНЫ
 // ============================================================
 function skeleton(){
   return '<div class="skel" style="height:56px"></div><div class="skel" style="height:110px"></div>' +
     '<div class="skel" style="height:150px"></div><div class="skel" style="height:150px"></div>';
 }
-const bell = () => `<button class="icon-btn" onclick="openNotifications()">🔔<span class="bdot hidden" data-n></span></button>`;
 function setApp(html){
   $('app').innerHTML = html;
   $('nav').classList.remove('hidden');
-  updateBadges();
 }
 
-function screenAuth(reason, error){
+function screenNoTg(){
   $('nav').classList.add('hidden');
-  const hint = reason === 'no_tg' ? 'Откройте страницу через кнопку в боте @' + BOT_USERNAME
-    : reason === 'no_user' ? 'Telegram не передал данные пользователя'
-    : reason === 'api_error' ? 'Сервер недоступен: ' + API + (error ? ' (' + error + ')' : '') : '';
   $('app').innerHTML = `
     <div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div></div>
     <div class="hero center" style="padding:36px 20px">
       <div style="font-size:56px;margin-bottom:8px">✨</div>
       <h1 style="font-size:26px;margin-bottom:6px">Проект «Эры»</h1>
-      <div class="muted">Войдите через Telegram</div>
+      <div class="muted">Откройте через Telegram-бота</div>
     </div>
-    <div class="card">
-      <div id="tg-login-widget" style="display:flex;justify-content:center;padding:8px 0"></div>
-      ${hint ? `<div class="card2" style="margin-top:12px;background:rgba(255,92,92,.1);border-color:rgba(255,92,92,.3);color:#ffb3b3;font-size:12px">⚠️ ${esc(hint)}</div>` : ''}
-      ${apiBox()}
-      <button class="btn ghost" style="margin-top:10px" onclick="location.reload()">🔄 Повторить</button>
+    <div class="card center">
+      <p class="muted">Нажмите кнопку в боте @${esc(BOT_USERNAME)}</p>
+      <a class="btn" href="https://t.me/${esc(BOT_USERNAME)}" style="margin-top:12px">🚀 Открыть бота</a>
     </div>`;
-  if (reason !== 'api_error' && BOT_USERNAME) {
-    const c = $('tg-login-widget');
-    const s = document.createElement('script');
-    s.src = 'https://telegram.org/js/telegram-widget.js?22';
-    s.setAttribute('data-telegram-login', BOT_USERNAME);
-    s.setAttribute('data-size', 'large');
-    s.setAttribute('data-onauth', 'onTelegramAuth(user)');
-    s.setAttribute('data-request-access', 'write');
-    c.appendChild(s);
-  }
 }
-window.onTelegramAuth = async function(user){
-  try {
-    const res = await api('/api/auth/telegram', {method:'POST', body:{...user, ref: refCode()}});
-    TOKEN = res.token; localStorage.setItem('token', TOKEN); localStorage.setItem('uid', String(user.id));
-    location.reload();
-  } catch(e){ toast('Ошибка: ' + e.message, 'err'); }
-};
 
 function drawHome(){
   const me = ME || {}, P = PURCHASES, u = tgUser() || {};
-  const active = P.filter(p => p.status === 'active');
-  const shown = P.filter(p => ['active','completed'].includes(p.status));
-  const expected = shown.reduce((s, p) => s + num(p.profit_amount), 0);
-  const available = P.filter(p => p.status === 'completed').reduce((s, p) => s + num(p.total_amount), 0);
-  const invested = P.filter(p => !['awaiting_payment','cancelled'].includes(p.status)).reduce((s, p) => s + num(p.purchase_price), 0);
-  const name = me.first_name || u.first_name || me.telegram_username || 'друг';
+  const active = P.filter(p => ['created','in_progress','approved'].includes(p.status));
+  const approved = P.filter(p => p.status === 'approved');
+  const completed = P.filter(p => p.status === 'completed');
+  const invested = P.filter(p => p.status !== 'cancelled').reduce((s, p) => s + num(p.purchase_price), 0);
+  const expected = approved.reduce((s, p) => s + num(p.profit_amount), 0);
+  const available = completed.reduce((s, p) => s + num(p.total_amount), 0);
+  const name = me.first_name || u.first_name || me.username || 'друг';
   const photo = me.photo_url || u.photo_url || '';
-  const refLink = location.origin + location.pathname + '?ref=' + (me.referral_code || '');
+  const refLink = location.origin + location.pathname + '?ref=' + (me.telegram_id || '');
+
   setApp(`
     <div class="topbar">
       <div class="brand"><div class="logo">✨</div>Эры</div>
-      <div class="actions"><button class="icon-btn" onclick="refresh()">🔄</button>${bell()}</div>
+      <div class="actions"><button class="icon-btn" onclick="refresh()">🔄</button></div>
     </div>
     <div class="hero"><div class="row">
       <div class="user">
         <div class="avatar">${photo ? `<img src="${esc(photo)}" alt="">` : esc((name[0] || '?').toUpperCase())}</div>
         <div class="info"><div class="muted-sm">Привет 👋</div><h1>${esc(name)}</h1>
-          ${me.telegram_username ? `<div class="sub">@${esc(me.telegram_username)}</div>` : ''}</div>
+          ${me.username ? `<div class="sub">@${esc(me.username)}</div>` : ''}</div>
       </div>
-      <span class="badge active">${esc(me.status || 'active')}</span>
     </div></div>
     <div class="stats">
       <div class="stat"><div class="label">Инвестировано</div><div class="value sm accent">${fmt(invested)}</div></div>
-      <div class="stat"><div class="label">Активных эр</div><div class="value">${active.length}</div></div>
+      <div class="stat"><div class="label">Активных</div><div class="value">${active.length}</div></div>
       <div class="stat"><div class="label">Начислено</div><div class="value sm ok">+${fmt(expected)}</div></div>
       <div class="stat"><div class="label">Доступно</div><div class="value sm ${available > 0 ? 'ok' : ''}">${fmt(available)}</div></div>
     </div>
     <div class="card">
-      <div class="row" style="margin-bottom:10px"><h3>🔗 Реферальная ссылка</h3><span class="muted-sm">${num(me.invited_count)} друзей</span></div>
+      <div class="row" style="margin-bottom:10px"><h3>🔗 Реферальная ссылка</h3></div>
       <div class="ref-box">${esc(refLink)}</div>
       <button class="btn secondary sm" style="margin-top:10px;width:100%" onclick="copyRef()">📋 Скопировать</button>
     </div>
-    <div class="section-title"><h2>Активные эры</h2>
-      ${shown.length ? `<button class="btn ghost xs" onclick="setTab('purchases')">Все →</button>` : ''}</div>
-    ${shown.length ? shown.map(p => eraCardPurchase(p, false)).join('') : `
-      <div class="card empty"><div class="icon">🌱</div><h3>Пока нет активных эр</h3>
-        <p class="muted" style="margin-bottom:16px">Выберите эру и начните зарабатывать</p>
-        <button class="btn" style="max-width:240px;margin:0 auto" onclick="setTab('buy')">🛒 Открыть магазин</button></div>`}`);
+    <div class="section-title"><h2>Мои заявки</h2>
+      ${P.length ? `<button class="btn ghost xs" onclick="setTab('purchases')">Все →</button>` : ''}</div>
+    ${P.length ? P.slice(0, 3).map(p => eraCardPurchase(p)).join('') : `
+      <div class="card empty"><div class="icon">🌱</div><h3>Пока нет заявок</h3>
+        <p class="muted" style="margin-bottom:16px">Выберите эру и начните</p>
+        <button class="btn" style="max-width:240px;margin:0 auto" onclick="setTab('buy')">🛒 Открыть магазин</button></div>`}
+  `);
 }
 
-function eraCardPurchase(p, full){
-  const cls = daysLeftClass(p);
-  const showProg = !full || p.status === 'active';
+function eraCardPurchase(p){
   return `
     <div class="era-card">
       <div class="head">
-        ${full ? `<div class="order-num">📩 Заявка #${esc(p.id)}</div>` : ''}
+        <div class="order-num">📩 Заявка #${esc(p.id)}</div>
         <div class="row">
           <div class="title-wrap"><div class="icon">🌿</div>
             <div style="min-width:0"><div class="name">${esc(p.era_title)}</div>
-              <div class="tier">${full ? num(p.duration_days) + ' дней · ' + fmt(p.purchase_price) : 'Заявка #' + esc(p.id)}</div></div></div>
+              <div class="tier">${num(p.duration_days)} дней</div></div></div>
           <span class="badge ${esc(p.status)}">${esc(statusLabel(p.status))}</span>
         </div>
       </div>
@@ -739,35 +481,19 @@ function eraCardPurchase(p, full){
           <div class="metric"><div class="l">Начисл.</div><div class="v profit">+${fmt(p.profit_amount)}</div></div>
           <div class="metric"><div class="l">Итого</div><div class="v total">${fmt(p.total_amount)}</div></div>
         </div>
-        ${showProg ? `
-          <div style="text-align:center;margin-top:14px"><span class="days-left ${cls}">${daysLeftLabel(p)}</span></div>
-          <div class="progress" style="margin-top:12px"><div class="fill ${cls}" style="width:${progressOf(p)}%"></div></div>` : ''}
-        ${full ? `<div class="muted-sm" style="margin-top:12px">🕐 ${fmtDate(p.created_at)}${p.activated_at ? ' · ✅ ' + fmtDate(p.activated_at) : ''}${p.last_day ? ' · 🏁 ' + fmtDate(p.last_day) : ''}${p.paid_at ? ' · 💰 ' + fmtDate(p.paid_at) : ''}</div>` : ''}
+        <div class="muted-sm" style="margin-top:12px">🕐 ${fmtDate(p.created_at)}</div>
       </div>
-      ${p.status === 'completed' ? `<div class="actions"><button class="btn success" onclick="requestPayout(${q(p.id)})">💰 Подать заявку на вывод</button></div>` : ''}
     </div>`;
 }
 
-// ---------- магазин ----------
 function drawBuy(){
-  const me = ME || {};
-  if (!me.agreed_terms) {
-    setApp(`
-      <div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div></div>
-      <h1>Условия участия</h1>
-      <div class="card" style="margin-top:12px"><div style="white-space:pre-wrap;font-size:14px;line-height:1.7" id="terms"><div class="skel" style="height:120px"></div></div></div>
-      <button class="btn" onclick="agreeTerms()">✅ Я согласен и подтверждаю</button>`);
-    get('/api/content/terms_text').then(c => { const t = $('terms'); if (t) t.textContent = c.value || ''; })
-      .catch(e => { const t = $('terms'); if (t) t.textContent = e.message; });
-    return;
-  }
   const chips = [['all','Все'],['starter','⚡ Старт'],['middle','🚀 Бизнес'],['premium','💎 Premium']];
   setApp(`
     <div class="topbar">
       <div class="brand"><div class="logo">🛒</div>Магазин</div>
-      <div class="actions"><span class="muted-sm">${HAVE.eras ? ERAS.length + ' эр' : ''}</span>${bell()}</div>
+      <div class="actions"><span class="muted-sm">${ERAS.length} эр</span></div>
     </div>
-    <div class="searchbar"><input class="search-input" placeholder="🔍 Поиск эры…" value="${esc(shopSearch)}"
+    <div class="searchbar"><input class="search-input" placeholder="🔍 Поиск…" value="${esc(shopSearch)}"
       oninput="shopSearch=this.value;fillShop()"></div>
     <div class="filters">${chips.map(([k, l]) =>
       `<button class="chip ${shopFilter === k ? 'active' : ''}" onclick="shopFilter='${k}';drawBuy()">${l}</button>`).join('')}</div>
@@ -778,7 +504,6 @@ window.drawBuy = drawBuy;
 
 function fillShop(){
   const box = $('shopList'); if (!box) return;
-  if (!HAVE.eras) { box.innerHTML = '<div class="skel" style="height:220px"></div><div class="skel" style="height:220px"></div>'; return; }
   let list = ERAS.slice();
   const s = shopSearch.trim().toLowerCase();
   if (s) list = list.filter(e => String(e.title || '').toLowerCase().includes(s) || String(e.description || '').toLowerCase().includes(s));
@@ -786,7 +511,7 @@ function fillShop(){
   if (shopFilter === 'middle') list = list.filter(e => e.price >= 5000 && e.price < 15000);
   if (shopFilter === 'premium') list = list.filter(e => e.price >= 15000);
   box.innerHTML = list.length ? list.map(eraCardShop).join('') :
-    `<div class="card empty"><div class="icon">${ERAS.length ? '🔍' : '📦'}</div><h3>${ERAS.length ? 'Ничего не найдено' : 'Товаров пока нет'}</h3></div>`;
+    `<div class="card empty"><div class="icon">📦</div><h3>${ERAS.length ? 'Ничего не найдено' : 'Товаров пока нет'}</h3></div>`;
 }
 
 function eraCardShop(e){
@@ -812,112 +537,100 @@ function eraCardShop(e){
 }
 
 function drawPurchases(){
-  const list = PURCHASES;
   setApp(`
     <div class="topbar">
       <div class="brand"><div class="logo">📦</div>Мои покупки</div>
-      <div class="actions"><span class="muted-sm">${list.length}</span>${bell()}</div>
+      <div class="actions"><button class="icon-btn" onclick="refresh()">🔄</button></div>
     </div>
-    ${list.length ? list.map(p => eraCardPurchase(p, true)).join('') : `
+    ${PURCHASES.length ? PURCHASES.map(eraCardPurchase).join('') : `
       <div class="card empty"><div class="icon">📦</div><h3>Покупок пока нет</h3>
         <button class="btn" style="max-width:240px;margin:16px auto 0" onclick="setTab('buy')">🛒 В магазин</button></div>`}`);
 }
 
 function drawProfile(){
   const me = ME || {}, u = tgUser() || {};
-  const name = me.first_name || u.first_name || me.telegram_username || 'Пользователь';
+  const name = me.first_name || u.first_name || me.username || 'Пользователь';
   const photo = me.photo_url || u.photo_url || '';
   const item = (emo, label, fn) => `<div class="menu-item" onclick="${fn}"><div class="left"><div class="emo">${emo}</div><div>${label}</div></div><div class="arrow">→</div></div>`;
   setApp(`
-    <div class="topbar"><div class="brand"><div class="logo">👤</div>Профиль</div><div class="actions">${bell()}</div></div>
+    <div class="topbar"><div class="brand"><div class="logo">👤</div>Профиль</div></div>
     <div class="hero center" style="padding:24px 20px">
       <div class="avatar lg" style="margin:0 auto 12px">${photo ? `<img src="${esc(photo)}" alt="">` : esc((name[0] || '?').toUpperCase())}</div>
       <h2 style="margin-bottom:4px">${esc(name)}</h2>
-      ${me.telegram_username ? `<div class="muted">@${esc(me.telegram_username)}</div>` : ''}
-      <div style="margin-top:10px"><span class="badge active">${esc(me.status || 'active')}</span></div>
+      ${me.username ? `<div class="muted">@${esc(me.username)}</div>` : ''}
     </div>
     <div class="section-title"><h2>Мой аккаунт</h2></div>
     <div class="card" style="padding:0 16px">
-      ${item('📋', 'Мои заказы', 'openMyOrders()')}${item('💬', 'Связь', 'openContact()')}${item('🔔', 'Уведомления', 'openNotifications()')}
+      ${item('💬', 'Связь с админом', 'openContact()')}
     </div>
     <div class="section-title"><h2>Данные</h2></div>
     <div class="card" style="padding:0 16px">
       <div class="list-item"><span class="muted">Telegram ID</span><b>${esc(me.telegram_id || u.id || '—')}</b></div>
-      <div class="list-item"><span class="muted">Username</span><b>@${esc(me.telegram_username || u.username || '—')}</b></div>
-      <div class="list-item"><span class="muted">Реферер</span><b>${me.referrer ? '@' + esc(me.referrer.username || me.referrer.first_name || '—') : '—'}</b></div>
+      <div class="list-item"><span class="muted">Username</span><b>@${esc(me.username || u.username || '—')}</b></div>
       <div class="list-item"><span class="muted">Регистрация</span><b>${fmtDate(me.registered_at)}</b></div>
-      <div class="list-item"><span class="muted">Условия</span><b>${me.agreed_terms ? '✅' : '❌'}</b></div>
-    </div>
-    <div class="section-title"><h2>Информация</h2></div>
-    <div class="card" style="padding:0 16px">
-      ${item('📖', 'Правила проекта', "showContent('rules_text','Правила')")}
-      ${item('📄', 'Условия участия', "showContent('terms_text','Условия')")}
-      ${item('📊', 'Маркетинг', 'showMarketing()')}
-    </div>
-    <button class="btn ghost" onclick="logout()" style="margin-top:8px">🚪 Выйти</button>`);
+    </div>`);
 }
 
 // ============================================================
-// Рендер: мгновенно из кэша, затем тихое обновление
+// РЕНДЕР
 // ============================================================
-const SCREENS = {
-  home:      { need: ['me','purchases'], soft: [],       draw: drawHome },
-  buy:       { need: ['me'],             soft: ['eras'], draw: drawBuy },
-  purchases: { need: ['purchases'],      soft: [],       draw: drawPurchases },
-  profile:   { need: ['me'],             soft: [],       draw: drawProfile },
-};
+const SCREENS = { home: drawHome, buy: drawBuy, purchases: drawPurchases, profile: drawProfile };
 
-async function render(force, silent){
-  const my = ++RID;
+async function refreshData(){
+  if (!ME){ ME = await loadMe(); }
+  ERAS = await loadEras();
+  PURCHASES = await loadPurchases();
+}
+
+let RENDER_LOCK = false;
+async function render(force){
+  if (RENDER_LOCK) return;
+  RENDER_LOCK = true;
   try {
-    const r = await ensureAuth();
-    if (my !== RID) return;
-    if (!r.ok) { screenAuth(r.reason, r.error); return; }
-    if (SUB && silent) return;
-    const sc = SCREENS[CURRENT_TAB] || SCREENS.home;
-    const ready = sc.need.every(k => HAVE[k]);
-    if (!silent) {
-      if (ready) sc.draw();
-      else { $('app').innerHTML = skeleton(); $('nav').classList.remove('hidden'); }
+    if (!tgUser()){ screenNoTg(); return; }
+    if (!ME){
+      $('app').innerHTML = skeleton();
+      $('nav').classList.remove('hidden');
+      ME = await loadMe();
     }
-    const res = await Promise.all([
-      ...sc.need.map(k => fetchKey(k, force)),
-      ...sc.soft.map(k => fetchKey(k, force).catch(() => false)),
-    ]);
-    if (my !== RID || SUB) return;
-    const typing = document.activeElement && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);
-    if (!ready || (res.some(Boolean) && !(silent && ($('modal-root').innerHTML || typing)))) {
-      const y = window.scrollY; sc.draw(); if (silent) window.scrollTo(0, y);
-    } else if (CURRENT_TAB === 'buy') fillShop();
-    if (KNOWN === null) pollNotifs();
+    const need = !HAVE.eras || !HAVE.purchases || force;
+    if (need){
+      if (HAVE.eras && HAVE.purchases && !force){
+        SCREENS[CURRENT_TAB] ? SCREENS[CURRENT_TAB]() : drawHome();
+      }
+      await refreshData();
+      HAVE.eras = HAVE.purchases = true;
+    }
+    const y = window.scrollY;
+    (SCREENS[CURRENT_TAB] || drawHome)();
+    window.scrollTo(0, y);
   } catch(e){
-    if (my !== RID) return;
     console.error(e);
-    if (e.message === 'Unauthorized') { render(); return; }
-    if (silent) return;
-    $('nav').classList.add('hidden');
     $('app').innerHTML = `
       <div class="topbar"><div class="brand"><div class="logo">⚠️</div>Ошибка</div></div>
-      <div class="card">
-        <p style="margin-bottom:12px">${esc(e.message)}</p>
-        <p class="muted" style="margin-bottom:12px">Сервер: ${esc(API)}</p>
-        <button class="btn" onclick="refresh()">🔄 Повторить</button>
-        ${apiBox()}
-      </div>`;
+      <div class="card"><p style="margin-bottom:12px">${esc(e.message)}</p>
+        <button class="btn" onclick="refresh()">🔄 Повторить</button></div>`;
+  } finally {
+    RENDER_LOCK = false;
   }
 }
 
+window.refresh = function(){ HAVE = {}; render(true); };
+window.logout = function(){ try { tg.close(); } catch(e){} };
+
 // ============================================================
-// Старт
+// СТАРТ
 // ============================================================
 (function init(){
   try { if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor && tg.setHeaderColor('#0a0e14'); tg.setBackgroundColor && tg.setBackgroundColor('#0a0e14'); } } catch(e){}
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === CURRENT_TAB));
   $('nav').addEventListener('click', e => {
     const b = e.target.closest('button');
     if (b && b.dataset.tab) window.setTab(b.dataset.tab);
   });
-  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === CURRENT_TAB));
   render();
+  setInterval(() => { if (!document.hidden && tgUser()) render(true); }, POLL_MS);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && tgUser()) render(true); });
 })();
 </script>
 </body>

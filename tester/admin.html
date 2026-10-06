@@ -16,12 +16,11 @@
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:14px;line-height:1.5}
   button,input,textarea,select{font-family:inherit}
   .layout{display:flex;min-height:100vh}
-  .side{width:220px;background:var(--card);border-right:1px solid var(--border);padding:16px 10px;
+  .side{width:210px;background:var(--card);border-right:1px solid var(--border);padding:16px 10px;
     flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
   .side .logo{display:flex;align-items:center;gap:10px;padding:0 8px 16px;border-bottom:1px solid var(--border);margin-bottom:12px}
   .side .logo .ic{width:34px;height:34px;border-radius:9px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff}
   .side .logo .t{font-weight:700;font-size:14px}
-  .side .logo .s{font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:600}
   .side .nav-item{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:none;border:0;color:var(--text2);
     padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;margin-bottom:1px;font-weight:500}
   .side .nav-item:hover{background:var(--card2)}
@@ -29,7 +28,7 @@
   .side .nav-item .emo{font-size:15px;width:18px;text-align:center}
   .side .nav-item .count{margin-left:auto;padding:1px 7px;border-radius:9px;background:rgba(255,255,255,.14);font-size:10px;font-weight:700;min-width:18px;text-align:center}
   .side .section{font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;padding:12px 12px 4px}
-  .main{flex:1;min-width:0;padding:20px 24px;overflow-x:hidden}
+  .main{flex:1;min-width:0;padding:20px 24px}
   .header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px;flex-wrap:wrap}
   .header h1{font-size:22px;font-weight:700}
   .header .sub{font-size:12px;color:var(--muted)}
@@ -93,6 +92,7 @@
   .close-x{width:32px;height:32px;border-radius:50%;background:var(--card2);border:1px solid var(--border2);color:var(--text2);
     font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .loading{text-align:center;padding:40px;color:var(--muted)}
   @media(max-width:768px){
     .layout{flex-direction:column}
     .side{width:100%;height:auto;position:relative;padding:10px;border-right:0;border-bottom:1px solid var(--border);
@@ -113,19 +113,13 @@
 
 <script>
 const FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app';
-const TTL = 20000;
-const POLL_MS = 25000;
-const PAGE = 30;
+const PAGE = 20;
 
 const $ = id => document.getElementById(id);
 let TAB = 'dashboard';
-let RID = 0;
-const DATA = { purchases: [], payouts: [], eras: [], users: [] };
-const SIG = {};
+const DATA = { purchases: null, payouts: null, eras: null, users: null };
 let FILTER = { purchases: 'all', payouts: 'all', search: '' };
 let LIM = { purchases: PAGE, payouts: PAGE, users: PAGE };
-let store = {};
-const inflight = {};
 const BUSY = new Set();
 
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -134,14 +128,12 @@ const num = v => { const n = Number(v); return isFinite(n) ? n : 0; };
 function fmt(n){ return num(n).toLocaleString('ru-RU') + ' ₽'; }
 function fmtDate(s){
   if (!s) return '—';
-  const d = new Date(s);
-  if (isNaN(d)) return String(s);
+  const d = new Date(s); if (isNaN(d)) return String(s);
   return d.toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric'});
 }
 function fmtDT(s){
   if (!s) return '—';
-  const d = new Date(s);
-  if (isNaN(d)) return String(s);
+  const d = new Date(s); if (isNaN(d)) return String(s);
   return d.toLocaleString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
 }
 function statusLabel(s){
@@ -149,7 +141,6 @@ function statusLabel(s){
     completed:'Завершён', paid:'Выплачен', cancelled:'Отменён',
     pending:'Ожидает', rejected:'Отклонён'})[s] || s;
 }
-
 function toast(msg, type='ok', ms=2500){
   const t = $('toast');
   t.textContent = msg;
@@ -157,9 +148,7 @@ function toast(msg, type='ok', ms=2500){
   clearTimeout(t._t);
   t._t = setTimeout(() => t.className = 'toast hidden', ms);
 }
-function showModal(html){
-  $('modal-root').innerHTML = `<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`;
-}
+function showModal(html){ $('modal-root').innerHTML = `<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`; }
 function closeModal(){ $('modal-root').innerHTML = ''; }
 async function once(key, fn){
   if (BUSY.has(key)) return;
@@ -168,6 +157,7 @@ async function once(key, fn){
   finally { BUSY.delete(key); }
 }
 
+// Firebase
 async function fbGet(path){
   const r = await fetch(`${FIREBASE}/${path}.json`);
   if (!r.ok) throw new Error('Firebase ' + r.status);
@@ -195,35 +185,10 @@ function toList(raw){
   return [];
 }
 
-async function get(path, force){
-  const c = store[path];
-  if (!force && c && Date.now() - c.t < TTL) return c.raw;
-  if (inflight[path]) return inflight[path];
-  inflight[path] = fbGet(path).then(raw => { store[path] = {t: Date.now(), raw}; return raw; })
-    .finally(() => { delete inflight[path]; });
-  return inflight[path];
-}
-function invalidate(){ store = {}; }
-
-async function loadAll(force){
-  const [p, po, e, u] = await Promise.all([
-    get('purchases', force), get('payouts', force),
-    get('eras', force), get('users', force)
-  ]);
-  let changed = false;
-  const sp = JSON.stringify(p);
-  if (sp !== SIG.p){ SIG.p = sp; DATA.purchases = toList(p).sort((a,b) => num(b.id) - num(a.id)); changed = true; }
-  const spo = JSON.stringify(po);
-  if (spo !== SIG.po){ SIG.po = spo; DATA.payouts = toList(po).sort((a,b) => num(b.id) - num(a.id)); changed = true; }
-  const se = JSON.stringify(e);
-  if (se !== SIG.e){ SIG.e = se; DATA.eras = toList(e).sort((a,b) => (num(a.sort_order) - num(b.sort_order)) || (num(a.id) - num(b.id))); changed = true; }
-  const su = JSON.stringify(u);
-  if (su !== SIG.u){ SIG.u = su; DATA.users = toList(u); changed = true; }
-  return changed;
-}
-
+// ============================================================
+// ОБОЛОЧКА
+// ============================================================
 function shell(){
-  if ($('main')) return;
   const nav = (tab, emo, label, cnt) => `
     <button class="nav-item" data-tab="${tab}" onclick="setTab('${tab}')">
       <span class="emo">${emo}</span>${label}${cnt ? `<span class="count hidden" id="cnt-${tab}"></span>` : ''}
@@ -232,7 +197,7 @@ function shell(){
     <div class="layout">
       <aside class="side">
         <div class="logo"><div class="ic">⚡</div>
-          <div><div class="t">Era Admin</div><div class="s">Панель</div></div></div>
+          <div><div class="t">Era Admin</div></div></div>
         <div class="section">Обзор</div>
         ${nav('dashboard','📊','Дашборд')}
         <div class="section">Операции</div>
@@ -242,49 +207,83 @@ function shell(){
         ${nav('users','👥','Пользователи')}
         ${nav('eras','🧩','Товары')}
         <div class="section"></div>
-        <button class="nav-item" onclick="window.location.reload()">
+        <button class="nav-item" onclick="location.reload()">
           <span class="emo">🔄</span>Обновить</button>
       </aside>
       <main class="main" id="main"></main>
     </div>`;
 }
-function updateNav(){
-  document.querySelectorAll('.nav-item[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === TAB));
-  const c = {
-    purchases: DATA.purchases.filter(p => p.status === 'created').length,
-    payouts: DATA.payouts.filter(p => p.status === 'pending').length,
-  };
-  for (const k in c){
-    const el = $('cnt-' + k);
-    if (el){ el.textContent = c[k]; el.classList.toggle('hidden', !c[k]); }
-  }
-}
-function setMain(html){ shell(); $('main').innerHTML = html; updateNav(); }
+function setMain(html){ $('main').innerHTML = html; }
 function emptyBlock(icon, title, text='', extra=''){
   return `<div class="empty"><div class="ic">${icon}</div><h3>${title}</h3>
     ${text ? `<p class="muted" style="margin:8px 0">${text}</p>` : ''}${extra}</div>`;
 }
 
-const TABS = { dashboard: drawDashboard, purchases: drawPurchases, payouts: drawPayouts, users: drawUsers, eras: drawEras };
+// ============================================================
+// ВКЛАДКИ
+// ============================================================
+const LOADERS = {
+  dashboard: async () => {
+    const [p, po, e, u] = await Promise.all([fbGet('purchases'), fbGet('payouts'), fbGet('eras'), fbGet('users')]);
+    DATA.purchases = toList(p).sort((a,b) => num(b.id) - num(a.id));
+    DATA.payouts = toList(po).sort((a,b) => num(b.id) - num(a.id));
+    DATA.eras = toList(e);
+    DATA.users = toList(u);
+    return drawDashboard;
+  },
+  purchases: async () => {
+    DATA.purchases = toList(await fbGet('purchases')).sort((a,b) => num(b.id) - num(a.id));
+    return drawPurchases;
+  },
+  payouts: async () => {
+    DATA.payouts = toList(await fbGet('payouts')).sort((a,b) => num(b.id) - num(a.id));
+    return drawPayouts;
+  },
+  users: async () => {
+    const [u, p] = await Promise.all([fbGet('users'), fbGet('purchases')]);
+    DATA.users = toList(u);
+    DATA.purchases = toList(p);
+    return drawUsers;
+  },
+  eras: async () => {
+    DATA.eras = toList(await fbGet('eras')).sort((a,b) => (num(a.sort_order) - num(b.sort_order)) || (num(a.id) - num(b.id)));
+    return drawEras;
+  },
+};
 
-async function render(force){
-  const my = ++RID;
-  const wasReady = Object.keys(SIG).length > 0;
-  if (!wasReady || force) setMain('<div class="card">Загрузка…</div>');
+async function render(){
+  const target = TAB;
+  $('main').innerHTML = '<div class="loading">Загрузка…</div>';
+  document.querySelectorAll('.nav-item[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === target));
   try {
-    const changed = await loadAll(force);
-    if (my !== RID) return;
-    if (!wasReady || changed) (TABS[TAB] || drawDashboard)();
-    else updateNav();
+    const draw = await LOADERS[target]();
+    if (TAB !== target) return;
+    draw();
+    updateCounts();
   } catch(e){
-    if (my !== RID) return;
-    setMain(emptyBlock('⚠️', 'Ошибка', esc(e.message), `<button class="btn" onclick="render(true)">🔄 Повторить</button>`));
+    setMain(emptyBlock('⚠️', 'Ошибка', esc(e.message), `<button class="btn" onclick="render()">🔄 Повторить</button>`));
   }
 }
-function setTab(t){ TAB = t; FILTER.search = ''; LIM = { purchases: PAGE, payouts: PAGE, users: PAGE }; render(); }
-function refresh(){ invalidate(); render(true); }
-window.setTab = setTab; window.refresh = refresh; window.closeModal = closeModal;
-window.invalidate = invalidate;
+function updateCounts(){
+  if (DATA.purchases){
+    const c = DATA.purchases.filter(p => p.status === 'created').length;
+    const el = $('cnt-purchases');
+    if (el){ el.textContent = c; el.classList.toggle('hidden', !c); }
+  }
+  if (DATA.payouts){
+    const c = DATA.payouts.filter(p => p.status === 'pending').length;
+    const el = $('cnt-payouts');
+    if (el){ el.textContent = c; el.classList.toggle('hidden', !c); }
+  }
+}
+function setTab(t){
+  TAB = t;
+  FILTER.search = '';
+  LIM = { purchases: PAGE, payouts: PAGE, users: PAGE };
+  render();
+}
+window.setTab = setTab;
+window.closeModal = closeModal;
 
 // ============================================================
 // DASHBOARD
@@ -298,7 +297,7 @@ function drawDashboard(){
   setMain(`
     <div class="header">
       <div><h1>📊 Дашборд</h1><div class="sub">Общая статистика</div></div>
-      <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button>
+      <button class="btn secondary sm" onclick="render()">🔄 Обновить</button>
     </div>
     <div class="stats">
       <div class="stat"><div class="ic">👥</div><div class="l">Пользователей</div><div class="v">${DATA.users.length}</div></div>
@@ -315,6 +314,28 @@ function drawDashboard(){
 // ============================================================
 // PURCHASES
 // ============================================================
+function drawPurchases(){
+  const P = DATA.purchases;
+  const c = { all: P.length };
+  ['created','in_progress','approved','completed','cancelled'].forEach(k => c[k] = P.filter(p => p.status === k).length);
+  const tabs = [
+    ['all','📋 Все'],['created','🔵 Созданные'],['in_progress','🟡 В процессе'],
+    ['approved','🟢 Одобренные'],['completed','🏁 Завершённые'],['cancelled','❌ Отменённые']
+  ];
+  setMain(`
+    <div class="header">
+      <div><h1>📩 Заявки</h1><div class="sub" id="sub"></div></div>
+      <button class="btn secondary sm" onclick="render()">🔄 Обновить</button>
+    </div>
+    <div class="tabs">${tabs.map(([k, l]) =>
+      `<button class="tab ${FILTER.purchases === k ? 'active' : ''}" onclick="setFilter('${k}')">${l} (${c[k]})</button>`).join('')}</div>
+    <div class="card" style="padding:10px">
+      <input class="input" placeholder="🔍 Поиск: имя, @username, ID…" value="${esc(FILTER.search)}"
+        oninput="onSearch(this.value)">
+    </div>
+    <div id="list"></div>`);
+  fillPurchases();
+}
 function purchaseFiltered(){
   const f = FILTER.purchases, s = FILTER.search.trim().toLowerCase();
   return DATA.purchases.filter(p => {
@@ -326,34 +347,12 @@ function purchaseFiltered(){
            String(p.user_telegram_id || '').includes(s);
   });
 }
-function drawPurchases(){
-  const P = DATA.purchases;
-  const c = { all: P.length };
-  ['created','in_progress','approved','completed','cancelled'].forEach(k => c[k] = P.filter(p => p.status === k).length);
-  const tabs = [
-    ['all','📋 Все'],['created','🔵 Созданные'],['in_progress','🟡 В процессе'],
-    ['approved','🟢 Одобренные'],['completed','🏁 Завершённые'],['cancelled','❌ Отменённые']
-  ];
-  const list = purchaseFiltered();
-  setMain(`
-    <div class="header">
-      <div><h1>📩 Заявки</h1><div class="sub">Всего: ${c.all} · Показано: ${list.length}</div></div>
-      <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button>
-    </div>
-    <div class="tabs">${tabs.map(([k, l]) =>
-      `<button class="tab ${FILTER.purchases === k ? 'active' : ''}" onclick="setFilter('purchases','${k}')">${l} (${c[k]})</button>`).join('')}</div>
-    <div class="card" style="padding:10px">
-      <input class="input" placeholder="🔍 Поиск: имя, @username, ID…" value="${esc(FILTER.search)}"
-        oninput="onSearch(this.value,'purchases')">
-    </div>
-    <div id="list"></div>`);
-  fillPurchases();
-}
 function fillPurchases(){
-  const f = purchaseFiltered();
+  const list = purchaseFiltered();
   const lim = LIM.purchases;
-  $('list').innerHTML = f.length
-    ? f.slice(0, lim).map(orderCard).join('') + moreBtn('purchases', f.length - lim)
+  $('sub').textContent = `Всего: ${DATA.purchases.length} · Показано: ${list.length}`;
+  $('list').innerHTML = list.length
+    ? list.slice(0, lim).map(orderCard).join('') + moreBtn('purchases', list.length - lim)
     : emptyBlock('📭', 'Заявок нет');
 }
 function moreBtn(name, left){
@@ -361,13 +360,9 @@ function moreBtn(name, left){
     <button class="btn secondary" onclick="more('${name}')">Показать ещё (${left})</button></div>` : '';
 }
 function more(name){ LIM[name] += PAGE; name === 'purchases' ? fillPurchases() : name === 'payouts' ? fillPayouts() : fillUsers(); }
-function setFilter(name, v){ FILTER[name] = v; LIM[name] = PAGE; TABS[name](); }
+function setFilter(v){ FILTER.purchases = v; LIM.purchases = PAGE; drawPurchases(); }
 let SEARCH_TIMER;
-function onSearch(v, tab){
-  FILTER.search = v; LIM[tab] = PAGE;
-  clearTimeout(SEARCH_TIMER);
-  SEARCH_TIMER = setTimeout(() => tab === 'purchases' ? fillPurchases() : fillUsers(), 150);
-}
+function onSearch(v){ FILTER.search = v; LIM.purchases = PAGE; clearTimeout(SEARCH_TIMER); SEARCH_TIMER = setTimeout(fillPurchases, 150); }
 window.setFilter = setFilter; window.onSearch = onSearch; window.more = more;
 
 function orderCard(p){
@@ -388,19 +383,15 @@ function orderCard(p){
         <div class="meta-item"><div class="l">📅 Срок</div><div class="v">${num(p.duration_days)} дней</div></div>
       </div>
       <div class="muted-sm" style="margin-bottom:10px">
-        🕐 Создано: ${fmtDT(p.created_at)}
+        🕐 ${fmtDT(p.created_at)}
         ${p.activated_at ? '<br>✅ Подтверждено: ' + fmtDT(p.activated_at) : ''}
         ${p.start_date ? '<br>📅 Начало: ' + fmtDate(p.start_date) : ''}
         ${p.last_day ? ' · 🏁 Последний: ' + fmtDate(p.last_day) : ''}
         ${p.expires_at ? ' · ⏰ Завершение: ' + fmtDate(p.expires_at) : ''}
       </div>
       <div class="flex">
-        ${p.status === 'created' ? `
-          <button class="btn secondary sm" onclick="setStatus(${q(p._key)}, 'in_progress')">🟡 В процессе</button>
-          <button class="btn ok sm" onclick="approvePurchase(${q(p._key)})">🟢 Одобрить</button>
-          <button class="btn danger sm" onclick="setStatus(${q(p._key)}, 'cancelled')">❌ Отменить</button>
-        ` : ''}
-        ${p.status === 'in_progress' ? `
+        ${p.status === 'created' || p.status === 'in_progress' ? `
+          ${p.status === 'created' ? `<button class="btn secondary sm" onclick="setStatus(${q(p._key)}, 'in_progress')">🟡 В процессе</button>` : ''}
           <button class="btn ok sm" onclick="approvePurchase(${q(p._key)})">🟢 Одобрить</button>
           <button class="btn danger sm" onclick="setStatus(${q(p._key)}, 'cancelled')">❌ Отменить</button>
         ` : ''}
@@ -408,7 +399,7 @@ function orderCard(p){
           <button class="btn sm" onclick="setStatus(${q(p._key)}, 'completed')">🏁 Завершить</button>
           <button class="btn danger sm" onclick="setStatus(${q(p._key)}, 'cancelled')">❌ Отменить</button>
         ` : ''}
-        ${p.user_username ? `<button class="btn ghost sm" onclick="writeUser(${q(p.user_username)}, ${q(p.user_telegram_id || 0)})">💬 Написать</button>` : ''}
+        ${p.user_username ? `<a class="btn ghost sm" href="https://t.me/${esc(p.user_username)}" target="_blank">💬 Написать</a>` : ''}
       </div>
     </div>`;
 }
@@ -416,43 +407,39 @@ function orderCard(p){
 window.setStatus = (key, status) => once('p' + key + status, async () => {
   if (!confirm(`Изменить статус на "${statusLabel(status)}"?`)) return;
   await fbPatch(`purchases/${key}`, {status, status_changed_at: new Date().toISOString()});
-  toast(`✅ Статус → ${statusLabel(status)}`);
-  invalidate();
-  await render(true);
+  // локальное обновление
+  const p = DATA.purchases.find(x => x._key === key);
+  if (p){ p.status = status; p.status_changed_at = new Date().toISOString(); }
+  toast(`✅ → ${statusLabel(status)}`);
+  drawPurchases();
+  updateCounts();
 });
 
 window.approvePurchase = key => once('ap' + key, async () => {
-  if (!confirm('Одобрить заявку? Участник получит уведомление с датами.')) return;
+  if (!confirm('Одобрить заявку?')) return;
   const p = DATA.purchases.find(x => x._key === key);
   if (!p) return;
   const now = new Date();
-  // Ташкент UTC+5
   const tzNow = new Date(now.getTime() + 5*3600*1000);
   const y = tzNow.getUTCFullYear(), m = tzNow.getUTCMonth(), d = tzNow.getUTCDate();
   const first = new Date(Date.UTC(y, m, d+1, 0, 0, 0) - 5*3600*1000);
   const days = num(p.duration_days);
   const last = new Date(first.getTime() + (days - 1) * 86400000);
   const expires = new Date(last.getTime() + 86400000);
-  await fbPatch(`purchases/${key}`, {
+  const patch = {
     status: 'approved',
     activated_at: now.toISOString(),
     start_date: first.toISOString(),
     last_day: last.toISOString(),
     expires_at: expires.toISOString(),
     status_changed_at: now.toISOString(),
-  });
+  };
+  await fbPatch(`purchases/${key}`, patch);
+  Object.assign(p, patch);
   toast('🟢 Одобрено');
-  invalidate();
-  await render(true);
+  drawPurchases();
+  updateCounts();
 });
-
-window.writeUser = function(username, tgId){
-  let url;
-  if (username) url = `https://t.me/${username}`;
-  else if (tgId) url = `tg://user?id=${tgId}`;
-  else { toast('Нет username или ID', 'err'); return; }
-  window.open(url, '_blank');
-};
 
 // ============================================================
 // PAYOUTS
@@ -463,14 +450,13 @@ function drawPayouts(){
   ['pending','paid','rejected'].forEach(k => c[k] = P.filter(p => p.status === k).length);
   const tabs = [['all','📋 Все'],['pending','⏳ Ожидают'],['paid','✅ Выплачено'],['rejected','❌ Отклонено']];
   const f = FILTER.payouts;
-  const list = f === 'all' ? P : P.filter(p => p.status === f);
   setMain(`
     <div class="header">
       <div><h1>💸 Выплаты</h1><div class="sub">Всего: ${c.all}</div></div>
-      <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button>
+      <button class="btn secondary sm" onclick="render()">🔄 Обновить</button>
     </div>
     <div class="tabs">${tabs.map(([k, l]) =>
-      `<button class="tab ${f === k ? 'active' : ''}" onclick="setFilter('payouts','${k}')">${l} (${c[k]})</button>`).join('')}</div>
+      `<button class="tab ${f === k ? 'active' : ''}" onclick="setPayFilter('${k}')">${l} (${c[k]})</button>`).join('')}</div>
     <div id="list"></div>`);
   fillPayouts();
 }
@@ -482,6 +468,8 @@ function fillPayouts(){
     ? list.slice(0, lim).map(payoutCard).join('') + moreBtn('payouts', list.length - lim)
     : emptyBlock('📭', 'Заявок нет');
 }
+function setPayFilter(v){ FILTER.payouts = v; LIM.payouts = PAGE; drawPayouts(); }
+window.setPayFilter = setPayFilter;
 
 function payoutCard(po){
   return `
@@ -500,84 +488,89 @@ function payoutCard(po){
         <div class="meta-item"><div class="l">💰 К выводу</div><div class="v ok">${fmt(po.amount)}</div></div>
       </div>
       <div class="muted-sm" style="margin-bottom:10px">
-        📅 Подано: ${fmtDT(po.requested_at)}
-        ${po.paid_at ? '<br>✅ Выплачено: ' + fmtDT(po.paid_at) : ''}
-        ${po.rejected_at ? '<br>❌ Отклонено: ' + fmtDT(po.rejected_at) : ''}
+        📅 ${fmtDT(po.requested_at)}
+        ${po.paid_at ? '<br>✅ ' + fmtDT(po.paid_at) : ''}
+        ${po.rejected_at ? '<br>❌ ' + fmtDT(po.rejected_at) + ' — ' + esc(po.reject_reason || '') : ''}
       </div>
       <div class="flex">
         ${po.status === 'pending' ? `
           <button class="btn ok sm" onclick="markPayoutPaid(${q(po._key)}, ${q(po.id)})">✅ Подтвердить выплату</button>
           <button class="btn danger sm" onclick="rejectPayout(${q(po._key)}, ${q(po.id)})">❌ Отклонить</button>
         ` : ''}
-        ${po.user_username ? `<button class="btn ghost sm" onclick="writeUser(${q(po.user_username)}, ${q(po.user_telegram_id || 0)})">👤 Связаться</button>` : ''}
+        ${po.user_username ? `<a class="btn ghost sm" href="https://t.me/${esc(po.user_username)}" target="_blank">👤 Связаться</a>` : ''}
       </div>
     </div>`;
 }
 
 window.markPayoutPaid = (key, id) => once('po' + key, async () => {
-  if (!confirm(`Подтвердить выплату #${id}?\n\nНажимайте только после фактического перевода денег.`)) return;
+  if (!confirm(`Подтвердить выплату #${id}?\n\nНажимайте только после фактического перевода.`)) return;
   const po = DATA.payouts.find(x => x._key === key);
   if (!po) return;
   await fbPatch(`payouts/${key}`, {status: 'paid', paid_at: new Date().toISOString()});
-  // покупку помечаем paid
-  const purchaseKey = DATA.purchases.find(p => String(p.id) === String(po.purchase_id))?._key;
-  if (purchaseKey) await fbPatch(`purchases/${purchaseKey}`, {status: 'paid', paid_at: new Date().toISOString()});
+  po.status = 'paid';
+  po.paid_at = new Date().toISOString();
+  const pk = DATA.purchases?.find(p => String(p.id) === String(po.purchase_id))?._key;
+  if (pk) await fbPatch(`purchases/${pk}`, {status: 'paid', paid_at: new Date().toISOString()});
   toast('✅ Выплата подтверждена');
-  invalidate();
-  await render(true);
+  drawPayouts();
+  updateCounts();
 });
 
 window.rejectPayout = (key, id) => once('por' + key, async () => {
-  const reason = prompt('Причина отклонения (увидит участник):', 'Не указана');
+  const reason = prompt('Причина отклонения:', 'Не указана');
   if (reason === null) return;
   await fbPatch(`payouts/${key}`, {
     status: 'rejected',
     rejected_at: new Date().toISOString(),
     reject_reason: reason || 'Не указана',
   });
+  const po = DATA.payouts.find(x => x._key === key);
+  if (po){ po.status = 'rejected'; po.rejected_at = new Date().toISOString(); po.reject_reason = reason; }
   toast('❌ Отклонено');
-  invalidate();
-  await render(true);
+  drawPayouts();
+  updateCounts();
 });
 
 // ============================================================
 // USERS
 // ============================================================
 function drawUsers(){
-  const s = FILTER.search.trim().toLowerCase();
-  const list = s ? DATA.users.filter(u =>
-    (u.first_name || '').toLowerCase().includes(s) ||
-    (u.username || '').toLowerCase().includes(s) ||
-    String(u.telegram_id || '').includes(s)
-  ) : DATA.users;
   setMain(`
     <div class="header">
-      <div><h1>👥 Пользователи</h1><div class="sub">Всего: ${DATA.users.length} · Показано: ${list.length}</div></div>
-      <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button>
+      <div><h1>👥 Пользователи</h1><div class="sub" id="sub"></div></div>
+      <button class="btn secondary sm" onclick="render()">🔄 Обновить</button>
     </div>
     <div class="card" style="padding:10px">
       <input class="input" placeholder="🔍 Поиск: имя, @username, ID…" value="${esc(FILTER.search)}"
-        oninput="onSearch(this.value,'users')">
+        oninput="onUserSearch(this.value)">
     </div>
     <div id="list"></div>`);
   fillUsers();
 }
-function fillUsers(){
+function userFiltered(){
   const s = FILTER.search.trim().toLowerCase();
-  const list = s ? DATA.users.filter(u =>
+  if (!s) return DATA.users;
+  return DATA.users.filter(u =>
     (u.first_name || '').toLowerCase().includes(s) ||
     (u.username || '').toLowerCase().includes(s) ||
-    String(u.telegram_id || '').includes(s)
-  ) : DATA.users;
+    String(u.telegram_id || '').includes(s));
+}
+function fillUsers(){
+  const list = userFiltered();
   const lim = LIM.users;
+  $('sub').textContent = `Всего: ${DATA.users.length} · Показано: ${list.length}`;
   $('list').innerHTML = list.length
     ? list.slice(0, lim).map(userCard).join('') + moreBtn('users', list.length - lim)
     : emptyBlock('👤', 'Пользователей нет');
 }
+function onUserSearch(v){ FILTER.search = v; LIM.users = PAGE; clearTimeout(SEARCH_TIMER); SEARCH_TIMER = setTimeout(fillUsers, 150); }
+window.onUserSearch = onUserSearch;
+
 function userCard(u){
-  const ps = DATA.purchases.filter(p => String(p.user_telegram_id) === String(u.telegram_id));
+  const ps = (DATA.purchases || []).filter(p => String(p.user_telegram_id) === String(u.telegram_id));
   const invested = ps.filter(p => p.status !== 'cancelled').reduce((s,p) => s + num(p.purchase_price), 0);
   const earned = ps.filter(p => p.status === 'completed' || p.status === 'paid').reduce((s,p) => s + num(p.total_amount), 0);
+  const invited = (DATA.users || []).filter(x => String(x.referrer_uid || '') === String(u.telegram_id)).length;
   const initial = (u.first_name || u.username || '?')[0].toUpperCase();
   return `
     <div class="order-card">
@@ -595,10 +588,11 @@ function userCard(u){
         <div class="meta-item"><div class="l">Вложено</div><div class="v accent">${fmt(invested)}</div></div>
         <div class="meta-item"><div class="l">Выплачено</div><div class="v ok">${fmt(earned)}</div></div>
         <div class="meta-item"><div class="l">Заявок</div><div class="v">${ps.length}</div></div>
+        <div class="meta-item"><div class="l">Рефералов</div><div class="v">${invited}</div></div>
       </div>
       <div class="muted-sm">📅 ${fmtDT(u.registered_at)}</div>
       ${u.username ? `<div class="flex" style="margin-top:10px">
-        <button class="btn ghost sm" onclick="writeUser(${q(u.username)}, ${q(u.telegram_id || 0)})">💬 Написать</button>
+        <a class="btn ghost sm" href="https://t.me/${esc(u.username)}" target="_blank">💬 Написать</a>
       </div>` : ''}
     </div>`;
 }
@@ -612,7 +606,7 @@ function drawEras(){
     <div class="header">
       <div><h1>🧩 Товары (Эры)</h1><div class="sub">Всего: ${E.length}</div></div>
       <div class="flex">
-        <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button>
+        <button class="btn secondary sm" onclick="render()">🔄 Обновить</button>
         <button class="btn" onclick="openEraModal()">➕ Создать</button>
       </div>
     </div>
@@ -634,7 +628,6 @@ function eraCard(e){
         <div class="meta-item"><div class="l">📅 Срок</div><div class="v">${num(e.duration_days)} дней</div></div>
         <div class="meta-item"><div class="l">📈 ROI</div><div class="v ok">+${roi}%</div></div>
       </div>
-      ${e.description ? `<div class="muted-sm" style="margin-bottom:10px">${esc(e.description)}</div>` : ''}
       <div class="flex">
         <button class="btn sm" onclick="openEraModal(${q(e._key)})">✏️ Изменить</button>
         <button class="btn danger sm" onclick="deleteEra(${q(e._key)}, ${q(e.title)})">🗑 Удалить</button>
@@ -694,21 +687,21 @@ window.saveEra = key => once('save' + (key || 'new'), async () => {
     await fbPut(`eras/${newId}`, body);
     toast(`✅ Эра #${newId} создана`);
   }
-  closeModal(); invalidate(); await render(true);
+  closeModal();
+  render();
 });
 window.deleteEra = (key, title) => once('del' + key, async () => {
   if (!confirm(`🗑 Удалить "${title}"?`)) return;
   await fbDelete(`eras/${key}`);
   toast('🗑 Удалено');
-  invalidate(); await render(true);
+  render();
 });
 
 // ============================================================
 // СТАРТ
 // ============================================================
+shell();
 render();
-setInterval(() => { if (!document.hidden){ invalidate(); render(true); } }, POLL_MS);
-document.addEventListener('visibilitychange', () => { if (!document.hidden){ invalidate(); render(true); } });
 </script>
 </body>
 </html>

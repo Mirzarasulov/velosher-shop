@@ -3,74 +3,120 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Админ-панель — Эры</title>
+<title>👑 Era Admin — God Panel</title>
 <style>
   :root{
-    --bg:#0d1117; --card:#161b22; --card2:#1c2330; --card3:#232b38;
-    --border:#2a3240; --border2:#3a4453;
-    --text:#e6edf3; --text2:#c4ccd6; --muted:#8b949e;
-    --accent:#4f8cff; --accent-glow:rgba(79,140,255,.3);
+    --bg:#080b11; --card:#0f141c; --card2:#161d28; --card3:#1e2735;
+    --border:#1f2937; --border2:#2d3947;
+    --text:#e6edf3; --text2:#c4ccd6; --muted:#7a8595;
+    --accent:#4f8cff; --accent2:#356fd8; --accent-glow:rgba(79,140,255,.3);
     --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c; --info:#63a9ff;
+    --gold:#ffd166; --purple:#a78bfa;
+    --r:12px; --r2:10px;
   }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:14px;
-    -webkit-font-smoothing:antialiased}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+    font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  button,input,textarea,select{font-family:inherit}
   .layout{display:flex;min-height:100vh}
-  .side{width:230px;background:var(--card);border-right:1px solid var(--border);
-    padding:20px 12px;flex-shrink:0}
-  .side h2{font-size:12px;margin:0 0 20px;color:var(--muted);
-    text-transform:uppercase;letter-spacing:.08em}
-  .side button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--text);
-    padding:11px 14px;border-radius:9px;cursor:pointer;font-size:14px;margin-bottom:2px;
-    font-family:inherit;font-weight:500;transition:background .15s}
-  .side button:hover{background:var(--card2)}
-  .side button.active{background:linear-gradient(135deg,var(--accent),#356fd8);color:#fff;
-    box-shadow:0 3px 10px var(--accent-glow)}
-  .main{flex:1;padding:24px 28px;overflow-x:auto;max-width:100%}
-  h1{font-size:24px;margin:0 0 20px;font-weight:700;letter-spacing:-.02em}
-  h3{font-size:15px;margin:0 0 12px}
 
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px}
-  .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;
-    position:relative;overflow:hidden}
-  .stat::after{content:'';position:absolute;top:0;right:0;width:80px;height:80px;
-    background:radial-gradient(circle,var(--accent-glow),transparent 70%);opacity:.4}
-  .stat .v{font-size:22px;font-weight:700;margin-top:4px;letter-spacing:-.02em;position:relative}
-  .stat .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;
-    font-weight:600;position:relative}
-  .stat.ok .v{color:var(--ok)}
-  .stat.warn .v{color:var(--warn)}
-  .stat.info .v{color:var(--info)}
+  /* SIDEBAR */
+  .side{width:240px;background:var(--card);border-right:1px solid var(--border);
+    padding:20px 12px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .side .logo{display:flex;align-items:center;gap:10px;padding:0 8px 20px;
+    border-bottom:1px solid var(--border);margin-bottom:16px}
+  .side .logo .ic{width:36px;height:36px;border-radius:10px;
+    background:linear-gradient(135deg,var(--accent),#7b5cff);display:flex;
+    align-items:center;justify-content:center;font-size:18px;
+    box-shadow:0 4px 14px var(--accent-glow)}
+  .side .logo .t{font-weight:800;font-size:15px;letter-spacing:-.01em}
+  .side .logo .s{font-size:10px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.08em;font-weight:600}
+  .side .nav-item{display:flex;align-items:center;gap:10px;width:100%;
+    text-align:left;background:none;border:0;color:var(--text2);
+    padding:11px 12px;border-radius:10px;cursor:pointer;font-size:13.5px;
+    margin-bottom:2px;font-weight:500;transition:all .15s}
+  .side .nav-item:hover{background:var(--card2);color:var(--text)}
+  .side .nav-item.active{background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#fff;box-shadow:0 3px 12px var(--accent-glow)}
+  .side .nav-item .emo{font-size:16px;width:20px;text-align:center}
+  .side .nav-item .count{margin-left:auto;padding:2px 7px;border-radius:10px;
+    background:rgba(255,255,255,.1);font-size:10px;font-weight:700;min-width:20px;
+    text-align:center}
+  .side .nav-item.active .count{background:rgba(255,255,255,.25)}
+  .side .section{font-size:10px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.08em;font-weight:700;padding:14px 12px 6px}
 
+  /* MAIN */
+  .main{flex:1;padding:24px 28px;max-width:100%;overflow-x:hidden}
+  .header{display:flex;justify-content:space-between;align-items:flex-start;
+    gap:16px;margin-bottom:24px;flex-wrap:wrap}
+  .header h1{font-size:26px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+  .header .sub{font-size:13px;color:var(--muted)}
+
+  /* STATS */
+  .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+    gap:12px;margin-bottom:24px}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:14px;
+    padding:16px;position:relative;overflow:hidden;transition:border-color .15s}
+  .stat:hover{border-color:var(--border2)}
+  .stat .ic{width:38px;height:38px;border-radius:10px;display:flex;
+    align-items:center;justify-content:center;font-size:18px;margin-bottom:10px;
+    background:var(--card2);border:1px solid var(--border2)}
+  .stat .l{font-size:11px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.05em;font-weight:600;margin-bottom:4px}
+  .stat .v{font-size:22px;font-weight:800;letter-spacing:-.02em}
+  .stat .v.ok{color:var(--ok)}
+  .stat .v.warn{color:var(--warn)}
+  .stat .v.info{color:var(--info)}
+  .stat .v.accent{color:var(--accent)}
+  .stat .v.gold{color:var(--gold)}
+
+  /* CARD */
   .card{background:var(--card);border:1px solid var(--border);border-radius:14px;
     padding:18px;margin-bottom:16px}
 
-  /* Заявки - карточки */
-  .order-card{background:var(--card);border:1px solid var(--border);border-radius:14px;
-    padding:18px;margin-bottom:14px;transition:border-color .2s}
-  .order-card:hover{border-color:var(--border2)}
-  .order-card.processed{opacity:.7;background:var(--card2)}
-  .order-head{display:flex;justify-content:space-between;align-items:flex-start;
-    gap:12px;margin-bottom:12px;flex-wrap:wrap}
-  .order-num{font-size:20px;font-weight:800;color:var(--accent);
-    letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
-  .order-num .hash{color:var(--muted);font-weight:600}
-  .order-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:10px;margin-bottom:14px}
-  .meta-item{background:var(--card2);border-radius:10px;padding:10px 12px}
-  .meta-item .l{font-size:10px;color:var(--muted);text-transform:uppercase;
-    letter-spacing:.05em;font-weight:600;margin-bottom:3px}
-  .meta-item .v{font-size:14px;font-weight:600}
-  .meta-item .v.ok{color:var(--ok)}
-  .meta-item .v.warn{color:var(--warn)}
-  .meta-item .v.accent{color:var(--accent)}
+  /* BUTTONS */
+  .btn{padding:9px 15px;border-radius:9px;border:0;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;
+    font-size:13px;font-weight:600;cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;transition:all .15s;
+    box-shadow:0 2px 8px var(--accent-glow);font-family:inherit}
+  .btn:active{transform:scale(.97)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn.secondary{background:var(--card2);border:1px solid var(--border2);color:var(--text);box-shadow:none}
+  .btn.secondary:hover{background:var(--card3)}
+  .btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text2);box-shadow:none}
+  .btn.danger{background:linear-gradient(135deg,#ff5c5c,#d63a3a);box-shadow:0 2px 8px rgba(255,92,92,.3)}
+  .btn.ok{background:linear-gradient(135deg,#39d98a,#22a86b);box-shadow:0 2px 8px rgba(57,217,138,.3)}
+  .btn.gold{background:linear-gradient(135deg,#ffd166,#f0a020);color:#1a1300;
+    box-shadow:0 2px 8px rgba(255,209,102,.3)}
+  .btn.sm{padding:6px 11px;font-size:12px;border-radius:8px}
+  .btn.xs{padding:4px 9px;font-size:11px;border-radius:7px}
 
-  .order-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
-  .order-actions .btn{flex:0 0 auto}
+  /* INPUTS */
+  .input{width:100%;padding:10px 12px;border-radius:9px;
+    border:1px solid var(--border);background:var(--card2);color:var(--text);
+    font-size:13px;outline:none;transition:border-color .15s;font-family:inherit}
+  .input:focus{border-color:var(--accent)}
+  .form-row{margin-bottom:12px}
+  .form-row label{display:block;font-size:11px;color:var(--muted);
+    margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
 
-  .badge{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;
-    font-size:11px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap}
+  /* GRIDS */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .flex{display:flex;gap:8px;align-items:center}
+  .flex-wrap{flex-wrap:wrap}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .muted{color:var(--muted);font-size:12px}
+  .muted-sm{color:var(--muted);font-size:11px}
+
+  /* BADGES */
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;
+    border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.02em;
+    text-transform:uppercase;white-space:nowrap}
   .badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
   .badge.awaiting_payment{background:rgba(245,181,71,.15);color:var(--warn)}
   .badge.active{background:rgba(57,217,138,.15);color:var(--ok)}
@@ -79,64 +125,123 @@
   .badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
   .badge.cancelled{background:rgba(255,92,92,.15);color:var(--err)}
   .badge.pending{background:rgba(245,181,71,.15);color:var(--warn)}
+  .badge.info{background:rgba(79,140,255,.15);color:var(--accent)}
 
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th,td{padding:11px 10px;text-align:left;border-bottom:1px solid var(--border)}
-  th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;
-    letter-spacing:.05em}
-  tr:hover td{background:var(--card2)}
+  /* USER CARDS */
+  .user-card{background:var(--card);border:1px solid var(--border);
+    border-radius:14px;padding:16px;margin-bottom:12px;transition:border-color .15s}
+  .user-card:hover{border-color:var(--border2)}
+  .user-head{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+  .avatar{width:48px;height:48px;border-radius:50%;background:var(--card3);
+    display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:700;
+    color:var(--accent);border:2px solid var(--border2);overflow:hidden;flex-shrink:0}
+  .avatar img{width:100%;height:100%;object-fit:cover}
+  .user-info{min-width:0;flex:1}
+  .user-info .n{font-size:15px;font-weight:700;margin-bottom:2px}
+  .user-info .u{font-size:12px;color:var(--muted)}
+  .user-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+    gap:8px;margin-bottom:12px}
+  .user-stat{background:var(--card2);border-radius:9px;padding:9px 11px;
+    border:1px solid var(--border)}
+  .user-stat .l{font-size:10px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.05em;font-weight:600;margin-bottom:2px}
+  .user-stat .v{font-size:15px;font-weight:700}
+  .user-stat .v.ok{color:var(--ok)}
+  .user-stat .v.accent{color:var(--accent)}
+  .user-stat .v.warn{color:var(--warn)}
 
-  .btn{padding:9px 14px;border-radius:9px;border:0;
-    background:linear-gradient(135deg,var(--accent),#356fd8);color:#fff;
-    font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;
-    display:inline-flex;align-items:center;gap:6px;transition:all .15s;
-    box-shadow:0 2px 8px var(--accent-glow)}
-  .btn:active{transform:scale(.97)}
-  .btn:disabled{opacity:.5;cursor:not-allowed}
-  .btn.secondary{background:var(--card2);border:1px solid var(--border2);color:var(--text);box-shadow:none}
-  .btn.danger{background:linear-gradient(135deg,#ff5c5c,#d63a3a);box-shadow:0 2px 8px rgba(255,92,92,.3)}
-  .btn.ok{background:linear-gradient(135deg,#39d98a,#22a86b);box-shadow:0 2px 8px rgba(57,217,138,.3)}
-  .btn.sm{padding:6px 10px;font-size:12px}
+  /* ORDER CARDS */
+  .order-card{background:var(--card);border:1px solid var(--border);
+    border-radius:14px;padding:16px;margin-bottom:12px}
+  .order-card.processed{background:var(--card2)}
+  .order-card .on{font-size:17px;font-weight:800;color:var(--accent);
+    margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .order-card .meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+    gap:8px;margin-bottom:12px}
+  .meta-item{background:var(--card2);border-radius:9px;padding:9px 11px}
+  .meta-item .l{font-size:10px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.05em;font-weight:600;margin-bottom:2px}
+  .meta-item .v{font-size:13px;font-weight:600}
+  .meta-item .v.ok{color:var(--ok)}
+  .meta-item .v.warn{color:var(--warn)}
+  .meta-item .v.accent{color:var(--accent)}
 
-  .input,textarea,select{width:100%;padding:10px 12px;border-radius:9px;
-    border:1px solid var(--border);background:var(--card2);color:var(--text);
-    font-size:13px;outline:none;font-family:inherit;transition:border-color .15s}
-  .input:focus,textarea:focus{border-color:var(--accent)}
-  .form-row{margin-bottom:12px}
-  .form-row label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;
-    text-transform:uppercase;letter-spacing:.05em;font-weight:600}
-  .flex{display:flex;gap:8px;align-items:center}
-  .flex-wrap{flex-wrap:wrap}
-  .muted{color:var(--muted);font-size:12px}
-  .toast{position:fixed;top:20px;right:20px;background:var(--card2);
-    border:1px solid var(--border2);padding:14px 20px;border-radius:10px;z-index:999;
-    font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.4);animation:ti .2s ease}
-  @keyframes ti{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-  .hidden{display:none !important}
-  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-  .login-box{background:var(--card);border:1px solid var(--border);border-radius:16px;
-    padding:32px;width:100%;max-width:380px}
-  pre{background:var(--card2);padding:12px;border-radius:8px;overflow:auto;
-    font-size:12px;max-height:400px}
-  .tabs{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;
-    -webkit-overflow-scrolling:touch}
-  .tab{padding:9px 16px;border-radius:20px;background:var(--card2);
-    border:1px solid var(--border);color:var(--text2);font-size:13px;font-weight:600;
-    cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s}
+  /* MODAL */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.8);
+    backdrop-filter:blur(8px);z-index:999;display:flex;
+    align-items:center;justify-content:center;padding:20px;
+    animation:fadeIn .18s ease;overflow-y:auto}
+  .modal{background:var(--card);border:1px solid var(--border2);
+    border-radius:18px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;
+    animation:slideUp .22s cubic-bezier(.2,.8,.3,1);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .modal-head{padding:20px;border-bottom:1px solid var(--border);
+    display:flex;justify-content:space-between;align-items:center;
+    position:sticky;top:0;background:var(--card);z-index:1}
+  .modal-head h2{font-size:18px;font-weight:700}
+  .modal-body{padding:20px}
+  .modal-foot{padding:16px 20px;border-top:1px solid var(--border);
+    display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;
+    background:var(--card)}
+  .close-x{width:34px;height:34px;border-radius:50%;background:var(--card2);
+    border:1px solid var(--border2);color:var(--text2);font-size:17px;
+    cursor:pointer;display:flex;align-items:center;justify-content:center}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+  /* LOGIN */
+  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;
+    padding:20px;background:radial-gradient(circle at 50% 0%,rgba(79,140,255,.1),transparent 50%)}
+  .login-box{background:var(--card);border:1px solid var(--border2);
+    border-radius:20px;padding:36px;width:100%;max-width:400px;
+    box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .login-box .ic{width:64px;height:64px;border-radius:16px;margin:0 auto 20px;
+    background:linear-gradient(135deg,var(--accent),#7b5cff);
+    display:flex;align-items:center;justify-content:center;font-size:30px;
+    box-shadow:0 8px 24px var(--accent-glow)}
+  .login-box h1{font-size:22px;margin-bottom:6px;text-align:center}
+  .login-box .s{font-size:13px;color:var(--muted);text-align:center;margin-bottom:24px}
+
+  /* TABS */
+  .tabs{display:flex;gap:6px;margin-bottom:18px;overflow-x:auto;padding-bottom:4px;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{padding:8px 14px;border-radius:20px;background:var(--card2);
+    border:1px solid var(--border);color:var(--text2);font-size:12.5px;
+    font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;
+    transition:all .15s}
+  .tab:hover{background:var(--card3)}
   .tab.active{background:var(--accent);color:#fff;border-color:var(--accent);
     box-shadow:0 3px 10px var(--accent-glow)}
+
+  /* TOAST */
+  .toast{position:fixed;top:20px;right:20px;background:var(--card2);
+    border:1px solid var(--border2);padding:14px 20px;border-radius:12px;
+    z-index:9999;font-size:13px;font-weight:500;
+    box-shadow:0 8px 24px rgba(0,0,0,.5);animation:toastIn .2s ease;
+    max-width:320px}
+  .toast.ok{border-color:rgba(57,217,138,.4);background:rgba(57,217,138,.1)}
+  .toast.err{border-color:rgba(255,92,92,.4);background:rgba(255,92,92,.1)}
+  @keyframes toastIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+
   .empty{padding:60px 20px;text-align:center;color:var(--muted)}
+  .empty .ic{font-size:52px;margin-bottom:12px;opacity:.4}
+  .hidden{display:none !important}
+  .search-bar{position:relative;margin-bottom:16px}
+  .search-bar input{padding-left:38px}
+  .search-bar::before{content:'🔍';position:absolute;left:13px;top:50%;
+    transform:translateY(-50%);font-size:14px;opacity:.6;pointer-events:none}
 
   @media(max-width:768px){
     .layout{flex-direction:column}
-    .side{width:100%;border-right:0;border-bottom:1px solid var(--border);
-      display:flex;overflow-x:auto;padding:10px;gap:4px}
-    .side h2{display:none}
-    .side button{width:auto;white-space:nowrap;margin-bottom:0;padding:9px 14px;font-size:13px}
+    .side{width:100%;height:auto;position:relative;padding:12px;
+      border-right:0;border-bottom:1px solid var(--border)}
+    .side .logo{padding-bottom:12px;margin-bottom:12px}
+    .side .section{display:none}
+    .side .nav-item{width:auto;padding:9px 13px;font-size:12.5px}
     .main{padding:16px}
-    h1{font-size:20px}
-    .order-num{font-size:17px}
-    .order-meta{grid-template-columns:1fr}
+    .header h1{font-size:22px}
+    .grid2{grid-template-columns:1fr}
+    .modal{max-height:95vh}
   }
 </style>
 </head>
@@ -144,19 +249,41 @@
 
 <div id="root"></div>
 <div id="toast" class="toast hidden"></div>
+<div id="modal-root"></div>
 
 <script>
-const API = 'http://localhost:8000';  // ⬅️ ЗАМЕНИТЕ на ngrok URL или Render
+// ============================================================
+// КОНФИГ
+// ============================================================
+const API = localStorage.getItem('admin_api') || 'http://localhost:8000';
+const LOG_CHANNEL_URL = 'https://t.me/c/4305451466';  // ссылка на канал логов
+// ============================================================
+
 let TOKEN = localStorage.getItem('admin_token') || '';
 let TAB = 'dashboard';
-let PURCHASE_FILTER = 'pending';  // pending / all / active / completed / cancelled
+let CACHE = { users: [], purchases: [], payouts: [], eras: [], logs: [] };
+let FILTER = { purchases: 'pending', payouts: 'pending', search: '' };
 
-function toast(msg, ms=2500){
+// ---------- TOAST ----------
+function toast(msg, type='ok', ms=2500){
   const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.remove('hidden');
-  clearTimeout(t._t); t._t = setTimeout(()=>t.classList.add('hidden'), ms);
+  t.textContent = msg;
+  t.className = 'toast ' + type;
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>{ t.className = 'toast hidden'; }, ms);
 }
 
+// ---------- MODAL ----------
+function showModal(html){
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-backdrop" onclick="if(event.target===this)closeModal()">
+      <div class="modal">${html}</div>
+    </div>
+  `;
+}
+function closeModal(){ document.getElementById('modal-root').innerHTML = ''; }
+
+// ---------- API ----------
 async function api(path, opts={}){
   const headers = opts.headers || {};
   if (TOKEN) headers['Authorization'] = 'Bearer ' + TOKEN;
@@ -176,11 +303,16 @@ function logout(){
   localStorage.removeItem('admin_token'); TOKEN = ''; location.reload();
 }
 
+// ============================================================
+// LOGIN
+// ============================================================
 function renderLogin(){
   document.getElementById('root').innerHTML = `
     <div class="login-wrap">
       <div class="login-box">
-        <h1 style="margin-bottom:24px">🔐 Админ-панель</h1>
+        <div class="ic">👑</div>
+        <h1>God Panel</h1>
+        <div class="s">Админ-панель проекта «Эры»</div>
         <div class="form-row">
           <label>Логин</label>
           <input class="input" id="login" value="admin">
@@ -190,8 +322,13 @@ function renderLogin(){
           <input class="input" id="password" type="password"
             onkeydown="if(event.key==='Enter')doLogin()">
         </div>
-        <button class="btn" style="width:100%;justify-content:center;padding:12px"
-          onclick="doLogin()">Войти</button>
+        <button class="btn" style="width:100%;justify-content:center;padding:12px;font-size:14px"
+          onclick="doLogin()">🔓 Войти</button>
+        <div class="form-row" style="margin-top:16px">
+          <label>API URL</label>
+          <input class="input" id="api_url" value="${esc(API)}"
+            onchange="localStorage.setItem('admin_api',this.value);toast('API сохранён');">
+        </div>
       </div>
     </div>
   `;
@@ -203,104 +340,212 @@ async function doLogin(){
   try {
     const res = await api('/api/admin/login', {method:'POST', body:{login, password}});
     TOKEN = res.token; localStorage.setItem('admin_token', TOKEN);
+    toast('👑 Добро пожаловать, бог');
     render();
-  } catch(e){ toast(e.message); }
+  } catch(e){ toast(e.message, 'err'); }
 }
 
-const TABS = [
-  {id:'dashboard', label:'📊 Dashboard'},
-  {id:'purchases', label:'📩 Заявки'},
-  {id:'payouts', label:'💸 Выплаты'},
-  {id:'users', label:'👥 Пользователи'},
-  {id:'eras', label:'🧩 Эры'},
-  {id:'content', label:'📝 Контент'},
-  {id:'logs', label:'📜 Журнал'},
-];
-
+// ============================================================
+// LAYOUT
+// ============================================================
 function layout(content){
+  const counts = {
+    purchases: CACHE.purchases.filter(p=>p.status==='awaiting_payment').length,
+    payouts: CACHE.payouts.filter(p=>p.status==='pending').length,
+    users: CACHE.users.length,
+  };
   document.getElementById('root').innerHTML = `
     <div class="layout">
       <aside class="side">
-        <h2>Эры · Админ</h2>
-        ${TABS.map(t=>`<button class="${TAB===t.id?'active':''}"
-          onclick="setTab('${t.id}')">${t.label}</button>`).join('')}
-        <button onclick="logout()" style="margin-top:20px;color:var(--err)">🚪 Выйти</button>
+        <div class="logo">
+          <div class="ic">👑</div>
+          <div>
+            <div class="t">Era Admin</div>
+            <div class="s">God Mode</div>
+          </div>
+        </div>
+
+        <div class="section">Обзор</div>
+        <button class="nav-item ${TAB==='dashboard'?'active':''}" onclick="setTab('dashboard')">
+          <span class="emo">📊</span>Дашборд
+        </button>
+
+        <div class="section">Операции</div>
+        <button class="nav-item ${TAB==='purchases'?'active':''}" onclick="setTab('purchases')">
+          <span class="emo">📩</span>Заявки
+          ${counts.purchases ? `<span class="count">${counts.purchases}</span>` : ''}
+        </button>
+        <button class="nav-item ${TAB==='payouts'?'active':''}" onclick="setTab('payouts')">
+          <span class="emo">💸</span>Выплаты
+          ${counts.payouts ? `<span class="count">${counts.payouts}</span>` : ''}
+        </button>
+
+        <div class="section">Управление</div>
+        <button class="nav-item ${TAB==='users'?'active':''}" onclick="setTab('users')">
+          <span class="emo">👥</span>Пользователи
+          ${counts.users ? `<span class="count">${counts.users}</span>` : ''}
+        </button>
+        <button class="nav-item ${TAB==='eras'?'active':''}" onclick="setTab('eras')">
+          <span class="emo">🧩</span>Товары (Эры)
+        </button>
+        <button class="nav-item ${TAB==='content'?'active':''}" onclick="setTab('content')">
+          <span class="emo">📝</span>Контент
+        </button>
+
+        <div class="section">Система</div>
+        <button class="nav-item ${TAB==='logs'?'active':''}" onclick="setTab('logs')">
+          <span class="emo">📜</span>Журнал
+        </button>
+        <button class="nav-item" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">
+          <span class="emo">📢</span>Канал логов
+        </button>
+
+        <div class="section"></div>
+        <button class="nav-item" onclick="logout()" style="color:var(--err)">
+          <span class="emo">🚪</span>Выйти
+        </button>
       </aside>
       <main class="main">${content}</main>
     </div>
   `;
 }
-async function setTab(t){ TAB = t; await render(); }
+async function setTab(t){
+  TAB = t;
+  await render();
+}
 
-// ---------- DASHBOARD ----------
+// ============================================================
+// DASHBOARD
+// ============================================================
 async function tabDashboard(){
   const d = await api('/api/admin/dashboard');
   layout(`
-    <h1>Dashboard</h1>
-    <div class="grid">
-      <div class="stat"><div class="l">Пользователей</div><div class="v">${d.users}</div></div>
-      <div class="stat ok"><div class="l">Активных эр</div><div class="v">${d.active_eras}</div></div>
-      <div class="stat info"><div class="l">Завершённых</div><div class="v">${d.completed_eras}</div></div>
-      <div class="stat warn"><div class="l">Заявок ждут</div><div class="v">${d.purchase_requests}</div></div>
-      <div class="stat warn"><div class="l">Выплат ждут</div><div class="v">${d.payout_requests}</div></div>
-      <div class="stat"><div class="l">Сумма покупок</div><div class="v">${fmt(d.total_purchases_sum)}</div></div>
-      <div class="stat ok"><div class="l">Начислено</div><div class="v">${fmt(d.total_profit_sum)}</div></div>
-      <div class="stat info"><div class="l">Выплачено</div><div class="v">${fmt(d.total_paid_sum)}</div></div>
+    <div class="header">
+      <div>
+        <h1>👑 Дашборд</h1>
+        <div class="sub">Общая статистика проекта · ${new Date().toLocaleString('ru-RU')}</div>
+      </div>
+      <div class="flex">
+        <button class="btn secondary" onclick="render()">🔄 Обновить</button>
+        <button class="btn" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">📢 Канал логов</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="ic">👥</div>
+        <div class="l">Пользователей</div>
+        <div class="v">${d.users}</div>
+      </div>
+      <div class="stat">
+        <div class="ic">🟢</div>
+        <div class="l">Активных эр</div>
+        <div class="v ok">${d.active_eras}</div>
+      </div>
+      <div class="stat">
+        <div class="ic">🏁</div>
+        <div class="l">Завершённых</div>
+        <div class="v info">${d.completed_eras}</div>
+      </div>
+      <div class="stat">
+        <div class="ic">⏳</div>
+        <div class="l">Заявок ждут</div>
+        <div class="v warn">${d.purchase_requests}</div>
+      </div>
+      <div class="stat">
+        <div class="ic">💸</div>
+        <div class="l">Выплат ждут</div>
+        <div class="v warn">${d.payout_requests}</div>
+      </div>
+      <div class="stat">
+        <div class="ic">💵</div>
+        <div class="l">Сумма покупок</div>
+        <div class="v accent">${fmt(d.total_purchases_sum)}</div>
+      </div>
+      <div class="stat">
+        <div class="ic">📈</div>
+        <div class="l">Начислено</div>
+        <div class="v ok">${fmt(d.total_profit_sum)}</div>
+      </div>
+      <div class="stat">
+        <div class="ic">💰</div>
+        <div class="l">Выплачено</div>
+        <div class="v gold">${fmt(d.total_paid_sum)}</div>
+      </div>
     </div>
   `);
 }
 
-// ---------- PURCHASES (заявки карточками) ----------
+// ============================================================
+// PURCHASES
+// ============================================================
 async function tabPurchases(){
-  const list = await api('/api/admin/purchases');
+  CACHE.purchases = await api('/api/admin/purchases');
 
-  const filtered = list.filter(p=>{
-    if (PURCHASE_FILTER === 'pending') return p.status === 'awaiting_payment';
-    if (PURCHASE_FILTER === 'active') return p.status === 'active';
-    if (PURCHASE_FILTER === 'completed') return ['completed','awaiting_payout','paid'].includes(p.status);
-    if (PURCHASE_FILTER === 'cancelled') return p.status === 'cancelled';
+  const filtered = CACHE.purchases.filter(p=>{
+    if (FILTER.purchases === 'pending') return p.status === 'awaiting_payment';
+    if (FILTER.purchases === 'active') return p.status === 'active';
+    if (FILTER.purchases === 'completed') return ['completed','awaiting_payout','paid'].includes(p.status);
+    if (FILTER.purchases === 'cancelled') return p.status === 'cancelled';
     return true;
+  }).filter(p=>{
+    if (!FILTER.search) return true;
+    const q = FILTER.search.toLowerCase();
+    return (p.first_name||'').toLowerCase().includes(q) ||
+           (p.telegram_username||'').toLowerCase().includes(q) ||
+           String(p.id).includes(q) ||
+           String(p.telegram_id||'').includes(q);
   });
 
   const counts = {
-    all: list.length,
-    pending: list.filter(p=>p.status==='awaiting_payment').length,
-    active: list.filter(p=>p.status==='active').length,
-    completed: list.filter(p=>['completed','awaiting_payout','paid'].includes(p.status)).length,
-    cancelled: list.filter(p=>p.status==='cancelled').length,
+    all: CACHE.purchases.length,
+    pending: CACHE.purchases.filter(p=>p.status==='awaiting_payment').length,
+    active: CACHE.purchases.filter(p=>p.status==='active').length,
+    completed: CACHE.purchases.filter(p=>['completed','awaiting_payout','paid'].includes(p.status)).length,
+    cancelled: CACHE.purchases.filter(p=>p.status==='cancelled').length,
   };
 
   layout(`
-    <h1>Заявки на покупку</h1>
+    <div class="header">
+      <div>
+        <h1>📩 Заявки на покупку</h1>
+        <div class="sub">Всего: ${counts.all} · Найдено: ${filtered.length}</div>
+      </div>
+    </div>
+
+    <div class="search-bar">
+      <input class="input" placeholder="Поиск по имени, @username, ID заявки…"
+        value="${esc(FILTER.search)}"
+        oninput="FILTER.search=this.value;tabPurchases()">
+    </div>
 
     <div class="tabs">
-      <button class="tab ${PURCHASE_FILTER==='pending'?'active':''}"
-        onclick="PURCHASE_FILTER='pending';render()">
+      <button class="tab ${FILTER.purchases==='pending'?'active':''}"
+        onclick="FILTER.purchases='pending';tabPurchases()">
         ⏳ Ждут (${counts.pending})
       </button>
-      <button class="tab ${PURCHASE_FILTER==='active'?'active':''}"
-        onclick="PURCHASE_FILTER='active';render()">
+      <button class="tab ${FILTER.purchases==='active'?'active':''}"
+        onclick="FILTER.purchases='active';tabPurchases()">
         🟢 Активные (${counts.active})
       </button>
-      <button class="tab ${PURCHASE_FILTER==='completed'?'active':''}"
-        onclick="PURCHASE_FILTER='completed';render()">
+      <button class="tab ${FILTER.purchases==='completed'?'active':''}"
+        onclick="FILTER.purchases='completed';tabPurchases()">
         ✅ Завершённые (${counts.completed})
       </button>
-      <button class="tab ${PURCHASE_FILTER==='cancelled'?'active':''}"
-        onclick="PURCHASE_FILTER='cancelled';render()">
+      <button class="tab ${FILTER.purchases==='cancelled'?'active':''}"
+        onclick="FILTER.purchases='cancelled';tabPurchases()">
         ❌ Отменённые (${counts.cancelled})
       </button>
-      <button class="tab ${PURCHASE_FILTER==='all'?'active':''}"
-        onclick="PURCHASE_FILTER='all';render()">
+      <button class="tab ${FILTER.purchases==='all'?'active':''}"
+        onclick="FILTER.purchases='all';tabPurchases()">
         📋 Все (${counts.all})
       </button>
     </div>
 
     ${filtered.length ? filtered.map(p=>orderCard(p)).join('') : `
-      <div class="card empty">
-        <div style="font-size:44px;margin-bottom:8px">📭</div>
+      <div class="empty"><div class="ic">📭</div>
         <h3>Заявок нет</h3>
-        <p class="muted">В этой категории заявок пока нет</p>
+        <p class="muted">В этой категории ничего не найдено</p>
       </div>
     `}
   `);
@@ -310,14 +555,12 @@ function orderCard(p){
   const processed = p.status !== 'awaiting_payment';
   return `
     <div class="order-card ${processed?'processed':''}">
-      <div class="order-head">
-        <div class="order-num">
-          📩 Заявка <span class="hash">#</span>${p.id}
-        </div>
+      <div class="row" style="align-items:flex-start;margin-bottom:12px">
+        <div class="on">📩 Заявка #${p.id}</div>
         <span class="badge ${p.status}">${statusLabel(p.status)}</span>
       </div>
 
-      <div class="order-meta">
+      <div class="meta">
         <div class="meta-item">
           <div class="l">👤 Участник</div>
           <div class="v">${esc(p.first_name||'')} ${esc(p.last_name||'')}</div>
@@ -352,48 +595,33 @@ function orderCard(p){
         </div>
       </div>
 
-      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">
+      <div class="muted-sm" style="margin-bottom:12px">
         🕐 Создана: ${fmtDate(p.created_at)}
         ${p.activated_at ? ` · ✅ Активирована: ${fmtDate(p.activated_at)}` : ''}
-        ${p.expires_at ? ` · 🏁 Завершение: ${fmtDate(p.expires_at)}` : ''}
+        ${p.last_day ? ` · 🏁 Последний день: ${fmtDate(p.last_day)}` : ''}
         ${p.cancelled_at ? ` · ❌ Отменена: ${fmtDate(p.cancelled_at)}` : ''}
       </div>
 
-      ${!processed ? `
-        <div class="order-actions">
-          <button class="btn ok" onclick="confirmPurchase(${p.id})">
-            ✅ Подтвердить покупку
-          </button>
-          <button class="btn danger" onclick="cancelPurchase(${p.id})">
-            ❌ Отменить заявку
-          </button>
-        </div>
-      ` : `
-        <div style="padding:10px 14px;background:var(--card2);border-radius:9px;
-          font-size:12px;color:var(--muted);text-align:center">
-          ${processedMessage(p)}
-        </div>
-      `}
+      <div class="flex flex-wrap">
+        ${!processed ? `
+          <button class="btn ok" onclick="confirmPurchase(${p.id})">✅ Подтвердить покупку</button>
+          <button class="btn danger" onclick="cancelPurchase(${p.id})">❌ Отменить заявку</button>
+        ` : ''}
+        <button class="btn ghost sm" onclick="writeUser('${p.telegram_username||''}', ${p.telegram_id})">
+          💬 Написать
+        </button>
+      </div>
     </div>
   `;
 }
 
-function processedMessage(p){
-  if (p.status === 'active') return '✅ Заявка подтверждена. Эра активна.';
-  if (p.status === 'cancelled') return '❌ Заявка отменена. Обработка недоступна.';
-  if (p.status === 'completed') return '🏁 Эра завершена. Ожидает заявки на вывод.';
-  if (p.status === 'awaiting_payout') return '💸 Заявка на вывод создана. Ожидает выплаты.';
-  if (p.status === 'paid') return '💰 Выплачено. Заявка закрыта.';
-  return 'Обработано';
-}
-
 async function confirmPurchase(id){
-  if (!confirm(`✅ Подтвердить оплату по заявке #${id}?\n\nЭра будет активирована, пользователь получит уведомление.`)) return;
+  if (!confirm(`✅ Подтвердить оплату заявки #${id}?\n\nЭра активируется, участник получит уведомление.`)) return;
   try {
     await api(`/api/admin/purchases/${id}/confirm`, {method:'POST'});
     toast(`✅ Заявка #${id} подтверждена`);
-    render();
-  } catch(e){ toast('⚠️ ' + e.message); }
+    tabPurchases();
+  } catch(e){ toast(e.message, 'err'); }
 }
 
 async function cancelPurchase(id){
@@ -401,227 +629,637 @@ async function cancelPurchase(id){
   try {
     await api(`/api/admin/purchases/${id}/cancel`, {method:'POST'});
     toast(`❌ Заявка #${id} отменена`);
-    render();
-  } catch(e){ toast('⚠️ ' + e.message); }
+    tabPurchases();
+  } catch(e){ toast(e.message, 'err'); }
 }
 
-// ---------- PAYOUTS ----------
+// ============================================================
+// PAYOUTS
+// ============================================================
 async function tabPayouts(){
-  const list = await api('/api/admin/payouts');
-  layout(`
-    <h1>Выплаты (${list.length})</h1>
-    <div class="card" style="overflow:auto">
-      <table>
-        <thead><tr>
-          <th>#</th><th>Пользователь</th><th>Эра</th><th>Сумма</th>
-          <th>Заявка</th><th>Выплата</th><th>Статус</th><th></th>
-        </tr></thead>
-        <tbody>
-        ${list.map(p=>`
-          <tr>
-            <td><b>#${p.id}</b></td>
-            <td>${esc(p.first_name||'')}<br>
-              <span class="muted">@${esc(p.telegram_username||'—')} · ${p.telegram_id}</span>
-            </td>
-            <td>${esc(p.era_title||'')}</td>
-            <td><b>${fmt(p.amount)}</b></td>
-            <td>${fmtDate(p.requested_at)}</td>
-            <td>${p.paid_at?fmtDate(p.paid_at):'—'}</td>
-            <td><span class="badge ${p.status}">${p.status==='paid'?'Выплачено':'Ожидает'}</span></td>
-            <td>
-              ${p.status==='pending'?`
-                <button class="btn ok sm" onclick="markPaid(${p.id})">✅ Выплачено</button>
-                <button class="btn danger sm" onclick="cancelPayout(${p.id})">✕</button>
-              `:''}
-            </td>
-          </tr>
-        `).join('')}
-        </tbody>
-      </table>
-    </div>
-  `);
-}
-async function markPaid(id){
-  if (!confirm(`Отметить выплату #${id} как выполненную?`)) return;
-  try { await api(`/api/admin/payouts/${id}/mark_paid`, {method:'POST'});
-    toast('💰 Выплата отмечена'); render(); }
-  catch(e){ toast(e.message); }
-}
-async function cancelPayout(id){
-  if (!confirm(`Отменить заявку на вывод #${id}?`)) return;
-  try { await api(`/api/admin/payouts/${id}/cancel`, {method:'POST'});
-    toast('Отменено'); render(); }
-  catch(e){ toast(e.message); }
-}
+  CACHE.payouts = await api('/api/admin/payouts');
 
-// ---------- USERS ----------
-async function tabUsers(){
-  const list = await api('/api/admin/users');
-  layout(`
-    <h1>Пользователи (${list.length})</h1>
-    <div class="card" style="overflow:auto">
-      <table>
-        <thead><tr>
-          <th>ID</th><th>Username</th><th>Имя</th><th>Telegram ID</th>
-          <th>Реферер</th><th>Покупок</th><th>Регистрация</th><th></th>
-        </tr></thead>
-        <tbody>
-        ${list.map(u=>`
-          <tr>
-            <td>${u.id}</td>
-            <td>@${esc(u.telegram_username||'—')}</td>
-            <td>${esc(u.first_name||'')} ${esc(u.last_name||'')}</td>
-            <td>${u.telegram_id}</td>
-            <td>${u.referrer_username ? '@'+esc(u.referrer_username) : '—'}</td>
-            <td>${u.purchases_count}</td>
-            <td>${fmtDate(u.registered_at)}</td>
-            <td><button class="btn secondary sm" onclick="showRefTree(${u.id})">Дерево</button></td>
-          </tr>
-        `).join('')}
-        </tbody>
-      </table>
-    </div>
-  `);
-}
-async function showRefTree(uid){
-  const tree = await api('/api/admin/referral_tree/'+uid);
-  const html = renderTree(tree.children);
-  layout(`
-    <button class="btn secondary sm" onclick="setTab('users')">← Назад</button>
-    <h1 style="margin-top:14px">Реферальное дерево #${uid}</h1>
-    <div class="card"><pre>${html || 'Нет рефералов'}</pre></div>
-  `);
-}
-function renderTree(nodes, depth=0){
-  return nodes.map(n=>'  '.repeat(depth) + `• ${esc(n.name||'')} @${esc(n.username||'—')} (#${n.id})\n` +
-    renderTree(n.children||[], depth+1)).join('');
-}
+  const filtered = CACHE.payouts.filter(p=>{
+    if (FILTER.payouts === 'pending') return p.status === 'pending';
+    if (FILTER.payouts === 'paid') return p.status === 'paid';
+    return true;
+  });
 
-// ---------- ERAS ----------
-async function tabEras(){
-  const list = await api('/api/admin/eras');
+  const counts = {
+    all: CACHE.payouts.length,
+    pending: CACHE.payouts.filter(p=>p.status==='pending').length,
+    paid: CACHE.payouts.filter(p=>p.status==='paid').length,
+  };
+
   layout(`
-    <h1>Эры</h1>
-    <div class="muted" style="margin-bottom:16px">
-      ⚠️ Изменения применяются только к новым покупкам
-    </div>
-    ${list.map(e=>`
-      <div class="card">
-        <div class="flex" style="justify-content:space-between;margin-bottom:12px">
-          <h3>${esc(e.title)}</h3>
-          <span class="badge ${e.is_active?'active':'cancelled'}">
-            ${e.is_active?'Активна':'Отключена'}
-          </span>
-        </div>
-        <div class="grid" style="margin-bottom:12px">
-          <div class="form-row"><label>Название</label>
-            <input class="input" id="t_${e.id}" value="${esc(e.title)}"></div>
-          <div class="form-row"><label>Стоимость</label>
-            <input class="input" id="p_${e.id}" type="number" value="${e.price}"></div>
-          <div class="form-row"><label>Срок (дней)</label>
-            <input class="input" id="d_${e.id}" type="number" value="${e.duration_days}"></div>
-          <div class="form-row"><label>Начисление</label>
-            <input class="input" id="pr_${e.id}" type="number" value="${e.profit_amount}"></div>
-          <div class="form-row"><label>Итог (авто)</label>
-            <input class="input" value="${e.price + e.profit_amount}" disabled></div>
-          <div class="form-row"><label>Активна</label>
-            <select class="input" id="a_${e.id}">
-              <option value="1" ${e.is_active?'selected':''}>Да</option>
-              <option value="0" ${!e.is_active?'selected':''}>Нет</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row"><label>Описание</label>
-          <textarea class="input" id="desc_${e.id}" rows="2">${esc(e.description||'')}</textarea>
-        </div>
-        <button class="btn" onclick="saveEra(${e.id})">💾 Сохранить</button>
+    <div class="header">
+      <div>
+        <h1>💸 Заявки на вывод</h1>
+        <div class="sub">Всего: ${counts.all}</div>
       </div>
-    `).join('')}
+    </div>
+
+    <div class="tabs">
+      <button class="tab ${FILTER.payouts==='pending'?'active':''}"
+        onclick="FILTER.payouts='pending';tabPayouts()">
+        ⏳ Ждут выплаты (${counts.pending})
+      </button>
+      <button class="tab ${FILTER.payouts==='paid'?'active':''}"
+        onclick="FILTER.payouts='paid';tabPayouts()">
+        ✅ Выплачено (${counts.paid})
+      </button>
+      <button class="tab ${FILTER.payouts==='all'?'active':''}"
+        onclick="FILTER.payouts='all';tabPayouts()">
+        📋 Все (${counts.all})
+      </button>
+    </div>
+
+    ${filtered.length ? filtered.map(po=>payoutCard(po)).join('') : `
+      <div class="empty"><div class="ic">📭</div>
+        <h3>Заявок нет</h3>
+        <p class="muted">В этой категории пусто</p>
+      </div>
+    `}
   `);
 }
+
+function payoutCard(po){
+  const processed = po.status === 'paid';
+  return `
+    <div class="order-card ${processed?'processed':''}">
+      <div class="row" style="align-items:flex-start;margin-bottom:12px">
+        <div class="on">💸 Выплата #${po.id}</div>
+        <span class="badge ${po.status}">${po.status === 'paid' ? '✅ Выплачено' : '⏳ Ожидает'}</span>
+      </div>
+
+      <div class="meta">
+        <div class="meta-item">
+          <div class="l">👤 Участник</div>
+          <div class="v">${esc(po.first_name||'')}</div>
+        </div>
+        <div class="meta-item">
+          <div class="l">🔗 Никнейм</div>
+          <div class="v">@${esc(po.telegram_username||'—')}</div>
+        </div>
+        <div class="meta-item">
+          <div class="l">🆔 Telegram ID</div>
+          <div class="v">${po.telegram_id||'—'}</div>
+        </div>
+        <div class="meta-item">
+          <div class="l">💳 Эра</div>
+          <div class="v">${esc(po.era_title||'')}</div>
+        </div>
+        <div class="meta-item">
+          <div class="l">💰 Сумма к выплате</div>
+          <div class="v ok">${fmt(po.amount)}</div>
+        </div>
+        <div class="meta-item">
+          <div class="l">📄 Покупка</div>
+          <div class="v">#${po.purchase_id}</div>
+        </div>
+      </div>
+
+      <div class="muted-sm" style="margin-bottom:12px">
+        🕐 Заявка: ${fmtDate(po.requested_at)}
+        ${po.paid_at ? ` · 💰 Выплачено: ${fmtDate(po.paid_at)}` : ''}
+      </div>
+
+      <div class="flex flex-wrap">
+        ${!processed ? `
+          <button class="btn ok" onclick="markPaid(${po.id})">✅ Отметить как выплачено</button>
+          <button class="btn danger" onclick="cancelPayout(${po.id})">❌ Отменить</button>
+        ` : ''}
+        <button class="btn ghost sm" onclick="writeUser('${po.telegram_username||''}', ${po.telegram_id||0})">
+          💬 Написать
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+async function markPaid(id){
+  if (!confirm(`💰 Отметить выплату #${id} как выполненную?\n\nУчастник получит уведомление.`)) return;
+  try {
+    await api(`/api/admin/payouts/${id}/mark_paid`, {method:'POST'});
+    toast('💰 Выплата отмечена');
+    tabPayouts();
+  } catch(e){ toast(e.message, 'err'); }
+}
+
+async function cancelPayout(id){
+  if (!confirm(`❌ Отменить заявку на вывод #${id}?`)) return;
+  try {
+    await api(`/api/admin/payouts/${id}/cancel`, {method:'POST'});
+    toast('Отменено');
+    tabPayouts();
+  } catch(e){ toast(e.message, 'err'); }
+}
+
+// ============================================================
+// USERS — детально
+// ============================================================
+async function tabUsers(){
+  CACHE.users = await api('/api/admin/users');
+  // Загружаем ещё покупки для подсчётов
+  if (!CACHE.purchases.length) CACHE.purchases = await api('/api/admin/purchases');
+
+  const filtered = CACHE.users.filter(u=>{
+    if (!FILTER.search) return true;
+    const q = FILTER.search.toLowerCase();
+    return (u.first_name||'').toLowerCase().includes(q) ||
+           (u.telegram_username||'').toLowerCase().includes(q) ||
+           String(u.telegram_id||'').includes(q);
+  });
+
+  layout(`
+    <div class="header">
+      <div>
+        <h1>👥 Пользователи</h1>
+        <div class="sub">Всего: ${CACHE.users.length} · Найдено: ${filtered.length}</div>
+      </div>
+    </div>
+
+    <div class="search-bar">
+      <input class="input" placeholder="Поиск по имени, @username, Telegram ID…"
+        value="${esc(FILTER.search)}"
+        oninput="FILTER.search=this.value;tabUsers()">
+    </div>
+
+    ${filtered.length ? filtered.map(u=>userCard(u)).join('') : `
+      <div class="empty"><div class="ic">👤</div>
+        <h3>Никого не найдено</h3>
+      </div>
+    `}
+  `);
+}
+
+function userCard(u){
+  const userPurchases = CACHE.purchases.filter(p => p.user_uid === u.id);
+  const active = userPurchases.filter(p => p.status === 'active');
+  const completed = userPurchases.filter(p => p.status === 'completed');
+  const paid = userPurchases.filter(p => p.status === 'paid');
+  const invested = userPurchases
+    .filter(p => !['awaiting_payment','cancelled'].includes(p.status))
+    .reduce((s,p) => s + Number(p.purchase_price||0), 0);
+  const toPayout = completed.reduce((s,p) => s + Number(p.total_amount||0), 0);
+  const paidSum = paid.reduce((s,p) => s + Number(p.total_amount||0), 0);
+  const initial = (u.first_name || '👤')[0].toUpperCase();
+
+  return `
+    <div class="user-card">
+      <div class="user-head">
+        <div class="avatar">
+          ${u.photo_url ? `<img src="${esc(u.photo_url)}" alt="">` : initial}
+        </div>
+        <div class="user-info">
+          <div class="n">${esc(u.first_name||'')} ${esc(u.last_name||'')}</div>
+          <div class="u">@${esc(u.telegram_username||'—')} · ID ${u.telegram_id} · #${u.id}</div>
+        </div>
+        <span class="badge ${u.status === 'active' ? 'active' : 'cancelled'}">${esc(u.status||'active')}</span>
+      </div>
+
+      <div class="user-stats">
+        <div class="user-stat">
+          <div class="l">Вложено</div>
+          <div class="v accent">${fmt(invested)}</div>
+        </div>
+        <div class="user-stat">
+          <div class="l">К выводу</div>
+          <div class="v ok">${fmt(toPayout)}</div>
+        </div>
+        <div class="user-stat">
+          <div class="l">Выплачено</div>
+          <div class="v ok">${fmt(paidSum)}</div>
+        </div>
+        <div class="user-stat">
+          <div class="l">Активных</div>
+          <div class="v">${active.length}</div>
+        </div>
+        <div class="user-stat">
+          <div class="l">Покупок</div>
+          <div class="v">${userPurchases.length}</div>
+        </div>
+        <div class="user-stat">
+          <div class="l">Рефералов</div>
+          <div class="v">${CACHE.users.filter(x => x.referrer_uid === u.id).length}</div>
+        </div>
+      </div>
+
+      <div class="muted-sm" style="margin-bottom:12px">
+        📅 Регистрация: ${fmtDate(u.registered_at)}
+        ${u.referrer_username ? ` · 🎁 Реферер: @${esc(u.referrer_username)}` : ''}
+        ${u.agreed_terms ? ' · ✅ Условия приняты' : ' · ⚠️ Условия не приняты'}
+      </div>
+
+      <div class="flex flex-wrap">
+        <button class="btn" onclick="openUserDetail('${u.id}')">📊 Детали</button>
+        <button class="btn ghost" onclick="writeUser('${u.telegram_username||''}', ${u.telegram_id})">
+          💬 Написать
+        </button>
+        <button class="btn secondary sm" onclick="showRefTree('${u.id}')">🌳 Рефералы</button>
+      </div>
+    </div>
+  `;
+}
+
+function openUserDetail(uid){
+  const u = CACHE.users.find(x => x.id === uid);
+  if (!u) return;
+  const userPurchases = CACHE.purchases.filter(p => p.user_uid === uid);
+  const referrals = CACHE.users.filter(x => x.referrer_uid === uid);
+
+  const purchasesHtml = userPurchases.length ? userPurchases.map(p => `
+    <div class="meta-item" style="margin-bottom:8px">
+      <div class="row" style="margin-bottom:6px">
+        <div style="font-weight:700;color:var(--accent)">📩 Заявка #${p.id}</div>
+        <span class="badge ${p.status}">${statusLabel(p.status)}</span>
+      </div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:4px">${esc(p.era_title)}</div>
+      <div class="muted-sm">Вложено: ${fmt(p.purchase_price)} · Начисление: +${fmt(p.profit_amount)} · Итого: ${fmt(p.total_amount)}</div>
+      <div class="muted-sm">Создана: ${fmtDate(p.created_at)}${p.activated_at ? ' · Активирована: '+fmtDate(p.activated_at) : ''}</div>
+    </div>
+  `).join('') : '<div class="muted" style="padding:16px;text-align:center">Покупок нет</div>';
+
+  const refsHtml = referrals.length ? referrals.map(r => `
+    <div class="list-item">
+      <div>${esc(r.first_name||'')} <span class="muted">@${esc(r.telegram_username||'—')}</span></div>
+      <span class="muted-sm">${fmtDate(r.registered_at)}</span>
+    </div>
+  `).join('') : '<div class="muted" style="padding:16px;text-align:center">Рефералов нет</div>';
+
+  const totalInvested = userPurchases
+    .filter(p => !['awaiting_payment','cancelled'].includes(p.status))
+    .reduce((s,p) => s + Number(p.purchase_price||0), 0);
+  const totalToPayout = userPurchases.filter(p => p.status === 'completed')
+    .reduce((s,p) => s + Number(p.total_amount||0), 0);
+  const totalPaid = userPurchases.filter(p => p.status === 'paid')
+    .reduce((s,p) => s + Number(p.total_amount||0), 0);
+
+  showModal(`
+    <div class="modal-head">
+      <h2>👤 ${esc(u.first_name||'')} ${esc(u.last_name||'')}</h2>
+      <button class="close-x" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="user-stats" style="margin-bottom:16px">
+        <div class="user-stat">
+          <div class="l">Вложено</div>
+          <div class="v accent">${fmt(totalInvested)}</div>
+        </div>
+        <div class="user-stat">
+          <div class="l">К выводу</div>
+          <div class="v ok">${fmt(totalToPayout)}</div>
+        </div>
+        <div class="user-stat">
+          <div class="l">Выплачено</div>
+          <div class="v ok">${fmt(totalPaid)}</div>
+        </div>
+      </div>
+
+      <h3 style="margin:16px 0 10px;font-size:14px">📦 Покупки (${userPurchases.length})</h3>
+      ${purchasesHtml}
+
+      <h3 style="margin:16px 0 10px;font-size:14px">🌳 Рефералы (${referrals.length})</h3>
+      ${refsHtml}
+    </div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closeModal()">Закрыть</button>
+      <button class="btn" onclick="writeUser('${u.telegram_username||''}', ${u.telegram_id})">💬 Написать</button>
+    </div>
+  `);
+}
+
+async function showRefTree(uid){
+  try {
+    const tree = await api('/api/admin/referral_tree/' + uid);
+    const html = renderTree(tree.children);
+    showModal(`
+      <div class="modal-head">
+        <h2>🌳 Реферальное дерево</h2>
+        <button class="close-x" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <pre style="background:var(--card2);padding:14px;border-radius:10px;
+          font-size:12px;overflow:auto;max-height:400px;line-height:1.7">${html || 'Нет рефералов'}</pre>
+      </div>
+    `);
+  } catch(e){ toast(e.message, 'err'); }
+}
+
+function renderTree(nodes, depth=0){
+  return nodes.map(n =>
+    '  '.repeat(depth) + `• ${esc(n.name||'')} @${esc(n.username||'—')} (#${n.id})\n` +
+    renderTree(n.children||[], depth+1)
+  ).join('');
+}
+
+function writeUser(username, tgId){
+  let url;
+  if (username){
+    url = `https://t.me/${username}`;
+  } else if (tgId){
+    url = `tg://user?id=${tgId}`;
+  } else {
+    toast('Нет username или ID', 'err');
+    return;
+  }
+  window.open(url, '_blank');
+}
+
+// ============================================================
+// ERAS — товары
+// ============================================================
+async function tabEras(){
+  CACHE.eras = await api('/api/admin/eras');
+
+  layout(`
+    <div class="header">
+      <div>
+        <h1>🧩 Товары (Эры)</h1>
+        <div class="sub">Всего: ${CACHE.eras.length} · Изменения влияют только на новые покупки</div>
+      </div>
+      <button class="btn" onclick="openEraModal()">➕ Создать эру</button>
+    </div>
+
+    ${CACHE.eras.length ? CACHE.eras.map(e => eraCard(e)).join('') : `
+      <div class="empty"><div class="ic">📦</div>
+        <h3>Товаров нет</h3>
+        <p class="muted" style="margin-bottom:16px">Создайте первую эру</p>
+        <button class="btn" onclick="openEraModal()">➕ Создать</button>
+      </div>
+    `}
+  `);
+}
+
+function eraCard(e){
+  const roi = e.price > 0 ? Math.round((e.profit_amount / e.price) * 100) : 0;
+  return `
+    <div class="order-card">
+      <div class="row" style="align-items:flex-start;margin-bottom:12px">
+        <div>
+          <div class="on">🧩 ${esc(e.title)}</div>
+          <div class="muted-sm">ID #${e.id} · Sort ${e.sort_order||e.id}</div>
+        </div>
+        <span class="badge ${e.is_active ? 'active' : 'cancelled'}">
+          ${e.is_active ? '🟢 Активна' : '⚫ Отключена'}
+        </span>
+      </div>
+
+      <div class="meta">
+        <div class="meta-item">
+          <div class="l">💵 Стоимость</div>
+          <div class="v accent">${fmt(e.price)}</div>
+        </div>
+        <div class="meta-item">
+          <div class="l">💰 Начисление</div>
+          <div class="v ok">+${fmt(e.profit_amount)}</div>
+        </div>
+        <div class="meta-item">
+          <div class="l">🏆 Итого</div>
+          <div class="v ok">${fmt(e.price + e.profit_amount)}</div>
+        </div>
+        <div class="meta-item">
+          <div class="l">📅 Срок</div>
+          <div class="v">${e.duration_days} дней</div>
+        </div>
+        <div class="meta-item">
+          <div class="l">📈 ROI</div>
+          <div class="v ok">+${roi}%</div>
+        </div>
+      </div>
+
+      ${e.description ? `<div class="muted-sm" style="margin-bottom:12px">${esc(e.description)}</div>` : ''}
+
+      <div class="flex flex-wrap">
+        <button class="btn" onclick="openEraModal(${e.id})">✏️ Редактировать</button>
+        <button class="btn secondary sm" onclick="toggleEra(${e.id}, ${e.is_active ? 0 : 1})">
+          ${e.is_active ? '⚫ Отключить' : '🟢 Включить'}
+        </button>
+        <button class="btn danger sm" onclick="deleteEra(${e.id})">🗑 Удалить</button>
+      </div>
+    </div>
+  `;
+}
+
+function openEraModal(id){
+  const e = id ? CACHE.eras.find(x => x.id === id) : null;
+  const isEdit = !!e;
+
+  showModal(`
+    <div class="modal-head">
+      <h2>${isEdit ? '✏️ Редактировать эру' : '➕ Создать эру'}</h2>
+      <button class="close-x" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label>Название</label>
+        <input class="input" id="f_title" value="${esc(e?.title||'Новая эра')}">
+      </div>
+      <div class="grid2">
+        <div class="form-row">
+          <label>Стоимость (₽)</label>
+          <input class="input" id="f_price" type="number" value="${e?.price||1500}">
+        </div>
+        <div class="form-row">
+          <label>Срок (дней)</label>
+          <input class="input" id="f_duration" type="number" value="${e?.duration_days||20}">
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Начисление (₽)</label>
+        <input class="input" id="f_profit" type="number" value="${e?.profit_amount||1000}">
+      </div>
+      <div class="form-row">
+        <label>Итоговая сумма (авто)</label>
+        <input class="input" id="f_total" disabled value="${((e?.price||1500) + (e?.profit_amount||1000))}">
+      </div>
+      <div class="form-row">
+        <label>Описание</label>
+        <textarea class="input" id="f_description" rows="3">${esc(e?.description||'')}</textarea>
+      </div>
+      <div class="form-row">
+        <label>Активна</label>
+        <select class="input" id="f_active">
+          <option value="1" ${(!e || e.is_active) ? 'selected' : ''}>Да</option>
+          <option value="0" ${(e && !e.is_active) ? 'selected' : ''}>Нет</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closeModal()">Отмена</button>
+      <button class="btn" onclick="saveEra(${id||0})">💾 ${isEdit ? 'Сохранить' : 'Создать'}</button>
+    </div>
+  `);
+
+  // Авто-пересчёт итога
+  setTimeout(()=>{
+    const price = document.getElementById('f_price');
+    const profit = document.getElementById('f_profit');
+    const total = document.getElementById('f_total');
+    const recalc = ()=>{
+      total.value = (parseFloat(price.value)||0) + (parseFloat(profit.value)||0);
+    };
+    price.addEventListener('input', recalc);
+    profit.addEventListener('input', recalc);
+  }, 50);
+}
+
 async function saveEra(id){
   const body = {
-    title: document.getElementById('t_'+id).value,
-    price: parseFloat(document.getElementById('p_'+id).value)||0,
-    duration_days: parseInt(document.getElementById('d_'+id).value)||0,
-    profit_amount: parseFloat(document.getElementById('pr_'+id).value)||0,
-    description: document.getElementById('desc_'+id).value,
-    is_active: parseInt(document.getElementById('a_'+id).value),
-    sort_order: id,
+    title: document.getElementById('f_title').value,
+    price: parseFloat(document.getElementById('f_price').value) || 0,
+    duration_days: parseInt(document.getElementById('f_duration').value) || 0,
+    profit_amount: parseFloat(document.getElementById('f_profit').value) || 0,
+    description: document.getElementById('f_description').value,
+    is_active: parseInt(document.getElementById('f_active').value),
+    sort_order: id || 99,
   };
-  try { await api('/api/admin/eras/'+id, {method:'PUT', body}); toast('💾 Сохранено'); render(); }
-  catch(e){ toast(e.message); }
+  try {
+    if (id){
+      await api('/api/admin/eras/' + id, {method:'PUT', body});
+      toast('💾 Эра сохранена');
+    } else {
+      await api('/api/admin/eras', {method:'POST', body});
+      toast('✅ Эра создана');
+    }
+    closeModal();
+    tabEras();
+  } catch(e){ toast(e.message, 'err'); }
 }
 
-// ---------- CONTENT ----------
+async function toggleEra(id, newActive){
+  const e = CACHE.eras.find(x => x.id === id);
+  if (!e) return;
+  try {
+    await api('/api/admin/eras/' + id, {
+      method:'PUT',
+      body: {...e, is_active: newActive}
+    });
+    toast(newActive ? '🟢 Эра включена' : '⚫ Эра отключена');
+    tabEras();
+  } catch(e){ toast(e.message, 'err'); }
+}
+
+async function deleteEra(id){
+  if (!confirm(`🗑 Удалить эру #${id}?\n\nДействие необратимо. Существующие покупки не пострадают.`)) return;
+  try {
+    await api('/api/admin/eras/' + id, {method:'DELETE'});
+    toast('🗑 Эра удалена');
+    tabEras();
+  } catch(e){ toast(e.message, 'err'); }
+}
+
+// ============================================================
+// CONTENT
+// ============================================================
 async function tabContent(){
   const keys = [
     {k:'marketing_image', t:'Маркетинговое изображение', upload:true},
     {k:'rules_text', t:'Правила проекта', textarea:true},
     {k:'terms_text', t:'Условия участия', textarea:true},
     {k:'notif_registration', t:'Уведомление: регистрация'},
-    {k:'notif_purchase_created', t:'Уведомление: заявка на покупку'},
+    {k:'notif_purchase_created', t:'Уведомление: заявка'},
     {k:'notif_purchase_activated', t:'Уведомление: активация'},
-    {k:'notif_purchase_cancelled', t:'Уведомление: отмена заявки'},
-    {k:'notif_era_completed', t:'Уведомление: завершение'},
-    {k:'notif_payout_requested', t:'Уведомление: заявка на вывод'},
+    {k:'notif_purchase_cancelled', t:'Уведомление: отмена'},
+    {k:'notif_payout_requested', t:'Уведомление: вывод'},
     {k:'notif_payout_paid', t:'Уведомление: выплата'},
   ];
   const values = {};
-  await Promise.all(keys.map(async ({k})=>{ const r = await api('/api/content/'+k); values[k] = r.value; }));
+  await Promise.all(keys.map(async ({k})=>{
+    const r = await api('/api/content/' + k);
+    values[k] = r.value;
+  }));
 
   layout(`
-    <h1>Контент</h1>
-    ${keys.map(({k,t,textarea,upload})=>`
+    <div class="header">
+      <div>
+        <h1>📝 Контент</h1>
+        <div class="sub">Тексты и изображения проекта</div>
+      </div>
+    </div>
+
+    ${keys.map(({k,t,textarea,upload}) => `
       <div class="card">
-        <h3>${t}</h3>
+        <h3 style="margin-bottom:12px">${t}</h3>
         ${upload ? `
           ${values[k] ? `<img src="${API}${values[k]}"
-            style="max-width:100%;max-height:200px;border-radius:9px;margin-bottom:10px">` :
-            '<div class="muted" style="margin-bottom:10px">Не загружено</div>'}
+            style="max-width:100%;max-height:200px;border-radius:10px;margin-bottom:12px">` :
+            '<div class="muted" style="margin-bottom:12px">Не загружено</div>'}
           <input type="file" id="f_${k}" class="input">
-          <button class="btn" style="margin-top:10px" onclick="uploadFile('${k}')">
-            ⬆️ Загрузить
-          </button>
+          <button class="btn" style="margin-top:10px" onclick="uploadFile('${k}')">⬆️ Загрузить</button>
         ` : `
           ${textarea
-            ? `<textarea class="input" id="c_${k}" rows="6">${esc(values[k]||'')}</textarea>`
+            ? `<textarea class="input" id="c_${k}" rows="5">${esc(values[k]||'')}</textarea>`
             : `<input class="input" id="c_${k}" value="${esc(values[k]||'')}">`}
-          <button class="btn" style="margin-top:10px" onclick="saveContent('${k}')">
-            💾 Сохранить
-          </button>
+          <button class="btn" style="margin-top:10px" onclick="saveContent('${k}')">💾 Сохранить</button>
         `}
       </div>
     `).join('')}
   `);
 }
+
 async function saveContent(key){
-  const value = document.getElementById('c_'+key).value;
-  try { await api('/api/admin/content', {method:'POST', body:{key, value}});
-    toast('💾 Сохранено'); }
-  catch(e){ toast(e.message); }
-}
-async function uploadFile(key){
-  const f = document.getElementById('f_'+key).files[0];
-  if (!f) return toast('Выберите файл');
-  const fd = new FormData(); fd.append('file', f);
-  try { await api('/api/admin/upload/marketing', {method:'POST', body: fd});
-    toast('⬆️ Загружено'); render(); }
-  catch(e){ toast(e.message); }
+  const value = document.getElementById('c_' + key).value;
+  try {
+    await api('/api/admin/content', {method:'POST', body:{key, value}});
+    toast('💾 Сохранено');
+  } catch(e){ toast(e.message, 'err'); }
 }
 
-// ---------- LOGS ----------
+async function uploadFile(key){
+  const f = document.getElementById('f_' + key).files[0];
+  if (!f) return toast('Выберите файл', 'err');
+  const fd = new FormData(); fd.append('file', f);
+  try {
+    await api('/api/admin/upload/marketing', {method:'POST', body: fd});
+    toast('⬆️ Загружено');
+    tabContent();
+  } catch(e){ toast(e.message, 'err'); }
+}
+
+// ============================================================
+// LOGS
+// ============================================================
 async function tabLogs(){
   const list = await api('/api/admin/actions');
   layout(`
-    <h1>Журнал действий</h1>
+    <div class="header">
+      <div>
+        <h1>📜 Журнал действий</h1>
+        <div class="sub">Последние ${list.length} действий администраторов</div>
+      </div>
+      <button class="btn" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">📢 Канал логов</button>
+    </div>
     <div class="card" style="overflow:auto">
-      <table>
-        <thead><tr><th>#</th><th>Админ</th><th>Действие</th><th>Детали</th><th>Дата</th></tr></thead>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr>
+            <th style="padding:11px 10px;text-align:left;color:var(--muted);
+              font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+              border-bottom:1px solid var(--border)">#</th>
+            <th style="padding:11px 10px;text-align:left;color:var(--muted);
+              font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+              border-bottom:1px solid var(--border)">Админ</th>
+            <th style="padding:11px 10px;text-align:left;color:var(--muted);
+              font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+              border-bottom:1px solid var(--border)">Действие</th>
+            <th style="padding:11px 10px;text-align:left;color:var(--muted);
+              font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+              border-bottom:1px solid var(--border)">Детали</th>
+            <th style="padding:11px 10px;text-align:left;color:var(--muted);
+              font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+              border-bottom:1px solid var(--border)">Дата</th>
+          </tr>
+        </thead>
         <tbody>
-        ${list.map(a=>`
-          <tr><td>${a.id}</td><td>${esc(a.admin)}</td><td>${esc(a.action)}</td>
-            <td>${esc(a.details)}</td><td>${fmtDate(a.created_at)}</td></tr>
+        ${list.map(a => `
+          <tr>
+            <td style="padding:10px;border-bottom:1px solid var(--border)">${a.id}</td>
+            <td style="padding:10px;border-bottom:1px solid var(--border)">${esc(a.admin)}</td>
+            <td style="padding:10px;border-bottom:1px solid var(--border)">${esc(a.action)}</td>
+            <td style="padding:10px;border-bottom:1px solid var(--border)">${esc(a.details)}</td>
+            <td style="padding:10px;border-bottom:1px solid var(--border)">${fmtDate(a.created_at)}</td>
+          </tr>
         `).join('')}
         </tbody>
       </table>
@@ -629,39 +1267,55 @@ async function tabLogs(){
   `);
 }
 
+// ============================================================
 // UTILS
+// ============================================================
 function esc(s){ return String(s??'').replace(/[&<>"']/g,
-  c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function fmt(n){ return Number(n||0).toLocaleString('ru-RU') + ' ₽'; }
 function fmtDate(s){
   if (!s) return '—';
-  try { return new Date(s).toLocaleString('ru-RU',
-    {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
-  catch { return s; }
+  try {
+    return new Date(s).toLocaleString('ru-RU',
+      {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  } catch { return s; }
 }
 function statusLabel(s){
-  return ({awaiting_payment:'⏳ Ожидает подтверждения', active:'🟢 Активен',
+  return ({
+    awaiting_payment:'⏳ Ожидает оплаты', active:'🟢 Активен',
     completed:'🏁 Завершён', awaiting_payout:'💸 Ожидает выплаты',
-    paid:'💰 Выплачен', cancelled:'❌ Отменён'})[s] || s;
+    paid:'💰 Выплачен', cancelled:'❌ Отменён'
+  })[s] || s;
 }
 
+// ============================================================
 // MAIN
+// ============================================================
 async function render(){
   if (!TOKEN){ renderLogin(); return; }
   try {
     const routes = {
-      dashboard: tabDashboard, users: tabUsers, purchases: tabPurchases,
-      payouts: tabPayouts, eras: tabEras, content: tabContent, logs: tabLogs
+      dashboard: tabDashboard,
+      purchases: tabPurchases,
+      payouts: tabPayouts,
+      users: tabUsers,
+      eras: tabEras,
+      content: tabContent,
+      logs: tabLogs
     };
-    await routes[TAB]();
+    const fn = routes[TAB] || tabDashboard;
+    await fn();
   } catch(e){
     console.error(e);
     if (e.message === 'Unauthorized') return;
-    toast(e.message);
+    toast(e.message, 'err');
   }
 }
 
 render();
+setInterval(()=>{
+  if (TOKEN && ['dashboard','purchases','payouts'].includes(TAB)) render();
+}, 30000);
 </script>
 </body>
 </html>

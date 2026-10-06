@@ -5,478 +5,1105 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Era Admin</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#0d1117;color:#e6edf3;padding:16px;
-  font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
-h1{font-size:20px;margin-bottom:4px}
-h2{font-size:16px;margin:0 0 12px}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
-.tab{padding:8px 14px;background:#1c2330;border:1px solid #2a3240;border-radius:8px;
-  color:#c4ccd6;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
-.tab.active{background:#4f8cff;color:#fff;border-color:#4f8cff}
-.btn{padding:8px 14px;background:#4f8cff;color:#fff;border:0;border-radius:8px;
-  font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-right:6px}
-.btn:active{transform:scale(.97)}
-.btn.gray{background:#1c2330;border:1px solid #2a3240;color:#e6edf3}
-.btn.red{background:#ff5c5c}
-.btn.green{background:#39d98a;color:#04241a}
-.btn.sm{padding:6px 10px;font-size:12px}
-.card{background:#161b22;border:1px solid #2a3240;border-radius:10px;padding:14px;margin-bottom:10px}
-.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:10px 0}
-.cell{background:#1c2330;border-radius:8px;padding:8px 10px}
-.cell b{display:block;color:#8b949e;font-size:10px;text-transform:uppercase;margin-bottom:2px;font-weight:600}
-.cell span{font-size:13px;font-weight:600;color:#e6edf3}
-.badge{display:inline-block;padding:3px 9px;border-radius:12px;font-size:10px;font-weight:700;text-transform:uppercase}
-.badge.awaiting_payment{background:rgba(245,181,71,.15);color:#f5b547}
-.badge.active{background:rgba(57,217,138,.15);color:#39d98a}
-.badge.completed{background:rgba(99,169,255,.15);color:#63a9ff}
-.badge.awaiting_payout{background:rgba(245,181,71,.15);color:#f5b547}
-.badge.paid{background:rgba(57,217,138,.15);color:#39d98a}
-.badge.cancelled{background:rgba(255,92,92,.15);color:#ff5c5c}
-.badge.pending{background:rgba(245,181,71,.15);color:#f5b547}
-.toast{position:fixed;top:14px;right:14px;background:#1c2330;border:1px solid #2a3240;
-  padding:10px 16px;border-radius:8px;font-size:13px;z-index:99;
-  box-shadow:0 4px 12px rgba(0,0,0,.4)}
-.toast.err{border-color:#ff5c5c;color:#ffb3b3}
-.toast.ok{border-color:#39d98a;color:#a8f0cc}
-.login-box{max-width:360px;margin:60px auto;background:#161b22;border:1px solid #2a3240;border-radius:12px;padding:24px}
-input,select,textarea{width:100%;padding:10px 12px;background:#1c2330;border:1px solid #2a3240;
-  border-radius:8px;color:#e6edf3;font-size:14px;font-family:inherit;outline:none;margin-bottom:10px}
-input:focus,select:focus,textarea:focus{border-color:#4f8cff}
-.empty{text-align:center;padding:40px 20px;color:#8b949e}
-.empty .ic{font-size:40px;margin-bottom:8px;opacity:.5}
-.muted{color:#8b949e;font-size:12px}
-.stat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:16px}
-.stat{background:#161b22;border:1px solid #2a3240;border-radius:10px;padding:12px}
-.stat .l{font-size:10px;color:#8b949e;text-transform:uppercase;font-weight:600;margin-bottom:4px}
-.stat .v{font-size:18px;font-weight:700}
-.stat .v.ok{color:#39d98a}
-.stat .v.warn{color:#f5b547}
-.stat .v.accent{color:#4f8cff}
-.hidden{display:none!important}
-.loader{padding:40px;text-align:center;color:#8b949e}
+  :root{
+    --bg:#0d1117; --card:#161b22; --card2:#1c2330; --card3:#232b38;
+    --border:#252e3a; --border2:#2f3a48;
+    --text:#e6edf3; --text2:#c4ccd6; --muted:#8b949e;
+    --accent:#4f8cff; --accent2:#356fd8;
+    --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c; --info:#63a9ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  button,input,textarea,select{font-family:inherit}
+  .layout{display:flex;min-height:100vh}
+
+  .side{width:220px;background:var(--card);border-right:1px solid var(--border);
+    padding:16px 10px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .side .logo{display:flex;align-items:center;gap:10px;padding:0 8px 16px;
+    border-bottom:1px solid var(--border);margin-bottom:12px}
+  .side .logo .ic{width:34px;height:34px;border-radius:9px;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff}
+  .side .logo .t{font-weight:700;font-size:14px}
+  .side .logo .s{font-size:10px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.06em;font-weight:600}
+  .side .nav-item{display:flex;align-items:center;gap:9px;width:100%;text-align:left;
+    background:none;border:0;color:var(--text2);padding:10px 12px;border-radius:8px;
+    cursor:pointer;font-size:13px;margin-bottom:1px;font-weight:500;transition:background .1s}
+  .side .nav-item:hover{background:var(--card2)}
+  .side .nav-item.active{background:var(--accent);color:#fff}
+  .side .nav-item .emo{font-size:15px;width:18px;text-align:center}
+  .side .nav-item .count{margin-left:auto;padding:1px 7px;border-radius:9px;
+    background:rgba(255,255,255,.14);font-size:10px;font-weight:700;min-width:18px;text-align:center}
+  .side .section{font-size:10px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.06em;font-weight:700;padding:12px 12px 4px}
+
+  .main{flex:1;min-width:0;padding:20px 24px;overflow-x:hidden}
+  .header{display:flex;justify-content:space-between;align-items:flex-start;
+    gap:16px;margin-bottom:20px;flex-wrap:wrap}
+  .header h1{font-size:22px;font-weight:700;margin-bottom:2px}
+  .header .sub{font-size:12px;color:var(--muted)}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:20px}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px}
+  .stat .ic{font-size:22px;margin-bottom:6px}
+  .stat .l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:3px}
+  .stat .v{font-size:20px;font-weight:700}
+  .stat .v.ok{color:var(--ok)} .stat .v.warn{color:var(--warn)}
+  .stat .v.info{color:var(--info)} .stat .v.accent{color:var(--accent)}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
+
+  .btn{padding:8px 14px;border-radius:8px;border:0;background:var(--accent);color:#fff;
+    font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;
+    gap:6px;transition:opacity .15s}
+  .btn:hover{opacity:.9}
+  .btn:active{transform:scale(.97)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn.secondary{background:var(--card2);border:1px solid var(--border2);color:var(--text)}
+  .btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+  .btn.danger{background:var(--err)}
+  .btn.ok{background:var(--ok);color:#04241a}
+  .btn.sm{padding:5px 10px;font-size:11.5px}
+
+  .input{width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--border);
+    background:var(--card2);color:var(--text);font-size:13px;outline:none;transition:border-color .15s}
+  .input:focus{border-color:var(--accent)}
+  .form-row{margin-bottom:11px}
+  .form-row label{display:block;font-size:10.5px;color:var(--muted);margin-bottom:4px;
+    text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .muted{color:var(--muted);font-size:12px}
+  .muted-sm{color:var(--muted);font-size:11px}
+
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;
+    font-size:10.5px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap}
+  .badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+  .badge.awaiting_payment,.badge.awaiting_payout,.badge.pending{background:rgba(245,181,71,.15);color:var(--warn)}
+  .badge.active,.badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
+  .badge.completed{background:rgba(99,169,255,.15);color:var(--info)}
+  .badge.cancelled{background:rgba(255,92,92,.15);color:var(--err)}
+
+  .user-card,.order-card{background:var(--card);border:1px solid var(--border);
+    border-radius:12px;padding:14px;margin-bottom:10px;
+    content-visibility:auto;contain-intrinsic-size:auto 230px}
+  .order-card.processed{background:var(--card2)}
+  .user-head{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+  .avatar{width:44px;height:44px;border-radius:50%;background:var(--card3);display:flex;
+    align-items:center;justify-content:center;font-size:17px;font-weight:700;color:var(--accent);
+    border:2px solid var(--border2);overflow:hidden;flex-shrink:0}
+  .avatar img{width:100%;height:100%;object-fit:cover}
+  .user-info{min-width:0;flex:1}
+  .user-info .n{font-size:14px;font-weight:700;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .user-info .u{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .user-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));gap:7px;margin-bottom:11px}
+  .user-stat{background:var(--card2);border-radius:8px;padding:8px 10px;border:1px solid var(--border)}
+  .user-stat .l,.meta-item .l{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:600;margin-bottom:2px}
+  .user-stat .v{font-size:14px;font-weight:700}
+  .v.ok{color:var(--ok)} .v.accent{color:var(--accent)} .v.warn{color:var(--warn)}
+  .order-card .on{font-size:15px;font-weight:700;color:var(--accent);margin-bottom:8px}
+  .order-card .meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:7px;margin-bottom:11px}
+  .meta-item{background:var(--card2);border-radius:8px;padding:8px 10px}
+  .order-card.processed .meta-item{background:var(--card3)}
+  .meta-item .v{font-size:12.5px;font-weight:600;word-break:break-word}
+
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999;display:flex;
+    align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+  .modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;width:100%;
+    max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .modal-head{padding:18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;
+    align-items:center;position:sticky;top:0;background:var(--card);z-index:1}
+  .modal-head h2{font-size:17px;font-weight:700}
+  .modal-body{padding:18px}
+  .modal-foot{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px;
+    justify-content:flex-end;position:sticky;bottom:0;background:var(--card)}
+  .close-x{width:32px;height:32px;border-radius:50%;background:var(--card2);border:1px solid var(--border2);
+    color:var(--text2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .login-box{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:32px;width:100%;max-width:380px}
+  .login-box .ic{width:56px;height:56px;border-radius:14px;margin:0 auto 16px;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff}
+  .login-box h1{font-size:20px;margin-bottom:4px;text-align:center}
+  .login-box .s{font-size:12px;color:var(--muted);text-align:center;margin-bottom:20px}
+
+  .tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{padding:7px 13px;border-radius:18px;background:var(--card2);border:1px solid var(--border);
+    color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+  .toast{position:fixed;top:16px;right:16px;background:var(--card2);border:1px solid var(--border2);
+    padding:12px 18px;border-radius:10px;z-index:9999;font-size:13px;font-weight:500;max-width:300px;
+    box-shadow:0 8px 24px rgba(0,0,0,.4);animation:toastIn .2s ease}
+  .toast.ok{border-color:rgba(57,217,138,.4);background:#13281f}
+  .toast.err{border-color:rgba(255,92,92,.4);background:#2a1618}
+  @keyframes toastIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+
+  .empty{padding:50px 20px;text-align:center;color:var(--muted)}
+  .empty .ic{font-size:44px;margin-bottom:10px;opacity:.4}
+  .hidden{display:none !important}
+  .search-bar{position:relative;margin-bottom:14px}
+  .search-bar input{padding-left:34px}
+  .search-bar::before{content:'🔍';position:absolute;left:11px;top:50%;transform:translateY(-50%);
+    font-size:13px;opacity:.6;pointer-events:none}
+
+  .skel{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);
+    background-size:200% 100%;animation:sh 1.2s infinite;border-radius:12px;
+    border:1px solid var(--border);margin-bottom:10px}
+  @keyframes sh{to{background-position:-200% 0}}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--border)}
+  th{color:var(--muted);font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em}
+  pre.raw{background:var(--card2);padding:12px;border-radius:9px;font-size:11.5px;overflow:auto;
+    max-height:400px;line-height:1.5;white-space:pre-wrap;word-break:break-all}
+
+  @media(max-width:768px){
+    .layout{flex-direction:column}
+    .side{width:100%;height:auto;position:relative;padding:10px;border-right:0;
+      border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:4px}
+    .side .logo{width:100%;padding-bottom:10px;margin-bottom:8px}
+    .side .section{display:none}
+    .side .nav-item{width:auto;padding:8px 12px;font-size:12px;margin-bottom:0}
+    .main{padding:14px}
+    .header h1{font-size:19px}
+    .grid2{grid-template-columns:1fr}
+  }
 </style>
 </head>
 <body>
 
-<div id="app"></div>
+<div id="root"></div>
 <div id="toast" class="toast hidden"></div>
+<div id="modal-root"></div>
 
 <script>
 // ============================================================
-// ⚠️ ЗАМЕНИТЕ API НА ВАШ NGROK URL!
+// КОНФИГ
 // ============================================================
-const API = localStorage.getItem('admin_api') || 'http://localhost:8000';
+let API = (localStorage.getItem('admin_api') || 'http://localhost:8000').replace(/\/+$/, '');
 const LOG_CHANNEL_URL = 'https://t.me/c/4305451466';
+const TTL = 20000;          // сколько секунд данные считаются свежими
+const PAGE = 50;            // карточек за раз в длинных списках
+const POLL_MS = 45000;      // фоновое автообновление
 // ============================================================
 
 let TOKEN = localStorage.getItem('admin_token') || '';
 let TAB = 'dashboard';
-let DATA = { dashboard:null, purchases:null, payouts:null, users:null, eras:null };
+let RID = 0;                                   // защита от «гонок» ответов
+let DASH = null, CONTENT = null, LOGS = null;
+const DATA = { users: [], purchases: [], payouts: [], eras: [] };
+const LOADED = {};
+const SIG = {};
+const FILTER = { purchases: 'pending', payouts: 'pending', search: '' };
+const LIM = { purchases: PAGE, users: PAGE };
+let UIDX = { P: {}, R: {} };
+let store = {};                                // path -> {t, raw}
+const inflight = {};
+const BUSY = new Set();
 
+// ---------- helpers ----------
 const $ = id => document.getElementById(id);
-function esc(s){ return String(s??'').replace(/[&<>"']/g,
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g,
   c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function fmt(n){ return Number(n||0).toLocaleString('ru-RU') + ' ₽'; }
+// безопасная передача значения (число/строка) в inline-обработчик
+function q(v){ return esc(JSON.stringify(v ?? '')); }
+const num = v => { const n = Number(v); return isFinite(n) ? n : 0; };
+const bool = v => (v === undefined || v === null) ? true : (v === true || v === 1 || v === '1' || v === 'true');
+function fmt(n){ return num(n).toLocaleString('ru-RU') + ' ₽'; }
 function fmtDate(s){
   if (!s) return '—';
-  try { return new Date(s).toLocaleString('ru-RU',
-    {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
-  catch { return s; }
+  try {
+    const d = new Date(s);
+    if (isNaN(d)) return String(s);
+    return d.toLocaleString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  } catch { return String(s); }
 }
 function statusLabel(s){
-  return ({awaiting_payment:'Ожидает оплаты',active:'Активен',
-    completed:'Завершён',awaiting_payout:'Ожидает выплаты',
-    paid:'Выплачен',cancelled:'Отменён'})[s] || s;
-}
-function toast(msg, type){
-  const t = $('toast');
-  t.textContent = msg;
-  t.className = 'toast ' + (type || '');
-  clearTimeout(t._t);
-  t._t = setTimeout(() => t.className = 'toast hidden', 2500);
+  return ({awaiting_payment:'⏳ Ожидает оплаты', active:'🟢 Активен', completed:'🏁 Завершён',
+    awaiting_payout:'💸 Ожидает выплаты', paid:'💰 Выплачен', cancelled:'❌ Отменён'})[s] || s;
 }
 
-async function api(path, opts){
-  opts = opts || {};
-  const headers = opts.headers || {};
+// ---------- TOAST ----------
+function toast(msg, type='ok', ms=2500){
+  const t = $('toast'); if (!t) return;
+  t.textContent = msg;
+  t.className = 'toast ' + type;
+  clearTimeout(t._t);
+  t._t = setTimeout(() => { t.className = 'toast hidden'; }, ms);
+}
+
+// ---------- MODAL ----------
+function showModal(html){
+  $('modal-root').innerHTML =
+    `<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`;
+}
+function closeModal(){ $('modal-root').innerHTML = ''; }
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Enter' && e.target && e.target.closest && e.target.closest('.modal') &&
+      e.target.tagName === 'INPUT' && $('f_submit')) $('f_submit').click();
+});
+
+// ============================================================
+// API + КЭШ
+// ============================================================
+async function api(path, opts = {}){
+  const headers = {...(opts.headers || {})};
   if (TOKEN) headers['Authorization'] = 'Bearer ' + TOKEN;
   headers['ngrok-skip-browser-warning'] = 'true';
-  if (opts.body && !(opts.body instanceof FormData)) {
+  let body = opts.body;
+  if (body && !(body instanceof FormData)) {
     headers['Content-Type'] = 'application/json';
-    opts.body = JSON.stringify(opts.body);
+    body = JSON.stringify(body);
   }
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 20000);
   let res;
-  try { res = await fetch(API + path, {...opts, headers}); }
-  catch(e){ throw new Error('Сервер недоступен'); }
-  if (res.status === 401){ logout(); throw new Error('Unauthorized'); }
+  try {
+    res = await fetch(API + path, {...opts, body, headers, signal: ctrl.signal});
+  } catch (e) {
+    throw new Error(e.name === 'AbortError' ? 'Сервер не отвечает (таймаут)' : 'Сервер недоступен');
+  } finally { clearTimeout(timer); }
+  if (res.status === 401 && !path.includes('/login')) { logout(); throw new Error('Unauthorized'); }
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.detail || 'Ошибка');
+  if (!res.ok) throw new Error(data.detail || 'Ошибка ' + res.status);
   return data;
 }
+
+// GET с кэшем и склейкой одинаковых запросов
+function get(path, force = false){
+  const c = store[path];
+  if (!force && c && Date.now() - c.t < TTL) return Promise.resolve(c.raw);
+  if (inflight[path]) return inflight[path];
+  inflight[path] = api(path)
+    .then(raw => { store[path] = {t: Date.now(), raw}; return raw; })
+    .finally(() => { delete inflight[path]; });
+  return inflight[path];
+}
+function invalidate(){ store = {}; }
 
 function logout(){
   localStorage.removeItem('admin_token'); TOKEN = ''; location.reload();
 }
 
+// Firebase отдаёт то массив, то объект {key: {...}}, то массив с null.
+// Приводим всё к обычному массиву.
+function toList(raw){
+  if (Array.isArray(raw))
+    return raw.map((v, i) => (v && typeof v === 'object') ? {...v, id: v.id ?? i} : null).filter(Boolean);
+  if (raw && typeof raw === 'object') {
+    for (const k of ['items','data','results','list','eras','products','purchases','payouts','users','actions','logs'])
+      if (raw[k] && typeof raw[k] === 'object') return toList(raw[k]);
+    return Object.entries(raw)
+      .filter(([, v]) => v && typeof v === 'object' && !Array.isArray(v))
+      .map(([k, v]) => ({...v, id: v.id ?? k}));
+  }
+  return [];
+}
+
+const PATHS = {
+  users: '/api/admin/users', purchases: '/api/admin/purchases',
+  payouts: '/api/admin/payouts', eras: '/api/admin/eras',
+};
+const NORM = {
+  users: l => l.map(u => ({...u, id: u.id ?? u._id})),
+  purchases: l => l,
+  payouts: l => l,
+  eras: l => l.map(e => ({
+    ...e,
+    title: e.title || e.name || 'Без названия',
+    price: num(e.price),
+    profit_amount: num(e.profit_amount ?? e.profit),
+    duration_days: num(e.duration_days ?? e.days),
+    is_active: bool(e.is_active ?? e.active),
+    sort_order: num(e.sort_order),
+  })).sort((a, b) => (a.sort_order - b.sort_order) || String(a.id).localeCompare(String(b.id), 'ru', {numeric:true})),
+};
+
+// возвращает true, если данные изменились
+async function loadList(name, force = false){
+  const raw = await get(PATHS[name], force);
+  const sig = JSON.stringify(raw);
+  const changed = SIG[name] !== sig || !LOADED[name];
+  if (changed) { DATA[name] = NORM[name](toList(raw)); SIG[name] = sig; }
+  LOADED[name] = true;
+  return changed;
+}
+
+// ============================================================
 // LOGIN
+// ============================================================
 function renderLogin(){
-  $('app').innerHTML =
-    '<div class="login-box"><h1 style="text-align:center;margin-bottom:20px">⚡ Era Admin</h1>' +
-    '<input id="login" placeholder="Логин" value="admin">' +
-    '<input id="password" type="password" placeholder="Пароль" onkeydown="if(event.key===\'Enter\')doLogin()">' +
-    '<button class="btn" style="width:100%;justify-content:center" onclick="doLogin()">Войти</button>' +
-    '<div style="margin-top:14px"><div class="muted" style="margin-bottom:4px">API URL</div>' +
-    '<input id="api_url" value="' + esc(API) + '" onchange="localStorage.setItem(\'admin_api\',this.value);toast(\'API сохранён\');"></div></div>';
+  $('root').innerHTML = `
+    <div class="login-wrap"><div class="login-box">
+      <div class="ic">⚡</div>
+      <h1>Era Admin</h1>
+      <div class="s">Панель управления проектом</div>
+      <div class="form-row"><label>Логин</label><input class="input" id="login" value="admin"></div>
+      <div class="form-row"><label>Пароль</label>
+        <input class="input" id="password" type="password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn" id="login_btn" style="width:100%;justify-content:center;padding:11px;font-size:13.5px"
+        onclick="doLogin()">Войти</button>
+      <div class="form-row" style="margin-top:14px"><label>API URL</label>
+        <input class="input" id="api_url" value="${esc(API)}"></div>
+    </div></div>`;
 }
 
 async function doLogin(){
-  const login = $('login').value;
-  const password = $('password').value;
-  const apiUrl = $('api_url').value.trim();
-  if (apiUrl) localStorage.setItem('admin_api', apiUrl);
+  const login = $('login').value, password = $('password').value;
+  const apiUrl = $('api_url').value.trim().replace(/\/+$/, '');
+  if (apiUrl) { API = apiUrl; localStorage.setItem('admin_api', apiUrl); }
+  const btn = $('login_btn'); btn.disabled = true;
   try {
     const res = await api('/api/admin/login', {method:'POST', body:{login, password}});
     TOKEN = res.token;
     localStorage.setItem('admin_token', TOKEN);
     toast('Добро пожаловать');
-    render();
-  } catch(e){ toast(e.message, 'err'); }
+    start();
+  } catch (e) { toast(e.message, 'err'); btn.disabled = false; }
 }
 
-// LAYOUT
-function layout(content){
+// ============================================================
+// ОБОЛОЧКА (рисуется один раз) 
+// ============================================================
+function shell(){
+  if ($('main')) return;
+  const nav = (tab, emo, label, cnt) => `
+    <button class="nav-item" data-tab="${tab}" onclick="setTab('${tab}')">
+      <span class="emo">${emo}</span>${label}${cnt ? `<span class="count hidden" id="cnt-${tab}"></span>` : ''}
+    </button>`;
+  $('root').innerHTML = `
+    <div class="layout">
+      <aside class="side">
+        <div class="logo"><div class="ic">⚡</div>
+          <div><div class="t">Era Admin</div><div class="s">Панель</div></div></div>
+        <div class="section">Обзор</div>
+        ${nav('dashboard','📊','Дашборд')}
+        <div class="section">Операции</div>
+        ${nav('purchases','📩','Заявки',1)}
+        ${nav('payouts','💸','Выплаты',1)}
+        <div class="section">Управление</div>
+        ${nav('users','👥','Пользователи',1)}
+        ${nav('eras','🧩','Товары')}
+        ${nav('content','📝','Контент')}
+        <div class="section">Система</div>
+        ${nav('logs','📜','Журнал')}
+        <button class="nav-item" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">
+          <span class="emo">📢</span>Канал логов</button>
+        <div class="section"></div>
+        <button class="nav-item" onclick="logout()" style="color:var(--err)">
+          <span class="emo">🚪</span>Выйти</button>
+      </aside>
+      <main class="main" id="main"></main>
+    </div>`;
+}
+
+function updateNav(){
+  document.querySelectorAll('.nav-item[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === TAB));
   const c = {
-    purchases: (DATA.purchases || []).filter(p => p.status === 'awaiting_payment').length,
-    payouts: (DATA.payouts || []).filter(p => p.status === 'pending').length,
-    users: (DATA.users || []).length,
-    eras: (DATA.eras || []).length
+    purchases: DATA.purchases.filter(p => p.status === 'awaiting_payment').length,
+    payouts: DATA.payouts.filter(p => p.status === 'pending').length,
+    users: DATA.users.length,
   };
-
-  $('app').innerHTML =
-    '<div class="header"><div><h1>⚡ Era Admin</h1><div class="muted">Панель управления</div></div>' +
-    '<button class="btn gray sm" onclick="logout()">Выйти</button></div>' +
-
-    '<div class="tabs">' +
-      '<button class="tab ' + (TAB==='dashboard'?'active':'') + '" onclick="setTab(\'dashboard\')">📊 Дашборд</button>' +
-      '<button class="tab ' + (TAB==='purchases'?'active':'') + '" onclick="setTab(\'purchases\')">📩 Заявки ' + (c.purchases?'('+c.purchases+')':'') + '</button>' +
-      '<button class="tab ' + (TAB==='payouts'?'active':'') + '" onclick="setTab(\'payouts\')">💸 Выплаты ' + (c.payouts?'('+c.payouts+')':'') + '</button>' +
-      '<button class="tab ' + (TAB==='users'?'active':'') + '" onclick="setTab(\'users\')">👥 Юзеры ' + (c.users?'('+c.users+')':'') + '</button>' +
-      '<button class="tab ' + (TAB==='eras'?'active':'') + '" onclick="setTab(\'eras\')">🧩 Товары ' + (c.eras?'('+c.eras+')':'') + '</button>' +
-      '<button class="tab" onclick="window.open(\'' + LOG_CHANNEL_URL + '\',\'_blank\')">📢 Канал</button>' +
-    '</div>' +
-    '<div id="content">' + content + '</div>';
+  for (const k in c) {
+    const el = $('cnt-' + k);
+    if (el) { el.textContent = c[k]; el.classList.toggle('hidden', !c[k]); }
+  }
 }
 
-async function setTab(t){
-  TAB = t;
-  await render();
+function setMain(html){ shell(); $('main').innerHTML = html; updateNav(); window.scrollTo(0, 0); }
+
+function skeleton(){
+  return `<div class="skel" style="height:34px;width:240px"></div>
+    ${'<div class="skel" style="height:150px"></div>'.repeat(3)}`;
 }
 
+function emptyBlock(icon, title, text, extra = ''){
+  return `<div class="empty"><div class="ic">${icon}</div><h3>${title}</h3>
+    ${text ? `<p class="muted" style="margin:8px 0">${text}</p>` : ''}${extra}</div>`;
+}
+
+// ============================================================
+// РОУТИНГ / РЕНДЕР
+// ============================================================
+const TABS = {
+  dashboard: { ready: () => !!DASH,
+    load: async f => { const raw = await get('/api/admin/dashboard', f); const s = JSON.stringify(raw);
+      const ch = s !== SIG.dash; SIG.dash = s; DASH = raw || {}; return ch; },
+    draw: drawDashboard },
+  purchases: { ready: () => LOADED.purchases,
+    load: async f => { const [a] = await Promise.all([loadList('purchases', f), LOADED.users ? 0 : loadList('users').catch(()=>0)]); return a; },
+    draw: drawPurchases },
+  payouts: { ready: () => LOADED.payouts, load: f => loadList('payouts', f), draw: drawPayouts },
+  users: { ready: () => LOADED.users && LOADED.purchases,
+    load: async f => { const r = await Promise.all([loadList('users', f), loadList('purchases', f)]); return r[0] || r[1]; },
+    draw: drawUsers },
+  eras: { ready: () => LOADED.eras, load: f => loadList('eras', f), draw: drawEras },
+  content: { ready: () => !!CONTENT, load: loadContent, draw: drawContent },
+  logs: { ready: () => !!LOGS,
+    load: async f => { const raw = await get('/api/admin/actions', f); const s = JSON.stringify(raw);
+      const ch = s !== SIG.logs; SIG.logs = s; LOGS = toList(raw); return ch; },
+    draw: drawLogs },
+};
+
+function isTyping(){
+  const a = document.activeElement;
+  return a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && $('main') && $('main').contains(a);
+}
+
+async function render(force = false, silent = false){
+  if (!TOKEN) { renderLogin(); return; }
+  const my = ++RID;
+  const t = TABS[TAB] || TABS.dashboard;
+  const wasReady = t.ready();
+  if (!silent) { wasReady ? t.draw() : setMain(skeleton()); }
+  try {
+    const changed = await t.load(force);
+    if (my !== RID) return;
+    if (!wasReady || (changed && !(silent && (isTyping() || $('modal-root').innerHTML)))) t.draw();
+    else updateNav();
+  } catch (e) {
+    console.error(e);
+    if (my !== RID || e.message === 'Unauthorized') return;
+    if (!wasReady) setMain(emptyBlock('⚠️', 'Не удалось загрузить', esc(e.message),
+      `<button class="btn" onclick="render(true)">🔄 Повторить</button>`));
+    else if (!silent) toast(e.message, 'err');
+  }
+}
+
+function setTab(t){ TAB = t; FILTER.search = ''; LIM.purchases = LIM.users = PAGE; render(); }
+function refresh(){ invalidate(); render(true); }
+
+function start(){
+  shell();
+  render();
+  // подгружаем остальное в фоне — бейджи и переключение вкладок становятся мгновенными
+  setTimeout(() => {
+    Promise.allSettled(['purchases','payouts','users','eras'].map(n => loadList(n))).then(updateNav);
+  }, 400);
+}
+
+// фоновое автообновление
+setInterval(() => {
+  if (!TOKEN || document.hidden) return;
+  invalidate();
+  render(true, true);
+  if (TAB !== 'purchases') loadList('purchases', true).then(updateNav).catch(()=>{});
+  if (TAB !== 'payouts') loadList('payouts', true).then(updateNav).catch(()=>{});
+}, POLL_MS);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && TOKEN) render(true, true); });
+
+// выполнить действие один раз (защита от двойных кликов)
+async function once(key, fn){
+  if (BUSY.has(key)) return;
+  BUSY.add(key);
+  try { await fn(); } catch (e) { toast(e.message, 'err'); } finally { BUSY.delete(key); }
+}
+
+// ============================================================
 // DASHBOARD
-async function renderDashboard(){
-  layout('<div class="loader">Загрузка…</div>');
-  try {
-    const d = await api('/api/admin/dashboard');
-    DATA.dashboard = d;
-    layout(
-      '<div class="stat-row">' +
-        '<div class="stat"><div class="l">Пользователей</div><div class="v">' + d.users + '</div></div>' +
-        '<div class="stat"><div class="l">Активных</div><div class="v ok">' + d.active_eras + '</div></div>' +
-        '<div class="stat"><div class="l">Завершено</div><div class="v accent">' + d.completed_eras + '</div></div>' +
-        '<div class="stat"><div class="l">Заявок ждут</div><div class="v warn">' + d.purchase_requests + '</div></div>' +
-        '<div class="stat"><div class="l">Выплат ждут</div><div class="v warn">' + d.payout_requests + '</div></div>' +
-        '<div class="stat"><div class="l">Куплено</div><div class="v accent">' + fmt(d.total_purchases_sum) + '</div></div>' +
-        '<div class="stat"><div class="l">Начислено</div><div class="v ok">' + fmt(d.total_profit_sum) + '</div></div>' +
-        '<div class="stat"><div class="l">Выплачено</div><div class="v">' + fmt(d.total_paid_sum) + '</div></div>' +
-      '</div>' +
-      '<button class="btn gray" onclick="renderDashboard()">🔄 Обновить</button>'
-    );
-  } catch(e){
-    layout('<div class="empty"><div class="ic">⚠️</div><h2>Ошибка</h2><p>' + esc(e.message) + '</p><button class="btn" onclick="renderDashboard()">Повторить</button></div>');
-  }
+// ============================================================
+function drawDashboard(){
+  const d = DASH || {};
+  setMain(`
+    <div class="header">
+      <div><h1>📊 Дашборд</h1><div class="sub">Общая статистика проекта</div></div>
+      <div class="flex">
+        <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button>
+        <button class="btn sm" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">📢 Канал</button>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="ic">👥</div><div class="l">Пользователей</div><div class="v">${num(d.users)}</div></div>
+      <div class="stat"><div class="ic">🟢</div><div class="l">Активных эр</div><div class="v ok">${num(d.active_eras)}</div></div>
+      <div class="stat"><div class="ic">🏁</div><div class="l">Завершённых</div><div class="v info">${num(d.completed_eras)}</div></div>
+      <div class="stat"><div class="ic">⏳</div><div class="l">Заявок ждут</div><div class="v warn">${num(d.purchase_requests)}</div></div>
+      <div class="stat"><div class="ic">💸</div><div class="l">Выплат ждут</div><div class="v warn">${num(d.payout_requests)}</div></div>
+      <div class="stat"><div class="ic">💵</div><div class="l">Сумма покупок</div><div class="v accent">${fmt(d.total_purchases_sum)}</div></div>
+      <div class="stat"><div class="ic">📈</div><div class="l">Начислено</div><div class="v ok">${fmt(d.total_profit_sum)}</div></div>
+      <div class="stat"><div class="ic">💰</div><div class="l">Выплачено</div><div class="v">${fmt(d.total_paid_sum)}</div></div>
+    </div>`);
 }
 
+// ============================================================
 // PURCHASES
-async function renderPurchases(){
-  layout('<div class="loader">Загрузка…</div>');
-  try {
-    const list = await api('/api/admin/purchases');
-    DATA.purchases = list;
-    layout(
-      '<h2>📩 Заявки (' + list.length + ')</h2>' +
-      (list.length ? list.map(p => orderCard(p)).join('')
-        : '<div class="empty"><div class="ic">📭</div><h3>Заявок нет</h3></div>')
-    );
-  } catch(e){
-    layout('<div class="empty"><div class="ic">⚠️</div><h2>Ошибка</h2><p>' + esc(e.message) + '</p><button class="btn" onclick="renderPurchases()">Повторить</button></div>');
-  }
+// ============================================================
+const donePurchase = s => ['completed','awaiting_payout','paid'].includes(s);
+
+function purchaseFiltered(){
+  const f = FILTER.purchases, s = FILTER.search.trim().toLowerCase();
+  return DATA.purchases.filter(p => {
+    if (f === 'pending' && p.status !== 'awaiting_payment') return false;
+    if (f === 'active' && p.status !== 'active') return false;
+    if (f === 'completed' && !donePurchase(p.status)) return false;
+    if (f === 'cancelled' && p.status !== 'cancelled') return false;
+    if (!s) return true;
+    return (p.first_name||'').toLowerCase().includes(s) ||
+           (p.last_name||'').toLowerCase().includes(s) ||
+           (p.telegram_username||'').toLowerCase().includes(s) ||
+           String(p.id).includes(s) || String(p.telegram_id||'').includes(s);
+  });
+}
+
+function drawPurchases(){
+  const P = DATA.purchases;
+  const c = {
+    all: P.length,
+    pending: P.filter(p => p.status === 'awaiting_payment').length,
+    active: P.filter(p => p.status === 'active').length,
+    completed: P.filter(p => donePurchase(p.status)).length,
+    cancelled: P.filter(p => p.status === 'cancelled').length,
+  };
+  const tabs = [['pending','⏳ Ждут'],['active','🟢 Активные'],['completed','✅ Завершённые'],['cancelled','❌ Отменённые'],['all','📋 Все']];
+  setMain(`
+    <div class="header"><div><h1>📩 Заявки</h1><div class="sub" id="sub"></div></div>
+      <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button></div>
+    <div class="search-bar"><input class="input" placeholder="Поиск: имя, @username, ID…"
+      value="${esc(FILTER.search)}" oninput="onSearch(this.value,'purchases')"></div>
+    <div class="tabs">${tabs.map(([k,l]) =>
+      `<button class="tab ${FILTER.purchases===k?'active':''}" onclick="setFilter('purchases','${k}')">${l} (${c[k]})</button>`).join('')}</div>
+    <div id="list"></div>`);
+  fillPurchases();
+}
+
+function fillPurchases(){
+  const f = purchaseFiltered(), lim = LIM.purchases;
+  $('sub').textContent = `Всего: ${DATA.purchases.length} · Показано: ${f.length}`;
+  $('list').innerHTML = f.length
+    ? f.slice(0, lim).map(orderCard).join('') + moreBtn('purchases', f.length - lim)
+    : emptyBlock('📭', 'Заявок нет');
+}
+
+function moreBtn(name, left){
+  return left > 0 ? `<div style="text-align:center;margin:14px 0">
+    <button class="btn secondary" onclick="more('${name}')">Показать ещё (${left})</button></div>` : '';
+}
+function more(name){ LIM[name] += PAGE; name === 'purchases' ? fillPurchases() : fillUsers(); }
+function setFilter(name, v){ FILTER[name] = v; LIM[name] = PAGE; TABS[name].draw(); }
+
+let SEARCH_TIMER;
+function onSearch(value, tab){
+  FILTER.search = value;
+  LIM[tab] = PAGE;
+  clearTimeout(SEARCH_TIMER);
+  SEARCH_TIMER = setTimeout(() => tab === 'purchases' ? fillPurchases() : fillUsers(), 120);
 }
 
 function orderCard(p){
-  const isPending = p.status === 'awaiting_payment';
-  return '<div class="card"><div class="row" style="margin-bottom:10px"><b style="color:#4f8cff;font-size:16px">📩 #' + p.id + '</b><span class="badge ' + p.status + '">' + statusLabel(p.status) + '</span></div>' +
-    '<div class="grid">' +
-      '<div class="cell"><b>Участник</b><span>' + esc(p.first_name||'') + ' ' + esc(p.last_name||'') + '</span></div>' +
-      '<div class="cell"><b>Username</b><span>@' + esc(p.telegram_username||'—') + '</span></div>' +
-      '<div class="cell"><b>TG ID</b><span>' + (p.telegram_id||'—') + '</span></div>' +
-      '<div class="cell"><b>Эра</b><span>' + esc(p.era_title) + '</span></div>' +
-      '<div class="cell"><b>Номинал</b><span style="color:#4f8cff">' + fmt(p.purchase_price) + '</span></div>' +
-      '<div class="cell"><b>Начисл.</b><span style="color:#39d98a">+' + fmt(p.profit_amount) + '</span></div>' +
-      '<div class="cell"><b>Итого</b><span style="color:#39d98a">' + fmt(p.total_amount) + '</span></div>' +
-      '<div class="cell"><b>Срок</b><span>' + p.duration_days + ' дн.</span></div>' +
-    '</div>' +
-    '<div class="muted" style="margin-bottom:10px">🕐 ' + fmtDate(p.created_at) + (p.activated_at ? ' · ✅ ' + fmtDate(p.activated_at) : '') + (p.cancelled_at ? ' · ❌ ' + fmtDate(p.cancelled_at) : '') + '</div>' +
-    '<div>' +
-      (isPending ? '<button class="btn green sm" onclick="confirmPurchase(' + p.id + ')">✅ Подтвердить</button><button class="btn red sm" onclick="cancelPurchase(' + p.id + ')">❌ Отменить</button>' : '') +
-      '<button class="btn gray sm" onclick="writeUser(\'' + esc(p.telegram_username||'') + '\', ' + (p.telegram_id||0) + ')">💬 Написать</button>' +
-    '</div></div>';
+  const processed = p.status !== 'awaiting_payment';
+  return `
+    <div class="order-card ${processed?'processed':''}">
+      <div class="row" style="align-items:flex-start;margin-bottom:10px">
+        <div class="on">📩 Заявка #${esc(p.id)}</div>
+        <span class="badge ${esc(p.status)}">${esc(statusLabel(p.status))}</span>
+      </div>
+      <div class="meta">
+        <div class="meta-item"><div class="l">👤 Участник</div><div class="v">${esc(p.first_name)} ${esc(p.last_name)}</div></div>
+        <div class="meta-item"><div class="l">🔗 Никнейм</div><div class="v">@${esc(p.telegram_username||'—')}</div></div>
+        <div class="meta-item"><div class="l">🆔 TG ID</div><div class="v">${esc(p.telegram_id||'—')}</div></div>
+        <div class="meta-item"><div class="l">💳 Эра</div><div class="v">${esc(p.era_title)}</div></div>
+        <div class="meta-item"><div class="l">💵 Номинал</div><div class="v accent">${fmt(p.purchase_price)}</div></div>
+        <div class="meta-item"><div class="l">💰 Начисление</div><div class="v ok">+${fmt(p.profit_amount)}</div></div>
+        <div class="meta-item"><div class="l">🏆 Итого</div><div class="v ok">${fmt(p.total_amount)}</div></div>
+        <div class="meta-item"><div class="l">📅 Срок</div><div class="v">${num(p.duration_days)} дней</div></div>
+      </div>
+      <div class="muted-sm" style="margin-bottom:10px">
+        🕐 ${fmtDate(p.created_at)}
+        ${p.activated_at ? ' · ✅ ' + fmtDate(p.activated_at) : ''}
+        ${p.last_day ? ' · 🏁 ' + fmtDate(p.last_day) : ''}
+        ${p.cancelled_at ? ' · ❌ ' + fmtDate(p.cancelled_at) : ''}
+      </div>
+      <div class="flex">
+        ${!processed ? `
+          <button class="btn ok sm" onclick="confirmPurchase(${q(p.id)})">✅ Подтвердить</button>
+          <button class="btn danger sm" onclick="cancelPurchase(${q(p.id)})">❌ Отменить</button>` : ''}
+        <button class="btn ghost sm" onclick="writeUser(${q(p.telegram_username||'')}, ${q(p.telegram_id||0)})">💬 Написать</button>
+      </div>
+    </div>`;
 }
 
-async function confirmPurchase(id){
-  if (!confirm('Подтвердить заявку #' + id + '?')) return;
-  try {
-    await api('/api/admin/purchases/' + id + '/confirm', {method:'POST'});
-    toast('✅ Подтверждено');
-    renderPurchases();
-  } catch(e){ toast(e.message, 'err'); }
+function confirmPurchase(id){
+  if (!confirm(`✅ Подтвердить заявку #${id}?`)) return;
+  once('p' + id, async () => {
+    await api(`/api/admin/purchases/${encodeURIComponent(id)}/confirm`, {method:'POST'});
+    toast(`✅ Заявка #${id} подтверждена`); refresh();
+  });
+}
+function cancelPurchase(id){
+  if (!confirm(`❌ Отменить заявку #${id}?`)) return;
+  once('p' + id, async () => {
+    await api(`/api/admin/purchases/${encodeURIComponent(id)}/cancel`, {method:'POST'});
+    toast(`❌ Заявка #${id} отменена`); refresh();
+  });
 }
 
-async function cancelPurchase(id){
-  if (!confirm('Отменить заявку #' + id + '?')) return;
-  try {
-    await api('/api/admin/purchases/' + id + '/cancel', {method:'POST'});
-    toast('❌ Отменено');
-    renderPurchases();
-  } catch(e){ toast(e.message, 'err'); }
-}
-
+// ============================================================
 // PAYOUTS
-async function renderPayouts(){
-  layout('<div class="loader">Загрузка…</div>');
-  try {
-    const list = await api('/api/admin/payouts');
-    DATA.payouts = list;
-    layout(
-      '<h2>💸 Выплаты (' + list.length + ')</h2>' +
-      (list.length ? list.map(po => payoutCard(po)).join('')
-        : '<div class="empty"><div class="ic">📭</div><h3>Заявок нет</h3></div>')
-    );
-  } catch(e){
-    layout('<div class="empty"><div class="ic">⚠️</div><h2>Ошибка</h2><p>' + esc(e.message) + '</p><button class="btn" onclick="renderPayouts()">Повторить</button></div>');
-  }
+// ============================================================
+function drawPayouts(){
+  const P = DATA.payouts, f = FILTER.payouts;
+  const c = { all: P.length, pending: P.filter(p => p.status === 'pending').length, paid: P.filter(p => p.status === 'paid').length };
+  const list = P.filter(p => f === 'all' || p.status === f);
+  const tabs = [['pending','⏳ Ждут'],['paid','✅ Выплачено'],['all','📋 Все']];
+  setMain(`
+    <div class="header"><div><h1>💸 Выплаты</h1><div class="sub">Всего: ${c.all}</div></div>
+      <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button></div>
+    <div class="tabs">${tabs.map(([k,l]) =>
+      `<button class="tab ${f===k?'active':''}" onclick="setFilter('payouts','${k}')">${l} (${c[k]})</button>`).join('')}</div>
+    ${list.length ? list.map(payoutCard).join('') : emptyBlock('📭', 'Заявок нет')}`);
 }
 
 function payoutCard(po){
-  const isPending = po.status === 'pending';
-  return '<div class="card"><div class="row" style="margin-bottom:10px"><b style="color:#4f8cff;font-size:16px">💸 #' + po.id + '</b><span class="badge ' + po.status + '">' + (isPending ? '⏳ Ожидает' : '✅ Выплачено') + '</span></div>' +
-    '<div class="grid">' +
-      '<div class="cell"><b>Участник</b><span>' + esc(po.first_name||'') + '</span></div>' +
-      '<div class="cell"><b>Username</b><span>@' + esc(po.telegram_username||'—') + '</span></div>' +
-      '<div class="cell"><b>Сумма</b><span style="color:#39d98a">' + fmt(po.amount) + '</span></div>' +
-      '<div class="cell"><b>Покупка</b><span>#' + po.purchase_id + '</span></div>' +
-    '</div>' +
-    '<div class="muted" style="margin-bottom:10px">🕐 ' + fmtDate(po.requested_at) + (po.paid_at ? ' · 💰 ' + fmtDate(po.paid_at) : '') + '</div>' +
-    '<div>' +
-      (isPending ? '<button class="btn green sm" onclick="markPaid(' + po.id + ')">✅ Выплачено</button><button class="btn red sm" onclick="cancelPayout(' + po.id + ')">❌ Отменить</button>' : '') +
-      '<button class="btn gray sm" onclick="writeUser(\'' + esc(po.telegram_username||'') + '\', ' + (po.telegram_id||0) + ')">💬 Написать</button>' +
-    '</div></div>';
+  const processed = po.status === 'paid';
+  return `
+    <div class="order-card ${processed?'processed':''}">
+      <div class="row" style="align-items:flex-start;margin-bottom:10px">
+        <div class="on">💸 Выплата #${esc(po.id)}</div>
+        <span class="badge ${esc(po.status)}">${processed ? '✅ Выплачено' : '⏳ Ожидает'}</span>
+      </div>
+      <div class="meta">
+        <div class="meta-item"><div class="l">👤 Участник</div><div class="v">${esc(po.first_name)}</div></div>
+        <div class="meta-item"><div class="l">🔗 Никнейм</div><div class="v">@${esc(po.telegram_username||'—')}</div></div>
+        <div class="meta-item"><div class="l">🆔 TG ID</div><div class="v">${esc(po.telegram_id||'—')}</div></div>
+        <div class="meta-item"><div class="l">💳 Эра</div><div class="v">${esc(po.era_title)}</div></div>
+        <div class="meta-item"><div class="l">💰 Сумма</div><div class="v ok">${fmt(po.amount)}</div></div>
+        <div class="meta-item"><div class="l">📄 Покупка</div><div class="v">#${esc(po.purchase_id)}</div></div>
+      </div>
+      <div class="muted-sm" style="margin-bottom:10px">
+        🕐 ${fmtDate(po.requested_at)}${po.paid_at ? ' · 💰 ' + fmtDate(po.paid_at) : ''}
+      </div>
+      <div class="flex">
+        ${!processed ? `
+          <button class="btn ok sm" onclick="markPaid(${q(po.id)})">✅ Выплачено</button>
+          <button class="btn danger sm" onclick="cancelPayout(${q(po.id)})">❌ Отменить</button>` : ''}
+        <button class="btn ghost sm" onclick="writeUser(${q(po.telegram_username||'')}, ${q(po.telegram_id||0)})">💬 Написать</button>
+      </div>
+    </div>`;
 }
 
-async function markPaid(id){
-  if (!confirm('Отметить выплату #' + id + '?')) return;
-  try {
-    await api('/api/admin/payouts/' + id + '/mark_paid', {method:'POST'});
-    toast('💰 Выплачено');
-    renderPayouts();
-  } catch(e){ toast(e.message, 'err'); }
+function markPaid(id){
+  if (!confirm(`💰 Отметить выплату #${id} как выполненную?`)) return;
+  once('o' + id, async () => {
+    await api(`/api/admin/payouts/${encodeURIComponent(id)}/mark_paid`, {method:'POST'});
+    toast('💰 Выплата отмечена'); refresh();
+  });
+}
+function cancelPayout(id){
+  if (!confirm(`❌ Отменить заявку #${id}?`)) return;
+  once('o' + id, async () => {
+    await api(`/api/admin/payouts/${encodeURIComponent(id)}/cancel`, {method:'POST'});
+    toast('Отменено'); refresh();
+  });
 }
 
-async function cancelPayout(id){
-  if (!confirm('Отменить заявку #' + id + '?')) return;
-  try {
-    await api('/api/admin/payouts/' + id + '/cancel', {method:'POST'});
-    toast('Отменено');
-    renderPayouts();
-  } catch(e){ toast(e.message, 'err'); }
-}
-
+// ============================================================
 // USERS
-async function renderUsers(){
-  layout('<div class="loader">Загрузка…</div>');
-  try {
-    const users = await api('/api/admin/users');
-    DATA.users = users;
-    layout(
-      '<h2>👥 Пользователи (' + users.length + ')</h2>' +
-      (users.length ? users.map(userCard).join('')
-        : '<div class="empty"><div class="ic">👤</div><h3>Пользователей нет</h3></div>')
-    );
-  } catch(e){
-    layout('<div class="empty"><div class="ic">⚠️</div><h2>Ошибка</h2><p>' + esc(e.message) + '</p><button class="btn" onclick="renderUsers()">Повторить</button></div>');
-  }
+// ============================================================
+function buildUserIdx(){
+  const P = {}, R = {};
+  DATA.purchases.forEach(p => { (P[String(p.user_uid)] ||= []).push(p); });
+  DATA.users.forEach(u => { const r = String(u.referrer_uid || ''); if (r) (R[r] ||= []).push(u); });
+  UIDX = {P, R};
+}
+
+function userFiltered(){
+  const s = FILTER.search.trim().toLowerCase();
+  if (!s) return DATA.users;
+  return DATA.users.filter(u =>
+    (u.first_name||'').toLowerCase().includes(s) || (u.last_name||'').toLowerCase().includes(s) ||
+    (u.telegram_username||'').toLowerCase().includes(s) || String(u.telegram_id||'').includes(s));
+}
+
+function drawUsers(){
+  buildUserIdx();
+  setMain(`
+    <div class="header"><div><h1>👥 Пользователи</h1><div class="sub" id="sub"></div></div>
+      <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button></div>
+    <div class="search-bar"><input class="input" placeholder="Поиск: имя, @username, Telegram ID…"
+      value="${esc(FILTER.search)}" oninput="onSearch(this.value,'users')"></div>
+    <div id="list"></div>`);
+  fillUsers();
+}
+
+function fillUsers(){
+  const f = userFiltered(), lim = LIM.users;
+  $('sub').textContent = `Всего: ${DATA.users.length} · Показано: ${f.length}`;
+  $('list').innerHTML = f.length
+    ? f.slice(0, lim).map(userCard).join('') + moreBtn('users', f.length - lim)
+    : emptyBlock('👤', DATA.users.length ? 'Никого не найдено' : 'Пользователей пока нет',
+        DATA.users.length ? 'Измените поиск' : 'Зарегистрируйтесь через бота');
+}
+
+function userStats(uid){
+  const ps = UIDX.P[uid] || [];
+  return {
+    ps,
+    active: ps.filter(p => p.status === 'active').length,
+    invested: ps.filter(p => !['awaiting_payment','cancelled'].includes(p.status)).reduce((s,p) => s + num(p.purchase_price), 0),
+    toPayout: ps.filter(p => p.status === 'completed').reduce((s,p) => s + num(p.total_amount), 0),
+    paid: ps.filter(p => p.status === 'paid').reduce((s,p) => s + num(p.total_amount), 0),
+    refs: UIDX.R[uid] || [],
+  };
 }
 
 function userCard(u){
+  const uid = String(u.id ?? '');
+  const st = userStats(uid);
+  const initial = (u.first_name || u.telegram_username || '?')[0].toUpperCase();
   const name = [u.first_name, u.last_name].filter(Boolean).join(' ') || 'Без имени';
-  const initial = (u.first_name || '👤')[0].toUpperCase();
-  return '<div class="card"><div class="row" style="margin-bottom:10px"><div style="display:flex;gap:10px;align-items:center">' +
-    '<div style="width:40px;height:40px;border-radius:50%;background:#232b38;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#4f8cff;overflow:hidden">' +
-    (u.photo_url ? '<img src="' + esc(u.photo_url) + '" style="width:100%;height:100%;object-fit:cover">' : initial) +
-    '</div><div><b>' + esc(name) + '</b><div class="muted">@' + esc(u.telegram_username||'—') + ' · ID ' + (u.telegram_id||'—') + '</div></div></div></div>' +
-    '<div class="grid">' +
-      '<div class="cell"><b>Покупок</b><span>' + (u.purchases_count||0) + '</span></div>' +
-      '<div class="cell"><b>Условия</b><span>' + (u.agreed_terms ? '✅' : '❌') + '</span></div>' +
-    '</div>' +
-    '<div class="muted" style="margin:10px 0">📅 ' + fmtDate(u.registered_at) + '</div>' +
-    '<button class="btn gray sm" onclick="writeUser(\'' + esc(u.telegram_username||'') + '\', ' + (u.telegram_id||0) + ')">💬 Написать</button></div>';
+  const status = u.status || 'active';
+  return `
+    <div class="user-card">
+      <div class="user-head">
+        <div class="avatar">${u.photo_url ? `<img src="${esc(u.photo_url)}" alt="" loading="lazy">` : esc(initial)}</div>
+        <div class="user-info">
+          <div class="n">${esc(name)}</div>
+          <div class="u">@${esc(u.telegram_username||'—')} · ID ${esc(u.telegram_id||'—')}</div>
+        </div>
+        <span class="badge ${status==='active'?'active':'cancelled'}">${esc(status)}</span>
+      </div>
+      <div class="user-stats">
+        <div class="user-stat"><div class="l">Вложено</div><div class="v accent">${fmt(st.invested)}</div></div>
+        <div class="user-stat"><div class="l">К выводу</div><div class="v ok">${fmt(st.toPayout)}</div></div>
+        <div class="user-stat"><div class="l">Выплачено</div><div class="v ok">${fmt(st.paid)}</div></div>
+        <div class="user-stat"><div class="l">Активных</div><div class="v">${st.active}</div></div>
+        <div class="user-stat"><div class="l">Покупок</div><div class="v">${st.ps.length}</div></div>
+        <div class="user-stat"><div class="l">Рефералов</div><div class="v">${st.refs.length}</div></div>
+      </div>
+      <div class="muted-sm" style="margin-bottom:10px">
+        📅 ${fmtDate(u.registered_at)}
+        ${u.referrer_username ? ' · 🎁 @' + esc(u.referrer_username) : ''}
+        ${u.agreed_terms ? ' · ✅ Условия приняты' : ' · ⚠️ Условия не приняты'}
+      </div>
+      <div class="flex">
+        <button class="btn sm" onclick="openUserDetail(${q(uid)})">📊 Детали</button>
+        <button class="btn ghost sm" onclick="writeUser(${q(u.telegram_username||'')}, ${q(u.telegram_id||0)})">💬 Написать</button>
+        <button class="btn secondary sm" onclick="showRefTree(${q(uid)})">🌳 Рефералы</button>
+      </div>
+    </div>`;
 }
 
-// ERAS — ГЛАВНОЕ
-async function renderEras(){
-  layout('<div class="loader">Загрузка товаров…</div>');
+function openUserDetail(uid){
+  uid = String(uid);
+  const u = DATA.users.find(x => String(x.id) === uid);
+  if (!u) { toast('Пользователь не найден', 'err'); return; }
+  const st = userStats(uid);
+  const pHtml = st.ps.length ? st.ps.map(p => `
+    <div class="meta-item" style="margin-bottom:8px">
+      <div class="row" style="margin-bottom:5px">
+        <div style="font-weight:700;color:var(--accent)">📩 Заявка #${esc(p.id)}</div>
+        <span class="badge ${esc(p.status)}">${esc(statusLabel(p.status))}</span>
+      </div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:3px">${esc(p.era_title)}</div>
+      <div class="muted-sm">${fmt(p.purchase_price)} → +${fmt(p.profit_amount)} = ${fmt(p.total_amount)}</div>
+      <div class="muted-sm">${fmtDate(p.created_at)}${p.activated_at ? ' · ✅ ' + fmtDate(p.activated_at) : ''}</div>
+    </div>`).join('') : '<div class="muted" style="padding:14px;text-align:center">Покупок нет</div>';
+  const rHtml = st.refs.length ? st.refs.map(r => `
+    <div style="padding:10px 0;border-bottom:1px solid var(--border)">
+      <div>${esc(r.first_name)} <span class="muted">@${esc(r.telegram_username||'—')}</span></div>
+      <div class="muted-sm">${fmtDate(r.registered_at)}</div>
+    </div>`).join('') : '<div class="muted" style="padding:14px;text-align:center">Рефералов нет</div>';
+  const name = [u.first_name, u.last_name].filter(Boolean).join(' ') || 'Без имени';
+  showModal(`
+    <div class="modal-head"><h2>👤 ${esc(name)}</h2><button class="close-x" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="user-stats" style="margin-bottom:14px">
+        <div class="user-stat"><div class="l">Вложено</div><div class="v accent">${fmt(st.invested)}</div></div>
+        <div class="user-stat"><div class="l">К выводу</div><div class="v ok">${fmt(st.toPayout)}</div></div>
+        <div class="user-stat"><div class="l">Выплачено</div><div class="v ok">${fmt(st.paid)}</div></div>
+      </div>
+      <h3 style="margin:14px 0 8px;font-size:13px">📦 Покупки (${st.ps.length})</h3>${pHtml}
+      <h3 style="margin:14px 0 8px;font-size:13px">🌳 Рефералы (${st.refs.length})</h3>${rHtml}
+    </div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closeModal()">Закрыть</button>
+      <button class="btn" onclick="writeUser(${q(u.telegram_username||'')}, ${q(u.telegram_id||0)})">💬 Написать</button>
+    </div>`);
+}
+
+async function showRefTree(uid){
   try {
-    const list = await api('/api/admin/eras');
-    DATA.eras = list;
-    layout(
-      '<div class="row" style="margin-bottom:16px"><h2>🧩 Товары (' + list.length + ')</h2>' +
-      '<button class="btn" onclick="createEra()">➕ Создать</button></div>' +
-      (list.length ? list.map(eraCard).join('')
-        : '<div class="empty"><div class="ic">📦</div><h3>Товаров нет</h3><button class="btn" style="margin-top:12px" onclick="createEra()">➕ Создать</button></div>')
-    );
-  } catch(e){
-    layout('<div class="empty"><div class="ic">⚠️</div><h2>Ошибка</h2><p>' + esc(e.message) + '</p><button class="btn" onclick="renderEras()">Повторить</button></div>');
-  }
+    const tree = await api('/api/admin/referral_tree/' + encodeURIComponent(uid));
+    const text = renderTree(toList(tree.children));
+    showModal(`
+      <div class="modal-head"><h2>🌳 Рефералы</h2><button class="close-x" onclick="closeModal()">✕</button></div>
+      <div class="modal-body"><pre class="raw">${text || 'Нет рефералов'}</pre></div>`);
+  } catch (e) { toast(e.message, 'err'); }
+}
+function renderTree(nodes, depth = 0){
+  return nodes.map(n =>
+    '  '.repeat(depth) + `• ${esc(n.name||'')} @${esc(n.username||'—')}\n` + renderTree(toList(n.children), depth + 1)
+  ).join('');
+}
+
+function writeUser(username, tgId){
+  let url;
+  if (username) url = `https://t.me/${username}`;
+  else if (tgId) url = `tg://user?id=${tgId}`;
+  else { toast('Нет username или ID', 'err'); return; }
+  window.open(url, '_blank');
+}
+
+// ============================================================
+// ERAS (товары)
+// ============================================================
+function drawEras(){
+  const E = DATA.eras;
+  setMain(`
+    <div class="header">
+      <div><h1>🧩 Товары (Эры)</h1>
+        <div class="sub">Всего: ${E.length} · Изменения влияют только на новые покупки</div></div>
+      <div class="flex">
+        <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button>
+        <button class="btn" onclick="openEraModal()">➕ Создать</button>
+      </div>
+    </div>
+    ${E.length ? E.map(eraCard).join('') : emptyBlock('📦', 'Товаров нет', 'Если в Firebase они есть — нажмите «Ответ сервера» и посмотрите, что приходит с API',
+      `<div class="flex" style="justify-content:center;margin-top:12px">
+        <button class="btn" onclick="openEraModal()">➕ Создать</button>
+        <button class="btn ghost" onclick="showRaw('${PATHS.eras}')">🔍 Ответ сервера</button></div>`)}`);
 }
 
 function eraCard(e){
   const roi = e.price > 0 ? Math.round((e.profit_amount / e.price) * 100) : 0;
-  return '<div class="card"><div class="row" style="margin-bottom:10px"><div><b style="color:#4f8cff;font-size:15px">🧩 ' + esc(e.title) + '</b><div class="muted">ID #' + e.id + '</div></div>' +
-    '<span class="badge ' + (e.is_active ? 'active' : 'cancelled') + '">' + (e.is_active ? '🟢 Активна' : '⚫ Отключена') + '</span></div>' +
-    '<div class="grid">' +
-      '<div class="cell"><b>Стоимость</b><span style="color:#4f8cff">' + fmt(e.price) + '</span></div>' +
-      '<div class="cell"><b>Начисление</b><span style="color:#39d98a">+' + fmt(e.profit_amount) + '</span></div>' +
-      '<div class="cell"><b>Итого</b><span style="color:#39d98a">' + fmt(e.price + e.profit_amount) + '</span></div>' +
-      '<div class="cell"><b>Срок</b><span>' + e.duration_days + ' дн.</span></div>' +
-      '<div class="cell"><b>ROI</b><span style="color:#39d98a">+' + roi + '%</span></div>' +
-    '</div>' +
-    (e.description ? '<div class="muted" style="margin:10px 0">' + esc(e.description) + '</div>' : '') +
-    '<div>' +
-      '<button class="btn sm" onclick="editEra(' + e.id + ')">✏️ Изменить</button>' +
-      '<button class="btn gray sm" onclick="toggleEra(' + e.id + ',' + (e.is_active ? 0 : 1) + ')">' + (e.is_active ? '⚫ Отключить' : '🟢 Включить') + '</button>' +
-      '<button class="btn red sm" onclick="deleteEra(' + e.id + ')">🗑 Удалить</button>' +
-    '</div></div>';
+  return `
+    <div class="order-card">
+      <div class="row" style="align-items:flex-start;margin-bottom:10px">
+        <div><div class="on">🧩 ${esc(e.title)}</div><div class="muted-sm">ID ${esc(e.id)}</div></div>
+        <span class="badge ${e.is_active ? 'active' : 'cancelled'}">${e.is_active ? '🟢 Активна' : '⚫ Отключена'}</span>
+      </div>
+      <div class="meta">
+        <div class="meta-item"><div class="l">💵 Стоимость</div><div class="v accent">${fmt(e.price)}</div></div>
+        <div class="meta-item"><div class="l">💰 Начисление</div><div class="v ok">+${fmt(e.profit_amount)}</div></div>
+        <div class="meta-item"><div class="l">🏆 Итого</div><div class="v ok">${fmt(e.price + e.profit_amount)}</div></div>
+        <div class="meta-item"><div class="l">📅 Срок</div><div class="v">${e.duration_days} дней</div></div>
+        <div class="meta-item"><div class="l">📈 ROI</div><div class="v ok">+${roi}%</div></div>
+      </div>
+      ${e.description ? `<div class="muted-sm" style="margin-bottom:10px">${esc(e.description)}</div>` : ''}
+      <div class="flex">
+        <button class="btn sm" onclick="openEraModal(${q(e.id)})">✏️ Изменить</button>
+        <button class="btn secondary sm" onclick="toggleEra(${q(e.id)})">${e.is_active ? '⚫ Отключить' : '🟢 Включить'}</button>
+        <button class="btn danger sm" onclick="deleteEra(${q(e.id)})">🗑 Удалить</button>
+      </div>
+    </div>`;
 }
 
-function createEra(){
-  const title = prompt('Название:', 'Новая эра');
-  if (!title) return;
-  const price = parseFloat(prompt('Стоимость (₽):', '1500')) || 0;
-  const days = parseInt(prompt('Срок (дней):', '20')) || 20;
-  const profit = parseFloat(prompt('Начисление (₽):', '1000')) || 0;
-  const desc = prompt('Описание:', '') || '';
+const findEra = id => DATA.eras.find(x => String(x.id) === String(id));
 
-  if (!confirm('Создать эру?\n\n' + title + '\nСтоимость: ' + price + ' ₽\nСрок: ' + days + ' дн.\nНачисление: +' + profit + ' ₽\nИтого: ' + (price + profit) + ' ₽')) return;
-
-  api('/api/admin/eras', {
-    method:'POST',
-    body: { title, price, duration_days: days, profit_amount: profit, description: desc, is_active: 1, sort_order: 99 }
-  })
-    .then(r => { toast('✅ Эра #' + r.id + ' создана'); renderEras(); })
-    .catch(e => toast(e.message, 'err'));
+function openEraModal(id){
+  const e = (id !== undefined && id !== '') ? findEra(id) : null;
+  const isEdit = !!e;
+  showModal(`
+    <div class="modal-head"><h2>${isEdit ? '✏️ Изменить эру' : '➕ Создать эру'}</h2>
+      <button class="close-x" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row"><label>Название</label>
+        <input class="input" id="f_title" value="${esc(e ? e.title : 'Новая эра')}"></div>
+      <div class="grid2">
+        <div class="form-row"><label>Стоимость (₽)</label>
+          <input class="input" id="f_price" type="number" min="0" value="${e ? e.price : 1500}"></div>
+        <div class="form-row"><label>Срок (дней)</label>
+          <input class="input" id="f_duration" type="number" min="0" value="${e ? e.duration_days : 20}"></div>
+      </div>
+      <div class="form-row"><label>Начисление (₽)</label>
+        <input class="input" id="f_profit" type="number" min="0" value="${e ? e.profit_amount : 1000}"></div>
+      <div class="form-row"><label>Итоговая сумма (авто)</label>
+        <input class="input" id="f_total" disabled value=""></div>
+      <div class="form-row"><label>Описание</label>
+        <textarea class="input" id="f_description" rows="3">${esc(e?.description || '')}</textarea></div>
+      <div class="form-row"><label>Активна</label>
+        <select class="input" id="f_active">
+          <option value="1" ${(!e || e.is_active) ? 'selected' : ''}>Да</option>
+          <option value="0" ${(e && !e.is_active) ? 'selected' : ''}>Нет</option>
+        </select></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closeModal()">Отмена</button>
+      <button class="btn" id="f_submit" onclick="saveEra(${q(isEdit ? e.id : '')})">${isEdit ? '💾 Сохранить' : '✅ Создать'}</button>
+    </div>`);
+  const recalc = () => { $('f_total').value = num($('f_price').value) + num($('f_profit').value); };
+  $('f_price').addEventListener('input', recalc);
+  $('f_profit').addEventListener('input', recalc);
+  recalc();
 }
 
-function editEra(id){
-  const e = (DATA.eras || []).find(x => x.id === id);
-  if (!e) return;
-  const title = prompt('Название:', e.title);
-  if (!title) return;
-  const price = parseFloat(prompt('Стоимость (₽):', e.price)) || 0;
-  const days = parseInt(prompt('Срок (дней):', e.duration_days)) || 20;
-  const profit = parseFloat(prompt('Начисление (₽):', e.profit_amount)) || 0;
-  const desc = prompt('Описание:', e.description || '') || '';
-
-  api('/api/admin/eras/' + id, {
-    method:'PUT',
-    body: { title, price, duration_days: days, profit_amount: profit, description: desc, is_active: e.is_active, sort_order: e.sort_order || id }
-  })
-    .then(() => { toast('💾 Сохранено'); renderEras(); })
-    .catch(e => toast(e.message, 'err'));
+function eraBody(e, over = {}){
+  return {
+    title: e.title, price: e.price, duration_days: e.duration_days, profit_amount: e.profit_amount,
+    description: e.description || '', is_active: e.is_active ? 1 : 0,
+    sort_order: e.sort_order || num(e.id) || DATA.eras.length + 1, ...over,
+  };
 }
 
-async function toggleEra(id, newActive){
-  const e = (DATA.eras || []).find(x => x.id === id);
-  if (!e) return;
+function saveEra(id){
+  const title = $('f_title').value.trim();
+  if (!title) { toast('Введите название', 'err'); return; }
+  const old = id !== '' ? findEra(id) : null;
+  const body = {
+    title,
+    price: num($('f_price').value),
+    duration_days: Math.round(num($('f_duration').value)),
+    profit_amount: num($('f_profit').value),
+    description: $('f_description').value,
+    is_active: $('f_active').value === '0' ? 0 : 1,   // раньше "0" превращался в 1
+    sort_order: old ? (old.sort_order || num(old.id) || DATA.eras.length + 1) : DATA.eras.length + 1,
+  };
+  const btn = $('f_submit');
+  once('era-save', async () => {
+    btn.disabled = true; btn.textContent = '⏳ Сохранение…';
+    try {
+      if (old) {
+        await api('/api/admin/eras/' + encodeURIComponent(old.id), {method:'PUT', body});
+        toast('💾 Эра обновлена');
+      } else {
+        const res = await api('/api/admin/eras', {method:'POST', body});
+        toast(`✅ Эра ${res.id !== undefined ? '#' + res.id + ' ' : ''}создана`);
+      }
+      closeModal(); refresh();
+    } catch (e) {
+      btn.disabled = false; btn.textContent = old ? '💾 Сохранить' : '✅ Создать';
+      throw e;
+    }
+  });
+}
+
+function toggleEra(id){
+  const e = findEra(id); if (!e) return;
+  const next = !e.is_active;
+  once('era-' + id, async () => {
+    e.is_active = next; drawEras();                      // мгновенно, не ждём сервер
+    try {
+      await api('/api/admin/eras/' + encodeURIComponent(e.id), {method:'PUT', body: eraBody(e, {is_active: next ? 1 : 0})});
+      toast(next ? '🟢 Включена' : '⚫ Отключена');
+      invalidate(); delete SIG.eras;
+    } catch (err) { e.is_active = !next; drawEras(); throw err; }
+  });
+}
+
+function deleteEra(id){
+  if (!confirm(`🗑 Удалить эру #${id}?\n\nДействие необратимо.`)) return;
+  once('era-' + id, async () => {
+    await api('/api/admin/eras/' + encodeURIComponent(id), {method:'DELETE'});
+    toast('🗑 Эра удалена'); refresh();
+  });
+}
+
+// диагностика: что реально отдаёт API
+async function showRaw(path){
   try {
-    await api('/api/admin/eras/' + id, {
-      method:'PUT',
-      body: { title: e.title, price: e.price, duration_days: e.duration_days,
-        profit_amount: e.profit_amount, description: e.description || '',
-        is_active: newActive, sort_order: e.sort_order || id }
-    });
-    toast(newActive ? '🟢 Включена' : '⚫ Отключена');
-    renderEras();
-  } catch(e){ toast(e.message, 'err'); }
+    const raw = await api(path);
+    let s = JSON.stringify(raw, null, 2);
+    if (s.length > 6000) s = s.slice(0, 6000) + '\n… (обрезано)';
+    showModal(`
+      <div class="modal-head"><h2>🔍 ${esc(path)}</h2><button class="close-x" onclick="closeModal()">✕</button></div>
+      <div class="modal-body"><pre class="raw">${esc(s)}</pre></div>`);
+  } catch (e) { toast(e.message, 'err'); }
 }
 
-async function deleteEra(id){
-  if (!confirm('Удалить эру #' + id + '?')) return;
-  try {
-    await api('/api/admin/eras/' + id, {method:'DELETE'});
-    toast('🗑 Удалено');
-    renderEras();
-  } catch(e){ toast(e.message, 'err'); }
+// ============================================================
+// CONTENT
+// ============================================================
+const CONTENT_KEYS = [
+  {k:'marketing_image', t:'Маркетинговое изображение', upload:true},
+  {k:'rules_text', t:'Правила проекта', textarea:true},
+  {k:'terms_text', t:'Условия участия', textarea:true},
+  {k:'notif_registration', t:'Уведомление: регистрация'},
+  {k:'notif_purchase_created', t:'Уведомление: заявка'},
+  {k:'notif_purchase_activated', t:'Уведомление: активация'},
+  {k:'notif_purchase_cancelled', t:'Уведомление: отмена'},
+  {k:'notif_payout_requested', t:'Уведомление: вывод'},
+  {k:'notif_payout_paid', t:'Уведомление: выплата'},
+];
+
+async function loadContent(force){
+  const res = await Promise.allSettled(CONTENT_KEYS.map(({k}) => get('/api/content/' + k, force)));
+  const values = {};
+  res.forEach((r, i) => { values[CONTENT_KEYS[i].k] = r.status === 'fulfilled' ? (r.value?.value ?? '') : ''; });
+  if (res.every(r => r.status === 'rejected')) throw new Error(res[0].reason?.message || 'Ошибка');
+  const s = JSON.stringify(values), ch = s !== SIG.content;
+  SIG.content = s; CONTENT = values;
+  return ch;
 }
 
-// HELPERS
-function writeUser(username, tgId){
-  let url;
-  if (username) url = 'https://t.me/' + username;
-  else if (tgId) url = 'tg://user?id=' + tgId;
-  else return toast('Нет username');
-  window.open(url, '_blank');
+const imgUrl = v => /^https?:|^data:/.test(v) ? v : API + v;
+
+function drawContent(){
+  setMain(`
+    <div class="header"><div><h1>📝 Контент</h1><div class="sub">Тексты и изображения</div></div>
+      <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button></div>
+    ${CONTENT_KEYS.map(({k, t, textarea, upload}) => `
+      <div class="card">
+        <h3 style="margin-bottom:10px;font-size:13.5px">${t}</h3>
+        ${upload ? `
+          ${CONTENT[k] ? `<img src="${esc(imgUrl(CONTENT[k]))}" loading="lazy"
+              style="max-width:100%;max-height:200px;border-radius:9px;margin-bottom:10px">`
+            : '<div class="muted" style="margin-bottom:10px">Не загружено</div>'}
+          <input type="file" accept="image/*" id="f_${k}" class="input">
+          <button class="btn sm" style="margin-top:8px" onclick="uploadFile('${k}')">⬆️ Загрузить</button>
+        ` : `
+          ${textarea ? `<textarea class="input" id="c_${k}" rows="5">${esc(CONTENT[k])}</textarea>`
+                     : `<input class="input" id="c_${k}" value="${esc(CONTENT[k])}">`}
+          <button class="btn sm" style="margin-top:8px" onclick="saveContent('${k}')">💾 Сохранить</button>
+        `}
+      </div>`).join('')}`);
 }
 
-// MAIN
-async function render(){
-  if (!TOKEN){ renderLogin(); return; }
-  try {
-    const map = {
-      dashboard: renderDashboard,
-      purchases: renderPurchases,
-      payouts: renderPayouts,
-      users: renderUsers,
-      eras: renderEras
-    };
-    await (map[TAB] || renderDashboard)();
-  } catch(e){
-    console.error(e);
-    if (e.message === 'Unauthorized') return;
-    toast(e.message, 'err');
-  }
+function saveContent(key){
+  const value = $('c_' + key)?.value || '';
+  once('c-' + key, async () => {
+    await api('/api/admin/content', {method:'POST', body:{key, value}});
+    CONTENT[key] = value; invalidate();
+    toast('💾 Сохранено');
+  });
 }
 
-window.setTab = setTab;
-window.doLogin = doLogin;
-window.logout = logout;
-window.renderDashboard = renderDashboard;
-window.renderPurchases = renderPurchases;
-window.renderPayouts = renderPayouts;
-window.renderUsers = renderUsers;
-window.renderEras = renderEras;
-window.confirmPurchase = confirmPurchase;
-window.cancelPurchase = cancelPurchase;
-window.markPaid = markPaid;
-window.cancelPayout = cancelPayout;
-window.createEra = createEra;
-window.editEra = editEra;
-window.toggleEra = toggleEra;
-window.deleteEra = deleteEra;
-window.writeUser = writeUser;
+function uploadFile(key){
+  const f = $('f_' + key)?.files?.[0];
+  if (!f) return toast('Выберите файл', 'err');
+  once('up-' + key, async () => {
+    const fd = new FormData(); fd.append('file', f);
+    await api('/api/admin/upload/marketing', {method:'POST', body: fd});
+    toast('⬆️ Загружено'); invalidate(); CONTENT = null; render(true);
+  });
+}
 
-render();
+// ============================================================
+// LOGS
+// ============================================================
+function drawLogs(){
+  const list = LOGS || [];
+  const cell = v => esc(v && typeof v === 'object' ? JSON.stringify(v) : v);
+  setMain(`
+    <div class="header">
+      <div><h1>📜 Журнал</h1><div class="sub">Последние ${list.length} действий</div></div>
+      <div class="flex">
+        <button class="btn secondary sm" onclick="refresh()">🔄 Обновить</button>
+        <button class="btn sm" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">📢 Канал</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:auto">
+      <table>
+        <thead><tr><th>#</th><th>Админ</th><th>Действие</th><th>Детали</th><th>Дата</th></tr></thead>
+        <tbody>
+        ${list.length ? list.map(a => `
+          <tr><td>${cell(a.id)}</td><td>${cell(a.admin)}</td><td>${cell(a.action)}</td>
+              <td>${cell(a.details)}</td><td>${fmtDate(a.created_at)}</td></tr>`).join('') : `
+          <tr><td colspan="5" style="text-align:center;padding:30px;color:var(--muted)">Журнал пуст</td></tr>`}
+        </tbody>
+      </table>
+    </div>`);
+}
+
+// ============================================================
+// СТАРТ
+// ============================================================
+if (TOKEN) start(); else renderLogin();
 </script>
 </body>
 </html>

@@ -14,7 +14,6 @@
     --accent:#4f8cff; --accent2:#356fd8; --accent-glow:rgba(79,140,255,.35);
     --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c; --info:#63a9ff;
     --gold:#ffd166;
-    --r:14px; --r2:12px; --r3:10px;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
   html,body{background:var(--bg);color:var(--text);
@@ -38,6 +37,10 @@
     background:var(--card2);color:var(--text2);font-size:17px;cursor:pointer;
     display:flex;align-items:center;justify-content:center;transition:all .15s}
   .icon-btn:active{transform:scale(.94);background:var(--card3)}
+  .back-btn{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);
+    background:var(--card2);color:var(--text2);font-size:18px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:all .15s}
+  .back-btn:active{transform:scale(.94);background:var(--card3)}
 
   h1{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.25}
   h2{font-size:18px;font-weight:700;letter-spacing:-.01em}
@@ -46,8 +49,8 @@
   .muted-sm{color:var(--muted);font-size:11px}
   .section-title{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px}
 
-  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
-  .card2{background:var(--card2);border:1px solid var(--border);border-radius:var(--r2);padding:12px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+  .card2{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px}
 
   .hero{background:linear-gradient(135deg,#1a2540 0%,#161b26 100%);
     border:1px solid var(--border2);border-radius:18px;padding:20px;
@@ -67,7 +70,7 @@
   .hero .info .sub{color:var(--text2);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
   .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px}
-  .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;
     padding:14px;position:relative;overflow:hidden}
   .stat .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;
     font-weight:600;margin-bottom:6px}
@@ -86,6 +89,7 @@
   .btn:active{transform:scale(.97);box-shadow:0 2px 6px var(--accent-glow)}
   .btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
   .btn.secondary{background:var(--card2);color:var(--text);border:1px solid var(--border2);box-shadow:none}
+  .btn.secondary:active{background:var(--card3)}
   .btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text2);box-shadow:none}
   .btn.danger{background:linear-gradient(135deg,#ff5c5c,#d63a3a);box-shadow:0 4px 14px rgba(255,92,92,.3)}
   .btn.success{background:linear-gradient(135deg,#39d98a,#22a86b);box-shadow:0 4px 14px rgba(57,217,138,.3)}
@@ -218,14 +222,41 @@
     padding:12px 14px;font-size:13px;font-family:ui-monospace,monospace;
     word-break:break-all;color:var(--text2);line-height:1.5}
 
-  /* Номер заявки */
   .order-num{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;
     background:rgba(79,140,255,.12);border:1px solid rgba(79,140,255,.25);
     border-radius:8px;font-size:11px;font-weight:700;color:var(--accent);
     letter-spacing:.03em;margin-bottom:8px}
+
+  .profile-menu{background:var(--card);border:1px solid var(--border);border-radius:14px;
+    padding:0 16px;margin-bottom:12px}
+  .profile-menu .item{display:flex;justify-content:space-between;align-items:center;
+    padding:16px 0;border-bottom:1px solid var(--border);cursor:pointer;
+    transition:padding-left .15s}
+  .profile-menu .item:last-child{border-bottom:0}
+  .profile-menu .item:active{padding-left:6px}
+  .profile-menu .item .left{display:flex;align-items:center;gap:12px;font-weight:500}
+  .profile-menu .item .left .emo{width:36px;height:36px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;font-size:17px;
+    background:var(--card2);border:1px solid var(--border)}
+  .profile-menu .item .arrow{color:var(--muted);font-size:16px}
+
+  .contact-list{display:flex;flex-direction:column;gap:10px}
+  .contact-btn{display:flex;align-items:center;gap:14px;padding:16px;
+    background:var(--card2);border:1px solid var(--border);border-radius:12px;
+    cursor:pointer;transition:all .15s;text-decoration:none;color:var(--text)}
+  .contact-btn:active{transform:scale(.98);border-color:var(--border2)}
+  .contact-btn .emo{width:46px;height:46px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;font-size:22px;
+    background:linear-gradient(135deg,var(--accent),#7b5cff);color:#fff;flex-shrink:0}
+  .contact-btn.tg .emo{background:linear-gradient(135deg,#2aabee,#229ed9)}
+  .contact-btn .info{flex:1;min-width:0}
+  .contact-btn .info .t{font-weight:600;font-size:14px;margin-bottom:2px}
+  .contact-btn .info .s{font-size:12px;color:var(--muted);white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
 <body>
+
 <div class="app" id="app">
   <div id="loading" class="center" style="padding:80px 0">
     <div class="spinner" style="border-color:var(--accent) #0000 var(--accent) #0000;width:36px;height:36px;border-width:3px"></div>
@@ -235,9 +266,8 @@
 
 <nav class="nav hidden" id="nav">
   <button data-tab="home"><span class="ico">🏠</span>Главная</button>
-  <button data-tab="buy"><span class="ico">🛒</span>Магазин</button>
-  <button data-tab="purchases"><span class="ico">📦</span>Мои эры</button>
-  <button data-tab="referrals"><span class="ico">👥</span>Друзья</button>
+  <button data-tab="buy"><span class="ico">🛒</span>Купить</button>
+  <button data-tab="purchases"><span class="ico">📦</span>Покупки</button>
   <button data-tab="profile"><span class="ico">👤</span>Профиль</button>
 </nav>
 
@@ -250,20 +280,37 @@
 // ============================================================
 const API = 'http://localhost:8000';   // ⬅️ ЗАМЕНИТЕ на ngrok URL
 const BOT_USERNAME = 'loadingtester1bot';
-const DEBUG = false;
+const ADMIN_USERNAME = 'loadingtester1bot';  // ⬅️ username админа для связи (если другой)
+const SUPPORT_USERNAME = '';                 // ⬅️ если есть отдельный саппорт
 // ============================================================
 
 let TOKEN = localStorage.getItem('token') || '';
 let ME = null;
 let CACHE_ERAS = [];
 
+// ---------- SAFE HELPERS ----------
+function $(id){
+  return document.getElementById(id);
+}
+function hideNav(){ const n = $('nav'); if (n) n.classList.add('hidden'); }
+function showNav(){ const n = $('nav'); if (n) n.classList.remove('hidden'); }
+function hideLoading(){ const l = $('loading'); if (l) l.classList.add('hidden'); }
+function setNavTab(tab){
+  document.querySelectorAll('#nav button').forEach(b=>{
+    if (b && b.dataset) b.classList.toggle('active', b.dataset.tab === tab);
+  });
+}
+
+// ---------- TOAST ----------
 function toast(msg, ms=2500){
-  const t = document.getElementById('toast');
+  const t = $('toast');
+  if (!t) return;
   t.textContent = msg; t.classList.remove('hidden');
   clearTimeout(t._t);
   t._t = setTimeout(()=>t.classList.add('hidden'), ms);
 }
 
+// ---------- API ----------
 async function api(path, opts={}){
   const headers = opts.headers || {};
   if (TOKEN) headers['Authorization'] = 'Bearer ' + TOKEN;
@@ -290,10 +337,11 @@ function logout(){
   location.reload();
 }
 
+// ---------- AUTH ----------
 async function tryTelegramAuth(){
   const tg = window.Telegram?.WebApp;
   if (!tg) return { ok:false, reason:'no_tg' };
-  tg.ready(); tg.expand();
+  try { tg.ready(); tg.expand(); } catch(e){}
 
   if (!tg.initDataUnsafe?.user) {
     return { ok:false, reason:'no_user',
@@ -324,36 +372,29 @@ async function tryTelegramAuth(){
   }
 }
 
+// ---------- ROUTER ----------
 let currentTab = 'home';
 function setTab(tab){
   currentTab = tab;
-  document.querySelectorAll('#nav button').forEach(b=>{
-    b.classList.toggle('active', b.dataset.tab === tab);
-  });
+  setNavTab(tab);
   render();
 }
-document.getElementById('nav').addEventListener('click', e=>{
-  const b = e.target.closest('button'); if (!b) return;
-  setTab(b.dataset.tab);
-});
 
+// Attach nav listener with null protection
+(function(){
+  const nav = document.getElementById('nav');
+  if (nav){
+    nav.addEventListener('click', e=>{
+      const b = e.target.closest('button'); if (!b) return;
+      setTab(b.dataset.tab);
+    });
+  }
+})();
+
+// ---------- AUTH SCREEN ----------
 function screenAuth(reason='', info={}){
-  document.getElementById('nav').classList.add('hidden');
+  hideNav();
   const tg = window.Telegram?.WebApp;
-  const tgDiag = DEBUG ? `
-    <div class="dev-info">
-      <b>🔍 Диагностика:</b><br>
-      API: ${esc(API)}<br>
-      Бот: @${esc(BOT_USERNAME)}<br>
-      Platform: ${esc(tg?.platform || '—')}<br>
-      Version: ${esc(tg?.version || '—')}<br>
-      initData: ${(tg?.initData||'').length} символов<br>
-      user: ${tg?.initDataUnsafe?.user ? '✅ есть' : '❌ нет'}<br>
-      hash: ${tg?.initDataUnsafe?.hash ? '✅ есть' : '❌ нет'}<br>
-      Reason: <b>${esc(reason)}</b>
-    </div>
-  ` : '';
-
   const hint = reason === 'no_tg'
     ? 'Откройте страницу через кнопку в боте @' + BOT_USERNAME
     : reason === 'no_user'
@@ -362,7 +403,8 @@ function screenAuth(reason='', info={}){
     ? 'Backend недоступен по адресу: ' + API
     : '';
 
-  document.getElementById('app').innerHTML = `
+  const app = $('app'); if (!app) return;
+  app.innerHTML = `
     <div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div></div>
     <div class="hero center" style="padding:36px 20px">
       <div style="font-size:56px;margin-bottom:8px">✨</div>
@@ -372,7 +414,6 @@ function screenAuth(reason='', info={}){
     <div class="card">
       <div id="tg-login-widget" style="display:flex;justify-content:center;padding:8px 0"></div>
       ${hint ? `<div class="dev-info warn" style="margin-top:12px">⚠️ ${esc(hint)}</div>` : ''}
-      ${tgDiag}
     </div>
     <div class="card">
       <h3 style="margin-bottom:10px">Как войти</h3>
@@ -385,17 +426,20 @@ function screenAuth(reason='', info={}){
   `;
 
   if (BOT_USERNAME && BOT_USERNAME !== 'YOUR_BOT_USERNAME') {
-    const container = document.getElementById('tg-login-widget');
-    container.innerHTML = '';
-    const script = document.createElement('script');
-    script.src = 'https://telegram.org/js/telegram-widget.js?22';
-    script.setAttribute('data-telegram-login', BOT_USERNAME);
-    script.setAttribute('data-size', 'large');
-    script.setAttribute('data-onauth', 'onTelegramAuth(user)');
-    script.setAttribute('data-request-access', 'write');
-    container.appendChild(script);
+    const container = $('tg-login-widget');
+    if (container){
+      container.innerHTML = '';
+      const script = document.createElement('script');
+      script.src = 'https://telegram.org/js/telegram-widget.js?22';
+      script.setAttribute('data-telegram-login', BOT_USERNAME);
+      script.setAttribute('data-size', 'large');
+      script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+      script.setAttribute('data-request-access', 'write');
+      container.appendChild(script);
+    }
   }
 }
+
 window.onTelegramAuth = async function(user){
   const urlRef = new URLSearchParams(location.search).get('ref') || '';
   try {
@@ -405,6 +449,7 @@ window.onTelegramAuth = async function(user){
   } catch(e){ toast('Ошибка: ' + e.message); }
 };
 
+// ---------- HELPERS ----------
 function tierOf(era){
   const price = Number(era.price||0);
   if (price >= 50000) return { key:'premium', label:'PREMIUM', icon:'💎', glow:'rgba(255,209,102,.25)' };
@@ -421,7 +466,9 @@ function progressOf(p){
   return Math.round(((now - a) / (e - a)) * 100);
 }
 
-// HOME
+// ============================================================
+// ГЛАВНАЯ
+// ============================================================
 async function screenHome(){
   const [me, purchases] = await Promise.all([
     api('/api/me'), api('/api/purchases/my')
@@ -438,7 +485,7 @@ async function screenHome(){
   const displayName = me.first_name || me.telegram_username || 'друг';
   const initial = (displayName[0] || '👤').toUpperCase();
 
-  document.getElementById('app').innerHTML = `
+  $('app').innerHTML = `
     <div class="topbar">
       <div class="brand"><div class="logo">✨</div>Эры</div>
       <div class="actions">
@@ -458,6 +505,7 @@ async function screenHome(){
         <span class="badge active">${esc(me.status)}</span>
       </div>
     </div>
+
     <div class="stats">
       <div class="stat">
         <div class="label">Инвестировано</div>
@@ -476,6 +524,7 @@ async function screenHome(){
         <div class="value sm ${available>0?'ok':''}">${fmt(available)}</div>
       </div>
     </div>
+
     <div class="card">
       <div class="row" style="margin-bottom:10px">
         <h3>🔗 Реферальная ссылка</h3>
@@ -486,10 +535,12 @@ async function screenHome(){
         📋 Скопировать
       </button>
     </div>
+
     <div class="section-title">
       <h2>Активные эры</h2>
       ${active.length ? `<button class="btn ghost xs" onclick="setTab('purchases')">Все →</button>` : ''}
     </div>
+
     ${active.length ? active.map(p=>eraCardActive(p)).join('') : `
       <div class="card empty">
         <div class="icon">🌱</div>
@@ -537,7 +588,9 @@ function eraCardActive(p){
   `;
 }
 
-// SHOP
+// ============================================================
+// КУПИТЬ
+// ============================================================
 let shopFilter = 'all';
 let shopSort = 'default';
 let shopSearch = '';
@@ -545,7 +598,7 @@ let shopSearch = '';
 async function screenBuy(){
   const me = await api('/api/me'); ME = me;
   if (!me.agreed_terms){
-    document.getElementById('app').innerHTML = `
+    $('app').innerHTML = `
       <div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div></div>
       <h1>Условия участия</h1>
       <div class="card" style="margin-top:12px">
@@ -554,7 +607,7 @@ async function screenBuy(){
       <button class="btn" onclick="agreeTerms()">✅ Я согласен и подтверждаю</button>
     `;
     const c = await api('/api/content/terms_text');
-    document.getElementById('terms').textContent = c.value || '';
+    const t = $('terms'); if (t) t.textContent = c.value || '';
     return;
   }
   const eras = await api('/api/eras');
@@ -574,7 +627,7 @@ async function screenBuy(){
   if (shopSort === 'profit')     filtered.sort((a,b)=>b.profit_amount-a.profit_amount);
   if (shopSort === 'duration')   filtered.sort((a,b)=>a.duration_days-b.duration_days);
 
-  document.getElementById('app').innerHTML = `
+  $('app').innerHTML = `
     <div class="topbar">
       <div class="brand"><div class="logo">🛒</div>Магазин</div>
       <div class="actions"><span class="muted-sm">${eras.length} эр</span></div>
@@ -662,13 +715,9 @@ function openEraDetail(id){
         <div class="stat"><div class="label">Доходность</div><div class="value sm ok">+${roi}%</div></div>
       </div>
       <div class="card2" style="margin-bottom:16px">
-        <div class="row" style="margin-bottom:8px">
-          <span class="muted">Срок</span><b>${e.duration_days} дней</b>
-        </div>
-        <div class="row">
-          <span class="muted">Дата завершения</span>
-          <b>через ${e.duration_days} дн. после активации</b>
-        </div>
+        <div class="row" style="margin-bottom:8px"><span class="muted">Срок</span><b>${e.duration_days} дней</b></div>
+        <div class="row"><span class="muted">Дата завершения</span>
+          <b>через ${e.duration_days} дн. после активации</b></div>
       </div>
       <button class="btn" onclick="closeModal();buyEra(${e.id})">
         🛒 Подать заявку на покупку
@@ -680,12 +729,14 @@ function openEraDetail(id){
   `);
 }
 
-// MY PURCHASES
+// ============================================================
+// ПОКУПКИ
+// ============================================================
 async function screenPurchases(){
   const list = await api('/api/purchases/my');
-  document.getElementById('app').innerHTML = `
+  $('app').innerHTML = `
     <div class="topbar">
-      <div class="brand"><div class="logo">📦</div>Мои эры</div>
+      <div class="brand"><div class="logo">📦</div>Мои покупки</div>
       <div class="actions"><span class="muted-sm">${list.length}</span></div>
     </div>
     ${list.length ? list.map(p=>eraCardFull(p)).join('') : `
@@ -729,7 +780,7 @@ function eraCardFull(p){
           <div class="muted-sm" style="margin-top:6px;text-align:center">Прогресс ${progress}% · осталось ${p.days_left} дн.</div>
         ` : ''}
         <div class="card2" style="margin-top:12px;background:var(--card3)">
-          ${p.created_at ? `<div class="row" style="padding:4px 0"><span class="muted-sm">Заявка создана</span><span style="font-size:12px">${fmtDate(p.created_at)}</span></div>`:''}
+          ${p.created_at ? `<div class="row" style="padding:4px 0"><span class="muted-sm">Создана</span><span style="font-size:12px">${fmtDate(p.created_at)}</span></div>`:''}
           ${p.activated_at ? `<div class="row" style="padding:4px 0"><span class="muted-sm">Активирована</span><span style="font-size:12px">${fmtDate(p.activated_at)}</span></div>`:''}
           ${p.expires_at ? `<div class="row" style="padding:4px 0"><span class="muted-sm">Завершение</span><span style="font-size:12px">${fmtDate(p.expires_at)}</span></div>`:''}
           ${p.payout_requested_at ? `<div class="row" style="padding:4px 0"><span class="muted-sm">Заявка на вывод</span><span style="font-size:12px">${fmtDate(p.payout_requested_at)}</span></div>`:''}
@@ -746,55 +797,16 @@ function eraCardFull(p){
   `;
 }
 
-// REFERRALS
-async function screenReferrals(){
-  const [me, list] = await Promise.all([api('/api/me'), api('/api/referrals')]);
-  const link = `${location.origin}${location.pathname}?ref=${me.referral_code}`;
-  document.getElementById('app').innerHTML = `
-    <div class="topbar">
-      <div class="brand"><div class="logo">👥</div>Друзья</div>
-      <div class="actions"><span class="muted-sm">${list.length}</span></div>
-    </div>
-    <div class="card">
-      <h3 style="margin-bottom:10px">🔗 Пригласите друзей</h3>
-      <div class="ref-box">${esc(link)}</div>
-      <button class="btn" style="margin-top:12px" onclick="shareRef('${link}')">📤 Поделиться</button>
-      <button class="btn secondary" style="margin-top:8px" onclick="copyRef('${link}')">📋 Скопировать</button>
-    </div>
-    <div class="stats">
-      <div class="stat"><div class="label">Приглашено</div><div class="value">${list.length}</div></div>
-      <div class="stat"><div class="label">С покупками</div><div class="value">${list.filter(u=>u.purchases_count>0).length}</div></div>
-    </div>
-    <div class="section-title"><h2>Ваши друзья</h2></div>
-    <div class="card" style="padding:0 16px">
-      ${list.length ? list.map(u=>`
-        <div class="list-item">
-          <div style="display:flex;gap:12px;align-items:center;min-width:0">
-            <div class="avatar" style="width:40px;height:40px;font-size:16px">
-              ${(u.first_name||'👤')[0].toUpperCase()}
-            </div>
-            <div style="min-width:0">
-              <div style="font-weight:600;font-size:14px">${esc(u.first_name||'Пользователь')}</div>
-              <div class="muted-sm">@${esc(u.telegram_username||'—')} · ${fmtDate(u.registered_at)}</div>
-            </div>
-          </div>
-          <span class="badge active">${u.purchases_count} покупок</span>
-        </div>
-      `).join('') : `
-        <div class="empty"><div class="icon">👥</div><h3>Пока никого нет</h3>
-        <p class="muted">Поделитесь ссылкой с друзьями</p></div>
-      `}
-    </div>
-  `;
-}
-
-// PROFILE
+// ============================================================
+// ПРОФИЛЬ
+// ============================================================
 async function screenProfile(){
   const me = await api('/api/me');
   const displayName = me.first_name || me.telegram_username || 'Пользователь';
   const initial = (displayName[0] || '👤').toUpperCase();
-  document.getElementById('app').innerHTML = `
+  $('app').innerHTML = `
     <div class="topbar"><div class="brand"><div class="logo">👤</div>Профиль</div></div>
+
     <div class="hero center" style="padding:24px 20px">
       <div class="avatar lg" style="margin:0 auto 12px">
         ${me.photo_url ? `<img src="${esc(me.photo_url)}" alt="">` : initial}
@@ -803,6 +815,35 @@ async function screenProfile(){
       ${me.telegram_username ? `<div class="muted">@${esc(me.telegram_username)}</div>` : ''}
       <div style="margin-top:10px"><span class="badge active">${esc(me.status)}</span></div>
     </div>
+
+    <div class="section-title"><h2>Мой аккаунт</h2></div>
+
+    <div class="profile-menu">
+      <div class="item" onclick="openMyOrders()">
+        <div class="left">
+          <div class="emo">📋</div>
+          <div>Мои заказы</div>
+        </div>
+        <div class="arrow">→</div>
+      </div>
+      <div class="item" onclick="openContact()">
+        <div class="left">
+          <div class="emo">💬</div>
+          <div>Связь</div>
+        </div>
+        <div class="arrow">→</div>
+      </div>
+      <div class="item" onclick="openNotifications()">
+        <div class="left">
+          <div class="emo">🔔</div>
+          <div>Уведомления</div>
+        </div>
+        <div class="arrow">→</div>
+      </div>
+    </div>
+
+    <div class="section-title"><h2>Данные</h2></div>
+
     <div class="card" style="padding:0 16px">
       <div class="list-item"><span class="muted">ID</span><b>${me.id}</b></div>
       <div class="list-item"><span class="muted">Telegram ID</span><b>${me.telegram_id}</b></div>
@@ -813,6 +854,7 @@ async function screenProfile(){
       <div class="list-item"><span class="muted">Условия</span>
         <b>${me.agreed_terms ? '✅ Подтверждены' : '❌ Не подтверждены'}</b></div>
     </div>
+
     <div class="section-title"><h2>Информация</h2></div>
     <div class="card" style="padding:0 16px">
       <div class="list-item" style="cursor:pointer" onclick="showContent('rules_text','Правила проекта')">
@@ -825,38 +867,130 @@ async function screenProfile(){
         <span>📊 Маркетинг проекта</span><span class="muted">→</span>
       </div>
     </div>
+
     <button class="btn ghost" onclick="logout()" style="margin-top:8px">🚪 Выйти</button>
   `;
 }
 
-async function showContent(key, title){
-  const c = await api('/api/content/'+key);
-  document.getElementById('app').innerHTML = `
-    <div class="topbar">
-      <button class="icon-btn" onclick="setTab('${currentTab}')">←</button>
-      <div class="brand"><div class="logo">📄</div>${esc(title)}</div>
-      <div style="width:38px"></div>
-    </div>
-    <div class="card"><div style="white-space:pre-wrap;line-height:1.7">${esc(c.value||'')}</div></div>
-  `;
+// ---------- МОИ ЗАКАЗЫ (модалка) ----------
+async function openMyOrders(){
+  try {
+    const list = await api('/api/purchases/my');
+    if (!list.length){
+      showModal(`
+        <div class="modal-head">
+          <h2>📋 Мои заказы</h2>
+          <button class="close-x" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="empty">
+            <div class="icon">📭</div>
+            <h3>Заказов пока нет</h3>
+            <p class="muted">Создайте первый заказ в магазине</p>
+          </div>
+        </div>
+      `);
+      return;
+    }
+    showModal(`
+      <div class="modal-head">
+        <div>
+          <h2>📋 Мои заказы</h2>
+          <div class="muted-sm">Всего: ${list.length}</div>
+        </div>
+        <button class="close-x" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        ${list.map(p=>`
+          <div class="card2" style="margin-bottom:10px">
+            <div class="row" style="margin-bottom:8px">
+              <div class="order-num" style="margin:0">📩 Заявка #${p.id}</div>
+              <span class="badge ${p.status}">${statusLabel(p.status)}</span>
+            </div>
+            <div style="font-weight:600;margin-bottom:4px">${esc(p.era_title)}</div>
+            <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0">
+              <span>Вложено</span><b style="color:var(--text)">${fmt(p.purchase_price)}</b>
+            </div>
+            <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0">
+              <span>Начисление</span><b style="color:var(--ok)">+${fmt(p.profit_amount)}</b>
+            </div>
+            <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0">
+              <span>Итого</span><b style="color:var(--accent)">${fmt(p.total_amount)}</b>
+            </div>
+            <div class="muted-sm" style="margin-top:6px">
+              Создана: ${fmtDate(p.created_at)}
+              ${p.activated_at ? ` · Активирована: ${fmtDate(p.activated_at)}` : ''}
+              ${p.cancelled_at ? ` · Отменена: ${fmtDate(p.cancelled_at)}` : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `);
+  } catch(e){ toast(e.message); }
 }
 
-async function showMarketing(){
-  const c = await api('/api/content/marketing_image');
-  document.getElementById('app').innerHTML = `
-    <div class="topbar">
-      <button class="icon-btn" onclick="setTab('${currentTab}')">←</button>
-      <div class="brand"><div class="logo">📊</div>Маркетинг</div>
-      <div style="width:38px"></div>
+// ---------- СВЯЗЬ (модалка) ----------
+function openContact(){
+  const adminLink = `https://t.me/${ADMIN_USERNAME}`;
+  const supportLink = SUPPORT_USERNAME ? `https://t.me/${SUPPORT_USERNAME}` : '';
+  const botLink = `https://t.me/${BOT_USERNAME}`;
+
+  showModal(`
+    <div class="modal-head">
+      <div>
+        <h2>💬 Связь</h2>
+        <div class="muted-sm">Мы всегда на связи</div>
+      </div>
+      <button class="close-x" onclick="closeModal()">✕</button>
     </div>
-    <div class="card">
-      ${c.value
-        ? `<img class="marketing" src="${API}${c.value}" alt="">`
-        : '<div class="muted center" style="padding:32px 0">Изображение пока не добавлено</div>'}
+    <div class="modal-body">
+      <div class="contact-list">
+        <a class="contact-btn tg" href="${adminLink}" target="_blank" rel="noopener">
+          <div class="emo">👨‍💼</div>
+          <div class="info">
+            <div class="t">Администратор</div>
+            <div class="s">@${esc(ADMIN_USERNAME)}</div>
+          </div>
+          <div class="arrow">→</div>
+        </a>
+        ${supportLink ? `
+          <a class="contact-btn tg" href="${supportLink}" target="_blank" rel="noopener">
+            <div class="emo">🆘</div>
+            <div class="info">
+              <div class="t">Поддержка</div>
+              <div class="s">@${esc(SUPPORT_USERNAME)}</div>
+            </div>
+            <div class="arrow">→</div>
+          </a>
+        ` : ''}
+        <a class="contact-btn tg" href="${botLink}" target="_blank" rel="noopener">
+          <div class="emo">🤖</div>
+          <div class="info">
+            <div class="t">Бот проекта</div>
+            <div class="s">@${esc(BOT_USERNAME)}</div>
+          </div>
+          <div class="arrow">→</div>
+        </a>
+      </div>
+
+      <div class="card2" style="margin-top:16px">
+        <div class="muted" style="line-height:1.7">
+          <b style="color:var(--text)">По каким вопросам писать:</b><br>
+          • Заявка на покупку и оплата<br>
+          • Активация эры<br>
+          • Заявка на вывод средств<br>
+          • Технические проблемы
+        </div>
+      </div>
+
+      <div class="muted-sm" style="text-align:center;margin-top:16px">
+        Отвечаем в течение 24 часов
+      </div>
     </div>
-  `;
+  `);
 }
 
+// ---------- УВЕДОМЛЕНИЯ ----------
 async function openNotifications(){
   try {
     const list = await api('/api/notifications');
@@ -879,15 +1013,54 @@ async function openNotifications(){
   } catch(e){ toast(e.message); }
 }
 
+// ---------- КОНТЕНТ ----------
+async function showContent(key, title){
+  const c = await api('/api/content/'+key);
+  $('app').innerHTML = `
+    <div class="topbar">
+      <button class="back-btn" onclick="setTab('${currentTab}')">←</button>
+      <div class="brand"><div class="logo">📄</div>${esc(title)}</div>
+      <div style="width:38px"></div>
+    </div>
+    <div class="card"><div style="white-space:pre-wrap;line-height:1.7">${esc(c.value||'')}</div></div>
+  `;
+}
+
+async function showMarketing(){
+  const c = await api('/api/content/marketing_image');
+  $('app').innerHTML = `
+    <div class="topbar">
+      <button class="back-btn" onclick="setTab('${currentTab}')">←</button>
+      <div class="brand"><div class="logo">📊</div>Маркетинг</div>
+      <div style="width:38px"></div>
+    </div>
+    <div class="card">
+      ${c.value
+        ? `<img class="marketing" src="${API}${c.value}" alt="">`
+        : '<div class="muted center" style="padding:32px 0">Изображение пока не добавлено</div>'}
+    </div>
+  `;
+}
+
+// ============================================================
+// MODAL
+// ============================================================
 function showModal(html){
-  document.getElementById('modal-root').innerHTML = `
+  const root = $('modal-root'); if (!root) return;
+  root.innerHTML = `
     <div class="modal-backdrop" onclick="if(event.target===this)closeModal()">
       <div class="modal">${html}</div>
     </div>
   `;
 }
-function closeModal(){ document.getElementById('modal-root').innerHTML = ''; }
+function closeModal(){
+  const root = $('modal-root'); if (!root) return;
+  root.innerHTML = '';
+}
 
+// ============================================================
+// ACTIONS
+// ============================================================
 async function agreeTerms(){
   try { await api('/api/agree', {method:'POST'}); toast('✅ Условия подтверждены'); render(); }
   catch(e){ toast(e.message); }
@@ -897,7 +1070,7 @@ async function buyEra(id){
   if (!confirm('Создать заявку на покупку?')) return;
   try {
     const res = await api('/api/purchases/create/'+id, {method:'POST'});
-    toast(`✅ Заявка #${res.purchase_id} создана. Ожидайте связи администратора.`);
+    toast(`✅ Заявка #${res.purchase_id} создана`);
     setTab('purchases');
   } catch(e){ toast('⚠️ ' + e.message); }
 }
@@ -920,13 +1093,10 @@ function copyRef(text){
       toast('📋 Скопировано');
     });
 }
-function shareRef(text){
-  if (navigator.share){
-    navigator.share({ title:'Эры', text:'Присоединяйся к проекту «Эры»!', url:text })
-      .catch(()=>copyRef(text));
-  } else { copyRef(text); }
-}
 
+// ============================================================
+// UTILS
+// ============================================================
 function esc(s){ return String(s??'').replace(/[&<>"']/g,
   c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function fmt(n){ return Number(n||0).toLocaleString('ru-RU') + ' ₽'; }
@@ -946,19 +1116,26 @@ function statusLabel(s){
   })[s] || s;
 }
 
+// ============================================================
+// MAIN RENDER
+// ============================================================
 async function render(){
   try {
     if (!TOKEN){
       const result = await tryTelegramAuth();
       if (!result.ok){ screenAuth(result.reason, result.info || result); return; }
     }
-    document.getElementById('nav').classList.remove('hidden');
-    document.getElementById('loading').classList.add('hidden');
+    showNav();
+    hideLoading();
+    setNavTab(currentTab);
     const routes = {
-      home: screenHome, buy: screenBuy, purchases: screenPurchases,
-      referrals: screenReferrals, profile: screenProfile
+      home: screenHome,
+      buy: screenBuy,
+      purchases: screenPurchases,
+      profile: screenProfile
     };
-    await routes[currentTab]();
+    const fn = routes[currentTab] || screenHome;
+    await fn();
   } catch(e){
     console.error(e);
     if (e.message === 'Unauthorized'){ screenAuth(); return; }
@@ -966,11 +1143,15 @@ async function render(){
   }
 }
 
-document.querySelectorAll('#nav button').forEach(b=>{
-  if (b.dataset.tab === 'home') b.classList.add('active');
-});
+// Запуск только после готовности DOM
+if (document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', ()=>{ setNavTab('home'); render(); });
+} else {
+  setNavTab('home');
+  render();
+}
 
-render();
+// Авто-обновление
 setInterval(()=>{
   if (TOKEN && ['home','purchases'].includes(currentTab)) render();
 }, 30000);

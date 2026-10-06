@@ -10,6 +10,7 @@
     --border:#252e3a; --border2:#2f3a48;
     --text:#e6edf3; --text2:#c4ccd6; --muted:#8b949e;
     --accent:#4f8cff; --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c; --info:#63a9ff;
+    --purple:#a78bfa;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{background:var(--bg);color:var(--text);
@@ -47,6 +48,7 @@
   .btn.danger{background:var(--err)}
   .btn.ok{background:var(--ok);color:#04241a}
   .btn.warn{background:var(--warn);color:#2a1a00}
+  .btn.purple{background:var(--purple);color:#12002e}
   .btn.sm{padding:5px 10px;font-size:11.5px}
   .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10.5px;
     font-weight:700;text-transform:uppercase;white-space:nowrap}
@@ -56,6 +58,7 @@
   .badge.approved,.badge.completed,.badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
   .badge.cancelled,.badge.rejected{background:rgba(255,92,92,.15);color:var(--err)}
   .badge.pending{background:rgba(245,181,71,.15);color:var(--warn)}
+  .badge.purple{background:rgba(167,139,250,.15);color:var(--purple)}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:10px 0}
   .cell{background:var(--card2);border-radius:8px;padding:8px 10px}
   .cell b{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;margin-bottom:2px;font-weight:600}
@@ -87,6 +90,17 @@
   .modal-f{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
   .close-x{width:32px;height:32px;border-radius:50%;background:var(--card2);border:1px solid var(--border2);color:var(--text2);
     font-size:16px;cursor:pointer}
+  .search-bar{position:relative;margin-bottom:14px}
+  .search-bar input{padding-left:34px}
+  .search-bar::before{content:'🔍';position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.6}
+  /* Реферальные связи */
+  .ref-block{background:var(--card3);border-radius:10px;padding:10px 12px;margin-top:10px;border-left:3px solid var(--purple)}
+  .ref-block .label{font-size:10px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px;letter-spacing:.05em}
+  .ref-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:12.5px}
+  .ref-item + .ref-item{border-top:1px solid var(--border)}
+  .ref-item a{color:var(--accent);text-decoration:none}
+  .ref-item a:hover{text-decoration:underline}
+  .tree-node{padding-left:16px;border-left:1px dashed var(--border2);margin-left:8px}
 </style>
 </head>
 <body>
@@ -103,6 +117,7 @@ const LOG_CHANNEL_URL = 'https://t.me/c/4305451466';
 let AUTHED = sessionStorage.getItem('admin_auth') === '1';
 let TAB = 'dashboard';
 let DATA = { purchases: null, payouts: null, users: null, eras: null };
+let SEARCH = '';
 const $ = id => document.getElementById(id);
 
 function esc(s){ return String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -144,13 +159,32 @@ async function fbPatch(path, data){
   const r = await fetch(`${FIREBASE}/${path}.json`, {method:'PATCH', body: JSON.stringify(data)});
   return r.ok;
 }
-async function fbPost(path, data){
-  const r = await fetch(`${FIREBASE}/${path}.json`, {method:'POST', body: JSON.stringify(data)});
-  return r.ok ? r.json() : null;
-}
 async function fbDelete(path){
   const r = await fetch(`${FIREBASE}/${path}.json`, {method:'DELETE'});
   return r.ok;
+}
+
+// ---------- helpers: рефералы ----------
+function findUserByTg(users, tgId){
+  if (!tgId) return null;
+  return users.find(u => String(u.telegram_id) === String(tgId)) || null;
+}
+function getReferrer(users, user){
+  if (!user || !user.referrer_uid) return null;
+  return findUserByTg(users, user.referrer_uid);
+}
+function getRefs(users, user){
+  if (!user || !user.telegram_id) return [];
+  return users.filter(u => String(u.referrer_uid || '') === String(user.telegram_id));
+}
+function userName(u){
+  if (!u) return '—';
+  return (u.first_name || '') + (u.last_name ? ' ' + u.last_name : '') || 'Без имени';
+}
+function userLink(u){
+  if (!u) return '';
+  if (u.username) return `<a href="https://t.me/${esc(u.username)}" target="_blank">@${esc(u.username)}</a>`;
+  return `<a href="tg://user?id=${esc(u.telegram_id)}" target="_blank">ID ${esc(u.telegram_id)}</a>`;
 }
 
 // LOGIN
@@ -161,17 +195,12 @@ function renderLogin(){
       <div class="form-row"><label>Пароль</label>
         <input class="input" id="pw" type="password" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <button class="btn" style="width:100%;justify-content:center;padding:11px" onclick="doLogin()">Войти</button>
-      <div class="muted" style="margin-top:12px;text-align:center;font-size:11px">
-        Firebase: velosher-f82b5
-      </div>
+      <div class="muted" style="margin-top:12px;text-align:center;font-size:11px">Firebase: velosher-f82b5</div>
     </div>`;
 }
 function doLogin(){
-  const pw = $('pw').value;
-  if (pw === ADMIN_PASSWORD){
-    AUTHED = true;
-    sessionStorage.setItem('admin_auth', '1');
-    render();
+  if ($('pw').value === ADMIN_PASSWORD){
+    AUTHED = true; sessionStorage.setItem('admin_auth', '1'); render();
   } else toast('Неверный пароль', 'err');
 }
 window.doLogin = doLogin;
@@ -183,6 +212,7 @@ function layout(content){
     payouts: (DATA.payouts || []).filter(p => p.status === 'pending').length,
     users: (DATA.users || []).length,
     eras: (DATA.eras || []).length,
+    refs: (DATA.users || []).filter(u => u.referrer_uid).length,
   };
   $('app').innerHTML = `
     <div class="layout">
@@ -202,7 +232,7 @@ function layout(content){
         <button class="nav-item ${TAB==='eras'?'active':''}" onclick="setTab('eras')">
           <span class="emo">🧩</span>Товары ${c.eras?`<span class="count">${c.eras}</span>`:''}</button>
         <button class="nav-item ${TAB==='refs'?'active':''}" onclick="setTab('refs')">
-          <span class="emo">👥</span>Рефералы</button>
+          <span class="emo">🌳</span>Рефералы ${c.refs?`<span class="count">${c.refs}</span>`:''}</button>
         <div class="section">Система</div>
         <button class="nav-item" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">
           <span class="emo">📢</span>Канал</button>
@@ -236,6 +266,7 @@ async function renderDashboard(){
     const completed = purchases.filter(p => p.status === 'completed').length;
     const created = purchases.filter(p => p.status === 'created').length;
     const pendingPO = payouts.filter(p => p.status === 'pending').length;
+    const refsCount = users.filter(u => u.referrer_uid).length;
     const totalPurch = purchases.filter(p => p.status !== 'cancelled')
       .reduce((s, p) => s + Number(p.purchase_price || 0), 0);
     const totalProfit = purchases.filter(p => ['approved','completed','paid'].includes(p.status))
@@ -246,6 +277,7 @@ async function renderDashboard(){
     layout(`
       <div class="stats">
         <div class="stat"><div class="ic">👥</div><div class="l">Пользователей</div><div class="v">${users.length}</div></div>
+        <div class="stat"><div class="ic">🌳</div><div class="l">Рефералов</div><div class="v" style="color:var(--purple)">${refsCount}</div></div>
         <div class="stat"><div class="ic">🟢</div><div class="l">Активных</div><div class="v ok">${active}</div></div>
         <div class="stat"><div class="ic">🏁</div><div class="l">Завершено</div><div class="v info">${completed}</div></div>
         <div class="stat"><div class="ic">⏳</div><div class="l">Новых заявок</div><div class="v warn">${created}</div></div>
@@ -265,8 +297,12 @@ let purchaseFilter = 'created';
 async function renderPurchases(){
   layout('<div class="empty">Загрузка…</div>');
   try {
-    const list = await fbGet('purchases').then(toList).catch(() => []);
+    const [list, users] = await Promise.all([
+      fbGet('purchases').then(toList).catch(() => []),
+      fbGet('users').then(toList).catch(() => []),
+    ]);
     DATA.purchases = list;
+    DATA.users = users;
     list.sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
 
     const counts = {
@@ -293,10 +329,15 @@ async function renderPurchases(){
 window.renderPurchases = renderPurchases;
 
 function orderCard(p){
-  const isNew = p.status === 'created';
   const k = p._key;
+  const users = DATA.users || [];
+  const buyer = findUserByTg(users, p.user_telegram_id);
+  const referrer = buyer ? getReferrer(users, buyer) : null;
+  const inviterName = referrer ? userName(referrer) : (buyer && buyer.referrer_uid ? 'ID ' + buyer.referrer_uid : null);
+
   const canConfirm = ['created','in_progress'].includes(p.status);
   const canCancel = ['created','in_progress'].includes(p.status);
+
   return `
     <div class="card">
       <div class="row" style="margin-bottom:10px">
@@ -313,7 +354,26 @@ function orderCard(p){
         <div class="cell"><b>🏆 Итого</b><span class="ok">${fmt(p.total_amount)}</span></div>
         <div class="cell"><b>📅 Срок</b><span>${Number(p.duration_days||0)} дн.</span></div>
       </div>
-      <div class="muted" style="margin-bottom:10px">
+
+      ${inviterName ? `
+        <div class="ref-block">
+          <div class="label">🎁 Пригласил (реферер)</div>
+          <div class="ref-item">
+            <div>
+              <b>${esc(userName(referrer))}</b>
+              ${referrer ? ' · ' + userLink(referrer) : ''}
+            </div>
+            <div class="muted">${referrer ? 'ID ' + esc(referrer.telegram_id) : ''}</div>
+          </div>
+        </div>
+      ` : `
+        <div class="ref-block" style="border-left-color:var(--muted)">
+          <div class="label">🎁 Пригласил</div>
+          <div class="ref-item"><span class="muted">Прямая регистрация (без реферера)</span></div>
+        </div>
+      `}
+
+      <div class="muted" style="margin:10px 0">
         🕐 ${fmtDate(p.created_at)}
         ${p.activated_at ? ' · ✅ ' + fmtDate(p.activated_at) : ''}
       </div>
@@ -332,7 +392,6 @@ async function admConfirm(k){
   try {
     const p = DATA.purchases.find(x => x._key === k);
     const now = new Date();
-    // Первый день = следующий день
     const d0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     d0.setDate(d0.getDate() + 1);
     const days = Number(p.duration_days || 20);
@@ -379,8 +438,12 @@ window.admContact = admContact;
 async function renderPayouts(){
   layout('<div class="empty">Загрузка…</div>');
   try {
-    const list = await fbGet('payouts').then(toList).catch(() => []);
+    const [list, users] = await Promise.all([
+      fbGet('payouts').then(toList).catch(() => []),
+      fbGet('users').then(toList).catch(() => []),
+    ]);
     DATA.payouts = list;
+    DATA.users = users;
     list.sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
 
     const pending = list.filter(p => p.status === 'pending');
@@ -399,6 +462,10 @@ window.renderPayouts = renderPayouts;
 
 function payoutCard(po){
   const k = po._key;
+  const users = DATA.users || [];
+  const buyer = findUserByTg(users, po.user_telegram_id);
+  const referrer = buyer ? getReferrer(users, buyer) : null;
+
   return `
     <div class="card">
       <div class="row" style="margin-bottom:10px">
@@ -413,7 +480,18 @@ function payoutCard(po){
         <div class="cell"><b>💰 Сумма</b><span class="ok">${fmt(po.amount)}</span></div>
         <div class="cell"><b>📄 Покупка</b><span>#${esc(po.purchase_id||'—')}</span></div>
       </div>
-      <div class="muted" style="margin-bottom:10px">🕐 ${fmtDate(po.requested_at)}</div>
+
+      ${referrer ? `
+        <div class="ref-block">
+          <div class="label">🎁 Приглашён реферером</div>
+          <div class="ref-item">
+            <div><b>${esc(userName(referrer))}</b> · ${userLink(referrer)}</div>
+            <div class="muted">ID ${esc(referrer.telegram_id)}</div>
+          </div>
+        </div>
+      ` : ''}
+
+      <div class="muted" style="margin:10px 0">🕐 ${fmtDate(po.requested_at)}</div>
       <div class="row">
         <div>
           <button class="btn ok sm" onclick="admMarkPaid('${esc(k)}')">✅ Выплачено</button>
@@ -429,12 +507,10 @@ async function admMarkPaid(k){
     const po = DATA.payouts.find(x => x._key === k);
     await fbPatch(`payouts/${k}`, { status: 'paid', paid_at: new Date().toISOString() });
 
-    // Находим purchase по purchase_id и помечаем paid
     const purchases = DATA.purchases || [];
     const p = purchases.find(x => String(x.id) === String(po.purchase_id));
-    if (p){
-      await fbPatch(`purchases/${p._key}`, { status: 'paid', paid_at: new Date().toISOString() });
-    }
+    if (p) await fbPatch(`purchases/${p._key}`, { status: 'paid', paid_at: new Date().toISOString() });
+
     toast('💰 Выплата отмечена', 'ok');
     renderPayouts();
   } catch(e){ toast(e.message, 'err'); }
@@ -445,40 +521,139 @@ window.admMarkPaid = admMarkPaid;
 async function renderUsers(){
   layout('<div class="empty">Загрузка…</div>');
   try {
-    const users = await fbGet('users').then(toList).catch(() => []);
-    const purchases = await fbGet('purchases').then(toList).catch(() => []);
+    const [users, purchases] = await Promise.all([
+      fbGet('users').then(toList).catch(() => []),
+      fbGet('purchases').then(toList).catch(() => []),
+    ]);
     DATA.users = users; DATA.purchases = purchases;
     users.sort((a, b) => new Date(b.registered_at || 0) - new Date(a.registered_at || 0));
 
+    const q = SEARCH.toLowerCase().trim();
+    const filtered = q ? users.filter(u =>
+      String(u.first_name||'').toLowerCase().includes(q) ||
+      String(u.username||'').toLowerCase().includes(q) ||
+      String(u.telegram_id||'').includes(q)
+    ) : users;
+
     layout(`
-      ${users.length ? users.map(u => {
-        const myP = purchases.filter(p => String(p.user_telegram_id) === String(u.telegram_id));
-        const invested = myP.filter(p => p.status !== 'cancelled').reduce((s, p) => s + Number(p.purchase_price || 0), 0);
-        const earned = myP.filter(p => ['completed','paid'].includes(p.status)).reduce((s, p) => s + Number(p.total_amount || 0), 0);
-        const refs = users.filter(x => String(x.referrer_uid || '') === String(u.telegram_id)).length;
-        return `
-          <div class="card">
-            <div class="row" style="margin-bottom:10px">
-              <div><b>${esc(u.first_name||'Пользователь')} ${esc(u.last_name||'')}</b>
-                <div class="muted">@${esc(u.username||'—')} · ID ${esc(u.telegram_id)}</div></div>
-              <span class="badge ${u.referrer_uid?'approved':'created'}">${u.referrer_uid?'реферал':'прямой'}</span>
-            </div>
-            <div class="grid">
-              <div class="cell"><b>Вложено</b><span class="accent">${fmt(invested)}</span></div>
-              <div class="cell"><b>Получено</b><span class="ok">${fmt(earned)}</span></div>
-              <div class="cell"><b>Заявок</b><span>${myP.length}</span></div>
-              <div class="cell"><b>Пригласил</b><span>${refs}</span></div>
-            </div>
-            <div class="row" style="margin-top:10px">
-              <div class="muted">📅 ${fmtDate(u.registered_at)}</div>
-              <button class="btn ghost sm" onclick="admContact('${esc(u.telegram_id||'')}')">💬 Написать</button>
-            </div>
-          </div>`;
-      }).join('') : '<div class="empty"><div class="ic">👤</div><p>Нет пользователей</p></div>'}
+      <div class="search-bar">
+        <input class="input" id="usearch" placeholder="Поиск по имени, @username, ID…"
+          value="${esc(SEARCH)}" oninput="SEARCH=this.value;renderUsers()">
+      </div>
+      ${filtered.length ? filtered.map(u => userCard(u, users, purchases)).join('')
+        : `<div class="empty"><div class="ic">👤</div><p>${users.length ? 'Ничего не найдено' : 'Нет пользователей'}</p></div>`}
     `);
   } catch(e){ layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`); }
 }
 window.renderUsers = renderUsers;
+
+function userCard(u, allUsers, purchases){
+  const myP = purchases.filter(p => String(p.user_telegram_id) === String(u.telegram_id));
+  const invested = myP.filter(p => p.status !== 'cancelled').reduce((s, p) => s + Number(p.purchase_price || 0), 0);
+  const earned = myP.filter(p => ['completed','paid'].includes(p.status)).reduce((s, p) => s + Number(p.total_amount || 0), 0);
+
+  const referrer = getReferrer(allUsers, u);
+  const refs = getRefs(allUsers, u);
+
+  return `
+    <div class="card">
+      <div class="row" style="margin-bottom:10px">
+        <div>
+          <b>${esc(userName(u))}</b>
+          <div class="muted">@${esc(u.username||'—')} · ID ${esc(u.telegram_id)}</div>
+        </div>
+        <div>
+          ${u.referrer_uid
+            ? `<span class="badge purple">🌳 реферал</span>`
+            : `<span class="badge created">⭐ прямой</span>`}
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="cell"><b>Вложено</b><span class="accent">${fmt(invested)}</span></div>
+        <div class="cell"><b>Получено</b><span class="ok">${fmt(earned)}</span></div>
+        <div class="cell"><b>Заявок</b><span>${myP.length}</span></div>
+        <div class="cell"><b>Пригласил</b><span style="color:var(--purple)">${refs.length}</span></div>
+      </div>
+
+      ${referrer || u.referrer_uid ? `
+        <div class="ref-block">
+          <div class="label">🎁 Кто пригласил этого пользователя</div>
+          <div class="ref-item">
+            <div>
+              ${referrer
+                ? `<b>${esc(userName(referrer))}</b> · ${userLink(referrer)}`
+                : `<span class="muted">ID ${esc(u.referrer_uid)} (не найден)</span>`}
+            </div>
+            ${referrer ? `<div class="muted">ID ${esc(referrer.telegram_id)}</div>` : ''}
+          </div>
+        </div>
+      ` : ''}
+
+      ${refs.length ? `
+        <div class="ref-block">
+          <div class="label">👥 Кого пригласил этот пользователь (${refs.length})</div>
+          ${refs.map(r => `
+            <div class="ref-item">
+              <div><b>${esc(userName(r))}</b> · ${userLink(r)}</div>
+              <div class="muted">${fmtDate(r.registered_at)}</div>
+            </div>
+          `).join('')}
+        </div>
+      ` : `
+        <div class="ref-block" style="border-left-color:var(--muted)">
+          <div class="label">👥 Кого пригласил</div>
+          <div class="ref-item"><span class="muted">Никого не пригласил</span></div>
+        </div>
+      `}
+
+      <div class="row" style="margin-top:10px">
+        <div class="muted">📅 ${fmtDate(u.registered_at)}</div>
+        <div>
+          ${refs.length ? `<button class="btn purple sm" onclick="showTree('${esc(u.telegram_id)}')">🌳 Дерево</button>` : ''}
+          <button class="btn ghost sm" onclick="admContact('${esc(u.telegram_id||'')}')">💬 Написать</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// Дерево рефералов (модалка)
+function showTree(uid){
+  const users = DATA.users || [];
+  const root = users.find(u => String(u.telegram_id) === String(uid));
+  if (!root) return;
+
+  function renderSub(u, depth){
+    const kids = getRefs(users, u);
+    if (!kids.length) return '';
+    return `<div class="tree-node">${kids.map(k => `
+      <div style="padding:6px 0">
+        <div>${'&nbsp;'.repeat(0)}${esc(userName(k))} · ${userLink(k)}</div>
+        <div class="muted" style="font-size:11px">📅 ${fmtDate(k.registered_at)}</div>
+        ${renderSub(k, depth + 1)}
+      </div>
+    `).join('')}</div>`;
+  }
+
+  const subs = renderSub(root, 0);
+  $('modal-root').innerHTML = `
+    <div class="modal-bg" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <div class="modal-h">
+          <h2>🌳 Дерево рефералов</h2>
+          <button class="close-x" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-b">
+          <div style="padding:10px 0;border-bottom:1px solid var(--border)">
+            <b style="color:var(--purple)">${esc(userName(root))}</b>
+            <div class="muted">@${esc(root.username||'—')} · ID ${esc(root.telegram_id)}</div>
+          </div>
+          ${subs || '<div class="empty" style="padding:20px 0"><p>Нет рефералов</p></div>'}
+        </div>
+      </div>
+    </div>`;
+}
+window.showTree = showTree;
 
 // ERAS
 async function renderEras(){
@@ -559,9 +734,7 @@ function eraForm(e){
 function closeModal(){ $('modal-root').innerHTML = ''; }
 window.closeModal = closeModal;
 
-function createEra(){
-  $('modal-root').innerHTML = eraForm(null);
-}
+function createEra(){ $('modal-root').innerHTML = eraForm(null); }
 window.createEra = createEra;
 
 function editEra(key){
@@ -590,14 +763,12 @@ async function saveEra(key){
       duration_days: days, description: desc, is_active: active,
     };
     if (key){
-      // Обновить
       const e = (DATA.eras || []).find(x => x._key === key);
       data.id = e?.id || key;
       data.sort_order = e?.sort_order || data.id;
       await fbPut(`eras/${key}`, data);
       toast('💾 Сохранено', 'ok');
     } else {
-      // Создать с новым ID
       const eras = DATA.eras || [];
       const usedIds = eras.map(e => Number(e.id || 0)).filter(Boolean);
       const newId = usedIds.length ? Math.max(...usedIds) + 1 : 1;
@@ -618,8 +789,6 @@ window.saveEra = saveEra;
 
 async function toggleEra(key, newActive){
   try {
-    const e = (DATA.eras || []).find(x => x._key === key);
-    if (!e) return;
     await fbPatch(`eras/${key}`, { is_active: newActive });
     toast(newActive ? '🟢 Включена' : '⚫ Отключена', 'ok');
     renderEras();
@@ -637,44 +806,49 @@ async function deleteEra(key){
 }
 window.deleteEra = deleteEra;
 
-// REFS
+// REFS — ГЛАВНЫЙ РАЗДЕЛ ПО РЕФЕРАЛАМ
 async function renderRefs(){
   layout('<div class="empty">Загрузка…</div>');
   try {
     const users = await fbGet('users').then(toList).catch(() => []);
     DATA.users = users;
+
     const refs = users.filter(u => u.referrer_uid);
-    const tree = {};
-    refs.forEach(u => {
-      const r = u.referrer_uid;
-      if (!tree[r]) tree[r] = [];
-      tree[r].push(u);
-    });
+    const inviters = users.filter(u => refs.some(r => String(r.referrer_uid) === String(u.telegram_id)));
 
     layout(`
-      <h2 style="font-size:16px;margin-bottom:12px">👥 Реферальная система</h2>
+      <h2 style="font-size:16px;margin-bottom:12px">🌳 Реферальная система</h2>
+
       <div class="stats" style="margin-bottom:16px">
         <div class="stat"><div class="ic">👥</div><div class="l">Всего юзеров</div><div class="v">${users.length}</div></div>
-        <div class="stat"><div class="ic">🎁</div><div class="l">С реферером</div><div class="v ok">${refs.length}</div></div>
-        <div class="stat"><div class="ic">📊</div><div class="l">Пригласивших</div><div class="v accent">${Object.keys(tree).length}</div></div>
+        <div class="stat"><div class="ic">🌳</div><div class="l">С реферером</div><div class="v" style="color:var(--purple)">${refs.length}</div></div>
+        <div class="stat"><div class="ic">⭐</div><div class="l">Прямых</div><div class="v accent">${users.length - refs.length}</div></div>
+        <div class="stat"><div class="ic">🎁</div><div class="l">Пригласивших</div><div class="v ok">${inviters.length}</div></div>
       </div>
-      ${Object.keys(tree).length ? Object.entries(tree).map(([uid, list]) => {
-        const inviter = users.find(u => String(u.telegram_id) === String(uid));
-        return `
+
+      ${inviters.length ? inviters
+        .map(inv => ({inv, refs: getRefs(users, inv)}))
+        .sort((a, b) => b.refs.length - a.refs.length)
+        .map(({inv, refs}) => `
           <div class="card">
             <div class="row" style="margin-bottom:10px">
-              <b>🎁 ${esc(inviter?.first_name || 'ID ' + uid)}</b>
-              <span class="badge approved">${list.length} реферал(ов)</span>
+              <div>
+                <b style="color:var(--purple)">🎁 ${esc(userName(inv))}</b>
+                <div class="muted">${userLink(inv)} · ID ${esc(inv.telegram_id)}</div>
+              </div>
+              <div>
+                <span class="badge purple">${refs.length} реферал${refs.length === 1 ? '' : refs.length < 5 ? 'а' : 'ов'}</span>
+                <button class="btn purple sm" onclick="showTree('${esc(inv.telegram_id)}')">🌳 Дерево</button>
+              </div>
             </div>
-            ${list.map(r => `
-              <div class="row" style="padding:8px 0;border-bottom:1px solid var(--border)">
-                <div><b>${esc(r.first_name||'—')}</b>
-                  <div class="muted">@${esc(r.username||'—')} · ID ${esc(r.telegram_id)}</div></div>
-                <div class="muted">${fmtDate(r.registered_at)}</div>
+            ${refs.map(r => `
+              <div class="ref-item">
+                <div><b>${esc(userName(r))}</b> · ${userLink(r)}</div>
+                <div class="muted">📅 ${fmtDate(r.registered_at)}</div>
               </div>
             `).join('')}
-          </div>`;
-      }).join('') : '<div class="empty"><div class="ic">👥</div><p>Пока нет рефералов</p></div>'}
+          </div>
+        `).join('') : '<div class="empty"><div class="ic">🌳</div><p>Пока нет рефералов</p></div>'}
     `);
   } catch(e){ layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`); }
 }

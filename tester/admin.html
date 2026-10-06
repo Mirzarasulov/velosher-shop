@@ -32,7 +32,7 @@
   .header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px;flex-wrap:wrap}
   .header h1{font-size:22px;font-weight:700}
   .header .sub{font-size:12px;color:var(--muted)}
-  .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:20px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:20px}
   .stat{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px}
   .stat .ic{font-size:22px;margin-bottom:6px}
   .stat .l{font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:600;margin-bottom:3px}
@@ -40,12 +40,13 @@
   .stat .v.ok{color:var(--ok)} .stat .v.warn{color:var(--warn)} .stat .v.info{color:var(--info)} .stat .v.accent{color:var(--accent)}
   .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
   .btn{padding:8px 14px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-size:12.5px;font-weight:600;
-    cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+    cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
   .btn:disabled{opacity:.5;cursor:not-allowed}
   .btn.secondary{background:var(--card2);border:1px solid var(--border2);color:var(--text)}
   .btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
   .btn.danger{background:var(--err)}
   .btn.ok{background:var(--ok);color:#04241a}
+  .btn.warn{background:var(--warn);color:#2a1a00}
   .btn.sm{padding:5px 10px;font-size:11.5px}
   .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10.5px;
     font-weight:700;text-transform:uppercase;white-space:nowrap}
@@ -121,6 +122,7 @@ const DATA = { purchases: null, payouts: null, eras: null, users: null };
 let FILTER = { purchases: 'all', payouts: 'all', search: '' };
 let LIM = { purchases: PAGE, payouts: PAGE, users: PAGE };
 const BUSY = new Set();
+let SEARCH_TIMER;
 
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function q(v){ return esc(JSON.stringify(v ?? '')); }
@@ -157,7 +159,6 @@ async function once(key, fn){
   finally { BUSY.delete(key); }
 }
 
-// Firebase
 async function fbGet(path){
   const r = await fetch(`${FIREBASE}/${path}.json`);
   if (!r.ok) throw new Error('Firebase ' + r.status);
@@ -186,8 +187,6 @@ function toList(raw){
 }
 
 // ============================================================
-// ОБОЛОЧКА
-// ============================================================
 function shell(){
   const nav = (tab, emo, label, cnt) => `
     <button class="nav-item" data-tab="${tab}" onclick="setTab('${tab}')">
@@ -196,8 +195,7 @@ function shell(){
   $('root').innerHTML = `
     <div class="layout">
       <aside class="side">
-        <div class="logo"><div class="ic">⚡</div>
-          <div><div class="t">Era Admin</div></div></div>
+        <div class="logo"><div class="ic">⚡</div><div class="t">Era Admin</div></div>
         <div class="section">Обзор</div>
         ${nav('dashboard','📊','Дашборд')}
         <div class="section">Операции</div>
@@ -207,8 +205,7 @@ function shell(){
         ${nav('users','👥','Пользователи')}
         ${nav('eras','🧩','Товары')}
         <div class="section"></div>
-        <button class="nav-item" onclick="location.reload()">
-          <span class="emo">🔄</span>Обновить</button>
+        <button class="nav-item" onclick="location.reload()"><span class="emo">🔄</span>Обновить</button>
       </aside>
       <main class="main" id="main"></main>
     </div>`;
@@ -219,8 +216,6 @@ function emptyBlock(icon, title, text='', extra=''){
     ${text ? `<p class="muted" style="margin:8px 0">${text}</p>` : ''}${extra}</div>`;
 }
 
-// ============================================================
-// ВКЛАДКИ
 // ============================================================
 const LOADERS = {
   dashboard: async () => {
@@ -253,7 +248,7 @@ const LOADERS = {
 
 async function render(){
   const target = TAB;
-  $('main').innerHTML = '<div class="loading">Загрузка…</div>';
+  setMain('<div class="loading">Загрузка…</div>');
   document.querySelectorAll('.nav-item[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === target));
   try {
     const draw = await LOADERS[target]();
@@ -261,7 +256,7 @@ async function render(){
     draw();
     updateCounts();
   } catch(e){
-    setMain(emptyBlock('⚠️', 'Ошибка', esc(e.message), `<button class="btn" onclick="render()">🔄 Повторить</button>`));
+    setMain(emptyBlock('⚠️', 'Ошибка', esc(e.message), `<button class="btn" onclick="render()">🔄</button>`));
   }
 }
 function updateCounts(){
@@ -286,41 +281,41 @@ window.setTab = setTab;
 window.closeModal = closeModal;
 
 // ============================================================
-// DASHBOARD
-// ============================================================
 function drawDashboard(){
   const P = DATA.purchases, PO = DATA.payouts;
   const byStatus = k => P.filter(p => p.status === k).length;
   const totalSum = P.filter(p => p.status !== 'cancelled').reduce((s,p) => s + num(p.purchase_price), 0);
-  const pendingPayouts = PO.filter(p => p.status === 'pending');
-  const pendingSum = pendingPayouts.reduce((s,p) => s + num(p.amount), 0);
+  const pending = PO.filter(p => p.status === 'pending');
+  const pendingSum = pending.reduce((s,p) => s + num(p.amount), 0);
   setMain(`
     <div class="header">
-      <div><h1>📊 Дашборд</h1><div class="sub">Общая статистика</div></div>
+      <div><h1>📊 Дашборд</h1><div class="sub">Общая статистика проекта</div></div>
       <button class="btn secondary sm" onclick="render()">🔄 Обновить</button>
     </div>
     <div class="stats">
       <div class="stat"><div class="ic">👥</div><div class="l">Пользователей</div><div class="v">${DATA.users.length}</div></div>
       <div class="stat"><div class="ic">📩</div><div class="l">Всего заявок</div><div class="v">${P.length}</div></div>
-      <div class="stat"><div class="ic">🔵</div><div class="l">Созданных</div><div class="v info">${byStatus('created')}</div></div>
+      <div class="stat"><div class="ic">🔵</div><div class="l">Созданные</div><div class="v info">${byStatus('created')}</div></div>
+      <div class="stat"><div class="ic">🟡</div><div class="l">В процессе</div><div class="v warn">${byStatus('in_progress')}</div></div>
       <div class="stat"><div class="ic">🟢</div><div class="l">Одобрено</div><div class="v ok">${byStatus('approved')}</div></div>
       <div class="stat"><div class="ic">🏁</div><div class="l">Завершено</div><div class="v ok">${byStatus('completed')}</div></div>
-      <div class="stat"><div class="ic">💸</div><div class="l">Выплат ждут</div><div class="v warn">${pendingPayouts.length}</div></div>
+      <div class="stat"><div class="ic">💰</div><div class="l">Выплачено</div><div class="v ok">${byStatus('paid')}</div></div>
+      <div class="stat"><div class="ic">❌</div><div class="l">Отменено</div><div class="v">${byStatus('cancelled')}</div></div>
+      <div class="stat"><div class="ic">💸</div><div class="l">Ждут выплату</div><div class="v warn">${pending.length}</div></div>
       <div class="stat"><div class="ic">💵</div><div class="l">Сумма покупок</div><div class="v accent">${fmt(totalSum)}</div></div>
       <div class="stat"><div class="ic">💰</div><div class="l">К выплате</div><div class="v warn">${fmt(pendingSum)}</div></div>
     </div>`);
 }
 
 // ============================================================
-// PURCHASES
-// ============================================================
 function drawPurchases(){
   const P = DATA.purchases;
   const c = { all: P.length };
-  ['created','in_progress','approved','completed','cancelled'].forEach(k => c[k] = P.filter(p => p.status === k).length);
+  ['created','in_progress','approved','completed','paid','cancelled'].forEach(k => c[k] = P.filter(p => p.status === k).length);
   const tabs = [
     ['all','📋 Все'],['created','🔵 Созданные'],['in_progress','🟡 В процессе'],
-    ['approved','🟢 Одобренные'],['completed','🏁 Завершённые'],['cancelled','❌ Отменённые']
+    ['approved','🟢 Одобренные'],['completed','🏁 Завершённые'],
+    ['paid','💰 Выплаченные'],['cancelled','❌ Отменённые']
   ];
   setMain(`
     <div class="header">
@@ -359,13 +354,22 @@ function moreBtn(name, left){
   return left > 0 ? `<div style="text-align:center;margin:14px 0">
     <button class="btn secondary" onclick="more('${name}')">Показать ещё (${left})</button></div>` : '';
 }
-function more(name){ LIM[name] += PAGE; name === 'purchases' ? fillPurchases() : name === 'payouts' ? fillPayouts() : fillUsers(); }
+function more(name){
+  LIM[name] += PAGE;
+  if (name === 'purchases') fillPurchases();
+  else if (name === 'payouts') fillPayouts();
+  else fillUsers();
+}
 function setFilter(v){ FILTER.purchases = v; LIM.purchases = PAGE; drawPurchases(); }
-let SEARCH_TIMER;
-function onSearch(v){ FILTER.search = v; LIM.purchases = PAGE; clearTimeout(SEARCH_TIMER); SEARCH_TIMER = setTimeout(fillPurchases, 150); }
+function onSearch(v){
+  FILTER.search = v; LIM.purchases = PAGE;
+  clearTimeout(SEARCH_TIMER);
+  SEARCH_TIMER = setTimeout(fillPurchases, 150);
+}
 window.setFilter = setFilter; window.onSearch = onSearch; window.more = more;
 
 function orderCard(p){
+  const canApprove = p.status === 'created' || p.status === 'in_progress';
   return `
     <div class="order-card">
       <div class="row" style="align-items:flex-start;margin-bottom:10px">
@@ -382,16 +386,17 @@ function orderCard(p){
         <div class="meta-item"><div class="l">🏆 Итого</div><div class="v ok">${fmt(p.total_amount)}</div></div>
         <div class="meta-item"><div class="l">📅 Срок</div><div class="v">${num(p.duration_days)} дней</div></div>
       </div>
-      <div class="muted-sm" style="margin-bottom:10px">
-        🕐 ${fmtDT(p.created_at)}
+      <div class="muted-sm" style="margin-bottom:10px;line-height:1.7">
+        🕐 Создано: ${fmtDT(p.created_at)}
         ${p.activated_at ? '<br>✅ Подтверждено: ' + fmtDT(p.activated_at) : ''}
         ${p.start_date ? '<br>📅 Начало: ' + fmtDate(p.start_date) : ''}
         ${p.last_day ? ' · 🏁 Последний: ' + fmtDate(p.last_day) : ''}
         ${p.expires_at ? ' · ⏰ Завершение: ' + fmtDate(p.expires_at) : ''}
+        ${p.paid_at ? '<br>💰 Выплачено: ' + fmtDT(p.paid_at) : ''}
       </div>
       <div class="flex">
-        ${p.status === 'created' || p.status === 'in_progress' ? `
-          ${p.status === 'created' ? `<button class="btn secondary sm" onclick="setStatus(${q(p._key)}, 'in_progress')">🟡 В процессе</button>` : ''}
+        ${canApprove ? `
+          ${p.status === 'created' ? `<button class="btn warn sm" onclick="setStatus(${q(p._key)}, 'in_progress')">🟡 В процессе</button>` : ''}
           <button class="btn ok sm" onclick="approvePurchase(${q(p._key)})">🟢 Одобрить</button>
           <button class="btn danger sm" onclick="setStatus(${q(p._key)}, 'cancelled')">❌ Отменить</button>
         ` : ''}
@@ -407,7 +412,6 @@ function orderCard(p){
 window.setStatus = (key, status) => once('p' + key + status, async () => {
   if (!confirm(`Изменить статус на "${statusLabel(status)}"?`)) return;
   await fbPatch(`purchases/${key}`, {status, status_changed_at: new Date().toISOString()});
-  // локальное обновление
   const p = DATA.purchases.find(x => x._key === key);
   if (p){ p.status = status; p.status_changed_at = new Date().toISOString(); }
   toast(`✅ → ${statusLabel(status)}`);
@@ -416,7 +420,7 @@ window.setStatus = (key, status) => once('p' + key + status, async () => {
 });
 
 window.approvePurchase = key => once('ap' + key, async () => {
-  if (!confirm('Одобрить заявку?')) return;
+  if (!confirm('Одобрить заявку?\n\nУчастник получит уведомление с датами и стартом периода.')) return;
   const p = DATA.purchases.find(x => x._key === key);
   if (!p) return;
   const now = new Date();
@@ -433,6 +437,8 @@ window.approvePurchase = key => once('ap' + key, async () => {
     last_day: last.toISOString(),
     expires_at: expires.toISOString(),
     status_changed_at: now.toISOString(),
+    notified_1d: 0,
+    completed_notified: 0,
   };
   await fbPatch(`purchases/${key}`, patch);
   Object.assign(p, patch);
@@ -441,8 +447,6 @@ window.approvePurchase = key => once('ap' + key, async () => {
   updateCounts();
 });
 
-// ============================================================
-// PAYOUTS
 // ============================================================
 function drawPayouts(){
   const P = DATA.payouts;
@@ -487,10 +491,10 @@ function payoutCard(po){
         <div class="meta-item"><div class="l">💵 Куплено</div><div class="v">${fmt(po.purchase_price)}</div></div>
         <div class="meta-item"><div class="l">💰 К выводу</div><div class="v ok">${fmt(po.amount)}</div></div>
       </div>
-      <div class="muted-sm" style="margin-bottom:10px">
-        📅 ${fmtDT(po.requested_at)}
-        ${po.paid_at ? '<br>✅ ' + fmtDT(po.paid_at) : ''}
-        ${po.rejected_at ? '<br>❌ ' + fmtDT(po.rejected_at) + ' — ' + esc(po.reject_reason || '') : ''}
+      <div class="muted-sm" style="margin-bottom:10px;line-height:1.7">
+        📅 Подано: ${fmtDT(po.requested_at)}
+        ${po.paid_at ? '<br>✅ Выплачено: ' + fmtDT(po.paid_at) : ''}
+        ${po.rejected_at ? '<br>❌ Отклонено: ' + fmtDT(po.rejected_at) + ' — ' + esc(po.reject_reason || '') : ''}
       </div>
       <div class="flex">
         ${po.status === 'pending' ? `
@@ -506,11 +510,11 @@ window.markPayoutPaid = (key, id) => once('po' + key, async () => {
   if (!confirm(`Подтвердить выплату #${id}?\n\nНажимайте только после фактического перевода.`)) return;
   const po = DATA.payouts.find(x => x._key === key);
   if (!po) return;
-  await fbPatch(`payouts/${key}`, {status: 'paid', paid_at: new Date().toISOString()});
-  po.status = 'paid';
-  po.paid_at = new Date().toISOString();
+  const now = new Date().toISOString();
+  await fbPatch(`payouts/${key}`, {status: 'paid', paid_at: now});
+  po.status = 'paid'; po.paid_at = now;
   const pk = DATA.purchases?.find(p => String(p.id) === String(po.purchase_id))?._key;
-  if (pk) await fbPatch(`purchases/${pk}`, {status: 'paid', paid_at: new Date().toISOString()});
+  if (pk) await fbPatch(`purchases/${pk}`, {status: 'paid', paid_at: now});
   toast('✅ Выплата подтверждена');
   drawPayouts();
   updateCounts();
@@ -519,20 +523,19 @@ window.markPayoutPaid = (key, id) => once('po' + key, async () => {
 window.rejectPayout = (key, id) => once('por' + key, async () => {
   const reason = prompt('Причина отклонения:', 'Не указана');
   if (reason === null) return;
+  const now = new Date().toISOString();
   await fbPatch(`payouts/${key}`, {
     status: 'rejected',
-    rejected_at: new Date().toISOString(),
+    rejected_at: now,
     reject_reason: reason || 'Не указана',
   });
   const po = DATA.payouts.find(x => x._key === key);
-  if (po){ po.status = 'rejected'; po.rejected_at = new Date().toISOString(); po.reject_reason = reason; }
+  if (po){ po.status = 'rejected'; po.rejected_at = now; po.reject_reason = reason; }
   toast('❌ Отклонено');
   drawPayouts();
   updateCounts();
 });
 
-// ============================================================
-// USERS
 // ============================================================
 function drawUsers(){
   setMain(`
@@ -563,13 +566,17 @@ function fillUsers(){
     ? list.slice(0, lim).map(userCard).join('') + moreBtn('users', list.length - lim)
     : emptyBlock('👤', 'Пользователей нет');
 }
-function onUserSearch(v){ FILTER.search = v; LIM.users = PAGE; clearTimeout(SEARCH_TIMER); SEARCH_TIMER = setTimeout(fillUsers, 150); }
+function onUserSearch(v){
+  FILTER.search = v; LIM.users = PAGE;
+  clearTimeout(SEARCH_TIMER);
+  SEARCH_TIMER = setTimeout(fillUsers, 150);
+}
 window.onUserSearch = onUserSearch;
 
 function userCard(u){
   const ps = (DATA.purchases || []).filter(p => String(p.user_telegram_id) === String(u.telegram_id));
   const invested = ps.filter(p => p.status !== 'cancelled').reduce((s,p) => s + num(p.purchase_price), 0);
-  const earned = ps.filter(p => p.status === 'completed' || p.status === 'paid').reduce((s,p) => s + num(p.total_amount), 0);
+  const earned = ps.filter(p => ['completed','paid'].includes(p.status)).reduce((s,p) => s + num(p.total_amount), 0);
   const invited = (DATA.users || []).filter(x => String(x.referrer_uid || '') === String(u.telegram_id)).length;
   const initial = (u.first_name || u.username || '?')[0].toUpperCase();
   return `
@@ -597,8 +604,6 @@ function userCard(u){
     </div>`;
 }
 
-// ============================================================
-// ERAS
 // ============================================================
 function drawEras(){
   const E = DATA.eras;
@@ -697,8 +702,6 @@ window.deleteEra = (key, title) => once('del' + key, async () => {
   render();
 });
 
-// ============================================================
-// СТАРТ
 // ============================================================
 shell();
 render();

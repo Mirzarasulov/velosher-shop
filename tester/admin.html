@@ -6,69 +6,137 @@
 <title>Админ-панель — Эры</title>
 <style>
   :root{
-    --bg:#0d1117; --card:#161b22; --card2:#1c2330; --border:#2a3240;
-    --text:#e6edf3; --muted:#8b949e; --accent:#4f8cff;
-    --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c;
+    --bg:#0d1117; --card:#161b22; --card2:#1c2330; --card3:#232b38;
+    --border:#2a3240; --border2:#3a4453;
+    --text:#e6edf3; --text2:#c4ccd6; --muted:#8b949e;
+    --accent:#4f8cff; --accent-glow:rgba(79,140,255,.3);
+    --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c; --info:#63a9ff;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:14px}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:14px;
+    -webkit-font-smoothing:antialiased}
   .layout{display:flex;min-height:100vh}
-  .side{width:220px;background:var(--card);border-right:1px solid var(--border);padding:16px 12px;flex-shrink:0}
-  .side h2{font-size:14px;margin:0 0 16px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  .side{width:230px;background:var(--card);border-right:1px solid var(--border);
+    padding:20px 12px;flex-shrink:0}
+  .side h2{font-size:12px;margin:0 0 20px;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.08em}
   .side button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--text);
-    padding:10px 12px;border-radius:8px;cursor:pointer;font-size:14px;margin-bottom:2px}
+    padding:11px 14px;border-radius:9px;cursor:pointer;font-size:14px;margin-bottom:2px;
+    font-family:inherit;font-weight:500;transition:background .15s}
   .side button:hover{background:var(--card2)}
-  .side button.active{background:var(--accent);color:#fff}
-  .main{flex:1;padding:24px;overflow-x:auto}
-  h1{font-size:22px;margin:0 0 20px;font-weight:600}
+  .side button.active{background:linear-gradient(135deg,var(--accent),#356fd8);color:#fff;
+    box-shadow:0 3px 10px var(--accent-glow)}
+  .main{flex:1;padding:24px 28px;overflow-x:auto;max-width:100%}
+  h1{font-size:24px;margin:0 0 20px;font-weight:700;letter-spacing:-.02em}
   h3{font-size:15px;margin:0 0 12px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:20px}
-  .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
-  .stat .v{font-size:20px;font-weight:700;margin-top:4px}
-  .stat .l{font-size:12px;color:var(--muted)}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;
+    position:relative;overflow:hidden}
+  .stat::after{content:'';position:absolute;top:0;right:0;width:80px;height:80px;
+    background:radial-gradient(circle,var(--accent-glow),transparent 70%);opacity:.4}
+  .stat .v{font-size:22px;font-weight:700;margin-top:4px;letter-spacing:-.02em;position:relative}
+  .stat .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;
+    font-weight:600;position:relative}
+  .stat.ok .v{color:var(--ok)}
+  .stat.warn .v{color:var(--warn)}
+  .stat.info .v{color:var(--info)}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;
+    padding:18px;margin-bottom:16px}
+
+  /* Заявки - карточки */
+  .order-card{background:var(--card);border:1px solid var(--border);border-radius:14px;
+    padding:18px;margin-bottom:14px;transition:border-color .2s}
+  .order-card:hover{border-color:var(--border2)}
+  .order-card.processed{opacity:.7;background:var(--card2)}
+  .order-head{display:flex;justify-content:space-between;align-items:flex-start;
+    gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  .order-num{font-size:20px;font-weight:800;color:var(--accent);
+    letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+  .order-num .hash{color:var(--muted);font-weight:600}
+  .order-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:10px;margin-bottom:14px}
+  .meta-item{background:var(--card2);border-radius:10px;padding:10px 12px}
+  .meta-item .l{font-size:10px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.05em;font-weight:600;margin-bottom:3px}
+  .meta-item .v{font-size:14px;font-weight:600}
+  .meta-item .v.ok{color:var(--ok)}
+  .meta-item .v.warn{color:var(--warn)}
+  .meta-item .v.accent{color:var(--accent)}
+
+  .order-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+  .order-actions .btn{flex:0 0 auto}
+
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;
+    font-size:11px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap}
+  .badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
+  .badge.awaiting_payment{background:rgba(245,181,71,.15);color:var(--warn)}
+  .badge.active{background:rgba(57,217,138,.15);color:var(--ok)}
+  .badge.completed{background:rgba(99,169,255,.15);color:var(--info)}
+  .badge.awaiting_payout{background:rgba(245,181,71,.15);color:var(--warn)}
+  .badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
+  .badge.cancelled{background:rgba(255,92,92,.15);color:var(--err)}
+  .badge.pending{background:rgba(245,181,71,.15);color:var(--warn)}
+
   table{width:100%;border-collapse:collapse;font-size:13px}
-  th,td{padding:10px;text-align:left;border-bottom:1px solid var(--border)}
-  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  th,td{padding:11px 10px;text-align:left;border-bottom:1px solid var(--border)}
+  th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;
+    letter-spacing:.05em}
   tr:hover td{background:var(--card2)}
-  .badge{display:inline-block;padding:3px 8px;border-radius:14px;font-size:11px;font-weight:600}
-  .badge.awaiting_payment{background:#3a2f10;color:var(--warn)}
-  .badge.active{background:#0f3a26;color:var(--ok)}
-  .badge.completed{background:#1a2e4a;color:#63a9ff}
-  .badge.awaiting_payout{background:#3a2f10;color:var(--warn)}
-  .badge.paid{background:#0f3a26;color:var(--ok)}
-  .badge.pending{background:#3a2f10;color:var(--warn)}
-  .badge.cancelled{background:#3a1010;color:var(--err)}
-  .btn{padding:7px 12px;border-radius:8px;border:0;background:var(--accent);color:#fff;
-    font-size:12px;font-weight:600;cursor:pointer;margin-right:4px}
-  .btn.secondary{background:var(--card2);border:1px solid var(--border);color:var(--text)}
-  .btn.danger{background:var(--err)}
-  .btn.ok{background:var(--ok)}
+
+  .btn{padding:9px 14px;border-radius:9px;border:0;
+    background:linear-gradient(135deg,var(--accent),#356fd8);color:#fff;
+    font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;
+    display:inline-flex;align-items:center;gap:6px;transition:all .15s;
+    box-shadow:0 2px 8px var(--accent-glow)}
+  .btn:active{transform:scale(.97)}
   .btn:disabled{opacity:.5;cursor:not-allowed}
-  .input,textarea{width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--border);
-    background:var(--card2);color:var(--text);font-size:13px;outline:none;font-family:inherit}
+  .btn.secondary{background:var(--card2);border:1px solid var(--border2);color:var(--text);box-shadow:none}
+  .btn.danger{background:linear-gradient(135deg,#ff5c5c,#d63a3a);box-shadow:0 2px 8px rgba(255,92,92,.3)}
+  .btn.ok{background:linear-gradient(135deg,#39d98a,#22a86b);box-shadow:0 2px 8px rgba(57,217,138,.3)}
+  .btn.sm{padding:6px 10px;font-size:12px}
+
+  .input,textarea,select{width:100%;padding:10px 12px;border-radius:9px;
+    border:1px solid var(--border);background:var(--card2);color:var(--text);
+    font-size:13px;outline:none;font-family:inherit;transition:border-color .15s}
   .input:focus,textarea:focus{border-color:var(--accent)}
   .form-row{margin-bottom:12px}
-  .form-row label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+  .form-row label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;
+    text-transform:uppercase;letter-spacing:.05em;font-weight:600}
   .flex{display:flex;gap:8px;align-items:center}
   .flex-wrap{flex-wrap:wrap}
   .muted{color:var(--muted);font-size:12px}
-  .toast{position:fixed;top:20px;right:20px;background:var(--card2);border:1px solid var(--border);
-    padding:12px 18px;border-radius:10px;z-index:999;font-size:13px}
+  .toast{position:fixed;top:20px;right:20px;background:var(--card2);
+    border:1px solid var(--border2);padding:14px 20px;border-radius:10px;z-index:999;
+    font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.4);animation:ti .2s ease}
+  @keyframes ti{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
   .hidden{display:none !important}
   .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-  .login-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;width:100%;max-width:360px}
-  pre{background:var(--card2);padding:12px;border-radius:8px;overflow:auto;font-size:12px;max-height:400px}
-  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .login-box{background:var(--card);border:1px solid var(--border);border-radius:16px;
+    padding:32px;width:100%;max-width:380px}
+  pre{background:var(--card2);padding:12px;border-radius:8px;overflow:auto;
+    font-size:12px;max-height:400px}
+  .tabs{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;
+    -webkit-overflow-scrolling:touch}
+  .tab{padding:9px 16px;border-radius:20px;background:var(--card2);
+    border:1px solid var(--border);color:var(--text2);font-size:13px;font-weight:600;
+    cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s}
+  .tab.active{background:var(--accent);color:#fff;border-color:var(--accent);
+    box-shadow:0 3px 10px var(--accent-glow)}
+  .empty{padding:60px 20px;text-align:center;color:var(--muted)}
+
   @media(max-width:768px){
     .layout{flex-direction:column}
     .side{width:100%;border-right:0;border-bottom:1px solid var(--border);
-      display:flex;overflow-x:auto;padding:8px}
+      display:flex;overflow-x:auto;padding:10px;gap:4px}
     .side h2{display:none}
-    .side button{width:auto;white-space:nowrap;margin-right:4px;margin-bottom:0}
+    .side button{width:auto;white-space:nowrap;margin-bottom:0;padding:9px 14px;font-size:13px}
     .main{padding:16px}
-    table{font-size:12px}
-    th,td{padding:6px}
+    h1{font-size:20px}
+    .order-num{font-size:17px}
+    .order-meta{grid-template-columns:1fr}
   }
 </style>
 </head>
@@ -78,9 +146,10 @@
 <div id="toast" class="toast hidden"></div>
 
 <script>
-const API = (location.origin.startsWith('http') ? location.origin : 'http://localhost:8000');
+const API = 'http://localhost:8000';  // ⬅️ ЗАМЕНИТЕ на ngrok URL или Render
 let TOKEN = localStorage.getItem('admin_token') || '';
 let TAB = 'dashboard';
+let PURCHASE_FILTER = 'pending';  // pending / all / active / completed / cancelled
 
 function toast(msg, ms=2500){
   const t = document.getElementById('toast');
@@ -91,6 +160,7 @@ function toast(msg, ms=2500){
 async function api(path, opts={}){
   const headers = opts.headers || {};
   if (TOKEN) headers['Authorization'] = 'Bearer ' + TOKEN;
+  headers['ngrok-skip-browser-warning'] = 'true';
   if (opts.body && !(opts.body instanceof FormData)) {
     headers['Content-Type'] = 'application/json';
     opts.body = JSON.stringify(opts.body);
@@ -106,23 +176,22 @@ function logout(){
   localStorage.removeItem('admin_token'); TOKEN = ''; location.reload();
 }
 
-// ============================================================
-// ЛОГИН
-// ============================================================
 function renderLogin(){
   document.getElementById('root').innerHTML = `
     <div class="login-wrap">
       <div class="login-box">
-        <h1 style="margin-bottom:20px">Админ-панель</h1>
+        <h1 style="margin-bottom:24px">🔐 Админ-панель</h1>
         <div class="form-row">
           <label>Логин</label>
           <input class="input" id="login" value="admin">
         </div>
         <div class="form-row">
           <label>Пароль</label>
-          <input class="input" id="password" type="password" onkeydown="if(event.key==='Enter')doLogin()">
+          <input class="input" id="password" type="password"
+            onkeydown="if(event.key==='Enter')doLogin()">
         </div>
-        <button class="btn" style="width:100%;padding:12px;font-size:14px" onclick="doLogin()">Войти</button>
+        <button class="btn" style="width:100%;justify-content:center;padding:12px"
+          onclick="doLogin()">Войти</button>
       </div>
     </div>
   `;
@@ -138,14 +207,11 @@ async function doLogin(){
   } catch(e){ toast(e.message); }
 }
 
-// ============================================================
-// LAYOUT
-// ============================================================
 const TABS = [
   {id:'dashboard', label:'📊 Dashboard'},
-  {id:'users', label:'👥 Пользователи'},
-  {id:'purchases', label:'🛒 Покупки'},
+  {id:'purchases', label:'📩 Заявки'},
   {id:'payouts', label:'💸 Выплаты'},
+  {id:'users', label:'👥 Пользователи'},
   {id:'eras', label:'🧩 Эры'},
   {id:'content', label:'📝 Контент'},
   {id:'logs', label:'📜 Журнал'},
@@ -156,39 +222,239 @@ function layout(content){
     <div class="layout">
       <aside class="side">
         <h2>Эры · Админ</h2>
-        ${TABS.map(t=>`<button class="${TAB===t.id?'active':''}" onclick="setTab('${t.id}')">${t.label}</button>`).join('')}
+        ${TABS.map(t=>`<button class="${TAB===t.id?'active':''}"
+          onclick="setTab('${t.id}')">${t.label}</button>`).join('')}
         <button onclick="logout()" style="margin-top:20px;color:var(--err)">🚪 Выйти</button>
       </aside>
-      <main class="main" id="main">${content}</main>
+      <main class="main">${content}</main>
     </div>
   `;
 }
-
 async function setTab(t){ TAB = t; await render(); }
 
-// ============================================================
-// DASHBOARD
-// ============================================================
+// ---------- DASHBOARD ----------
 async function tabDashboard(){
   const d = await api('/api/admin/dashboard');
   layout(`
     <h1>Dashboard</h1>
     <div class="grid">
       <div class="stat"><div class="l">Пользователей</div><div class="v">${d.users}</div></div>
-      <div class="stat"><div class="l">Активных эр</div><div class="v">${d.active_eras}</div></div>
-      <div class="stat"><div class="l">Завершённых</div><div class="v">${d.completed_eras}</div></div>
-      <div class="stat"><div class="l">Заявок на покупку</div><div class="v">${d.purchase_requests}</div></div>
-      <div class="stat"><div class="l">Заявок на вывод</div><div class="v">${d.payout_requests}</div></div>
+      <div class="stat ok"><div class="l">Активных эр</div><div class="v">${d.active_eras}</div></div>
+      <div class="stat info"><div class="l">Завершённых</div><div class="v">${d.completed_eras}</div></div>
+      <div class="stat warn"><div class="l">Заявок ждут</div><div class="v">${d.purchase_requests}</div></div>
+      <div class="stat warn"><div class="l">Выплат ждут</div><div class="v">${d.payout_requests}</div></div>
       <div class="stat"><div class="l">Сумма покупок</div><div class="v">${fmt(d.total_purchases_sum)}</div></div>
-      <div class="stat"><div class="l">Начислено</div><div class="v">${fmt(d.total_profit_sum)}</div></div>
-      <div class="stat"><div class="l">Выплачено</div><div class="v">${fmt(d.total_paid_sum)}</div></div>
+      <div class="stat ok"><div class="l">Начислено</div><div class="v">${fmt(d.total_profit_sum)}</div></div>
+      <div class="stat info"><div class="l">Выплачено</div><div class="v">${fmt(d.total_paid_sum)}</div></div>
     </div>
   `);
 }
 
-// ============================================================
-// USERS
-// ============================================================
+// ---------- PURCHASES (заявки карточками) ----------
+async function tabPurchases(){
+  const list = await api('/api/admin/purchases');
+
+  const filtered = list.filter(p=>{
+    if (PURCHASE_FILTER === 'pending') return p.status === 'awaiting_payment';
+    if (PURCHASE_FILTER === 'active') return p.status === 'active';
+    if (PURCHASE_FILTER === 'completed') return ['completed','awaiting_payout','paid'].includes(p.status);
+    if (PURCHASE_FILTER === 'cancelled') return p.status === 'cancelled';
+    return true;
+  });
+
+  const counts = {
+    all: list.length,
+    pending: list.filter(p=>p.status==='awaiting_payment').length,
+    active: list.filter(p=>p.status==='active').length,
+    completed: list.filter(p=>['completed','awaiting_payout','paid'].includes(p.status)).length,
+    cancelled: list.filter(p=>p.status==='cancelled').length,
+  };
+
+  layout(`
+    <h1>Заявки на покупку</h1>
+
+    <div class="tabs">
+      <button class="tab ${PURCHASE_FILTER==='pending'?'active':''}"
+        onclick="PURCHASE_FILTER='pending';render()">
+        ⏳ Ждут (${counts.pending})
+      </button>
+      <button class="tab ${PURCHASE_FILTER==='active'?'active':''}"
+        onclick="PURCHASE_FILTER='active';render()">
+        🟢 Активные (${counts.active})
+      </button>
+      <button class="tab ${PURCHASE_FILTER==='completed'?'active':''}"
+        onclick="PURCHASE_FILTER='completed';render()">
+        ✅ Завершённые (${counts.completed})
+      </button>
+      <button class="tab ${PURCHASE_FILTER==='cancelled'?'active':''}"
+        onclick="PURCHASE_FILTER='cancelled';render()">
+        ❌ Отменённые (${counts.cancelled})
+      </button>
+      <button class="tab ${PURCHASE_FILTER==='all'?'active':''}"
+        onclick="PURCHASE_FILTER='all';render()">
+        📋 Все (${counts.all})
+      </button>
+    </div>
+
+    ${filtered.length ? filtered.map(p=>orderCard(p)).join('') : `
+      <div class="card empty">
+        <div style="font-size:44px;margin-bottom:8px">📭</div>
+        <h3>Заявок нет</h3>
+        <p class="muted">В этой категории заявок пока нет</p>
+      </div>
+    `}
+  `);
+}
+
+function orderCard(p){
+  const processed = p.status !== 'awaiting_payment';
+  return `
+    <div class="order-card ${processed?'processed':''}">
+      <div class="order-head">
+        <div class="order-num">
+          📩 Заявка <span class="hash">#</span>${p.id}
+        </div>
+        <span class="badge ${p.status}">${statusLabel(p.status)}</span>
+      </div>
+
+      <div class="order-meta">
+        <div class="meta-item">
+          <div class="l">👤 Участник</div>
+          <div class="v">${esc(p.first_name||'')} ${esc(p.last_name||'')}</div>
+        </div>
+        <div class="meta-item">
+          <div class="l">🔗 Никнейм</div>
+          <div class="v">@${esc(p.telegram_username||'—')}</div>
+        </div>
+        <div class="meta-item">
+          <div class="l">🆔 Telegram ID</div>
+          <div class="v">${p.telegram_id}</div>
+        </div>
+        <div class="meta-item">
+          <div class="l">💳 Эра</div>
+          <div class="v">${esc(p.era_title)}</div>
+        </div>
+        <div class="meta-item">
+          <div class="l">💵 Номинал</div>
+          <div class="v accent">${fmt(p.purchase_price)}</div>
+        </div>
+        <div class="meta-item">
+          <div class="l">💰 Начисление</div>
+          <div class="v ok">+${fmt(p.profit_amount)}</div>
+        </div>
+        <div class="meta-item">
+          <div class="l">🏆 Итого</div>
+          <div class="v ok">${fmt(p.total_amount)}</div>
+        </div>
+        <div class="meta-item">
+          <div class="l">📅 Срок</div>
+          <div class="v">${p.duration_days} дней</div>
+        </div>
+      </div>
+
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">
+        🕐 Создана: ${fmtDate(p.created_at)}
+        ${p.activated_at ? ` · ✅ Активирована: ${fmtDate(p.activated_at)}` : ''}
+        ${p.expires_at ? ` · 🏁 Завершение: ${fmtDate(p.expires_at)}` : ''}
+        ${p.cancelled_at ? ` · ❌ Отменена: ${fmtDate(p.cancelled_at)}` : ''}
+      </div>
+
+      ${!processed ? `
+        <div class="order-actions">
+          <button class="btn ok" onclick="confirmPurchase(${p.id})">
+            ✅ Подтвердить покупку
+          </button>
+          <button class="btn danger" onclick="cancelPurchase(${p.id})">
+            ❌ Отменить заявку
+          </button>
+        </div>
+      ` : `
+        <div style="padding:10px 14px;background:var(--card2);border-radius:9px;
+          font-size:12px;color:var(--muted);text-align:center">
+          ${processedMessage(p)}
+        </div>
+      `}
+    </div>
+  `;
+}
+
+function processedMessage(p){
+  if (p.status === 'active') return '✅ Заявка подтверждена. Эра активна.';
+  if (p.status === 'cancelled') return '❌ Заявка отменена. Обработка недоступна.';
+  if (p.status === 'completed') return '🏁 Эра завершена. Ожидает заявки на вывод.';
+  if (p.status === 'awaiting_payout') return '💸 Заявка на вывод создана. Ожидает выплаты.';
+  if (p.status === 'paid') return '💰 Выплачено. Заявка закрыта.';
+  return 'Обработано';
+}
+
+async function confirmPurchase(id){
+  if (!confirm(`✅ Подтвердить оплату по заявке #${id}?\n\nЭра будет активирована, пользователь получит уведомление.`)) return;
+  try {
+    await api(`/api/admin/purchases/${id}/confirm`, {method:'POST'});
+    toast(`✅ Заявка #${id} подтверждена`);
+    render();
+  } catch(e){ toast('⚠️ ' + e.message); }
+}
+
+async function cancelPurchase(id){
+  if (!confirm(`❌ Отменить заявку #${id}?\n\nДействие необратимо.`)) return;
+  try {
+    await api(`/api/admin/purchases/${id}/cancel`, {method:'POST'});
+    toast(`❌ Заявка #${id} отменена`);
+    render();
+  } catch(e){ toast('⚠️ ' + e.message); }
+}
+
+// ---------- PAYOUTS ----------
+async function tabPayouts(){
+  const list = await api('/api/admin/payouts');
+  layout(`
+    <h1>Выплаты (${list.length})</h1>
+    <div class="card" style="overflow:auto">
+      <table>
+        <thead><tr>
+          <th>#</th><th>Пользователь</th><th>Эра</th><th>Сумма</th>
+          <th>Заявка</th><th>Выплата</th><th>Статус</th><th></th>
+        </tr></thead>
+        <tbody>
+        ${list.map(p=>`
+          <tr>
+            <td><b>#${p.id}</b></td>
+            <td>${esc(p.first_name||'')}<br>
+              <span class="muted">@${esc(p.telegram_username||'—')} · ${p.telegram_id}</span>
+            </td>
+            <td>${esc(p.era_title||'')}</td>
+            <td><b>${fmt(p.amount)}</b></td>
+            <td>${fmtDate(p.requested_at)}</td>
+            <td>${p.paid_at?fmtDate(p.paid_at):'—'}</td>
+            <td><span class="badge ${p.status}">${p.status==='paid'?'Выплачено':'Ожидает'}</span></td>
+            <td>
+              ${p.status==='pending'?`
+                <button class="btn ok sm" onclick="markPaid(${p.id})">✅ Выплачено</button>
+                <button class="btn danger sm" onclick="cancelPayout(${p.id})">✕</button>
+              `:''}
+            </td>
+          </tr>
+        `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `);
+}
+async function markPaid(id){
+  if (!confirm(`Отметить выплату #${id} как выполненную?`)) return;
+  try { await api(`/api/admin/payouts/${id}/mark_paid`, {method:'POST'});
+    toast('💰 Выплата отмечена'); render(); }
+  catch(e){ toast(e.message); }
+}
+async function cancelPayout(id){
+  if (!confirm(`Отменить заявку на вывод #${id}?`)) return;
+  try { await api(`/api/admin/payouts/${id}/cancel`, {method:'POST'});
+    toast('Отменено'); render(); }
+  catch(e){ toast(e.message); }
+}
+
+// ---------- USERS ----------
 async function tabUsers(){
   const list = await api('/api/admin/users');
   layout(`
@@ -209,7 +475,7 @@ async function tabUsers(){
             <td>${u.referrer_username ? '@'+esc(u.referrer_username) : '—'}</td>
             <td>${u.purchases_count}</td>
             <td>${fmtDate(u.registered_at)}</td>
-            <td><button class="btn secondary" onclick="showRefTree(${u.id})">Дерево</button></td>
+            <td><button class="btn secondary sm" onclick="showRefTree(${u.id})">Дерево</button></td>
           </tr>
         `).join('')}
         </tbody>
@@ -217,12 +483,11 @@ async function tabUsers(){
     </div>
   `);
 }
-
 async function showRefTree(uid){
   const tree = await api('/api/admin/referral_tree/'+uid);
   const html = renderTree(tree.children);
   layout(`
-    <button class="btn secondary" onclick="setTab('users')">← Назад</button>
+    <button class="btn secondary sm" onclick="setTab('users')">← Назад</button>
     <h1 style="margin-top:14px">Реферальное дерево #${uid}</h1>
     <div class="card"><pre>${html || 'Нет рефералов'}</pre></div>
   `);
@@ -232,127 +497,33 @@ function renderTree(nodes, depth=0){
     renderTree(n.children||[], depth+1)).join('');
 }
 
-// ============================================================
-// PURCHASES
-// ============================================================
-async function tabPurchases(){
-  const list = await api('/api/admin/purchases');
-  layout(`
-    <h1>Покупки (${list.length})</h1>
-    <div class="card" style="overflow:auto">
-      <table>
-        <thead><tr>
-          <th>#</th><th>Пользователь</th><th>Эра</th><th>Сумма</th>
-          <th>Заявка</th><th>Активация</th><th>Завершение</th><th>Статус</th><th>Действия</th>
-        </tr></thead>
-        <tbody>
-        ${list.map(p=>`
-          <tr>
-            <td>${p.id}</td>
-            <td>${esc(p.first_name||'')}<br><span class="muted">@${esc(p.telegram_username||'—')} · ${p.telegram_id}</span></td>
-            <td>${esc(p.era_title||'')}</td>
-            <td>${fmt(p.purchase_price)}<br><span class="muted">→ ${fmt(p.total_amount)}</span></td>
-            <td>${fmtDate(p.created_at)}</td>
-            <td>${p.activated_at?fmtDate(p.activated_at):'—'}</td>
-            <td>${p.expires_at?fmtDate(p.expires_at):'—'}</td>
-            <td><span class="badge ${p.status}">${statusLabel(p.status)}</span></td>
-            <td>
-              ${p.status==='awaiting_payment'?`
-                <button class="btn ok" onclick="confirmPurchase(${p.id})">✓ Подтвердить</button>
-                <button class="btn danger" onclick="cancelPurchase(${p.id})">✕ Отменить</button>
-              `:''}
-            </td>
-          </tr>
-        `).join('')}
-        </tbody>
-      </table>
-    </div>
-  `);
-}
-
-async function confirmPurchase(id){
-  if (!confirm(`Подтвердить оплату покупки #${id}?`)) return;
-  try {
-    await api(`/api/admin/purchases/${id}/confirm`, {method:'POST'});
-    toast('Оплата подтверждена'); render();
-  } catch(e){ toast(e.message); }
-}
-async function cancelPurchase(id){
-  if (!confirm(`Отменить заявку #${id}?`)) return;
-  try {
-    await api(`/api/admin/purchases/${id}/cancel`, {method:'POST'});
-    toast('Отменено'); render();
-  } catch(e){ toast(e.message); }
-}
-
-// ============================================================
-// PAYOUTS
-// ============================================================
-async function tabPayouts(){
-  const list = await api('/api/admin/payouts');
-  layout(`
-    <h1>Выплаты (${list.length})</h1>
-    <div class="card" style="overflow:auto">
-      <table>
-        <thead><tr>
-          <th>#</th><th>Пользователь</th><th>Эра</th><th>Сумма</th>
-          <th>Дата заявки</th><th>Дата выплаты</th><th>Статус</th><th></th>
-        </tr></thead>
-        <tbody>
-        ${list.map(p=>`
-          <tr>
-            <td>${p.id}</td>
-            <td>${esc(p.first_name||'')}<br><span class="muted">@${esc(p.telegram_username||'—')} · ${p.telegram_id}</span></td>
-            <td>${esc(p.era_title||'')}</td>
-            <td>${fmt(p.amount)}</td>
-            <td>${fmtDate(p.requested_at)}</td>
-            <td>${p.paid_at?fmtDate(p.paid_at):'—'}</td>
-            <td><span class="badge ${p.status}">${p.status==='paid'?'Выплачено':'Ожидает'}</span></td>
-            <td>
-              ${p.status==='pending'?`
-                <button class="btn ok" onclick="markPaid(${p.id})">✓ Выплачено</button>
-                <button class="btn danger" onclick="cancelPayout(${p.id})">✕ Отменить</button>
-              `:''}
-            </td>
-          </tr>
-        `).join('')}
-        </tbody>
-      </table>
-    </div>
-  `);
-}
-
-async function markPaid(id){
-  if (!confirm(`Отметить выплату #${id} как выполненную?`)) return;
-  try { await api(`/api/admin/payouts/${id}/mark_paid`, {method:'POST'}); toast('Готово'); render(); }
-  catch(e){ toast(e.message); }
-}
-async function cancelPayout(id){
-  if (!confirm(`Отменить заявку на вывод #${id}?`)) return;
-  try { await api(`/api/admin/payouts/${id}/cancel`, {method:'POST'}); toast('Отменено'); render(); }
-  catch(e){ toast(e.message); }
-}
-
-// ============================================================
-// ERAS
-// ============================================================
+// ---------- ERAS ----------
 async function tabEras(){
   const list = await api('/api/admin/eras');
   layout(`
     <h1>Эры</h1>
-    <div class="muted" style="margin-bottom:12px">Изменения применяются только к новым покупкам</div>
+    <div class="muted" style="margin-bottom:16px">
+      ⚠️ Изменения применяются только к новым покупкам
+    </div>
     ${list.map(e=>`
       <div class="card">
-        <div class="flex" style="justify-content:space-between;margin-bottom:10px">
+        <div class="flex" style="justify-content:space-between;margin-bottom:12px">
           <h3>${esc(e.title)}</h3>
-          <span class="badge ${e.is_active?'active':'cancelled'}">${e.is_active?'Активна':'Отключена'}</span>
+          <span class="badge ${e.is_active?'active':'cancelled'}">
+            ${e.is_active?'Активна':'Отключена'}
+          </span>
         </div>
-        <div class="grid3">
-          <div class="form-row"><label>Название</label><input class="input" id="t_${e.id}" value="${esc(e.title)}"></div>
-          <div class="form-row"><label>Стоимость</label><input class="input" id="p_${e.id}" type="number" value="${e.price}"></div>
-          <div class="form-row"><label>Срок (дней)</label><input class="input" id="d_${e.id}" type="number" value="${e.duration_days}"></div>
-          <div class="form-row"><label>Начисление</label><input class="input" id="pr_${e.id}" type="number" value="${e.profit_amount}"></div>
-          <div class="form-row"><label>Итог (авто)</label><input class="input" value="${e.price + e.profit_amount}" disabled></div>
+        <div class="grid" style="margin-bottom:12px">
+          <div class="form-row"><label>Название</label>
+            <input class="input" id="t_${e.id}" value="${esc(e.title)}"></div>
+          <div class="form-row"><label>Стоимость</label>
+            <input class="input" id="p_${e.id}" type="number" value="${e.price}"></div>
+          <div class="form-row"><label>Срок (дней)</label>
+            <input class="input" id="d_${e.id}" type="number" value="${e.duration_days}"></div>
+          <div class="form-row"><label>Начисление</label>
+            <input class="input" id="pr_${e.id}" type="number" value="${e.profit_amount}"></div>
+          <div class="form-row"><label>Итог (авто)</label>
+            <input class="input" value="${e.price + e.profit_amount}" disabled></div>
           <div class="form-row"><label>Активна</label>
             <select class="input" id="a_${e.id}">
               <option value="1" ${e.is_active?'selected':''}>Да</option>
@@ -363,12 +534,11 @@ async function tabEras(){
         <div class="form-row"><label>Описание</label>
           <textarea class="input" id="desc_${e.id}" rows="2">${esc(e.description||'')}</textarea>
         </div>
-        <button class="btn" onclick="saveEra(${e.id})">Сохранить</button>
+        <button class="btn" onclick="saveEra(${e.id})">💾 Сохранить</button>
       </div>
     `).join('')}
   `);
 }
-
 async function saveEra(id){
   const body = {
     title: document.getElementById('t_'+id).value,
@@ -379,13 +549,11 @@ async function saveEra(id){
     is_active: parseInt(document.getElementById('a_'+id).value),
     sort_order: id,
   };
-  try { await api('/api/admin/eras/'+id, {method:'PUT', body}); toast('Сохранено'); render(); }
+  try { await api('/api/admin/eras/'+id, {method:'PUT', body}); toast('💾 Сохранено'); render(); }
   catch(e){ toast(e.message); }
 }
 
-// ============================================================
-// CONTENT
-// ============================================================
+// ---------- CONTENT ----------
 async function tabContent(){
   const keys = [
     {k:'marketing_image', t:'Маркетинговое изображение', upload:true},
@@ -394,6 +562,7 @@ async function tabContent(){
     {k:'notif_registration', t:'Уведомление: регистрация'},
     {k:'notif_purchase_created', t:'Уведомление: заявка на покупку'},
     {k:'notif_purchase_activated', t:'Уведомление: активация'},
+    {k:'notif_purchase_cancelled', t:'Уведомление: отмена заявки'},
     {k:'notif_era_completed', t:'Уведомление: завершение'},
     {k:'notif_payout_requested', t:'Уведомление: заявка на вывод'},
     {k:'notif_payout_paid', t:'Уведомление: выплата'},
@@ -407,37 +576,41 @@ async function tabContent(){
       <div class="card">
         <h3>${t}</h3>
         ${upload ? `
-          ${values[k] ? `<img src="${API}${values[k]}" style="max-width:100%;max-height:200px;border-radius:8px;margin-bottom:8px">` : '<div class="muted">Не загружено</div>'}
-          <input type="file" id="f_${k}" class="input" style="margin-top:8px">
-          <button class="btn" style="margin-top:8px" onclick="uploadFile('${k}')">Загрузить</button>
+          ${values[k] ? `<img src="${API}${values[k]}"
+            style="max-width:100%;max-height:200px;border-radius:9px;margin-bottom:10px">` :
+            '<div class="muted" style="margin-bottom:10px">Не загружено</div>'}
+          <input type="file" id="f_${k}" class="input">
+          <button class="btn" style="margin-top:10px" onclick="uploadFile('${k}')">
+            ⬆️ Загрузить
+          </button>
         ` : `
           ${textarea
             ? `<textarea class="input" id="c_${k}" rows="6">${esc(values[k]||'')}</textarea>`
             : `<input class="input" id="c_${k}" value="${esc(values[k]||'')}">`}
-          <button class="btn" style="margin-top:8px" onclick="saveContent('${k}')">Сохранить</button>
+          <button class="btn" style="margin-top:10px" onclick="saveContent('${k}')">
+            💾 Сохранить
+          </button>
         `}
       </div>
     `).join('')}
   `);
 }
-
 async function saveContent(key){
   const value = document.getElementById('c_'+key).value;
-  try { await api('/api/admin/content', {method:'POST', body:{key, value}}); toast('Сохранено'); }
+  try { await api('/api/admin/content', {method:'POST', body:{key, value}});
+    toast('💾 Сохранено'); }
   catch(e){ toast(e.message); }
 }
-
 async function uploadFile(key){
   const f = document.getElementById('f_'+key).files[0];
   if (!f) return toast('Выберите файл');
   const fd = new FormData(); fd.append('file', f);
-  try { await api('/api/admin/upload/marketing', {method:'POST', body: fd}); toast('Загружено'); render(); }
+  try { await api('/api/admin/upload/marketing', {method:'POST', body: fd});
+    toast('⬆️ Загружено'); render(); }
   catch(e){ toast(e.message); }
 }
 
-// ============================================================
-// LOGS
-// ============================================================
+// ---------- LOGS ----------
 async function tabLogs(){
   const list = await api('/api/admin/actions');
   layout(`
@@ -448,7 +621,7 @@ async function tabLogs(){
         <tbody>
         ${list.map(a=>`
           <tr><td>${a.id}</td><td>${esc(a.admin)}</td><td>${esc(a.action)}</td>
-          <td>${esc(a.details)}</td><td>${fmtDate(a.created_at)}</td></tr>
+            <td>${esc(a.details)}</td><td>${fmtDate(a.created_at)}</td></tr>
         `).join('')}
         </tbody>
       </table>
@@ -456,24 +629,23 @@ async function tabLogs(){
   `);
 }
 
-// ============================================================
-// УТИЛИТЫ
-// ============================================================
-function esc(s){ return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+// UTILS
+function esc(s){ return String(s??'').replace(/[&<>"']/g,
+  c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function fmt(n){ return Number(n||0).toLocaleString('ru-RU') + ' ₽'; }
 function fmtDate(s){
   if (!s) return '—';
-  try { return new Date(s).toLocaleString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+  try { return new Date(s).toLocaleString('ru-RU',
+    {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
   catch { return s; }
 }
 function statusLabel(s){
-  return ({awaiting_payment:'Ожидает оплаты', active:'Активен', completed:'Завершён',
-    awaiting_payout:'Ожидает выплаты', paid:'Выплачен', cancelled:'Отменён'})[s] || s;
+  return ({awaiting_payment:'⏳ Ожидает подтверждения', active:'🟢 Активен',
+    completed:'🏁 Завершён', awaiting_payout:'💸 Ожидает выплаты',
+    paid:'💰 Выплачен', cancelled:'❌ Отменён'})[s] || s;
 }
 
-// ============================================================
-// ГЛАВНЫЙ ЦИКЛ
-// ============================================================
+// MAIN
 async function render(){
   if (!TOKEN){ renderLogin(); return; }
   try {

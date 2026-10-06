@@ -1,1160 +1,1109 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#0a0e14">
-<title>Эры — Магазин</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<style>
-  :root{
-    --bg:#0a0e14; --card:#131820; --card2:#1a212c; --card3:#232b38;
-    --border:#252e3a; --border2:#2f3a48;
-    --text:#e8edf3; --text2:#c4ccd6; --muted:#7a8595;
-    --accent:#4f8cff; --accent2:#356fd8; --accent-glow:rgba(79,140,255,.35);
-    --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c; --info:#63a9ff;
-    --gold:#ffd166;
-  }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
-  html,body{background:var(--bg);color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
-    font-size:15px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
-  body::before{content:'';position:fixed;top:0;left:0;right:0;height:280px;
-    background:radial-gradient(circle at 50% 0%,rgba(79,140,255,.15),transparent 60%);
-    pointer-events:none;z-index:0}
-  .app{max-width:560px;margin:0 auto;padding:0 16px 100px;position:relative;z-index:1}
+"""
+Эры-проект: Backend + Telegram Bot
+Запуск: python bot.py
+"""
 
-  .topbar{position:sticky;top:0;z-index:40;background:rgba(10,14,20,.85);
-    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    border-bottom:1px solid var(--border);margin:0 -16px 16px;padding:12px 16px;
-    display:flex;align-items:center;justify-content:space-between}
-  .topbar .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}
-  .topbar .brand .logo{width:32px;height:32px;border-radius:10px;
-    background:linear-gradient(135deg,var(--accent),#7b5cff);display:flex;
-    align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 14px var(--accent-glow)}
-  .topbar .actions{display:flex;gap:8px;align-items:center}
-  .icon-btn{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);
-    background:var(--card2);color:var(--text2);font-size:17px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;transition:all .15s}
-  .icon-btn:active{transform:scale(.94);background:var(--card3)}
-  .back-btn{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);
-    background:var(--card2);color:var(--text2);font-size:18px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;transition:all .15s}
-  .back-btn:active{transform:scale(.94);background:var(--card3)}
+import os
+import hmac
+import hashlib
+import json
+import secrets
+import sqlite3
+import asyncio
+from contextlib import asynccontextmanager
+from datetime import datetime, timedelta, timezone, date
+from zoneinfo import ZoneInfo
+from typing import Optional, List, Dict, Any
 
-  h1{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.25}
-  h2{font-size:18px;font-weight:700;letter-spacing:-.01em}
-  h3{font-size:15px;font-weight:600}
-  .muted{color:var(--muted);font-size:13px}
-  .muted-sm{color:var(--muted);font-size:11px}
-  .section-title{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px}
+from fastapi import FastAPI, HTTPException, Depends, Header, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+from jose import jwt, JWTError
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
-  .card2{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px}
+from aiogram import Bot, Dispatcher
+from aiogram.types import (Message, InlineKeyboardMarkup, InlineKeyboardButton,
+                           WebAppInfo, CallbackQuery)
+from aiogram.filters import Command
+from aiogram.client.default import DefaultBotProperties
 
-  .hero{background:linear-gradient(135deg,#1a2540 0%,#161b26 100%);
-    border:1px solid var(--border2);border-radius:18px;padding:20px;
-    margin-bottom:16px;position:relative;overflow:hidden}
-  .hero::before{content:'';position:absolute;top:-50%;right:-30%;width:280px;height:280px;
-    background:radial-gradient(circle,rgba(79,140,255,.25),transparent 70%);pointer-events:none}
-  .hero .row{display:flex;justify-content:space-between;align-items:center;gap:12px;position:relative}
-  .hero .user{display:flex;gap:14px;align-items:center;min-width:0;flex:1}
-  .avatar{width:56px;height:56px;border-radius:50%;background:var(--card3);
-    display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;
-    color:var(--accent);border:2px solid var(--border2);overflow:hidden;flex-shrink:0;
-    box-shadow:0 4px 12px rgba(0,0,0,.3)}
-  .avatar img{width:100%;height:100%;object-fit:cover}
-  .avatar.lg{width:88px;height:88px;font-size:36px}
-  .hero .info{min-width:0;flex:1}
-  .hero .info h1{font-size:20px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .hero .info .sub{color:var(--text2);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+# ============================================================
+# КОНФИГ
+# ============================================================
+BOT_TOKEN = os.getenv("BOT_TOKEN", "8673170042:AAE8cDClKSdADlXZ-TQAk8YhDZ3qdgzgEA4")
+ADMIN_IDS = [int(x) for x in os.getenv("ADMIN_IDS", "123456789").split(",") if x.strip()]
+ADMIN_LOGIN = os.getenv("ADMIN_LOGIN", "admin")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
+JWT_SECRET = os.getenv("JWT_SECRET", secrets.token_urlsafe(48))
+JWT_ALG = "HS256"
+JWT_TTL_HOURS = 24 * 7
 
-  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px}
-  .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;
-    padding:14px;position:relative;overflow:hidden}
-  .stat .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;
-    font-weight:600;margin-bottom:6px}
-  .stat .value{font-size:22px;font-weight:700;letter-spacing:-.02em}
-  .stat .value.sm{font-size:18px}
-  .stat .value.ok{color:var(--ok)}
-  .stat .value.warn{color:var(--warn)}
-  .stat .value.accent{color:var(--accent)}
+WEB_URL = os.getenv("WEB_URL", "https://mirzarasulov.github.io/velosher-shop/tester/web.html")
+ADMIN_URL = os.getenv("ADMIN_URL", "https://mirzarasulov.github.io/velosher-shop/tester/admin.html")
+DB_PATH = os.getenv("DB_PATH", "era.db")
+UPLOAD_DIR = os.getenv("UPLOAD_DIR", "uploads")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;
-    padding:14px 18px;border-radius:12px;border:0;
-    background:linear-gradient(135deg,var(--accent),var(--accent2));
-    color:#fff;font-weight:600;font-size:15px;cursor:pointer;
-    transition:all .18s;text-align:center;box-shadow:0 4px 14px var(--accent-glow);
-    font-family:inherit}
-  .btn:active{transform:scale(.97);box-shadow:0 2px 6px var(--accent-glow)}
-  .btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
-  .btn.secondary{background:var(--card2);color:var(--text);border:1px solid var(--border2);box-shadow:none}
-  .btn.secondary:active{background:var(--card3)}
-  .btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text2);box-shadow:none}
-  .btn.danger{background:linear-gradient(135deg,#ff5c5c,#d63a3a);box-shadow:0 4px 14px rgba(255,92,92,.3)}
-  .btn.success{background:linear-gradient(135deg,#39d98a,#22a86b);box-shadow:0 4px 14px rgba(57,217,138,.3)}
-  .btn.sm{padding:10px 14px;font-size:13px;border-radius:10px;width:auto}
-  .btn.xs{padding:7px 12px;font-size:12px;border-radius:8px;width:auto}
+# ============================================================
+# ЧАСОВОЙ ПОЯС ТАШКЕНТА
+# ============================================================
+TASHKENT_TZ = ZoneInfo("Asia/Tashkent")
 
-  .era-card{background:var(--card);border:1px solid var(--border);border-radius:16px;
-    padding:0;margin-bottom:14px;overflow:hidden;transition:all .2s;position:relative}
-  .era-card .head{padding:18px 18px 14px;background:linear-gradient(135deg,var(--card2),var(--card));
-    border-bottom:1px solid var(--border);position:relative;overflow:hidden}
-  .era-card .head::before{content:'';position:absolute;top:-40%;right:-20%;width:180px;height:180px;
-    background:radial-gradient(circle,var(--era-glow,rgba(79,140,255,.2)),transparent 70%)}
-  .era-card .head .row{display:flex;justify-content:space-between;align-items:flex-start;
-    gap:12px;position:relative}
-  .era-card .title-wrap{display:flex;gap:12px;align-items:center;min-width:0;flex:1}
-  .era-card .icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;
-    justify-content:center;font-size:22px;flex-shrink:0;background:var(--card3);
-    border:1px solid var(--border2);box-shadow:0 4px 12px rgba(0,0,0,.2)}
-  .era-card .name{font-size:17px;font-weight:700;letter-spacing:-.01em}
-  .era-card .tier{font-size:11px;color:var(--muted);text-transform:uppercase;
-    letter-spacing:.08em;font-weight:600;margin-top:2px}
-  .era-card .body{padding:16px 18px}
-  .era-card .desc{color:var(--text2);font-size:13px;margin-bottom:14px;line-height:1.5}
-  .era-card .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-  .metric{background:var(--card2);border-radius:10px;padding:10px 8px;text-align:center;
-    border:1px solid var(--border)}
-  .metric .l{color:var(--muted);font-size:10px;text-transform:uppercase;
-    letter-spacing:.05em;font-weight:600;margin-bottom:4px}
-  .metric .v{font-size:14px;font-weight:700}
-  .metric .v.profit{color:var(--ok)}
-  .metric .v.total{color:var(--accent)}
-  .era-card .actions{padding:0 18px 18px;display:flex;gap:8px}
-  .era-card .actions .btn{flex:1}
-  .badge-tier{position:absolute;top:14px;right:14px;padding:4px 10px;
-    border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.05em;
-    text-transform:uppercase;z-index:2}
-  .badge-tier.starter{background:rgba(99,169,255,.15);color:#63a9ff;border:1px solid rgba(99,169,255,.3)}
-  .badge-tier.middle{background:rgba(79,140,255,.15);color:#4f8cff;border:1px solid rgba(79,140,255,.3)}
-  .badge-tier.premium{background:rgba(255,209,102,.15);color:#ffd166;border:1px solid rgba(255,209,102,.3)}
+def now_tashkent() -> datetime:
+    """Текущее время в Ташкенте (timezone-aware)."""
+    return datetime.now(TASHKENT_TZ)
 
-  .badge{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;
-    font-size:11px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap}
-  .badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
-  .badge.awaiting_payment{background:rgba(245,181,71,.15);color:var(--warn)}
-  .badge.active{background:rgba(57,217,138,.15);color:var(--ok)}
-  .badge.completed{background:rgba(99,169,255,.15);color:var(--info)}
-  .badge.awaiting_payout{background:rgba(245,181,71,.15);color:var(--warn)}
-  .badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
-  .badge.cancelled{background:rgba(255,92,92,.15);color:var(--err)}
+def now_iso() -> str:
+    """Текущее время в Ташкенте в ISO формате."""
+    return now_tashkent().isoformat()
 
-  .searchbar{display:flex;gap:8px;margin-bottom:12px;align-items:center}
-  .search-input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid var(--border);
-    background:var(--card);color:var(--text);font-size:14px;outline:none;
-    transition:border-color .15s;font-family:inherit}
-  .search-input:focus{border-color:var(--accent)}
-  .filters{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;
-    -webkit-overflow-scrolling:touch;scrollbar-width:none}
-  .filters::-webkit-scrollbar{display:none}
-  .chip{padding:8px 14px;border-radius:20px;background:var(--card2);border:1px solid var(--border);
-    color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;
-    transition:all .15s;font-family:inherit;flex-shrink:0}
-  .chip:active{transform:scale(.95)}
-  .chip.active{background:var(--accent);color:#fff;border-color:var(--accent);
-    box-shadow:0 3px 10px var(--accent-glow)}
+def parse_dt(iso_str: str) -> Optional[datetime]:
+    """Парсит ISO-строку и приводит к ташкентскому времени."""
+    if not iso_str:
+        return None
+    try:
+        dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=TASHKENT_TZ)
+        return dt.astimezone(TASHKENT_TZ)
+    except Exception:
+        return None
 
-  .nav{position:fixed;bottom:0;left:0;right:0;background:rgba(19,24,32,.92);
-    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    border-top:1px solid var(--border);display:flex;justify-content:space-around;
-    padding:8px 8px calc(8px + env(safe-area-inset-bottom));z-index:50;
-    max-width:560px;margin:0 auto}
-  .nav button{background:none;border:0;color:var(--muted);font-size:11px;
-    padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;
-    cursor:pointer;flex:1;transition:color .15s;font-family:inherit;font-weight:600}
-  .nav button.active{color:var(--accent)}
-  .nav button .ico{font-size:20px;line-height:1}
+def next_day_start(dt: datetime) -> datetime:
+    """Возвращает 00:00:00 следующего дня (по Ташкенту) после переданной даты."""
+    d = dt.astimezone(TASHKENT_TZ).date()
+    tomorrow = d + timedelta(days=1)
+    return datetime(tomorrow.year, tomorrow.month, tomorrow.day, 0, 0, 0, tzinfo=TASHKENT_TZ)
 
-  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);
-    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:100;
-    display:flex;align-items:flex-end;justify-content:center;
-    animation:fadeIn .2s ease}
-  .modal{background:var(--card);border-radius:22px 22px 0 0;width:100%;max-width:560px;
-    max-height:88vh;overflow-y:auto;animation:slideUp .28s cubic-bezier(.2,.8,.3,1);
-    border:1px solid var(--border2);border-bottom:0}
-  .modal-head{position:sticky;top:0;background:linear-gradient(135deg,var(--card2),var(--card));
-    padding:20px;border-bottom:1px solid var(--border);z-index:1;
-    display:flex;justify-content:space-between;align-items:center}
-  .modal-body{padding:20px}
-  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-  .close-x{width:34px;height:34px;border-radius:50%;background:var(--card3);border:1px solid var(--border2);
-    color:var(--text2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+def calc_expires(start_date: datetime, duration_days: int) -> datetime:
+    """
+    Дата завершения = start_date + duration_days дней.
+    Пример: start=08.10 00:00, duration=20 → expires=28.10 00:00
+    """
+    return start_date + timedelta(days=duration_days)
 
-  .row{display:flex;justify-content:space-between;gap:12px;align-items:center}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-  .hidden{display:none !important}
-  .center{text-align:center}
-  .toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);
-    background:var(--card2);border:1px solid var(--border2);padding:12px 18px;
-    border-radius:12px;font-size:13px;font-weight:500;z-index:999;
-    max-width:90%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.4);
-    animation:toastIn .25s ease}
-  @keyframes toastIn{from{opacity:0;transform:translate(-50%,-10px)}to{opacity:1;transform:translate(-50%,0)}}
-  .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.25);
-    border-top-color:#fff;border-radius:50%;animation:sp .65s linear infinite;vertical-align:middle}
-  @keyframes sp{to{transform:rotate(360deg)}}
-  .skeleton{background:linear-gradient(90deg,var(--card2) 25%,var(--card3) 50%,var(--card2) 75%);
-    background-size:200% 100%;animation:sk 1.4s ease-in-out infinite;border-radius:10px}
-  @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+# ============================================================
+# БАЗА ДАННЫХ
+# ============================================================
+def db():
+    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON")
+    return conn
 
-  img.marketing{width:100%;border-radius:12px;display:block}
-  a{color:var(--accent);text-decoration:none}
-  .list-item{padding:14px 0;border-bottom:1px solid var(--border);display:flex;
-    justify-content:space-between;align-items:center;gap:12px}
-  .list-item:last-child{border-bottom:0}
+def init_db():
+    conn = db()
+    c = conn.cursor()
+    c.executescript("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        telegram_id INTEGER UNIQUE,
+        telegram_username TEXT,
+        first_name TEXT,
+        last_name TEXT,
+        photo_url TEXT,
+        referral_code TEXT UNIQUE,
+        referrer_id INTEGER,
+        status TEXT DEFAULT 'active',
+        agreed_terms INTEGER DEFAULT 0,
+        agreed_at TEXT,
+        registered_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (referrer_id) REFERENCES users(id)
+    );
 
-  .dev-info{background:#1a1e26;border:1px dashed #3a4453;border-radius:10px;
-    padding:12px;font-size:11px;color:#8a94a3;margin-top:12px;
-    word-break:break-all;line-height:1.6;font-family:ui-monospace,monospace}
-  .dev-info.warn{background:#2a1515;border-color:#5c3030;color:#ffb3b3}
+    CREATE TABLE IF NOT EXISTS eras (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        price REAL NOT NULL,
+        duration_days INTEGER NOT NULL,
+        profit_amount REAL NOT NULL,
+        total_amount REAL NOT NULL,
+        description TEXT,
+        is_active INTEGER DEFAULT 1,
+        sort_order INTEGER DEFAULT 0
+    );
 
-  .empty{padding:44px 20px;text-align:center}
-  .empty .icon{font-size:52px;margin-bottom:12px;opacity:.5}
+    CREATE TABLE IF NOT EXISTS purchases (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        era_id INTEGER NOT NULL,
+        era_title TEXT,
+        purchase_price REAL NOT NULL,
+        duration_days INTEGER NOT NULL,
+        profit_amount REAL NOT NULL,
+        total_amount REAL NOT NULL,
+        status TEXT DEFAULT 'awaiting_payment',
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        activated_at TEXT,
+        start_date TEXT,
+        expires_at TEXT,
+        completed_at TEXT,
+        completion_notified INTEGER DEFAULT 0,
+        payout_requested_at TEXT,
+        paid_at TEXT,
+        cancelled_at TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id),
+        FOREIGN KEY (era_id) REFERENCES eras(id)
+    );
 
-  .progress{height:6px;background:var(--card3);border-radius:3px;overflow:hidden;margin-top:8px}
-  .progress .fill{height:100%;background:linear-gradient(90deg,var(--accent),#7b5cff);
-    border-radius:3px;transition:width .4s ease}
+    CREATE TABLE IF NOT EXISTS payouts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        purchase_id INTEGER UNIQUE NOT NULL,
+        user_id INTEGER NOT NULL,
+        amount REAL NOT NULL,
+        status TEXT DEFAULT 'pending',
+        requested_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        paid_at TEXT,
+        FOREIGN KEY (purchase_id) REFERENCES purchases(id),
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    );
 
-  .ref-box{background:var(--card2);border:1px solid var(--border2);border-radius:12px;
-    padding:12px 14px;font-size:13px;font-family:ui-monospace,monospace;
-    word-break:break-all;color:var(--text2);line-height:1.5}
+    CREATE TABLE IF NOT EXISTS content (
+        key TEXT PRIMARY KEY,
+        value TEXT
+    );
 
-  .order-num{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;
-    background:rgba(79,140,255,.12);border:1px solid rgba(79,140,255,.25);
-    border-radius:8px;font-size:11px;font-weight:700;color:var(--accent);
-    letter-spacing:.03em;margin-bottom:8px}
+    CREATE TABLE IF NOT EXISTS notifications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        type TEXT,
+        text TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        read INTEGER DEFAULT 0
+    );
 
-  .profile-menu{background:var(--card);border:1px solid var(--border);border-radius:14px;
-    padding:0 16px;margin-bottom:12px}
-  .profile-menu .item{display:flex;justify-content:space-between;align-items:center;
-    padding:16px 0;border-bottom:1px solid var(--border);cursor:pointer;
-    transition:padding-left .15s}
-  .profile-menu .item:last-child{border-bottom:0}
-  .profile-menu .item:active{padding-left:6px}
-  .profile-menu .item .left{display:flex;align-items:center;gap:12px;font-weight:500}
-  .profile-menu .item .left .emo{width:36px;height:36px;border-radius:10px;
-    display:flex;align-items:center;justify-content:center;font-size:17px;
-    background:var(--card2);border:1px solid var(--border)}
-  .profile-menu .item .arrow{color:var(--muted);font-size:16px}
+    CREATE TABLE IF NOT EXISTS admin_actions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        admin TEXT,
+        action TEXT,
+        details TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
 
-  .contact-list{display:flex;flex-direction:column;gap:10px}
-  .contact-btn{display:flex;align-items:center;gap:14px;padding:16px;
-    background:var(--card2);border:1px solid var(--border);border-radius:12px;
-    cursor:pointer;transition:all .15s;text-decoration:none;color:var(--text)}
-  .contact-btn:active{transform:scale(.98);border-color:var(--border2)}
-  .contact-btn .emo{width:46px;height:46px;border-radius:12px;
-    display:flex;align-items:center;justify-content:center;font-size:22px;
-    background:linear-gradient(135deg,var(--accent),#7b5cff);color:#fff;flex-shrink:0}
-  .contact-btn.tg .emo{background:linear-gradient(135deg,#2aabee,#229ed9)}
-  .contact-btn .info{flex:1;min-width:0}
-  .contact-btn .info .t{font-weight:600;font-size:14px;margin-bottom:2px}
-  .contact-btn .info .s{font-size:12px;color:var(--muted);white-space:nowrap;
-    overflow:hidden;text-overflow:ellipsis}
-</style>
-</head>
-<body>
+    CREATE TABLE IF NOT EXISTS counters (
+        name TEXT PRIMARY KEY,
+        value INTEGER DEFAULT 0
+    );
+    """)
 
-<div class="app" id="app">
-  <div id="loading" class="center" style="padding:80px 0">
-    <div class="spinner" style="border-color:var(--accent) #0000 var(--accent) #0000;width:36px;height:36px;border-width:3px"></div>
-    <div class="muted" style="margin-top:16px">Загрузка…</div>
-  </div>
-</div>
+    # Миграции для старых БД
+    cols = [r["name"] for r in c.execute("PRAGMA table_info(purchases)").fetchall()]
+    if "start_date" not in cols:
+        c.execute("ALTER TABLE purchases ADD COLUMN start_date TEXT")
+    if "completion_notified" not in cols:
+        c.execute("ALTER TABLE purchases ADD COLUMN completion_notified INTEGER DEFAULT 0")
 
-<nav class="nav hidden" id="nav">
-  <button data-tab="home"><span class="ico">🏠</span>Главная</button>
-  <button data-tab="buy"><span class="ico">🛒</span>Купить</button>
-  <button data-tab="purchases"><span class="ico">📦</span>Покупки</button>
-  <button data-tab="profile"><span class="ico">👤</span>Профиль</button>
-</nav>
+    c.execute("INSERT OR IGNORE INTO counters (name, value) VALUES ('purchase', 0)")
+    c.execute("INSERT OR IGNORE INTO counters (name, value) VALUES ('payout', 0)")
 
-<div id="modal-root"></div>
-<div id="toast" class="toast hidden"></div>
+    c.execute("SELECT COUNT(*) FROM eras")
+    if c.fetchone()[0] == 0:
+        defaults = [
+            (1, "Эра №1", 1500, 20, 1000, 2500, "Базовый вход в проект. Оптимальный старт.", 1, 1),
+            (2, "Эра №2", 3000, 25, 2200, 5200, "Ускоренный рост с повышенным начислением.", 1, 2),
+            (3, "Эра №3", 5000, 30, 4000, 9000, "Сбалансированный вариант для уверенного дохода.", 1, 3),
+            (4, "Эра №4", 10000, 35, 8500, 18500, "Для участников, готовых к серьёзному результату.", 1, 4),
+            (5, "Эра №5", 25000, 40, 22000, 47000, "Премиальная эра с максимальной отдачей.", 1, 5),
+            (6, "Эра №6", 50000, 45, 45000, 95000, "VIP-уровень. Индивидуальный подход.", 1, 6),
+            (7, "Эра №7", 100000, 60, 100000, 200000, "Максимальная эра проекта. Для лидеров.", 1, 7),
+        ]
+        c.executemany("""INSERT INTO eras
+            (id,title,price,duration_days,profit_amount,total_amount,description,is_active,sort_order)
+            VALUES (?,?,?,?,?,?,?,?,?)""", defaults)
 
-<script>
-// ============================================================
-// ⚙️ НАСТРОЙКИ — ЗАМЕНИТЕ ПОД СЕБЯ
-// ============================================================
-const API = 'http://localhost:8000';   // ⬅️ ЗАМЕНИТЕ на ngrok URL
-const BOT_USERNAME = 'loadingtester1bot';
-const ADMIN_USERNAME = 'loadingtester1bot';  // ⬅️ username админа для связи (если другой)
-const SUPPORT_USERNAME = '';                 // ⬅️ если есть отдельный саппорт
-// ============================================================
-
-let TOKEN = localStorage.getItem('token') || '';
-let ME = null;
-let CACHE_ERAS = [];
-
-// ---------- SAFE HELPERS ----------
-function $(id){
-  return document.getElementById(id);
-}
-function hideNav(){ const n = $('nav'); if (n) n.classList.add('hidden'); }
-function showNav(){ const n = $('nav'); if (n) n.classList.remove('hidden'); }
-function hideLoading(){ const l = $('loading'); if (l) l.classList.add('hidden'); }
-function setNavTab(tab){
-  document.querySelectorAll('#nav button').forEach(b=>{
-    if (b && b.dataset) b.classList.toggle('active', b.dataset.tab === tab);
-  });
-}
-
-// ---------- TOAST ----------
-function toast(msg, ms=2500){
-  const t = $('toast');
-  if (!t) return;
-  t.textContent = msg; t.classList.remove('hidden');
-  clearTimeout(t._t);
-  t._t = setTimeout(()=>t.classList.add('hidden'), ms);
-}
-
-// ---------- API ----------
-async function api(path, opts={}){
-  const headers = opts.headers || {};
-  if (TOKEN) headers['Authorization'] = 'Bearer ' + TOKEN;
-  headers['ngrok-skip-browser-warning'] = 'true';
-  if (opts.body && !(opts.body instanceof FormData)) {
-    headers['Content-Type'] = 'application/json';
-    opts.body = JSON.stringify(opts.body);
-  }
-  let res;
-  try {
-    res = await fetch(API + path, {...opts, headers});
-  } catch(e) {
-    throw new Error('Сервер недоступен. Проверьте API: ' + API);
-  }
-  if (res.status === 401){ logout(); throw new Error('Unauthorized'); }
-  const data = await res.json().catch(()=>({}));
-  if (!res.ok) throw new Error(data.detail || 'Ошибка');
-  return data;
-}
-
-function logout(){
-  localStorage.removeItem('token');
-  TOKEN = ''; ME = null;
-  location.reload();
-}
-
-// ---------- AUTH ----------
-async function tryTelegramAuth(){
-  const tg = window.Telegram?.WebApp;
-  if (!tg) return { ok:false, reason:'no_tg' };
-  try { tg.ready(); tg.expand(); } catch(e){}
-
-  if (!tg.initDataUnsafe?.user) {
-    return { ok:false, reason:'no_user',
-      info:{ platform:tg.platform, version:tg.version,
-        len:(tg.initData||'').length } };
-  }
-  const u = tg.initDataUnsafe.user;
-  const urlRef = new URLSearchParams(location.search).get('ref') || '';
-  try {
-    const res = await api('/api/auth/telegram', {
-      method:'POST',
-      body: {
-        id: u.id,
-        first_name: u.first_name || '',
-        last_name: u.last_name || '',
-        username: u.username || '',
-        photo_url: u.photo_url || '',
-        auth_date: tg.initDataUnsafe.auth_date || 0,
-        hash: tg.initDataUnsafe.hash || '',
-        ref: urlRef
-      }
-    });
-    TOKEN = res.token;
-    localStorage.setItem('token', TOKEN);
-    return { ok:true };
-  } catch(e){
-    return { ok:false, reason:'api_error', error:e.message };
-  }
-}
-
-// ---------- ROUTER ----------
-let currentTab = 'home';
-function setTab(tab){
-  currentTab = tab;
-  setNavTab(tab);
-  render();
-}
-
-// Attach nav listener with null protection
-(function(){
-  const nav = document.getElementById('nav');
-  if (nav){
-    nav.addEventListener('click', e=>{
-      const b = e.target.closest('button'); if (!b) return;
-      setTab(b.dataset.tab);
-    });
-  }
-})();
-
-// ---------- AUTH SCREEN ----------
-function screenAuth(reason='', info={}){
-  hideNav();
-  const tg = window.Telegram?.WebApp;
-  const hint = reason === 'no_tg'
-    ? 'Откройте страницу через кнопку в боте @' + BOT_USERNAME
-    : reason === 'no_user'
-    ? 'Telegram не передал данные. Откройте через кнопку WebApp в боте.'
-    : reason === 'api_error'
-    ? 'Backend недоступен по адресу: ' + API
-    : '';
-
-  const app = $('app'); if (!app) return;
-  app.innerHTML = `
-    <div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div></div>
-    <div class="hero center" style="padding:36px 20px">
-      <div style="font-size:56px;margin-bottom:8px">✨</div>
-      <h1 style="font-size:26px;margin-bottom:6px">Проект «Эры»</h1>
-      <div class="muted">Войдите через Telegram, чтобы начать</div>
-    </div>
-    <div class="card">
-      <div id="tg-login-widget" style="display:flex;justify-content:center;padding:8px 0"></div>
-      ${hint ? `<div class="dev-info warn" style="margin-top:12px">⚠️ ${esc(hint)}</div>` : ''}
-    </div>
-    <div class="card">
-      <h3 style="margin-bottom:10px">Как войти</h3>
-      <ol class="muted" style="padding-left:20px;line-height:1.8">
-        <li>Откройте <b>@${esc(BOT_USERNAME)}</b> в Telegram</li>
-        <li>Нажмите <b>/start</b></li>
-        <li>Нажмите <b>«🚀 Открыть приложение»</b></li>
-      </ol>
-    </div>
-  `;
-
-  if (BOT_USERNAME && BOT_USERNAME !== 'YOUR_BOT_USERNAME') {
-    const container = $('tg-login-widget');
-    if (container){
-      container.innerHTML = '';
-      const script = document.createElement('script');
-      script.src = 'https://telegram.org/js/telegram-widget.js?22';
-      script.setAttribute('data-telegram-login', BOT_USERNAME);
-      script.setAttribute('data-size', 'large');
-      script.setAttribute('data-onauth', 'onTelegramAuth(user)');
-      script.setAttribute('data-request-access', 'write');
-      container.appendChild(script);
+    defaults_content = {
+        "marketing_image": "",
+        "rules_text": "Правила проекта:\n\n1. Участник обязан соблюдать условия.\n2. Запрещено создавать множественные аккаунты.\n3. Администрация вправе отказать в участии без объяснения причин.\n4. Все спорные ситуации решаются в чате поддержки.",
+        "terms_text": "Условия участия:\n\n1. Участник подтверждает, что ознакомлен с правилами.\n2. Участник понимает, что начисление ≠ фактическая выплата.\n3. Выплата производится администратором вручную после завершения эры.\n4. Проект не является финансовым инструментом и не гарантирует доход.\n5. Участие добровольное.",
+        "notif_registration": "🎉 Добро пожаловать в проект «Эры»!",
+        "notif_purchase_created": "📩 Ваша заявка на покупку создана. Ожидайте связи администратора.",
+        "notif_purchase_activated": "✅ Ваша заявка принята. Продукт активирован.",
+        "notif_payout_requested": "💸 Заявка на вывод создана. Ожидайте выплату.",
+        "notif_payout_paid": "💰 Ваша заявка на вывод выполнена. Выплата отправлена.",
+        "notif_purchase_cancelled": "❌ Ваша заявка отменена администратором.",
     }
-  }
-}
+    for k, v in defaults_content.items():
+        c.execute("INSERT OR IGNORE INTO content (key, value) VALUES (?, ?)", (k, v))
 
-window.onTelegramAuth = async function(user){
-  const urlRef = new URLSearchParams(location.search).get('ref') || '';
-  try {
-    const res = await api('/api/auth/telegram', {method:'POST', body:{...user, ref:urlRef}});
-    TOKEN = res.token; localStorage.setItem('token', TOKEN);
-    location.reload();
-  } catch(e){ toast('Ошибка: ' + e.message); }
-};
+    conn.commit()
+    conn.close()
 
-// ---------- HELPERS ----------
-function tierOf(era){
-  const price = Number(era.price||0);
-  if (price >= 50000) return { key:'premium', label:'PREMIUM', icon:'💎', glow:'rgba(255,209,102,.25)' };
-  if (price >= 10000) return { key:'middle', label:'БИЗНЕС', icon:'🚀', glow:'rgba(79,140,255,.25)' };
-  return { key:'starter', label:'СТАРТ', icon:'⚡', glow:'rgba(99,169,255,.2)' };
-}
-function progressOf(p){
-  if (!p.activated_at || !p.expires_at) return 0;
-  const a = new Date(p.activated_at).getTime();
-  const e = new Date(p.expires_at).getTime();
-  const now = Date.now();
-  if (now >= e) return 100;
-  if (now <= a) return 0;
-  return Math.round(((now - a) / (e - a)) * 100);
-}
+def next_counter(name: str) -> int:
+    conn = db()
+    conn.execute("BEGIN IMMEDIATE")
+    row = conn.execute("SELECT value FROM counters WHERE name=?", (name,)).fetchone()
+    new_val = (row["value"] if row else 0) + 1
+    conn.execute("INSERT INTO counters (name,value) VALUES (?,?) ON CONFLICT(name) DO UPDATE SET value=excluded.value",
+                 (name, new_val))
+    conn.commit()
+    conn.close()
+    return new_val
 
-// ============================================================
-// ГЛАВНАЯ
-// ============================================================
-async function screenHome(){
-  const [me, purchases] = await Promise.all([
-    api('/api/me'), api('/api/purchases/my')
-  ]);
-  ME = me;
-  const active = purchases.filter(p=>p.status==='active');
-  const expected = purchases.filter(p=>['active','completed'].includes(p.status))
-    .reduce((s,p)=>s+Number(p.profit_amount||0),0);
-  const available = purchases.filter(p=>p.status==='completed')
-    .reduce((s,p)=>s+Number(p.total_amount||0),0);
-  const invested = purchases.filter(p=>!['awaiting_payment','cancelled'].includes(p.status))
-    .reduce((s,p)=>s+Number(p.purchase_price||0),0);
-  const refLink = `${location.origin}${location.pathname}?ref=${me.referral_code}`;
-  const displayName = me.first_name || me.telegram_username || 'друг';
-  const initial = (displayName[0] || '👤').toUpperCase();
+def get_content(key: str, default: str = "") -> str:
+    conn = db()
+    row = conn.execute("SELECT value FROM content WHERE key=?", (key,)).fetchone()
+    conn.close()
+    return row["value"] if row else default
 
-  $('app').innerHTML = `
-    <div class="topbar">
-      <div class="brand"><div class="logo">✨</div>Эры</div>
-      <div class="actions">
-        <button class="icon-btn" onclick="openNotifications()">🔔</button>
-      </div>
-    </div>
-    <div class="hero">
-      <div class="row">
-        <div class="user">
-          <div class="avatar">${me.photo_url ? `<img src="${esc(me.photo_url)}" alt="">` : initial}</div>
-          <div class="info">
-            <div class="muted-sm">Привет 👋</div>
-            <h1>${esc(displayName)}</h1>
-            ${me.telegram_username ? `<div class="sub">@${esc(me.telegram_username)}</div>` : ''}
-          </div>
-        </div>
-        <span class="badge active">${esc(me.status)}</span>
-      </div>
-    </div>
+def set_content(key: str, value: str):
+    conn = db()
+    conn.execute("INSERT INTO content (key,value) VALUES (?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+                 (key, value))
+    conn.commit()
+    conn.close()
 
-    <div class="stats">
-      <div class="stat">
-        <div class="label">Инвестировано</div>
-        <div class="value sm accent">${fmt(invested)}</div>
-      </div>
-      <div class="stat">
-        <div class="label">Активных эр</div>
-        <div class="value">${active.length}</div>
-      </div>
-      <div class="stat">
-        <div class="label">Начислено</div>
-        <div class="value sm ok">+${fmt(expected)}</div>
-      </div>
-      <div class="stat">
-        <div class="label">Доступно</div>
-        <div class="value sm ${available>0?'ok':''}">${fmt(available)}</div>
-      </div>
-    </div>
+def log_admin(admin: str, action: str, details: str = ""):
+    conn = db()
+    conn.execute("INSERT INTO admin_actions (admin,action,details,created_at) VALUES (?,?,?,?)",
+                 (admin, action, details, now_iso()))
+    conn.commit()
+    conn.close()
 
-    <div class="card">
-      <div class="row" style="margin-bottom:10px">
-        <h3>🔗 Реферальная ссылка</h3>
-        <span class="muted-sm">${me.invited_count} друзей</span>
-      </div>
-      <div class="ref-box">${esc(refLink)}</div>
-      <button class="btn secondary sm" style="margin-top:10px;width:100%" onclick="copyRef('${refLink}')">
-        📋 Скопировать
-      </button>
-    </div>
+def add_notification(user_id: int, type_: str, text: str):
+    conn = db()
+    conn.execute("INSERT INTO notifications (user_id,type,text,created_at) VALUES (?,?,?,?)",
+                 (user_id, type_, text, now_iso()))
+    conn.commit()
+    conn.close()
 
-    <div class="section-title">
-      <h2>Активные эры</h2>
-      ${active.length ? `<button class="btn ghost xs" onclick="setTab('purchases')">Все →</button>` : ''}
-    </div>
-
-    ${active.length ? active.map(p=>eraCardActive(p)).join('') : `
-      <div class="card empty">
-        <div class="icon">🌱</div>
-        <h3>Пока нет активных эр</h3>
-        <p class="muted" style="margin-bottom:16px">Выберите эру и начните зарабатывать</p>
-        <button class="btn" style="max-width:240px;margin:0 auto" onclick="setTab('buy')">
-          🛒 Открыть магазин
-        </button>
-      </div>
-    `}
-  `;
-}
-
-function eraCardActive(p){
-  const progress = progressOf(p);
-  return `
-    <div class="era-card">
-      <div class="head" style="--era-glow:rgba(57,217,138,.2)">
-        <div class="row">
-          <div class="title-wrap">
-            <div class="icon" style="background:rgba(57,217,138,.15);border-color:rgba(57,217,138,.3)">🌿</div>
-            <div style="min-width:0">
-              <div class="name">${esc(p.era_title)}</div>
-              <div class="tier">Заявка #${p.id} · осталось ${p.days_left} дн.</div>
-            </div>
-          </div>
-          <span class="badge ${p.status}">${statusLabel(p.status)}</span>
-        </div>
-      </div>
-      <div class="body">
-        <div class="metrics">
-          <div class="metric"><div class="l">Вложено</div><div class="v">${fmt(p.purchase_price)}</div></div>
-          <div class="metric"><div class="l">Начисл.</div><div class="v profit">+${fmt(p.profit_amount)}</div></div>
-          <div class="metric"><div class="l">Итого</div><div class="v total">${fmt(p.total_amount)}</div></div>
-        </div>
-        <div class="progress" style="margin-top:12px"><div class="fill" style="width:${progress}%"></div></div>
-        <div class="muted-sm" style="margin-top:6px;text-align:center">Прогресс ${progress}%</div>
-      </div>
-      ${p.status==='completed' ? `
-        <div class="actions">
-          <button class="btn success" onclick="requestPayout(${p.id})">💰 Подать заявку на вывод</button>
-        </div>
-      ` : ''}
-    </div>
-  `;
-}
-
-// ============================================================
-// КУПИТЬ
-// ============================================================
-let shopFilter = 'all';
-let shopSort = 'default';
-let shopSearch = '';
-
-async function screenBuy(){
-  const me = await api('/api/me'); ME = me;
-  if (!me.agreed_terms){
-    $('app').innerHTML = `
-      <div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div></div>
-      <h1>Условия участия</h1>
-      <div class="card" style="margin-top:12px">
-        <div style="white-space:pre-wrap;font-size:14px;line-height:1.7" id="terms">Загрузка…</div>
-      </div>
-      <button class="btn" onclick="agreeTerms()">✅ Я согласен и подтверждаю</button>
-    `;
-    const c = await api('/api/content/terms_text');
-    const t = $('terms'); if (t) t.textContent = c.value || '';
-    return;
-  }
-  const eras = await api('/api/eras');
-  CACHE_ERAS = eras;
-  let filtered = eras.slice();
-  if (shopSearch){
-    const q = shopSearch.toLowerCase();
-    filtered = filtered.filter(e =>
-      e.title.toLowerCase().includes(q) ||
-      (e.description||'').toLowerCase().includes(q));
-  }
-  if (shopFilter === 'starter') filtered = filtered.filter(e=>e.price<10000);
-  if (shopFilter === 'middle')  filtered = filtered.filter(e=>e.price>=10000 && e.price<50000);
-  if (shopFilter === 'premium') filtered = filtered.filter(e=>e.price>=50000);
-  if (shopSort === 'price_asc')  filtered.sort((a,b)=>a.price-b.price);
-  if (shopSort === 'price_desc') filtered.sort((a,b)=>b.price-a.price);
-  if (shopSort === 'profit')     filtered.sort((a,b)=>b.profit_amount-a.profit_amount);
-  if (shopSort === 'duration')   filtered.sort((a,b)=>a.duration_days-b.duration_days);
-
-  $('app').innerHTML = `
-    <div class="topbar">
-      <div class="brand"><div class="logo">🛒</div>Магазин</div>
-      <div class="actions"><span class="muted-sm">${eras.length} эр</span></div>
-    </div>
-    <div class="searchbar">
-      <input class="search-input" id="shopSearch" placeholder="🔍 Поиск эры…"
-        value="${esc(shopSearch)}" oninput="shopSearch=this.value;screenBuy()">
-    </div>
-    <div class="filters">
-      <button class="chip ${shopFilter==='all'?'active':''}" onclick="shopFilter='all';screenBuy()">Все</button>
-      <button class="chip ${shopFilter==='starter'?'active':''}" onclick="shopFilter='starter';screenBuy()">⚡ Старт</button>
-      <button class="chip ${shopFilter==='middle'?'active':''}" onclick="shopFilter='middle';screenBuy()">🚀 Бизнес</button>
-      <button class="chip ${shopFilter==='premium'?'active':''}" onclick="shopFilter='premium';screenBuy()">💎 Premium</button>
-    </div>
-    <div class="filters">
-      <span class="muted-sm" style="align-self:center;padding-right:6px">Сортировка:</span>
-      <button class="chip ${shopSort==='default'?'active':''}" onclick="shopSort='default';screenBuy()">По умолч.</button>
-      <button class="chip ${shopSort==='price_asc'?'active':''}" onclick="shopSort='price_asc';screenBuy()">Дешевле</button>
-      <button class="chip ${shopSort==='price_desc'?'active':''}" onclick="shopSort='price_desc';screenBuy()">Дороже</button>
-      <button class="chip ${shopSort==='profit'?'active':''}" onclick="shopSort='profit';screenBuy()">Прибыль</button>
-      <button class="chip ${shopSort==='duration'?'active':''}" onclick="shopSort='duration';screenBuy()">Срок</button>
-    </div>
-    ${filtered.length ? filtered.map(e=>eraCardShop(e)).join('') : `
-      <div class="card empty">
-        <div class="icon">🔍</div>
-        <h3>Ничего не найдено</h3>
-        <p class="muted">Попробуйте изменить фильтры</p>
-      </div>
-    `}
-  `;
-}
-
-function eraCardShop(e){
-  const tier = tierOf(e);
-  const roi = e.price > 0 ? Math.round((e.profit_amount / e.price) * 100) : 0;
-  return `
-    <div class="era-card" style="--era-glow:${tier.glow}">
-      <span class="badge-tier ${tier.key}">${tier.icon} ${tier.label}</span>
-      <div class="head" style="--era-glow:${tier.glow}">
-        <div class="row">
-          <div class="title-wrap">
-            <div class="icon">${tier.icon}</div>
-            <div style="min-width:0">
-              <div class="name">${esc(e.title)}</div>
-              <div class="tier">Срок ${e.duration_days} дней · +${roi}% ROI</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="body">
-        <div class="desc">${esc(e.description||'')}</div>
-        <div class="metrics">
-          <div class="metric"><div class="l">Стоимость</div><div class="v">${fmt(e.price)}</div></div>
-          <div class="metric"><div class="l">Начисление</div><div class="v profit">+${fmt(e.profit_amount)}</div></div>
-          <div class="metric"><div class="l">Итого</div><div class="v total">${fmt(e.total_amount)}</div></div>
-        </div>
-      </div>
-      <div class="actions">
-        <button class="btn secondary" onclick="openEraDetail(${e.id})">Подробнее</button>
-        <button class="btn" onclick="buyEra(${e.id})">Купить</button>
-      </div>
-    </div>
-  `;
-}
-
-function openEraDetail(id){
-  const e = CACHE_ERAS.find(x=>x.id===id);
-  if (!e) return;
-  const tier = tierOf(e);
-  const roi = e.price > 0 ? Math.round((e.profit_amount / e.price) * 100) : 0;
-  showModal(`
-    <div class="modal-head">
-      <div>
-        <div class="muted-sm">${tier.icon} ${tier.label}</div>
-        <h2>${esc(e.title)}</h2>
-      </div>
-      <button class="close-x" onclick="closeModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <p class="muted" style="margin-bottom:16px;line-height:1.6">${esc(e.description||'')}</p>
-      <div class="grid2" style="margin-bottom:14px">
-        <div class="stat"><div class="label">Стоимость</div><div class="value sm">${fmt(e.price)}</div></div>
-        <div class="stat"><div class="label">Начисление</div><div class="value sm ok">+${fmt(e.profit_amount)}</div></div>
-        <div class="stat"><div class="label">Итоговая сумма</div><div class="value sm accent">${fmt(e.total_amount)}</div></div>
-        <div class="stat"><div class="label">Доходность</div><div class="value sm ok">+${roi}%</div></div>
-      </div>
-      <div class="card2" style="margin-bottom:16px">
-        <div class="row" style="margin-bottom:8px"><span class="muted">Срок</span><b>${e.duration_days} дней</b></div>
-        <div class="row"><span class="muted">Дата завершения</span>
-          <b>через ${e.duration_days} дн. после активации</b></div>
-      </div>
-      <button class="btn" onclick="closeModal();buyEra(${e.id})">
-        🛒 Подать заявку на покупку
-      </button>
-      <div class="muted-sm" style="text-align:center;margin-top:10px">
-        После подачи заявки администратор свяжется с вами для оплаты
-      </div>
-    </div>
-  `);
-}
-
-// ============================================================
-// ПОКУПКИ
-// ============================================================
-async function screenPurchases(){
-  const list = await api('/api/purchases/my');
-  $('app').innerHTML = `
-    <div class="topbar">
-      <div class="brand"><div class="logo">📦</div>Мои покупки</div>
-      <div class="actions"><span class="muted-sm">${list.length}</span></div>
-    </div>
-    ${list.length ? list.map(p=>eraCardFull(p)).join('') : `
-      <div class="card empty">
-        <div class="icon">📦</div>
-        <h3>Покупок пока нет</h3>
-        <p class="muted" style="margin-bottom:16px">Купите первую эру в магазине</p>
-        <button class="btn" style="max-width:240px;margin:0 auto" onclick="setTab('buy')">
-          🛒 Открыть магазин
-        </button>
-      </div>
-    `}
-  `;
-}
-
-function eraCardFull(p){
-  const progress = progressOf(p);
-  return `
-    <div class="era-card">
-      <div class="head">
-        <div class="order-num">📩 Заявка #${p.id}</div>
-        <div class="row">
-          <div class="title-wrap">
-            <div class="icon">🌿</div>
-            <div style="min-width:0">
-              <div class="name">${esc(p.era_title)}</div>
-              <div class="tier">${p.duration_days} дней · ${fmt(p.purchase_price)}</div>
-            </div>
-          </div>
-          <span class="badge ${p.status}">${statusLabel(p.status)}</span>
-        </div>
-      </div>
-      <div class="body">
-        <div class="metrics">
-          <div class="metric"><div class="l">Вложено</div><div class="v">${fmt(p.purchase_price)}</div></div>
-          <div class="metric"><div class="l">Начисл.</div><div class="v profit">+${fmt(p.profit_amount)}</div></div>
-          <div class="metric"><div class="l">Итого</div><div class="v total">${fmt(p.total_amount)}</div></div>
-        </div>
-        ${p.status==='active' ? `
-          <div class="progress" style="margin-top:12px"><div class="fill" style="width:${progress}%"></div></div>
-          <div class="muted-sm" style="margin-top:6px;text-align:center">Прогресс ${progress}% · осталось ${p.days_left} дн.</div>
-        ` : ''}
-        <div class="card2" style="margin-top:12px;background:var(--card3)">
-          ${p.created_at ? `<div class="row" style="padding:4px 0"><span class="muted-sm">Создана</span><span style="font-size:12px">${fmtDate(p.created_at)}</span></div>`:''}
-          ${p.activated_at ? `<div class="row" style="padding:4px 0"><span class="muted-sm">Активирована</span><span style="font-size:12px">${fmtDate(p.activated_at)}</span></div>`:''}
-          ${p.expires_at ? `<div class="row" style="padding:4px 0"><span class="muted-sm">Завершение</span><span style="font-size:12px">${fmtDate(p.expires_at)}</span></div>`:''}
-          ${p.payout_requested_at ? `<div class="row" style="padding:4px 0"><span class="muted-sm">Заявка на вывод</span><span style="font-size:12px">${fmtDate(p.payout_requested_at)}</span></div>`:''}
-          ${p.paid_at ? `<div class="row" style="padding:4px 0"><span class="muted-sm">Выплачено</span><span style="font-size:12px">${fmtDate(p.paid_at)}</span></div>`:''}
-          ${p.cancelled_at ? `<div class="row" style="padding:4px 0"><span class="muted-sm">Отменена</span><span style="font-size:12px">${fmtDate(p.cancelled_at)}</span></div>`:''}
-        </div>
-      </div>
-      ${p.status==='completed' ? `
-        <div class="actions">
-          <button class="btn success" onclick="requestPayout(${p.id})">💰 Подать заявку на вывод</button>
-        </div>
-      ` : ''}
-    </div>
-  `;
-}
-
-// ============================================================
-// ПРОФИЛЬ
-// ============================================================
-async function screenProfile(){
-  const me = await api('/api/me');
-  const displayName = me.first_name || me.telegram_username || 'Пользователь';
-  const initial = (displayName[0] || '👤').toUpperCase();
-  $('app').innerHTML = `
-    <div class="topbar"><div class="brand"><div class="logo">👤</div>Профиль</div></div>
-
-    <div class="hero center" style="padding:24px 20px">
-      <div class="avatar lg" style="margin:0 auto 12px">
-        ${me.photo_url ? `<img src="${esc(me.photo_url)}" alt="">` : initial}
-      </div>
-      <h2 style="margin-bottom:4px">${esc(displayName)}</h2>
-      ${me.telegram_username ? `<div class="muted">@${esc(me.telegram_username)}</div>` : ''}
-      <div style="margin-top:10px"><span class="badge active">${esc(me.status)}</span></div>
-    </div>
-
-    <div class="section-title"><h2>Мой аккаунт</h2></div>
-
-    <div class="profile-menu">
-      <div class="item" onclick="openMyOrders()">
-        <div class="left">
-          <div class="emo">📋</div>
-          <div>Мои заказы</div>
-        </div>
-        <div class="arrow">→</div>
-      </div>
-      <div class="item" onclick="openContact()">
-        <div class="left">
-          <div class="emo">💬</div>
-          <div>Связь</div>
-        </div>
-        <div class="arrow">→</div>
-      </div>
-      <div class="item" onclick="openNotifications()">
-        <div class="left">
-          <div class="emo">🔔</div>
-          <div>Уведомления</div>
-        </div>
-        <div class="arrow">→</div>
-      </div>
-    </div>
-
-    <div class="section-title"><h2>Данные</h2></div>
-
-    <div class="card" style="padding:0 16px">
-      <div class="list-item"><span class="muted">ID</span><b>${me.id}</b></div>
-      <div class="list-item"><span class="muted">Telegram ID</span><b>${me.telegram_id}</b></div>
-      <div class="list-item"><span class="muted">Username</span><b>@${esc(me.telegram_username||'—')}</b></div>
-      <div class="list-item"><span class="muted">Реферер</span>
-        <b>${me.referrer ? '@'+esc(me.referrer.username||me.referrer.first_name||'—') : '—'}</b></div>
-      <div class="list-item"><span class="muted">Регистрация</span><b>${fmtDate(me.registered_at)}</b></div>
-      <div class="list-item"><span class="muted">Условия</span>
-        <b>${me.agreed_terms ? '✅ Подтверждены' : '❌ Не подтверждены'}</b></div>
-    </div>
-
-    <div class="section-title"><h2>Информация</h2></div>
-    <div class="card" style="padding:0 16px">
-      <div class="list-item" style="cursor:pointer" onclick="showContent('rules_text','Правила проекта')">
-        <span>📖 Правила проекта</span><span class="muted">→</span>
-      </div>
-      <div class="list-item" style="cursor:pointer" onclick="showContent('terms_text','Условия участия')">
-        <span>📄 Условия участия</span><span class="muted">→</span>
-      </div>
-      <div class="list-item" style="cursor:pointer" onclick="showMarketing()">
-        <span>📊 Маркетинг проекта</span><span class="muted">→</span>
-      </div>
-    </div>
-
-    <button class="btn ghost" onclick="logout()" style="margin-top:8px">🚪 Выйти</button>
-  `;
-}
-
-// ---------- МОИ ЗАКАЗЫ (модалка) ----------
-async function openMyOrders(){
-  try {
-    const list = await api('/api/purchases/my');
-    if (!list.length){
-      showModal(`
-        <div class="modal-head">
-          <h2>📋 Мои заказы</h2>
-          <button class="close-x" onclick="closeModal()">✕</button>
-        </div>
-        <div class="modal-body">
-          <div class="empty">
-            <div class="icon">📭</div>
-            <h3>Заказов пока нет</h3>
-            <p class="muted">Создайте первый заказ в магазине</p>
-          </div>
-        </div>
-      `);
-      return;
+# ============================================================
+# JWT
+# ============================================================
+def make_token(user_id: int, is_admin: bool = False) -> str:
+    payload = {
+        "sub": str(user_id),
+        "adm": is_admin,
+        "exp": datetime.now(timezone.utc) + timedelta(hours=JWT_TTL_HOURS)
     }
-    showModal(`
-      <div class="modal-head">
-        <div>
-          <h2>📋 Мои заказы</h2>
-          <div class="muted-sm">Всего: ${list.length}</div>
-        </div>
-        <button class="close-x" onclick="closeModal()">✕</button>
-      </div>
-      <div class="modal-body">
-        ${list.map(p=>`
-          <div class="card2" style="margin-bottom:10px">
-            <div class="row" style="margin-bottom:8px">
-              <div class="order-num" style="margin:0">📩 Заявка #${p.id}</div>
-              <span class="badge ${p.status}">${statusLabel(p.status)}</span>
-            </div>
-            <div style="font-weight:600;margin-bottom:4px">${esc(p.era_title)}</div>
-            <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0">
-              <span>Вложено</span><b style="color:var(--text)">${fmt(p.purchase_price)}</b>
-            </div>
-            <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0">
-              <span>Начисление</span><b style="color:var(--ok)">+${fmt(p.profit_amount)}</b>
-            </div>
-            <div class="row" style="font-size:12px;color:var(--muted);padding:2px 0">
-              <span>Итого</span><b style="color:var(--accent)">${fmt(p.total_amount)}</b>
-            </div>
-            <div class="muted-sm" style="margin-top:6px">
-              Создана: ${fmtDate(p.created_at)}
-              ${p.activated_at ? ` · Активирована: ${fmtDate(p.activated_at)}` : ''}
-              ${p.cancelled_at ? ` · Отменена: ${fmtDate(p.cancelled_at)}` : ''}
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    `);
-  } catch(e){ toast(e.message); }
-}
+    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALG)
 
-// ---------- СВЯЗЬ (модалка) ----------
-function openContact(){
-  const adminLink = `https://t.me/${ADMIN_USERNAME}`;
-  const supportLink = SUPPORT_USERNAME ? `https://t.me/${SUPPORT_USERNAME}` : '';
-  const botLink = `https://t.me/${BOT_USERNAME}`;
+def decode_token(token: str) -> dict:
+    try:
+        return jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALG])
+    except JWTError:
+        raise HTTPException(401, "Invalid token")
 
-  showModal(`
-    <div class="modal-head">
-      <div>
-        <h2>💬 Связь</h2>
-        <div class="muted-sm">Мы всегда на связи</div>
-      </div>
-      <button class="close-x" onclick="closeModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="contact-list">
-        <a class="contact-btn tg" href="${adminLink}" target="_blank" rel="noopener">
-          <div class="emo">👨‍💼</div>
-          <div class="info">
-            <div class="t">Администратор</div>
-            <div class="s">@${esc(ADMIN_USERNAME)}</div>
-          </div>
-          <div class="arrow">→</div>
-        </a>
-        ${supportLink ? `
-          <a class="contact-btn tg" href="${supportLink}" target="_blank" rel="noopener">
-            <div class="emo">🆘</div>
-            <div class="info">
-              <div class="t">Поддержка</div>
-              <div class="s">@${esc(SUPPORT_USERNAME)}</div>
-            </div>
-            <div class="arrow">→</div>
-          </a>
-        ` : ''}
-        <a class="contact-btn tg" href="${botLink}" target="_blank" rel="noopener">
-          <div class="emo">🤖</div>
-          <div class="info">
-            <div class="t">Бот проекта</div>
-            <div class="s">@${esc(BOT_USERNAME)}</div>
-          </div>
-          <div class="arrow">→</div>
-        </a>
-      </div>
+async def current_user(authorization: Optional[str] = Header(None)) -> dict:
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(401, "No token")
+    data = decode_token(authorization.split(" ", 1)[1])
+    conn = db()
+    row = conn.execute("SELECT * FROM users WHERE id=?", (int(data["sub"]),)).fetchone()
+    conn.close()
+    if not row:
+        raise HTTPException(401, "User not found")
+    return dict(row)
 
-      <div class="card2" style="margin-top:16px">
-        <div class="muted" style="line-height:1.7">
-          <b style="color:var(--text)">По каким вопросам писать:</b><br>
-          • Заявка на покупку и оплата<br>
-          • Активация эры<br>
-          • Заявка на вывод средств<br>
-          • Технические проблемы
-        </div>
-      </div>
+async def current_admin(authorization: Optional[str] = Header(None)) -> dict:
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(401, "No token")
+    data = decode_token(authorization.split(" ", 1)[1])
+    if not data.get("adm"):
+        raise HTTPException(403, "Not admin")
+    return {"admin": True}
 
-      <div class="muted-sm" style="text-align:center;margin-top:16px">
-        Отвечаем в течение 24 часов
-      </div>
-    </div>
-  `);
-}
+# ============================================================
+# ФОРМАТИРОВАНИЕ
+# ============================================================
+def fmt_money(n) -> str:
+    try:
+        return f"{int(n):,} ₽".replace(",", " ")
+    except Exception:
+        return f"{n} ₽"
 
-// ---------- УВЕДОМЛЕНИЯ ----------
-async function openNotifications(){
-  try {
-    const list = await api('/api/notifications');
-    showModal(`
-      <div class="modal-head">
-        <h2>🔔 Уведомления</h2>
-        <button class="close-x" onclick="closeModal()">✕</button>
-      </div>
-      <div class="modal-body">
-        ${list.length ? list.map(n=>`
-          <div style="padding:12px 0;border-bottom:1px solid var(--border)">
-            <div style="font-size:13px">${esc(n.text)}</div>
-            <div class="muted-sm" style="margin-top:4px">${fmtDate(n.created_at)}</div>
-          </div>
-        `).join('') : `
-          <div class="empty"><div class="icon">🔔</div><p class="muted">Уведомлений нет</p></div>
-        `}
-      </div>
-    `);
-  } catch(e){ toast(e.message); }
-}
+def fmt_dt(iso_str: str) -> str:
+    """Форматирует дату в ташкентском времени: DD.MM.YYYY HH:MM"""
+    dt = parse_dt(iso_str)
+    if not dt:
+        return "—"
+    return dt.strftime("%d.%m.%Y %H:%M")
 
-// ---------- КОНТЕНТ ----------
-async function showContent(key, title){
-  const c = await api('/api/content/'+key);
-  $('app').innerHTML = `
-    <div class="topbar">
-      <button class="back-btn" onclick="setTab('${currentTab}')">←</button>
-      <div class="brand"><div class="logo">📄</div>${esc(title)}</div>
-      <div style="width:38px"></div>
-    </div>
-    <div class="card"><div style="white-space:pre-wrap;line-height:1.7">${esc(c.value||'')}</div></div>
-  `;
-}
+def fmt_date_only(iso_str: str) -> str:
+    dt = parse_dt(iso_str)
+    if not dt:
+        return "—"
+    return dt.strftime("%d.%m.%Y")
 
-async function showMarketing(){
-  const c = await api('/api/content/marketing_image');
-  $('app').innerHTML = `
-    <div class="topbar">
-      <button class="back-btn" onclick="setTab('${currentTab}')">←</button>
-      <div class="brand"><div class="logo">📊</div>Маркетинг</div>
-      <div style="width:38px"></div>
-    </div>
-    <div class="card">
-      ${c.value
-        ? `<img class="marketing" src="${API}${c.value}" alt="">`
-        : '<div class="muted center" style="padding:32px 0">Изображение пока не добавлено</div>'}
-    </div>
-  `;
-}
+# ============================================================
+# TELEGRAM BOT
+# ============================================================
+bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode="HTML"))
+dp = Dispatcher()
 
-// ============================================================
-// MODAL
-// ============================================================
-function showModal(html){
-  const root = $('modal-root'); if (!root) return;
-  root.innerHTML = `
-    <div class="modal-backdrop" onclick="if(event.target===this)closeModal()">
-      <div class="modal">${html}</div>
-    </div>
-  `;
-}
-function closeModal(){
-  const root = $('modal-root'); if (!root) return;
-  root.innerHTML = '';
-}
+async def notify_user(user_id: int, text: str):
+    conn = db()
+    row = conn.execute("SELECT telegram_id FROM users WHERE id=?", (user_id,)).fetchone()
+    conn.close()
+    if not row or not row["telegram_id"]:
+        return
+    try:
+        await bot.send_message(row["telegram_id"], text)
+    except Exception as e:
+        print(f"[notify_user] {user_id}: {e}")
 
-// ============================================================
-// ACTIONS
-// ============================================================
-async function agreeTerms(){
-  try { await api('/api/agree', {method:'POST'}); toast('✅ Условия подтверждены'); render(); }
-  catch(e){ toast(e.message); }
-}
+async def notify_admins_purchase(pid: int):
+    """Отправляет всем админам уведомление о новой заявке с кнопками."""
+    conn = db()
+    p = conn.execute("""
+        SELECT p.*, u.telegram_username, u.first_name, u.last_name, u.telegram_id,
+               (SELECT telegram_username FROM users WHERE id=u.referrer_id) AS ref_username
+        FROM purchases p JOIN users u ON u.id=p.user_id
+        WHERE p.id=?
+    """, (pid,)).fetchone()
+    conn.close()
+    if not p:
+        return
 
-async function buyEra(id){
-  if (!confirm('Создать заявку на покупку?')) return;
-  try {
-    const res = await api('/api/purchases/create/'+id, {method:'POST'});
-    toast(`✅ Заявка #${res.purchase_id} создана`);
-    setTab('purchases');
-  } catch(e){ toast('⚠️ ' + e.message); }
-}
+    text = (
+        f"📩 <b>Заявка #{p['id']}</b>\n"
+        f"👤 Участник: {p['first_name'] or ''} {p['last_name'] or ''}\n"
+        f"🔗 Никнейм: @{p['telegram_username'] or '—'}\n"
+        f"🆔 Telegram ID: <code>{p['telegram_id']}</code>\n"
+        f"💳 Эра: {p['era_title']} — {fmt_money(p['purchase_price'])}\n"
+        f"📅 Срок: {p['duration_days']} дней\n"
+        f"💰 Начисление: +{fmt_money(p['profit_amount'])}\n"
+        f"🏆 Итого: {fmt_money(p['total_amount'])}\n"
+        f"🕐 Создана: {fmt_dt(p['created_at'])}\n"
+        f"📌 Статус: <b>ожидает подтверждения</b>"
+    )
+    if p["ref_username"]:
+        text += f"\n🎁 Реферер: @{p['ref_username']}"
 
-async function requestPayout(pid){
-  if (!confirm('Подать заявку на вывод средств?')) return;
-  try {
-    await api('/api/payouts/request/'+pid, {method:'POST'});
-    toast('✅ Заявка на вывод создана');
-    render();
-  } catch(e){ toast('⚠️ ' + e.message); }
-}
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="✅ Подтвердить покупку", callback_data=f"purchase_confirm:{pid}")],
+        [InlineKeyboardButton(text="❌ Отменить заявку", callback_data=f"purchase_cancel:{pid}")],
+    ])
+    for aid in ADMIN_IDS:
+        try:
+            await bot.send_message(aid, text, reply_markup=kb)
+        except Exception as e:
+            print(f"[notify_admins_purchase] {aid}: {e}")
 
-function copyRef(text){
-  navigator.clipboard.writeText(text).then(()=>toast('📋 Скопировано'))
-    .catch(()=>{
-      const ta = document.createElement('textarea');
-      ta.value = text; document.body.appendChild(ta); ta.select();
-      document.execCommand('copy'); ta.remove();
-      toast('📋 Скопировано');
-    });
-}
+@dp.message(Command("start"))
+async def cmd_start(message: Message):
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🚀 Открыть приложение",
+                              web_app=WebAppInfo(url=WEB_URL))]
+    ])
+    await message.answer(
+        "👋 <b>Добро пожаловать в проект «Эры»!</b>\n\n"
+        "Нажмите кнопку ниже, чтобы открыть личный кабинет.",
+        reply_markup=kb
+    )
 
-// ============================================================
-// UTILS
-// ============================================================
-function esc(s){ return String(s??'').replace(/[&<>"']/g,
-  c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function fmt(n){ return Number(n||0).toLocaleString('ru-RU') + ' ₽'; }
-function fmtDate(s){
-  if (!s) return '—';
-  try {
-    const d = new Date(s);
-    return d.toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric'})
-      + ' ' + d.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
-  } catch { return s; }
-}
-function statusLabel(s){
-  return ({
-    awaiting_payment:'Ожидает оплаты', active:'Активен',
-    completed:'Завершён', awaiting_payout:'Ожидает выплаты',
-    paid:'Выплачен', cancelled:'Отменён'
-  })[s] || s;
-}
+# ---------- CALLBACK: подтверждение покупки ----------
+@dp.callback_query(lambda c: c.data.startswith("purchase_confirm:"))
+async def cb_purchase_confirm(cb: CallbackQuery):
+    pid = int(cb.data.split(":", 1)[1])
 
-// ============================================================
-// MAIN RENDER
-// ============================================================
-async function render(){
-  try {
-    if (!TOKEN){
-      const result = await tryTelegramAuth();
-      if (!result.ok){ screenAuth(result.reason, result.info || result); return; }
+    conn = db()
+    p = conn.execute("SELECT * FROM purchases WHERE id=?", (pid,)).fetchone()
+    if not p:
+        conn.close()
+        await cb.answer("Заявка не найдена", show_alert=True)
+        return
+
+    if p["status"] != "awaiting_payment":
+        conn.close()
+        await cb.answer(f"⚠️ Заявка #{pid} уже обработана (статус: {p['status']})", show_alert=True)
+        return
+
+    # === НОВАЯ ЛОГИКА ДАТ ===
+    # activated_at = текущий момент (Ташкент)
+    # start_date = следующий календарный день 00:00 (Ташкент) — первый день эры
+    # expires_at = start_date + duration_days
+    activated = now_tashkent()
+    start = next_day_start(activated)
+    expires = calc_expires(start, p["duration_days"])
+
+    conn.execute("""UPDATE purchases
+        SET status='active',
+            activated_at=?,
+            start_date=?,
+            expires_at=?,
+            completion_notified=0
+        WHERE id=? AND status='awaiting_payment'""",
+        (activated.isoformat(), start.isoformat(), expires.isoformat(), pid))
+    conn.commit()
+    conn.close()
+
+    log_admin("admin", "confirm_purchase", f"purchase #{pid}")
+    add_notification(p["user_id"], "activated", get_content("notif_purchase_activated"))
+
+    try:
+        await cb.message.edit_text(
+            cb.message.html_text + f"\n\n✅ <b>ПОДТВЕРЖДЕНО</b> — {fmt_dt(now_iso())}",
+            reply_markup=None
+        )
+    except Exception as e:
+        print(f"[edit_text confirm] {e}")
+
+    await cb.answer("✅ Заявка подтверждена")
+
+    # Уведомление пользователю с корректными датами
+    msg = (
+        f"✅ <b>Заявка #{pid} подтверждена!</b>\n\n"
+        f"💳 Эра: <b>{p['era_title']}</b>\n"
+        f"💵 Номинал: <b>{fmt_money(p['purchase_price'])}</b>\n"
+        f"💰 Начисление: <b>+{fmt_money(p['profit_amount'])}</b>\n"
+        f"🏆 Итоговая сумма: <b>{fmt_money(p['total_amount'])}</b>\n\n"
+        f"📅 Дата активации: <b>{fmt_dt(activated.isoformat())}</b>\n"
+        f"🚀 Первый день эры: <b>{fmt_date_only(start.isoformat())}</b>\n"
+        f"🏁 Дата завершения: <b>{fmt_date_only(expires.isoformat())}</b>\n\n"
+        f"Срок — {p['duration_days']} дней. По завершении вы сможете подать заявку на вывод."
+    )
+    await notify_user(p["user_id"], msg)
+
+# ---------- CALLBACK: отмена покупки ----------
+@dp.callback_query(lambda c: c.data.startswith("purchase_cancel:"))
+async def cb_purchase_cancel(cb: CallbackQuery):
+    pid = int(cb.data.split(":", 1)[1])
+
+    conn = db()
+    p = conn.execute("SELECT * FROM purchases WHERE id=?", (pid,)).fetchone()
+    if not p:
+        conn.close()
+        await cb.answer("Заявка не найдена", show_alert=True)
+        return
+
+    if p["status"] != "awaiting_payment":
+        conn.close()
+        await cb.answer(f"⚠️ Заявка #{pid} уже обработана (статус: {p['status']})", show_alert=True)
+        return
+
+    conn.execute("""UPDATE purchases
+        SET status='cancelled', cancelled_at=?
+        WHERE id=? AND status='awaiting_payment'""",
+        (now_iso(), pid))
+    conn.commit()
+    conn.close()
+
+    log_admin("admin", "cancel_purchase", f"purchase #{pid}")
+
+    try:
+        await cb.message.edit_text(
+            cb.message.html_text + f"\n\n❌ <b>ОТМЕНЕНО</b> — {fmt_dt(now_iso())}",
+            reply_markup=None
+        )
+    except Exception as e:
+        print(f"[edit_text cancel] {e}")
+
+    await cb.answer("❌ Заявка отменена")
+
+    msg = (
+        f"❌ <b>Заявка #{pid} отменена</b>\n\n"
+        f"💳 Эра: <b>{p['era_title']}</b>\n"
+        f"💵 Номинал: <b>{fmt_money(p['purchase_price'])}</b>\n\n"
+        f"К сожалению, ваша заявка была отменена администратором."
+    )
+    await notify_user(p["user_id"], msg)
+
+# ============================================================
+# FASTAPI
+# ============================================================
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()
+    scheduler.add_job(check_expired_eras, "interval", seconds=60,
+                      next_run_time=datetime.now(timezone.utc))
+    scheduler.start()
+    polling_task = asyncio.create_task(dp.start_polling(bot))
+    print("✅ Bot started")
+    print(f"✅ WebApp URL: {WEB_URL}")
+    print(f"✅ Часовой пояс: Asia/Tashkent (UTC+5)")
+    yield
+    polling_task.cancel()
+    try:
+        await polling_task
+    except asyncio.CancelledError:
+        pass
+    scheduler.shutdown(wait=False)
+    await bot.session.close()
+    print("🛑 Bot stopped")
+
+app = FastAPI(title="Era Project API", lifespan=lifespan)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+
+# ---------- Pydantic ----------
+class TelegramAuth(BaseModel):
+    id: int
+    first_name: Optional[str] = ""
+    last_name: Optional[str] = ""
+    username: Optional[str] = ""
+    photo_url: Optional[str] = ""
+    auth_date: Optional[int] = 0
+    hash: Optional[str] = ""
+    ref: Optional[str] = ""
+
+class AdminLogin(BaseModel):
+    login: str
+    password: str
+
+class EraIn(BaseModel):
+    title: str
+    price: float
+    duration_days: int
+    profit_amount: float
+    description: str = ""
+    is_active: int = 1
+    sort_order: int = 0
+
+class ContentIn(BaseModel):
+    key: str
+    value: str
+
+# ---------- AUTH ----------
+def verify_telegram_auth(data: dict) -> bool:
+    check_hash = data.get("hash", "")
+    if not check_hash:
+        return False
+    data_check = {k: v for k, v in data.items() if k != "hash" and v is not None and v != ""}
+    data_check = {k: str(v) for k, v in data_check.items()}
+    data_check_str = "\n".join(f"{k}={data_check[k]}" for k in sorted(data_check))
+    secret = hashlib.sha256(BOT_TOKEN.encode()).digest()
+    calc = hmac.new(secret, data_check_str.encode(), hashlib.sha256).hexdigest()
+    return hmac.compare_digest(calc, check_hash)
+
+def gen_ref_code() -> str:
+    return "USER" + secrets.token_hex(4).upper()
+
+@app.post("/api/auth/telegram")
+async def auth_telegram(payload: TelegramAuth):
+    data = payload.model_dump()
+    is_valid = verify_telegram_auth(data) or os.getenv("DEV_MODE", "1") == "1"
+    if not is_valid:
+        raise HTTPException(401, "Invalid Telegram auth")
+
+    conn = db()
+    row = conn.execute("SELECT * FROM users WHERE telegram_id=?", (payload.id,)).fetchone()
+
+    if not row:
+        ref_code = gen_ref_code()
+        referrer_id = None
+        if payload.ref:
+            r = conn.execute("SELECT id FROM users WHERE referral_code=?", (payload.ref,)).fetchone()
+            if r:
+                referrer_id = r["id"]
+
+        cur = conn.execute("""INSERT INTO users
+            (telegram_id, telegram_username, first_name, last_name, photo_url, referral_code, referrer_id, registered_at)
+            VALUES (?,?,?,?,?,?,?,?)""",
+            (payload.id, payload.username, payload.first_name, payload.last_name,
+             payload.photo_url, ref_code, referrer_id, now_iso()))
+        user_id = cur.lastrowid
+        conn.commit()
+
+        add_notification(user_id, "registration", get_content("notif_registration"))
+        await notify_user(user_id, get_content("notif_registration"))
+        for aid in ADMIN_IDS:
+            try:
+                await bot.send_message(aid,
+                    f"🆕 <b>Новый пользователь</b>\n"
+                    f"👤 {payload.first_name} {payload.last_name or ''}\n"
+                    f"🔗 @{payload.username or '—'}\n"
+                    f"🆔 <code>{payload.id}</code>\n"
+                    f"🎁 Реферер: {'да' if referrer_id else 'нет'}")
+            except Exception as e:
+                print(f"[new_user_notify] {aid}: {e}")
+        if referrer_id:
+            await notify_user(referrer_id, f"🎉 У вас новый реферал: {payload.first_name}")
+    else:
+        user_id = row["id"]
+
+    conn.close()
+    token = make_token(user_id, is_admin=False)
+    return {"token": token, "is_admin": False}
+
+@app.post("/api/admin/login")
+async def admin_login(payload: AdminLogin):
+    if payload.login != ADMIN_LOGIN or payload.password != ADMIN_PASSWORD:
+        raise HTTPException(401, "Invalid credentials")
+    token = make_token(0, is_admin=True)
+    return {"token": token, "is_admin": True}
+
+@app.get("/api/me")
+async def me(user: dict = Depends(current_user)):
+    conn = db()
+    ref = None
+    if user.get("referrer_id"):
+        r = conn.execute("SELECT * FROM users WHERE id=?", (user["referrer_id"],)).fetchone()
+        if r:
+            ref = {"username": r["telegram_username"], "first_name": r["first_name"]}
+    purchases = conn.execute("SELECT COUNT(*) c FROM purchases WHERE user_id=?", (user["id"],)).fetchone()["c"]
+    invited = conn.execute("SELECT COUNT(*) c FROM users WHERE referrer_id=?", (user["id"],)).fetchone()["c"]
+    conn.close()
+    return {
+        "id": user["id"],
+        "telegram_id": user["telegram_id"],
+        "telegram_username": user["telegram_username"],
+        "first_name": user["first_name"],
+        "last_name": user["last_name"],
+        "photo_url": user["photo_url"],
+        "referral_code": user["referral_code"],
+        "referrer": ref,
+        "status": user["status"],
+        "agreed_terms": bool(user["agreed_terms"]),
+        "agreed_at": user["agreed_at"],
+        "registered_at": user["registered_at"],
+        "purchases_count": purchases,
+        "invited_count": invited
     }
-    showNav();
-    hideLoading();
-    setNavTab(currentTab);
-    const routes = {
-      home: screenHome,
-      buy: screenBuy,
-      purchases: screenPurchases,
-      profile: screenProfile
-    };
-    const fn = routes[currentTab] || screenHome;
-    await fn();
-  } catch(e){
-    console.error(e);
-    if (e.message === 'Unauthorized'){ screenAuth(); return; }
-    toast('⚠️ ' + (e.message || 'Ошибка'));
-  }
-}
 
-// Запуск только после готовности DOM
-if (document.readyState === 'loading'){
-  document.addEventListener('DOMContentLoaded', ()=>{ setNavTab('home'); render(); });
-} else {
-  setNavTab('home');
-  render();
-}
+@app.post("/api/agree")
+async def agree(user: dict = Depends(current_user)):
+    conn = db()
+    conn.execute("UPDATE users SET agreed_terms=1, agreed_at=? WHERE id=?",
+                 (now_iso(), user["id"]))
+    conn.commit()
+    conn.close()
+    add_notification(user["id"], "terms", "Вы подтвердили условия участия.")
+    return {"ok": True}
 
-// Авто-обновление
-setInterval(()=>{
-  if (TOKEN && ['home','purchases'].includes(currentTab)) render();
-}, 30000);
-</script>
-</body>
-</html>
+# ---------- CONTENT ----------
+@app.get("/api/content/{key}")
+async def get_content_api(key: str):
+    return {"key": key, "value": get_content(key)}
+
+# ---------- ERAS ----------
+@app.get("/api/eras")
+async def list_eras():
+    conn = db()
+    rows = conn.execute("SELECT * FROM eras WHERE is_active=1 ORDER BY sort_order, id").fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+# ---------- PURCHASES ----------
+def calc_days_left(p: dict) -> int:
+    """Считает оставшиеся дни до expires_at по Ташкенту."""
+    if p["status"] != "active" or not p.get("expires_at"):
+        return 0
+    exp = parse_dt(p["expires_at"])
+    if not exp:
+        return 0
+    now = now_tashkent()
+    diff = (exp - now).total_seconds()
+    return max(0, int(diff // 86400))
+
+def enrich_purchase(p: dict) -> dict:
+    d = dict(p)
+    d["days_left"] = calc_days_left(d)
+    return d
+
+@app.post("/api/purchases/create/{era_id}")
+async def create_purchase(era_id: int, user: dict = Depends(current_user)):
+    if not user["agreed_terms"]:
+        raise HTTPException(403, "Сначала подтвердите условия участия")
+
+    conn = db()
+    era = conn.execute("SELECT * FROM eras WHERE id=? AND is_active=1", (era_id,)).fetchone()
+    if not era:
+        conn.close()
+        raise HTTPException(404, "Эра не найдена или недоступна")
+
+    dup = conn.execute("""SELECT id FROM purchases
+        WHERE user_id=? AND era_id=? AND status IN ('awaiting_payment','active','completed','awaiting_payout')""",
+        (user["id"], era_id)).fetchone()
+    if dup:
+        conn.close()
+        raise HTTPException(409, "У вас уже есть активная заявка на эту эру")
+
+    order_num = next_counter("purchase")
+
+    cur = conn.execute("""INSERT INTO purchases
+        (id, user_id, era_id, era_title, purchase_price, duration_days, profit_amount, total_amount, status, created_at)
+        VALUES (?,?,?,?,?,?,?,?,'awaiting_payment',?)""",
+        (order_num, user["id"], era["id"], era["title"], era["price"], era["duration_days"],
+         era["profit_amount"], era["total_amount"], now_iso()))
+    pid = cur.lastrowid
+    conn.commit()
+    conn.close()
+
+    add_notification(user["id"], "purchase", get_content("notif_purchase_created"))
+    await notify_user(user["id"],
+        f"📩 <b>Заявка #{pid} создана</b>\n\n"
+        f"💳 Эра: <b>{era['title']}</b>\n"
+        f"💵 Номинал: <b>{fmt_money(era['price'])}</b>\n"
+        f"📅 Срок: <b>{era['duration_days']} дней</b>\n\n"
+        f"Ожидайте связи администратора для оплаты.")
+
+    await notify_admins_purchase(pid)
+    return {"ok": True, "purchase_id": pid, "order_number": pid}
+
+@app.get("/api/purchases/my")
+async def my_purchases(user: dict = Depends(current_user)):
+    conn = db()
+    rows = conn.execute("SELECT * FROM purchases WHERE user_id=? ORDER BY id DESC", (user["id"],)).fetchall()
+    conn.close()
+    return [enrich_purchase(dict(r)) for r in rows]
+
+# ---------- PAYOUTS ----------
+@app.post("/api/payouts/request/{purchase_id}")
+async def request_payout(purchase_id: int, user: dict = Depends(current_user)):
+    conn = db()
+    p = conn.execute("SELECT * FROM purchases WHERE id=? AND user_id=?", (purchase_id, user["id"])).fetchone()
+    if not p:
+        conn.close()
+        raise HTTPException(404, "Покупка не найдена")
+    if p["status"] not in ("completed",):
+        conn.close()
+        raise HTTPException(400, "Заявку можно подать только по завершённой эре")
+    existing = conn.execute("SELECT id FROM payouts WHERE purchase_id=?", (purchase_id,)).fetchone()
+    if existing:
+        conn.close()
+        raise HTTPException(409, "Заявка на вывод уже создана")
+
+    payout_num = next_counter("payout")
+    conn.execute("""INSERT INTO payouts (id, purchase_id, user_id, amount, status, requested_at)
+        VALUES (?,?,?,?,'pending',?)""", (payout_num, purchase_id, user["id"], p["total_amount"], now_iso()))
+    conn.execute("UPDATE purchases SET status='awaiting_payout', payout_requested_at=? WHERE id=?",
+                 (now_iso(), purchase_id))
+    conn.commit()
+    conn.close()
+
+    add_notification(user["id"], "payout", get_content("notif_payout_requested"))
+    await notify_user(user["id"], get_content("notif_payout_requested"))
+    for aid in ADMIN_IDS:
+        try:
+            await bot.send_message(aid,
+                f"💸 <b>Заявка на вывод #{payout_num}</b>\n"
+                f"👤 {user['first_name']} @{user['telegram_username'] or '—'}\n"
+                f"🆔 <code>{user['telegram_id']}</code>\n"
+                f"📦 Покупка #{purchase_id}: {p['era_title']}\n"
+                f"💰 Сумма: <b>{fmt_money(p['total_amount'])}</b>")
+        except Exception as e:
+            print(f"[payout_notify] {aid}: {e}")
+    return {"ok": True, "payout_id": payout_num}
+
+# ---------- NOTIFICATIONS ----------
+@app.get("/api/notifications")
+async def notifications(user: dict = Depends(current_user)):
+    conn = db()
+    rows = conn.execute("SELECT * FROM notifications WHERE user_id=? ORDER BY id DESC LIMIT 50",
+                        (user["id"],)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+# ---------- REFERRALS ----------
+@app.get("/api/referrals")
+async def referrals(user: dict = Depends(current_user)):
+    conn = db()
+    rows = conn.execute("""SELECT id, telegram_username, first_name, registered_at, status,
+        (SELECT COUNT(*) FROM purchases WHERE user_id=users.id) AS purchases_count
+        FROM users WHERE referrer_id=? ORDER BY id DESC""", (user["id"],)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+# ============================================================
+# АДМИН API
+# ============================================================
+@app.get("/api/admin/dashboard")
+async def admin_dashboard(_: dict = Depends(current_admin)):
+    conn = db()
+    def scalar(q, *a):
+        return conn.execute(q, a).fetchone()[0]
+    data = {
+        "users": scalar("SELECT COUNT(*) FROM users"),
+        "active_eras": scalar("SELECT COUNT(*) FROM purchases WHERE status='active'"),
+        "completed_eras": scalar("SELECT COUNT(*) FROM purchases WHERE status IN ('completed','awaiting_payout','paid')"),
+        "purchase_requests": scalar("SELECT COUNT(*) FROM purchases WHERE status='awaiting_payment'"),
+        "payout_requests": scalar("SELECT COUNT(*) FROM payouts WHERE status='pending'"),
+        "total_purchases_sum": scalar("SELECT COALESCE(SUM(purchase_price),0) FROM purchases WHERE status NOT IN ('awaiting_payment','cancelled')"),
+        "total_profit_sum": scalar("SELECT COALESCE(SUM(profit_amount),0) FROM purchases WHERE status IN ('active','completed','awaiting_payout','paid')"),
+        "total_paid_sum": scalar("SELECT COALESCE(SUM(amount),0) FROM payouts WHERE status='paid'"),
+    }
+    conn.close()
+    return data
+
+@app.get("/api/admin/users")
+async def admin_users(_: dict = Depends(current_admin)):
+    conn = db()
+    rows = conn.execute("""SELECT u.*,
+        (SELECT telegram_username FROM users WHERE id=u.referrer_id) AS referrer_username,
+        (SELECT COUNT(*) FROM purchases WHERE user_id=u.id) AS purchases_count
+        FROM users u ORDER BY u.id DESC""").fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+@app.get("/api/admin/purchases")
+async def admin_purchases(_: dict = Depends(current_admin)):
+    conn = db()
+    rows = conn.execute("""SELECT p.*, u.telegram_username, u.first_name, u.last_name, u.telegram_id
+        FROM purchases p JOIN users u ON u.id=p.user_id ORDER BY p.id DESC""").fetchall()
+    conn.close()
+    return [enrich_purchase(dict(r)) for r in rows]
+
+@app.post("/api/admin/purchases/{pid}/confirm")
+async def admin_confirm_purchase(pid: int, _: dict = Depends(current_admin)):
+    conn = db()
+    p = conn.execute("SELECT * FROM purchases WHERE id=?", (pid,)).fetchone()
+    if not p:
+        conn.close()
+        raise HTTPException(404, "Не найдено")
+    if p["status"] != "awaiting_payment":
+        conn.close()
+        raise HTTPException(400, "Заявка уже обработана")
+
+    activated = now_tashkent()
+    start = next_day_start(activated)
+    expires = calc_expires(start, p["duration_days"])
+
+    conn.execute("""UPDATE purchases
+        SET status='active', activated_at=?, start_date=?, expires_at=?, completion_notified=0
+        WHERE id=? AND status='awaiting_payment'""",
+        (activated.isoformat(), start.isoformat(), expires.isoformat(), pid))
+    conn.commit()
+    conn.close()
+
+    log_admin("admin", "confirm_purchase", f"purchase #{pid}")
+    add_notification(p["user_id"], "activated", get_content("notif_purchase_activated"))
+
+    msg = (
+        f"✅ <b>Заявка #{pid} подтверждена!</b>\n\n"
+        f"💳 Эра: <b>{p['era_title']}</b>\n"
+        f"💵 Номинал: <b>{fmt_money(p['purchase_price'])}</b>\n"
+        f"💰 Начисление: <b>+{fmt_money(p['profit_amount'])}</b>\n"
+        f"🏆 Итоговая сумма: <b>{fmt_money(p['total_amount'])}</b>\n\n"
+        f"📅 Дата активации: <b>{fmt_dt(activated.isoformat())}</b>\n"
+        f"🚀 Первый день эры: <b>{fmt_date_only(start.isoformat())}</b>\n"
+        f"🏁 Дата завершения: <b>{fmt_date_only(expires.isoformat())}</b>"
+    )
+    await notify_user(p["user_id"], msg)
+    return {
+        "ok": True,
+        "activated_at": activated.isoformat(),
+        "start_date": start.isoformat(),
+        "expires_at": expires.isoformat()
+    }
+
+@app.post("/api/admin/purchases/{pid}/cancel")
+async def admin_cancel_purchase(pid: int, _: dict = Depends(current_admin)):
+    conn = db()
+    p = conn.execute("SELECT * FROM purchases WHERE id=?", (pid,)).fetchone()
+    if not p:
+        conn.close()
+        raise HTTPException(404, "Не найдено")
+    if p["status"] != "awaiting_payment":
+        conn.close()
+        raise HTTPException(400, "Заявка уже обработана")
+
+    conn.execute("UPDATE purchases SET status='cancelled', cancelled_at=? WHERE id=? AND status='awaiting_payment'",
+                 (now_iso(), pid))
+    conn.commit()
+    conn.close()
+    log_admin("admin", "cancel_purchase", f"purchase #{pid}")
+    add_notification(p["user_id"], "cancelled", get_content("notif_purchase_cancelled"))
+
+    msg = (
+        f"❌ <b>Заявка #{pid} отменена</b>\n\n"
+        f"💳 Эра: <b>{p['era_title']}</b>\n"
+        f"💵 Номинал: <b>{fmt_money(p['purchase_price'])}</b>\n\n"
+        f"Ваша заявка отменена администратором."
+    )
+    await notify_user(p["user_id"], msg)
+    return {"ok": True}
+
+@app.get("/api/admin/payouts")
+async def admin_payouts(_: dict = Depends(current_admin)):
+    conn = db()
+    rows = conn.execute("""SELECT po.*, u.telegram_username, u.first_name, u.telegram_id,
+        p.era_title, p.purchase_price, p.profit_amount, p.total_amount
+        FROM payouts po
+        JOIN users u ON u.id=po.user_id
+        JOIN purchases p ON p.id=po.purchase_id
+        ORDER BY po.id DESC""").fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+@app.post("/api/admin/payouts/{pid}/mark_paid")
+async def admin_mark_paid(pid: int, _: dict = Depends(current_admin)):
+    conn = db()
+    po = conn.execute("SELECT * FROM payouts WHERE id=?", (pid,)).fetchone()
+    if not po:
+        conn.close()
+        raise HTTPException(404, "Не найдено")
+    if po["status"] == "paid":
+        conn.close()
+        raise HTTPException(400, "Уже выплачено")
+
+    paid_at = now_iso()
+    conn.execute("UPDATE payouts SET status='paid', paid_at=? WHERE id=?", (paid_at, pid))
+    conn.execute("UPDATE purchases SET status='paid', paid_at=? WHERE id=?", (paid_at, po["purchase_id"]))
+    conn.commit()
+    conn.close()
+
+    log_admin("admin", "mark_paid", f"payout #{pid}")
+    add_notification(po["user_id"], "paid", get_content("notif_payout_paid"))
+    await notify_user(po["user_id"], get_content("notif_payout_paid"))
+    return {"ok": True}
+
+@app.post("/api/admin/payouts/{pid}/cancel")
+async def admin_cancel_payout(pid: int, _: dict = Depends(current_admin)):
+    conn = db()
+    po = conn.execute("SELECT * FROM payouts WHERE id=?", (pid,)).fetchone()
+    if not po:
+        conn.close()
+        raise HTTPException(404, "Не найдено")
+    conn.execute("DELETE FROM payouts WHERE id=?", (pid,))
+    conn.execute("UPDATE purchases SET status='completed', payout_requested_at=NULL WHERE id=?",
+                 (po["purchase_id"],))
+    conn.commit()
+    conn.close()
+    log_admin("admin", "cancel_payout", f"payout #{pid}")
+    return {"ok": True}
+
+@app.get("/api/admin/eras")
+async def admin_eras(_: dict = Depends(current_admin)):
+    conn = db()
+    rows = conn.execute("SELECT * FROM eras ORDER BY sort_order, id").fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+@app.put("/api/admin/eras/{eid}")
+async def admin_update_era(eid: int, payload: EraIn, _: dict = Depends(current_admin)):
+    conn = db()
+    conn.execute("""UPDATE eras SET title=?, price=?, duration_days=?, profit_amount=?,
+        total_amount=?, description=?, is_active=?, sort_order=? WHERE id=?""",
+        (payload.title, payload.price, payload.duration_days, payload.profit_amount,
+         payload.price + payload.profit_amount, payload.description, payload.is_active,
+         payload.sort_order, eid))
+    conn.commit()
+    conn.close()
+    log_admin("admin", "update_era", f"era #{eid}")
+    return {"ok": True}
+
+@app.post("/api/admin/eras")
+async def admin_create_era(payload: EraIn, _: dict = Depends(current_admin)):
+    conn = db()
+    cur = conn.execute("""INSERT INTO eras (title,price,duration_days,profit_amount,
+        total_amount,description,is_active,sort_order) VALUES (?,?,?,?,?,?,?,?)""",
+        (payload.title, payload.price, payload.duration_days, payload.profit_amount,
+         payload.price + payload.profit_amount, payload.description, payload.is_active, payload.sort_order))
+    eid = cur.lastrowid
+    conn.commit()
+    conn.close()
+    log_admin("admin", "create_era", f"era #{eid}")
+    return {"ok": True, "id": eid}
+
+@app.post("/api/admin/content")
+async def admin_set_content(payload: ContentIn, _: dict = Depends(current_admin)):
+    set_content(payload.key, payload.value)
+    log_admin("admin", "set_content", payload.key)
+    return {"ok": True}
+
+@app.post("/api/admin/upload/marketing")
+async def admin_upload_marketing(file: UploadFile = File(...), _: dict = Depends(current_admin)):
+    ext = os.path.splitext(file.filename or "img.png")[1] or ".png"
+    name = f"marketing_{secrets.token_hex(4)}{ext}"
+    path = os.path.join(UPLOAD_DIR, name)
+    with open(path, "wb") as f:
+        f.write(await file.read())
+    url = f"/uploads/{name}"
+    set_content("marketing_image", url)
+    log_admin("admin", "upload_marketing", url)
+    return {"ok": True, "url": url}
+
+@app.get("/api/admin/actions")
+async def admin_actions(_: dict = Depends(current_admin)):
+    conn = db()
+    rows = conn.execute("SELECT * FROM admin_actions ORDER BY id DESC LIMIT 200").fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+@app.get("/api/admin/referral_tree/{user_id}")
+async def admin_ref_tree(user_id: int, _: dict = Depends(current_admin)):
+    conn = db()
+    def children(uid):
+        rows = conn.execute("SELECT id, telegram_username, first_name FROM users WHERE referrer_id=?", (uid,)).fetchall()
+        return [{"id": r["id"], "username": r["telegram_username"], "name": r["first_name"],
+                 "children": children(r["id"])} for r in rows]
+    tree = children(user_id)
+    conn.close()
+    return {"user_id": user_id, "children": tree}
+
+# ============================================================
+# АВТОМАТИЗАЦИЯ: проверка завершения эр
+# ============================================================
+async def check_expired_eras():
+    """
+    Проверяет активные эры. Если expires_at <= сейчас (Ташкент):
+    - меняет статус на 'completed'
+    - ставит completed_at
+    - уведомляет ТОЛЬКО админов (один раз)
+    - ставит completion_notified=1, чтобы не повторять
+    """
+    conn = db()
+    now = now_tashkent()
+
+    rows = conn.execute("""SELECT p.*, u.first_name, u.last_name, u.telegram_username, u.telegram_id
+        FROM purchases p JOIN users u ON u.id=p.user_id
+        WHERE p.status='active'
+          AND p.expires_at IS NOT NULL
+          AND p.completion_notified=0""").fetchall()
+
+    completed_count = 0
+    for p in rows:
+        exp = parse_dt(p["expires_at"])
+        if not exp:
+            continue
+        if now < exp:
+            continue
+
+        # Обновляем статус
+        conn.execute("""UPDATE purchases
+            SET status='completed', completed_at=?, completion_notified=1
+            WHERE id=? AND status='active'""",
+            (now.isoformat(), p["id"]))
+
+        completed_count += 1
+
+        # Уведомление ТОЛЬКО админам
+        msg = (
+            f"🏁 <b>Эра завершена — Заявка #{p['id']}</b>\n\n"
+            f"👤 Участник: {p['first_name'] or ''} {p['last_name'] or ''}\n"
+            f"🔗 Никнейм: @{p['telegram_username'] or '—'}\n"
+            f"🆔 Telegram ID: <code>{p['telegram_id']}</code>\n"
+            f"💳 Эра: {p['era_title']}\n"
+            f"💵 Номинал: <b>{fmt_money(p['purchase_price'])}</b>\n"
+            f"💰 Начисление: <b>+{fmt_money(p['profit_amount'])}</b>\n"
+            f"🏆 Итоговая сумма: <b>{fmt_money(p['total_amount'])}</b>\n"
+            f"📅 Дата завершения: <b>{fmt_date_only(p['expires_at'])}</b>\n\n"
+            f"⚠️ <i>Срок завершён. Ожидается заявка на вывод от участника. Выплата не производилась.</i>"
+        )
+        for aid in ADMIN_IDS:
+            try:
+                await bot.send_message(aid, msg)
+            except Exception as e:
+                print(f"[era_completed_notify] {aid}: {e}")
+
+    conn.commit()
+    conn.close()
+
+    if completed_count:
+        print(f"[scheduler] завершено {completed_count} эр в {now.strftime('%d.%m.%Y %H:%M')} (Ташкент)")
+
+scheduler = AsyncIOScheduler()
+
+# ---------- Страницы ----------
+@app.get("/")
+async def root():
+    return HTMLResponse('<meta http-equiv="refresh" content="0; url=/web.html">')
+
+@app.get("/web.html")
+async def serve_web():
+    return FileResponse("web.html")
+
+@app.get("/admin.html")
+async def serve_admin():
+    return FileResponse("admin.html")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

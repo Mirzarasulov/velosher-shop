@@ -2,23 +2,25 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Эры</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:#0a0e14;color:#e8edf3;
   font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  padding:0 0 70px;overflow-x:hidden}
+  padding:0 0 calc(76px + env(safe-area-inset-bottom));overflow-x:hidden}
 .app{max-width:560px;margin:0 auto;padding:0 14px}
 .top{display:flex;justify-content:space-between;align-items:center;
   padding:12px 0;border-bottom:1px solid #252e3a;margin-bottom:14px;
-  position:sticky;top:0;background:#0a0e14;z-index:10}
+  position:sticky;top:0;background:#0a0e14;z-index:10;min-height:57px}
 .top h1{font-size:17px;font-weight:700}
+.top .acts{display:flex;gap:8px}
 .top button{background:#1a212c;border:1px solid #252e3a;color:#e8edf3;
-  padding:7px 12px;border-radius:9px;font:14px inherit;cursor:pointer}
-.card{background:#131820;border:1px solid #252e3a;border-radius:12px;
-  padding:14px;margin-bottom:10px}
+  padding:7px 12px;border-radius:9px;font:14px inherit;cursor:pointer;position:relative}
+.bdot{position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;padding:0 4px;
+  border-radius:9px;background:#ff5c5c;color:#fff;font:700 10px/17px inherit;text-align:center}
+.card{background:#131820;border:1px solid #252e3a;border-radius:12px;padding:14px;margin-bottom:10px}
 .hero{background:#1a2540;border:1px solid #2f3a48;border-radius:14px;
   padding:14px;margin-bottom:12px;display:flex;gap:12px;align-items:center}
 .hero img,.hero .av{width:46px;height:46px;border-radius:50%;flex-shrink:0;object-fit:cover}
@@ -28,22 +30,17 @@ body{background:#0a0e14;color:#e8edf3;
 .hero .u{color:#7a8595;font-size:12px}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .stat{background:#131820;border:1px solid #252e3a;border-radius:11px;padding:11px}
-.stat .l{color:#7a8595;font-size:10px;text-transform:uppercase;font-weight:600;
-  margin-bottom:3px;letter-spacing:.04em}
+.stat .l{color:#7a8595;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;letter-spacing:.04em}
 .stat .v{font-size:17px;font-weight:700}
-.stat .v.ok{color:#39d98a}
-.stat .v.accent{color:#4f8cff}
+.stat .v.ok{color:#39d98a}.stat .v.accent{color:#4f8cff}
 .btn{display:block;width:100%;padding:13px;border:0;border-radius:11px;
-  background:#4f8cff;color:#fff;font:600 15px inherit;cursor:pointer;
-  text-align:center;margin-bottom:8px}
+  background:#4f8cff;color:#fff;font:600 15px inherit;cursor:pointer;text-align:center;margin-bottom:8px}
 .btn:active{background:#356fd8}
 .btn:disabled{opacity:.5}
 .btn.gray{background:#1a212c;border:1px solid #2f3a48;color:#e8edf3}
 .btn.green{background:#39d98a;color:#04241a}
-.era{background:#131820;border:1px solid #252e3a;border-radius:13px;
-  padding:14px;margin-bottom:10px}
-.era .h{display:flex;justify-content:space-between;align-items:flex-start;
-  gap:10px;margin-bottom:10px}
+.era{background:#131820;border:1px solid #252e3a;border-radius:13px;padding:14px;margin-bottom:10px}
+.era .h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
 .era .h .t{font-size:16px;font-weight:700;margin-bottom:2px}
 .era .h .s{font-size:11px;color:#7a8595}
 .era .price{font-size:18px;font-weight:700;color:#4f8cff;white-space:nowrap}
@@ -52,327 +49,463 @@ body{background:#0a0e14;color:#e8edf3;
 .era .m{background:#1a212c;border-radius:8px;padding:7px;text-align:center}
 .era .m .l{font-size:9px;color:#7a8595;text-transform:uppercase;font-weight:600;margin-bottom:2px}
 .era .m .v{font-size:12px;font-weight:700}
-.era .m .v.ok{color:#39d98a}
-.era .m .v.accent{color:#4f8cff}
-.badge{display:inline-block;padding:3px 8px;border-radius:10px;
-  font-size:10px;font-weight:700;text-transform:uppercase}
-.badge.active{background:rgba(57,217,138,.15);color:#39d98a}
-.badge.awaiting_payment{background:rgba(245,181,71,.15);color:#f5b547}
+.era .m .v.ok{color:#39d98a}.era .m .v.accent{color:#4f8cff}
+.badge{display:inline-block;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase;white-space:nowrap}
+.badge.active,.badge.paid{background:rgba(57,217,138,.15);color:#39d98a}
+.badge.awaiting_payment,.badge.awaiting_payout{background:rgba(245,181,71,.15);color:#f5b547}
 .badge.completed{background:rgba(99,169,255,.15);color:#63a9ff}
-.badge.awaiting_payout{background:rgba(245,181,71,.15);color:#f5b547}
-.badge.paid{background:rgba(57,217,138,.15);color:#39d98a}
 .badge.cancelled{background:rgba(255,92,92,.15);color:#ff5c5c}
 .bar{height:6px;background:#232b38;border-radius:3px;overflow:hidden;margin-top:8px}
-.bar .f{height:100%;background:#4f8cff;border-radius:3px}
-.bar .f.ok{background:#39d98a}
-.bar .f.warn{background:#f5b547}
-.bar .f.err{background:#ff5c5c}
-.nav{position:fixed;bottom:0;left:0;right:0;background:#131820;
-  border-top:1px solid #252e3a;display:flex;
-  padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:50;
-  max-width:560px;margin:0 auto}
-.nav button{flex:1;background:none;border:0;color:#7a8595;font:600 11px inherit;
-  padding:6px 2px;display:flex;flex-direction:column;align-items:center;
-  gap:3px;cursor:pointer;font-family:inherit}
+.bar .f{height:100%;background:#4f8cff;border-radius:3px;transition:width .4s}
+.bar .f.ok{background:#39d98a}.bar .f.warn{background:#f5b547}.bar .f.err{background:#ff5c5c}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#131820;border-top:1px solid #252e3a;
+  display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:50;max-width:560px;margin:0 auto}
+.nav button{flex:1;background:none;border:0;color:#7a8595;font:600 11px inherit;padding:6px 2px;
+  display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;font-family:inherit;position:relative}
 .nav button.active{color:#4f8cff}
-.nav button .i{font-size:19px;line-height:1}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;
-  display:flex;align-items:flex-end;justify-content:center}
-.modal{background:#131820;border-radius:20px 20px 0 0;width:100%;max-width:560px;
-  max-height:85vh;overflow-y:auto;padding:20px}
+.nav button .i{font-size:19px;line-height:1;position:relative}
+.nav .bdot{top:-4px;right:-10px}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;align-items:flex-end;justify-content:center}
+.modal{background:#131820;border-radius:20px 20px 0 0;width:100%;max-width:560px;max-height:85vh;
+  overflow-y:auto;padding:20px 20px calc(20px + env(safe-area-inset-bottom));animation:up .2s ease}
+@keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
 .modal-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .modal-h h2{font-size:17px}
-.modal-x{width:32px;height:32px;border-radius:50%;background:#232b38;border:0;
-  color:#c4ccd6;font-size:16px;cursor:pointer}
+.modal-x{width:32px;height:32px;border-radius:50%;background:#232b38;border:0;color:#c4ccd6;font-size:16px;cursor:pointer}
 .muted{color:#7a8595;font-size:12px}
 .empty{text-align:center;padding:36px 20px;color:#7a8595}
 .empty .ic{font-size:42px;margin-bottom:8px;opacity:.5}
-.toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);
-  background:#1a212c;border:1px solid #2f3a48;padding:11px 16px;border-radius:10px;
-  font-size:13px;z-index:999;max-width:90%;text-align:center}
+.toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#1a212c;
+  border:1px solid #2f3a48;padding:11px 16px;border-radius:10px;font-size:13px;z-index:999;
+  max-width:90%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.5);animation:tin .2s ease}
+@keyframes tin{from{opacity:0;transform:translate(-50%,-10px)}to{opacity:1;transform:translate(-50%,0)}}
 .toast.err{border-color:#ff5c5c;color:#ffb3b3}
 .toast.ok{border-color:#39d98a;color:#a8f0cc}
-.loader{text-align:center;padding:60px 20px;color:#7a8595}
+.toast.info{border-color:#4f8cff;color:#cfe0ff}
 .hidden{display:none!important}
-.ref{background:#1a212c;border:1px solid #2f3a48;border-radius:10px;
-  padding:10px;font:12px monospace;word-break:break-all;color:#c4ccd6}
-.menu{background:#131820;border:1px solid #252e3a;border-radius:12px;
-  padding:0 14px;margin-bottom:10px}
-.menu-i{display:flex;justify-content:space-between;align-items:center;
-  padding:13px 0;border-bottom:1px solid #252e3a;cursor:pointer}
-.menu-i:last-child{border-bottom:0}
+.ref{background:#1a212c;border:1px solid #2f3a48;border-radius:10px;padding:10px;font:12px monospace;word-break:break-all;color:#c4ccd6}
+.menu,.list{background:#131820;border:1px solid #252e3a;border-radius:12px;padding:0 14px;margin-bottom:10px}
+.menu-i{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid #252e3a;cursor:pointer}
+.menu-i:last-child,.list-i:last-child{border-bottom:0}
 .menu-i .ic{font-size:18px;margin-right:10px}
 .menu-i .a{color:#7a8595}
-.list{background:#131820;border:1px solid #252e3a;border-radius:12px;
-  padding:0 14px;margin-bottom:10px}
-.list-i{display:flex;justify-content:space-between;padding:11px 0;
-  border-bottom:1px solid #252e3a;font-size:13px}
-.list-i:last-child{border-bottom:0}
+.list-i{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #252e3a;font-size:13px;gap:10px}
 .list-i .l{color:#7a8595}
-.contact{display:flex;align-items:center;gap:12px;padding:14px;
-  background:#1a212c;border:1px solid #252e3a;border-radius:10px;
-  text-decoration:none;color:#e8edf3;margin-bottom:8px}
-.contact .em{font-size:24px}
-.contact .in{flex:1}
-.contact .in .t{font-weight:600;font-size:14px}
-.contact .in .s{font-size:12px;color:#7a8595}
+.contact{display:flex;align-items:center;gap:12px;padding:14px;background:#1a212c;border:1px solid #252e3a;
+  border-radius:10px;text-decoration:none;color:#e8edf3;margin-bottom:8px}
+.contact .em{font-size:24px}.contact .in{flex:1}
+.contact .in .t{font-weight:600;font-size:14px}.contact .in .s{font-size:12px;color:#7a8595}
+.notif{padding:11px 0;border-bottom:1px solid #252e3a;display:flex;gap:10px}
+.notif:last-child{border-bottom:0}
+.notif .dot{width:8px;height:8px;border-radius:50%;background:#4f8cff;margin-top:6px;flex-shrink:0}
+.notif .dot.off{background:transparent}
+.skel{background:linear-gradient(90deg,#131820 25%,#1a212c 50%,#131820 75%);background-size:200% 100%;
+  animation:sh 1.2s infinite;border-radius:12px;border:1px solid #252e3a;margin-bottom:10px}
+@keyframes sh{to{background-position:-200% 0}}
 </style>
 </head>
 <body>
-<div class="app" id="app"><div class="loader">Загрузка…</div></div>
+<div class="app" id="app"><div class="skel" style="height:50px"></div><div class="skel" style="height:90px"></div><div class="skel" style="height:140px"></div></div>
 <nav class="nav hidden" id="nav">
   <button data-tab="home"><span class="i">🏠</span>Главная</button>
   <button data-tab="buy"><span class="i">🛒</span>Купить</button>
   <button data-tab="my"><span class="i">📦</span>Покупки</button>
-  <button data-tab="profile"><span class="i">👤</span>Профиль</button>
+  <button data-tab="profile"><span class="i">👤<span class="bdot hidden" id="nb"></span></span>Профиль</button>
 </nav>
 <div id="modal"></div>
 <div id="toast" class="toast hidden"></div>
 
 <script>
 // ============================================================
-// ⚠️⚠️⚠️ ЗАМЕНИТЕ НА ВАШ NGROK URL! ⚠️⚠️⚠️
+// ⚠️ ЗАМЕНИТЕ НА ВАШ NGROK / СЕРВЕРНЫЙ URL (https://...)
 // ============================================================
-const API = 'http://localhost:8000';
+const DEFAULT_API = 'http://localhost:8000';
 const BOT = 'loadingtester1bot';
 const ADMIN = 'loadingtester1bot';
 // ============================================================
 
-let TOKEN = localStorage.getItem('token') || '';
-let ME = null;
-let TAB = 'home';
-let PURCHASES = [];
+const TTL = 15000;          // кэш GET-запросов
+const NOTIF_POLL = 20000;   // проверка уведомлений
 
+// API можно задать ссылкой: ?api=https://xxx.ngrok-free.app (запомнится)
+(function(){
+  const a = new URLSearchParams(location.search).get('api');
+  if (a) localStorage.setItem('api', a.replace(/\/+$/, ''));
+})();
+const API = (localStorage.getItem('api') || DEFAULT_API).replace(/\/+$/, '');
+
+const tg = window.Telegram && window.Telegram.WebApp;
 const $ = id => document.getElementById(id);
 
-function toast(msg, type){
+let TOKEN = localStorage.getItem('token') || '';
+let TAB = 'home';
+let RID = 0;
+let SUB = false;                       // открыт подэкран (правила/условия)
+let ME = null, PURCHASES = [], ERAS = [], NOTIFS = [];
+const HAVE = {}, SIG = {};
+let store = {};
+const inflight = {};
+const BUSY = new Set();
+
+// ---------- utils ----------
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g,
+  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function q(v){ return esc(JSON.stringify(v ?? '')); }
+const num = v => { const n = Number(v); return isFinite(n) ? n : 0; };
+const bool = v => (v === undefined || v === null) ? true : (v === true || v === 1 || v === '1' || v === 'true');
+function fmt(n){ return num(n).toLocaleString('ru-RU') + ' ₽'; }
+function fmtDate(s){
+  if (!s) return '—';
+  const d = new Date(s);
+  if (isNaN(d)) return String(s);
+  return d.toLocaleString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function statusLabel(s){
+  return ({awaiting_payment:'Ожидает оплаты',active:'Активен',completed:'Завершён',
+    awaiting_payout:'Ожидает выплаты',paid:'Выплачен',cancelled:'Отменён'})[s] || s;
+}
+function haptic(kind){
+  try { tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(kind || 'success'); } catch(e){}
+}
+function toast(msg, type, ms){
   const t = $('toast');
   t.textContent = msg;
   t.className = 'toast ' + (type || '');
   clearTimeout(t._t);
-  t._t = setTimeout(() => t.className = 'toast hidden', 2500);
+  t._t = setTimeout(() => t.className = 'toast hidden', ms || 2600);
+}
+function ask(msg){
+  return new Promise(res => {
+    if (tg && tg.showConfirm) { try { tg.showConfirm(msg, ok => res(!!ok)); return; } catch(e){} }
+    res(confirm(msg));
+  });
+}
+async function once(key, fn){
+  if (BUSY.has(key)) return;
+  BUSY.add(key);
+  try { await fn(); } catch(e){ toast('⚠️ ' + e.message, 'err'); haptic('error'); }
+  finally { BUSY.delete(key); }
 }
 
-function esc(s){ return String(s ?? '').replace(/[&<>"']/g,
-  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function fmt(n){ return Number(n||0).toLocaleString('ru-RU') + ' ₽'; }
-function fmtDate(s){
-  if (!s) return '—';
-  try { return new Date(s).toLocaleString('ru-RU',
-    {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
-  catch { return s; }
+// Firebase может вернуть объект {key:{...}} вместо массива — приводим к массиву
+function toList(raw){
+  if (Array.isArray(raw))
+    return raw.map((v, i) => (v && typeof v === 'object') ? {...v, id: v.id ?? i} : null).filter(Boolean);
+  if (raw && typeof raw === 'object') {
+    for (const k of ['items','data','results','list','eras','products','purchases','notifications'])
+      if (raw[k] && typeof raw[k] === 'object') return toList(raw[k]);
+    return Object.entries(raw).filter(([, v]) => v && typeof v === 'object' && !Array.isArray(v))
+      .map(([k, v]) => ({...v, id: v.id ?? k}));
+  }
+  return [];
 }
-function statusLabel(s){
-  return ({awaiting_payment:'Ожидает оплаты',active:'Активен',
-    completed:'Завершён',awaiting_payout:'Ожидает выплаты',
-    paid:'Выплачен',cancelled:'Отменён'})[s] || s;
+function normEra(e){
+  const price = num(e.price), profit = num(e.profit_amount ?? e.profit);
+  return {...e, title: e.title || e.name || 'Без названия', price, profit_amount: profit,
+    total_amount: num(e.total_amount) || price + profit,
+    duration_days: num(e.duration_days ?? e.days), description: e.description || '',
+    is_active: bool(e.is_active ?? e.active), sort_order: num(e.sort_order)};
 }
 
+// ============================================================
+// API + кэш
+// ============================================================
 async function api(path, opts){
-  opts = opts || {};
-  const headers = opts.headers || {};
+  opts = {...(opts || {})};
+  const headers = {...(opts.headers || {})};
   if (TOKEN) headers['Authorization'] = 'Bearer ' + TOKEN;
   headers['ngrok-skip-browser-warning'] = 'true';
   if (opts.body && !(opts.body instanceof FormData)) {
     headers['Content-Type'] = 'application/json';
     opts.body = JSON.stringify(opts.body);
   }
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 15000);
   let res;
-  try { res = await fetch(API + path, {...opts, headers}); }
-  catch(e){ throw new Error('Сервер недоступен: ' + API); }
-  if (res.status === 401){ TOKEN = ''; localStorage.removeItem('token'); throw new Error('Сессия истекла'); }
+  try { res = await fetch(API + path, {...opts, headers, signal: ctrl.signal}); }
+  catch(e){ throw new Error(e.name === 'AbortError' ? 'Сервер не отвечает' : 'Сервер недоступен'); }
+  finally { clearTimeout(timer); }
+  if (res.status === 401 && !path.includes('/auth/')) {
+    TOKEN = ''; localStorage.removeItem('token'); throw new Error('Сессия истекла');
+  }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.detail || ('Ошибка ' + res.status));
   return data;
 }
+function get(path, force){
+  const c = store[path];
+  if (!force && c && Date.now() - c.t < TTL) return Promise.resolve(c.raw);
+  if (inflight[path]) return inflight[path];
+  inflight[path] = api(path).then(raw => { store[path] = {t: Date.now(), raw}; return raw; })
+    .finally(() => { delete inflight[path]; });
+  return inflight[path];
+}
+function invalidate(){ store = {}; }
 
-async function tryAuth(){
-  const tg = window.Telegram && window.Telegram.WebApp;
-  if (!tg) return { ok:false, reason:'no_tg' };
-  try { tg.ready(); tg.expand(); } catch(e){}
-  if (!tg.initDataUnsafe || !tg.initDataUnsafe.user) return { ok:false, reason:'no_user' };
-  const u = tg.initDataUnsafe.user;
-  const ref = new URLSearchParams(location.search).get('ref') || '';
-  try {
-    const res = await api('/api/auth/telegram', {
-      method:'POST',
-      body: {
-        id: u.id, first_name: u.first_name || '', last_name: u.last_name || '',
-        username: u.username || '', photo_url: u.photo_url || '',
-        auth_date: tg.initDataUnsafe.auth_date || 0,
-        hash: tg.initDataUnsafe.hash || '', ref
-      }
-    });
-    TOKEN = res.token;
-    localStorage.setItem('token', TOKEN);
-    return { ok:true };
-  } catch(e){ return { ok:false, reason:'api_error', error:e.message }; }
+const PATH = { me: '/api/me', purchases: '/api/purchases/my', eras: '/api/eras' };
+async function fetchKey(k, force){
+  const raw = await get(PATH[k], force);
+  const s = JSON.stringify(raw);
+  const changed = SIG[k] !== s || !HAVE[k];
+  if (changed) {
+    SIG[k] = s;
+    if (k === 'me') ME = raw;
+    else if (k === 'purchases') PURCHASES = toList(raw);
+    else if (k === 'eras') ERAS = toList(raw).map(normEra).filter(e => e.is_active)
+      .sort((a, b) => (a.sort_order - b.sort_order) || String(a.id).localeCompare(String(b.id), 'ru', {numeric:true}));
+  }
+  HAVE[k] = true;
+  return changed;
 }
 
 // ============================================================
-// GLOBAL ACTIONS
+// Авторизация через Telegram
+// ============================================================
+function tgUser(){ return tg && tg.initDataUnsafe && tg.initDataUnsafe.user; }
+function refCode(){
+  return new URLSearchParams(location.search).get('ref') ||
+    (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) || '';
+}
+async function tryAuth(){
+  if (!tg) return {ok:false, reason:'no_tg'};
+  const u = tgUser();
+  if (!u) return {ok:false, reason:'no_user'};
+  try {
+    const res = await api('/api/auth/telegram', {method:'POST', body:{
+      id: u.id, first_name: u.first_name || '', last_name: u.last_name || '',
+      username: u.username || '', photo_url: u.photo_url || '',
+      auth_date: tg.initDataUnsafe.auth_date || 0, hash: tg.initDataUnsafe.hash || '',
+      init_data: tg.initData || '', ref: refCode()
+    }});
+    TOKEN = res.token;
+    localStorage.setItem('token', TOKEN);
+    localStorage.setItem('uid', String(u.id));
+    return {ok:true};
+  } catch(e){ return {ok:false, reason:'api_error', error:e.message}; }
+}
+async function ensureAuth(){
+  const u = tgUser();
+  // сменился аккаунт Telegram — старый токен недействителен
+  if (TOKEN && u && localStorage.getItem('uid') && localStorage.getItem('uid') !== String(u.id)) {
+    TOKEN = ''; localStorage.removeItem('token'); resetData();
+  }
+  if (TOKEN) return {ok:true};
+  return tryAuth();
+}
+function resetData(){
+  ME = null; PURCHASES = []; ERAS = []; NOTIFS = []; store = {};
+  for (const k in HAVE) delete HAVE[k];
+  for (const k in SIG) delete SIG[k];
+}
+
+// ============================================================
+// Уведомления
+// ============================================================
+let KNOWN = null;
+const nid = n => String(n.id ?? (n.created_at + '|' + (n.text || n.message)));
+const ntext = n => n.text || n.message || n.title || 'Уведомление';
+function seenSet(){ try { return new Set(JSON.parse(localStorage.getItem('seen_n') || '[]')); } catch(e){ return new Set(); } }
+function unreadCount(){ const s = seenSet(); return NOTIFS.filter(n => !s.has(nid(n))).length; }
+function updateBadges(){
+  const c = unreadCount();
+  document.querySelectorAll('.bdot[data-n]').forEach(el => { el.textContent = c; el.classList.toggle('hidden', !c); });
+  const nb = $('nb'); if (nb) { nb.textContent = c; nb.classList.toggle('hidden', !c); }
+}
+async function pollNotifs(force){
+  if (!TOKEN) return;
+  try {
+    const list = toList(await get('/api/notifications', force))
+      .sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')));
+    NOTIFS = list;
+    if (KNOWN === null) { KNOWN = new Set(list.map(nid)); }
+    else {
+      const fresh = list.filter(n => !KNOWN.has(nid(n)));
+      if (fresh.length) {
+        fresh.forEach(n => KNOWN.add(nid(n)));
+        toast('🔔 ' + ntext(fresh[0]), 'info', 4000);
+        haptic('success');
+        invalidate();                       // статус заявок мог измениться
+        if (!SUB && !$('modal').innerHTML) render(true, true);
+      }
+    }
+    updateBadges();
+  } catch(e){ /* тихо */ }
+}
+setInterval(() => { if (!document.hidden) pollNotifs(true); }, NOTIF_POLL);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && TOKEN) { pollNotifs(true); render(true, true); }
+});
+
+window.showNotif = async function(){
+  const draw = (seen) => openModal(
+    '<div class="modal-h"><h2>🔔 Уведомления</h2><button class="modal-x" onclick="closeModal()">✕</button></div>' +
+    (NOTIFS.length ? NOTIFS.map(n =>
+      '<div class="notif"><div class="dot ' + (seen.has(nid(n)) ? 'off' : '') + '"></div><div>' +
+      '<div style="font-size:13px">' + esc(ntext(n)) + '</div>' +
+      '<div class="muted" style="margin-top:3px">' + fmtDate(n.created_at) + '</div></div></div>').join('')
+      : '<div class="empty"><div class="ic">🔔</div><p>Пока пусто</p></div>'));
+  const before = seenSet();
+  draw(before);
+  await pollNotifs(true);
+  draw(before);
+  // всё показанное считаем прочитанным
+  const all = new Set([...before, ...NOTIFS.map(nid)]);
+  localStorage.setItem('seen_n', JSON.stringify([...all].slice(-300)));
+  updateBadges();
+};
+
+// ============================================================
+// Действия
 // ============================================================
 window.setTab = function(t){
-  if (t === TAB) return;
+  SUB = false; hideBack();
+  if (t === TAB && !$('app').dataset.sub) return;
   TAB = t;
-  const nav = $('nav');
-  if (nav) nav.querySelectorAll('button').forEach(b => {
-    b.classList.toggle('active', b.dataset.tab === t);
-  });
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
   render();
 };
-
 window.logout = function(){
-  localStorage.removeItem('token');
-  TOKEN = '';
+  localStorage.removeItem('token'); localStorage.removeItem('uid'); TOKEN = '';
   location.reload();
 };
-
 window.copyRef = function(){
   if (!ME) return;
   const link = location.origin + location.pathname + '?ref=' + ME.referral_code;
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(link)
-      .then(() => toast('📋 Скопировано', 'ok'))
-      .catch(() => fallbackCopy(link));
-  } else fallbackCopy(link);
+  if (navigator.clipboard) navigator.clipboard.writeText(link).then(() => { toast('📋 Скопировано', 'ok'); haptic(); }).catch(() => fallbackCopy(link));
+  else fallbackCopy(link);
 };
-
 function fallbackCopy(text){
   const ta = document.createElement('textarea');
-  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
   document.body.appendChild(ta); ta.select();
-  try { document.execCommand('copy'); toast('📋 Скопировано', 'ok'); }
-  catch(e){ toast('Ошибка'); }
+  try { document.execCommand('copy'); toast('📋 Скопировано', 'ok'); } catch(e){ toast('Ошибка', 'err'); }
   ta.remove();
 }
-
-window.agreeTerms = async function(){
-  try {
-    await api('/api/agree', {method:'POST'});
-    toast('✅ Условия подтверждены', 'ok');
-    render();
-  } catch(e){ toast(e.message, 'err'); }
-};
-
-window.buyEra = async function(id){
-  if (!confirm('Создать заявку на покупку?')) return;
-  try {
-    const r = await api('/api/purchases/create/' + id, {method:'POST'});
-    toast('✅ Заявка #' + r.purchase_id + ' создана', 'ok');
-    window.setTab('my');
-  } catch(e){ toast('⚠️ ' + e.message, 'err'); }
-};
-
-window.requestPayout = async function(id){
-  if (!confirm('Подать заявку на вывод?')) return;
-  try {
-    await api('/api/payouts/request/' + id, {method:'POST'});
-    toast('✅ Заявка на вывод создана', 'ok');
-    render();
-  } catch(e){ toast('⚠️ ' + e.message, 'err'); }
-};
+window.agreeTerms = () => once('agree', async () => {
+  await api('/api/agree', {method:'POST'});
+  toast('✅ Условия подтверждены', 'ok'); haptic();
+  invalidate(); render(true);
+});
+window.buyEra = id => once('buy' + id, async () => {
+  if (!await ask('Создать заявку на покупку?')) return;
+  const r = await api('/api/purchases/create/' + encodeURIComponent(id), {method:'POST'});
+  toast('✅ Заявка #' + (r.purchase_id ?? '') + ' создана', 'ok'); haptic();
+  invalidate(); window.setTab('my'); render(true);
+});
+window.requestPayout = id => once('pay' + id, async () => {
+  if (!await ask('Подать заявку на вывод?')) return;
+  await api('/api/payouts/request/' + encodeURIComponent(id), {method:'POST'});
+  toast('✅ Заявка на вывод создана', 'ok'); haptic();
+  invalidate(); render(true);
+});
 
 window.closeModal = function(){ $('modal').innerHTML = ''; };
-
 function openModal(html){
   $('modal').innerHTML = '<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal">' + html + '</div></div>';
 }
 
 window.showMyOrders = function(){
-  if (!PURCHASES.length){
-    return openModal('<div class="modal-h"><h2>📋 Заказы</h2><button class="modal-x" onclick="closeModal()">✕</button></div><div class="empty"><div class="ic">📭</div><p>Заказов нет</p></div>');
-  }
-  openModal(
-    '<div class="modal-h"><h2>📋 Заказы (' + PURCHASES.length + ')</h2><button class="modal-x" onclick="closeModal()">✕</button></div>' +
-    PURCHASES.map(p =>
+  openModal('<div class="modal-h"><h2>📋 Заказы (' + PURCHASES.length + ')</h2><button class="modal-x" onclick="closeModal()">✕</button></div>' +
+    (PURCHASES.length ? PURCHASES.map(p =>
       '<div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:8px">' +
-        '<b style="color:#4f8cff">📩 #' + p.id + '</b>' +
-        '<span class="badge ' + p.status + '">' + statusLabel(p.status) + '</span></div>' +
+        '<b style="color:#4f8cff">📩 #' + esc(p.id) + '</b>' +
+        '<span class="badge ' + esc(p.status) + '">' + esc(statusLabel(p.status)) + '</span></div>' +
         '<div style="font-weight:600;margin-bottom:4px">' + esc(p.era_title) + '</div>' +
         '<div class="muted">Вложено: ' + fmt(p.purchase_price) + ' · +' + fmt(p.profit_amount) + ' = ' + fmt(p.total_amount) + '</div>' +
-        '<div class="muted" style="margin-top:4px">' + fmtDate(p.created_at) + '</div></div>'
-    ).join('')
-  );
+        '<div class="muted" style="margin-top:4px">' + fmtDate(p.created_at) + '</div></div>').join('')
+      : '<div class="empty"><div class="ic">📭</div><p>Заказов нет</p></div>'));
 };
 
 window.showContact = function(){
   openModal(
     '<div class="modal-h"><h2>💬 Связь</h2><button class="modal-x" onclick="closeModal()">✕</button></div>' +
-    '<a class="contact" href="https://t.me/' + ADMIN + '" target="_blank"><div class="em">👨‍💼</div><div class="in"><div class="t">Администратор</div><div class="s">@' + ADMIN + '</div></div></a>' +
-    '<a class="contact" href="https://t.me/' + BOT + '" target="_blank"><div class="em">🤖</div><div class="in"><div class="t">Бот проекта</div><div class="s">@' + BOT + '</div></div></a>' +
-    '<div class="card" style="margin-top:12px;background:#1a212c"><div class="muted" style="line-height:1.7"><b style="color:#e8edf3">По вопросам:</b><br>• Покупка<br>• Активация<br>• Вывод<br>• Техподдержка</div></div>'
-  );
+    '<a class="contact" href="https://t.me/' + esc(ADMIN) + '" target="_blank"><div class="em">👨‍💼</div><div class="in"><div class="t">Администратор</div><div class="s">@' + esc(ADMIN) + '</div></div></a>' +
+    '<a class="contact" href="https://t.me/' + esc(BOT) + '" target="_blank"><div class="em">🤖</div><div class="in"><div class="t">Бот проекта</div><div class="s">@' + esc(BOT) + '</div></div></a>' +
+    '<div class="card" style="margin-top:12px;background:#1a212c"><div class="muted" style="line-height:1.7"><b style="color:#e8edf3">По вопросам:</b><br>• Покупка<br>• Активация<br>• Вывод<br>• Техподдержка</div></div>');
 };
 
-window.showNotif = async function(){
-  try {
-    const list = await api('/api/notifications');
-    openModal(
-      '<div class="modal-h"><h2>🔔 Уведомления</h2><button class="modal-x" onclick="closeModal()">✕</button></div>' +
-      (list.length
-        ? list.map(n => '<div style="padding:11px 0;border-bottom:1px solid #252e3a"><div style="font-size:13px">' + esc(n.text || 'Уведомление') + '</div><div class="muted" style="margin-top:4px">' + fmtDate(n.created_at) + '</div></div>').join('')
-        : '<div class="empty"><div class="ic">🔔</div><p>Пусто</p></div>')
-    );
-  } catch(e){ toast(e.message, 'err'); }
-};
+// подэкраны (Правила / Условия) с кнопкой «Назад» Telegram
+function showBack(){ try { if (tg && tg.BackButton) { tg.BackButton.show(); } } catch(e){} }
+function hideBack(){ try { if (tg && tg.BackButton) tg.BackButton.hide(); } catch(e){} }
+window.closeSub = function(){ SUB = false; hideBack(); delete $('app').dataset.sub; render(); };
+try { tg && tg.BackButton && tg.BackButton.onClick(() => window.closeSub()); } catch(e){}
 
 window.showContent = async function(key, title){
+  SUB = true; showBack();
+  const app = $('app'); app.dataset.sub = '1';
+  app.innerHTML = '<div class="top"><button onclick="closeSub()">←</button><h1>' + esc(title) + '</h1><div style="width:44px"></div></div>' +
+    '<div class="skel" style="height:160px"></div>';
+  window.scrollTo(0, 0);
   try {
-    const c = await api('/api/content/' + key);
-    $('app').innerHTML =
-      '<div class="top"><button onclick="setTab(\'' + TAB + '\')">←</button><h1>' + esc(title) + '</h1><div style="width:44px"></div></div>' +
-      '<div class="card"><div style="white-space:pre-wrap;line-height:1.7">' + esc(c.value || '') + '</div></div>';
+    const c = await get('/api/content/' + key);
+    if (!SUB) return;
+    app.innerHTML = '<div class="top"><button onclick="closeSub()">←</button><h1>' + esc(title) + '</h1><div style="width:44px"></div></div>' +
+      '<div class="card"><div style="white-space:pre-wrap;line-height:1.7">' + esc(c.value || 'Пока пусто') + '</div></div>';
   } catch(e){ toast(e.message, 'err'); }
 };
 
-// HELPERS
+// ============================================================
+// Вычисления
+// ============================================================
+function daysLeft(p){
+  if (p.days_left !== undefined && p.days_left !== null) return num(p.days_left);
+  const end = p.expires_at || p.last_day;
+  if (!end) return 0;
+  return Math.max(0, Math.ceil((new Date(end).getTime() - Date.now()) / 86400000));
+}
 function progressOf(p){
-  if (!p.activated_at || !p.expires_at) return 0;
-  const a = new Date(p.activated_at).getTime();
-  const e = new Date(p.expires_at).getTime();
-  const n = Date.now();
+  if (!p.activated_at || !(p.expires_at || p.last_day)) return 0;
+  const a = new Date(p.activated_at).getTime(), e = new Date(p.expires_at || p.last_day).getTime(), n = Date.now();
   if (n >= e) return 100;
   if (n <= a) return 0;
   return Math.round(((n - a) / (e - a)) * 100);
 }
-
 function daysLabel(p){
   if (p.status === 'completed') return '🏁 Завершён';
   if (p.status === 'awaiting_payout') return '💸 Ждёт выплату';
   if (p.status === 'paid') return '💰 Выплачен';
   if (p.status === 'awaiting_payment') return '⏳ Ожидает оплаты';
   if (p.status === 'cancelled') return '❌ Отменён';
-  const d = p.days_left || 0;
+  const d = daysLeft(p);
   if (d <= 0) return '🏁 Завершение';
   if (d === 1) return '⏰ 1 день';
   if (d <= 3) return '⏰ ' + d + ' дня';
   return '✅ ' + d + ' дн.';
 }
-
 function daysClass(p){
   if (['completed','awaiting_payout','paid'].includes(p.status)) return '';
-  const d = p.days_left || 0;
-  if (d <= 1) return 'err';
-  if (d <= 3) return 'warn';
-  return 'ok';
+  const d = daysLeft(p);
+  return d <= 1 ? 'err' : d <= 3 ? 'warn' : 'ok';
 }
 
-// SCREENS
-function screenAuth(reason){
-  const nav = $('nav'); if (nav) nav.classList.add('hidden');
-  const hint = reason === 'no_tg' ? 'Откройте через бота @' + BOT
-    : reason === 'no_user' ? 'Telegram не передал данные'
-    : reason === 'api_error' ? 'API: ' + API : '';
+// ============================================================
+// Экраны
+// ============================================================
+function skeleton(){
+  return '<div class="skel" style="height:50px"></div><div class="skel" style="height:80px"></div>' +
+    '<div class="skel" style="height:130px"></div><div class="skel" style="height:130px"></div>';
+}
+function bell(){ return '<button onclick="showNotif()">🔔<span class="bdot hidden" data-n></span></button>'; }
+function setApp(html){
+  const app = $('app'); delete app.dataset.sub;
+  app.innerHTML = html;
+  $('nav').classList.remove('hidden');
+  updateBadges();
+}
 
+function screenAuth(reason, error){
+  $('nav').classList.add('hidden');
+  const hint = reason === 'no_tg' ? 'Откройте приложение через бота @' + BOT
+    : reason === 'no_user' ? 'Telegram не передал данные пользователя'
+    : reason === 'api_error' ? 'Сервер: ' + API + (error ? ' — ' + error : '') : '';
   $('app').innerHTML =
     '<div class="top"><h1>✨ Эры</h1></div>' +
     '<div class="card" style="text-align:center;padding:28px"><div style="font-size:48px;margin-bottom:8px">✨</div><h2 style="margin-bottom:6px">Проект «Эры»</h2><p class="muted">Войдите через Telegram</p></div>' +
     '<div class="card"><div id="tg-widget" style="display:flex;justify-content:center"></div>' +
-    (hint ? '<div class="card" style="background:rgba(255,92,92,.1);border-color:#5c3030;color:#ffb3b3;font-size:12px;margin-top:10px">⚠️ ' + esc(hint) + '</div>' : '') + '</div>';
-
+    (hint ? '<div class="card" style="background:rgba(255,92,92,.1);border-color:#5c3030;color:#ffb3b3;font-size:12px;margin:10px 0 0">⚠️ ' + esc(hint) + '</div>' : '') +
+    '<button class="btn gray" style="margin-top:10px" onclick="location.reload()">🔄 Повторить</button></div>';
   const c = $('tg-widget');
-  if (c && BOT) {
+  if (c && BOT && reason !== 'api_error') {
     const s = document.createElement('script');
     s.src = 'https://telegram.org/js/telegram-widget.js?22';
     s.setAttribute('data-telegram-login', BOT);
@@ -381,89 +514,79 @@ function screenAuth(reason){
     c.appendChild(s);
   }
 }
-
 window.onTgAuth = async function(user){
-  const ref = new URLSearchParams(location.search).get('ref') || '';
   try {
-    const r = await api('/api/auth/telegram', {method:'POST', body:{...user, ref}});
-    TOKEN = r.token; localStorage.setItem('token', TOKEN);
+    const r = await api('/api/auth/telegram', {method:'POST', body:{...user, ref: refCode()}});
+    TOKEN = r.token; localStorage.setItem('token', TOKEN); localStorage.setItem('uid', String(user.id));
     location.reload();
   } catch(e){ toast(e.message, 'err'); }
 };
 
-async function screenHome(){
-  const [me, purchases] = await Promise.all([api('/api/me'), api('/api/purchases/my')]);
-  ME = me;
-  PURCHASES = purchases;
-
-  const active = purchases.filter(p => p.status === 'active');
-  const expected = purchases.filter(p => ['active','completed'].includes(p.status)).reduce((s,p) => s + Number(p.profit_amount||0), 0);
-  const available = purchases.filter(p => p.status === 'completed').reduce((s,p) => s + Number(p.total_amount||0), 0);
-  const invested = purchases.filter(p => !['awaiting_payment','cancelled'].includes(p.status)).reduce((s,p) => s + Number(p.purchase_price||0), 0);
-
-  const name = me.first_name || me.telegram_username || 'друг';
-  const initial = (name[0] || '👤').toUpperCase();
-  const refLink = location.origin + location.pathname + '?ref=' + me.referral_code;
-
-  $('app').innerHTML =
-    '<div class="top"><h1>✨ Эры</h1><button onclick="showNotif()">🔔</button></div>' +
-    '<div class="hero">' +
-      (me.photo_url ? '<img src="' + esc(me.photo_url) + '">' : '<div class="av">' + initial + '</div>') +
+function drawHome(){
+  const me = ME || {};
+  const P = PURCHASES;
+  const active = P.filter(p => p.status === 'active');
+  const shown = P.filter(p => ['active','completed'].includes(p.status));
+  const expected = P.filter(p => ['active','completed'].includes(p.status)).reduce((s,p) => s + num(p.profit_amount), 0);
+  const available = P.filter(p => p.status === 'completed').reduce((s,p) => s + num(p.total_amount), 0);
+  const invested = P.filter(p => !['awaiting_payment','cancelled'].includes(p.status)).reduce((s,p) => s + num(p.purchase_price), 0);
+  const name = me.first_name || (tgUser() && tgUser().first_name) || me.telegram_username || 'друг';
+  const photo = me.photo_url || (tgUser() && tgUser().photo_url) || '';
+  const refLink = location.origin + location.pathname + '?ref=' + (me.referral_code || '');
+  setApp(
+    '<div class="top"><h1>✨ Эры</h1><div class="acts"><button onclick="refresh()">🔄</button>' + bell() + '</div></div>' +
+    '<div class="hero">' + (photo ? '<img src="' + esc(photo) + '" alt="">' : '<div class="av">' + esc((name[0] || '?').toUpperCase()) + '</div>') +
       '<div><div class="n">' + esc(name) + '</div>' +
-        (me.telegram_username ? '<div class="u">@' + esc(me.telegram_username) + '</div>' : '') + '</div></div>' +
-
+      (me.telegram_username ? '<div class="u">@' + esc(me.telegram_username) + '</div>' : '') + '</div></div>' +
     '<div class="stats">' +
       '<div class="stat"><div class="l">Инвестировано</div><div class="v accent">' + fmt(invested) + '</div></div>' +
       '<div class="stat"><div class="l">Активных</div><div class="v">' + active.length + '</div></div>' +
       '<div class="stat"><div class="l">Начислено</div><div class="v ok">+' + fmt(expected) + '</div></div>' +
-      '<div class="stat"><div class="l">Доступно</div><div class="v' + (available > 0 ? ' ok' : '') + '">' + fmt(available) + '</div></div>' +
-    '</div>' +
-
-    '<div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><b>🔗 Реф-ссылка</b><span class="muted">' + me.invited_count + ' друзей</span></div>' +
+      '<div class="stat"><div class="l">Доступно</div><div class="v' + (available > 0 ? ' ok' : '') + '">' + fmt(available) + '</div></div></div>' +
+    '<div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><b>🔗 Реф-ссылка</b><span class="muted">' + num(me.invited_count) + ' друзей</span></div>' +
       '<div class="ref">' + esc(refLink) + '</div>' +
       '<button class="btn gray" style="margin-top:10px" onclick="copyRef()">📋 Скопировать</button></div>' +
-
     '<h3 style="font-size:15px;margin:14px 0 10px">Активные эры</h3>' +
-    (active.length ? active.map(eraActive).join('')
-      : '<div class="card empty"><div class="ic">🌱</div><p style="margin-bottom:12px">Пока нет активных эр</p><button class="btn" style="max-width:200px;margin:0 auto" onclick="setTab(\'buy\')">🛒 В магазин</button></div>');
-
-  $('nav').classList.remove('hidden');
+    (shown.length ? shown.map(p => eraCard(p, false)).join('')
+      : '<div class="card empty"><div class="ic">🌱</div><p style="margin-bottom:12px">Пока нет активных эр</p><button class="btn" style="max-width:200px;margin:0 auto" onclick="setTab(\'buy\')">🛒 В магазин</button></div>'));
 }
 
-function eraActive(p){
-  const prog = progressOf(p);
-  const cls = daysClass(p);
+function eraCard(p, full){
+  const prog = progressOf(p), cls = daysClass(p);
+  const row = (l, v) => v ? '<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span class="muted">' + l + '</span><span>' + fmtDate(v) + '</span></div>' : '';
   return '<div class="era">' +
-    '<div class="h"><div><div class="t">' + esc(p.era_title) + '</div><div class="s">Заявка #' + p.id + '</div></div>' +
-    '<span class="badge ' + p.status + '">' + statusLabel(p.status) + '</span></div>' +
+    '<div class="h"><div><div class="t">' + esc(p.era_title) + '</div><div class="s">' +
+      (full ? '📩 #' + esc(p.id) + ' · ' + num(p.duration_days) + ' дн.' : 'Заявка #' + esc(p.id)) + '</div></div>' +
+    '<span class="badge ' + esc(p.status) + '">' + esc(statusLabel(p.status)) + '</span></div>' +
     '<div class="metrics">' +
       '<div class="m"><div class="l">Вложено</div><div class="v">' + fmt(p.purchase_price) + '</div></div>' +
       '<div class="m"><div class="l">Начисл.</div><div class="v ok">+' + fmt(p.profit_amount) + '</div></div>' +
       '<div class="m"><div class="l">Итого</div><div class="v accent">' + fmt(p.total_amount) + '</div></div></div>' +
-    '<div style="text-align:center;font-size:12px;font-weight:600">' + daysLabel(p) + '</div>' +
-    '<div class="bar"><div class="f ' + cls + '" style="width:' + prog + '%"></div></div>' +
-    (p.status === 'completed' ? '<button class="btn green" style="margin-top:12px" onclick="requestPayout(' + p.id + ')">💰 Подать на вывод</button>' : '') +
+    ((!full || p.status === 'active')
+      ? '<div style="text-align:center;font-size:12px;font-weight:600">' + daysLabel(p) + '</div>' +
+        '<div class="bar"><div class="f ' + cls + '" style="width:' + prog + '%"></div></div>' : '') +
+    (full ? '<div class="card" style="margin-top:10px;background:#1a212c;padding:10px">' +
+      row('Создана', p.created_at) + row('Активирована', p.activated_at) +
+      row('Последний день', p.last_day) + row('Выплачено', p.paid_at) + '</div>' : '') +
+    (p.status === 'completed' ? '<button class="btn green" style="margin-top:12px" onclick="requestPayout(' + q(p.id) + ')">💰 Подать на вывод</button>' : '') +
     '</div>';
 }
 
-async function screenBuy(){
-  const me = await api('/api/me'); ME = me;
-
-  if (!me.agreed_terms){
-    $('app').innerHTML =
-      '<div class="top"><h1>Условия</h1></div>' +
-      '<div class="card"><div id="terms" style="white-space:pre-wrap;line-height:1.7">Загрузка…</div></div>' +
-      '<button class="btn" onclick="agreeTerms()">✅ Я согласен</button>';
-    const c = await api('/api/content/terms_text');
-    const t = $('terms'); if (t) t.textContent = c.value || '';
+function drawBuy(){
+  const me = ME || {};
+  if (!me.agreed_terms) {
+    setApp('<div class="top"><h1>Условия</h1></div>' +
+      '<div class="card"><div id="terms" style="white-space:pre-wrap;line-height:1.7"><div class="skel" style="height:120px"></div></div></div>' +
+      '<button class="btn" onclick="agreeTerms()">✅ Я согласен</button>');
+    get('/api/content/terms_text').then(c => { const t = $('terms'); if (t) t.textContent = c.value || ''; })
+      .catch(e => { const t = $('terms'); if (t) t.textContent = e.message; });
     return;
   }
-
-  const eras = await api('/api/eras');
-
-  $('app').innerHTML =
-    '<div class="top"><h1>🛒 Магазин</h1><span class="muted">' + eras.length + ' эр</span></div>' +
-    (eras.length ? eras.map(eraShop).join('') : '<div class="empty"><div class="ic">📦</div><p>Товаров нет</p></div>');
+  setApp('<div class="top"><h1>🛒 Магазин</h1><div class="acts"><span class="muted" style="align-self:center">' +
+    (HAVE.eras ? ERAS.length + ' эр' : '') + '</span>' + bell() + '</div></div>' +
+    (!HAVE.eras ? '<div class="skel" style="height:190px"></div><div class="skel" style="height:190px"></div>'
+      : ERAS.length ? ERAS.map(eraShop).join('')
+      : '<div class="empty"><div class="ic">📦</div><p>Товаров пока нет</p></div>'));
 }
 
 function eraShop(e){
@@ -471,54 +594,30 @@ function eraShop(e){
   return '<div class="era">' +
     '<div class="h"><div><div class="t">' + esc(e.title) + '</div><div class="s">' + e.duration_days + ' дней · +' + roi + '% ROI</div></div>' +
     '<div class="price">' + fmt(e.price) + '</div></div>' +
-    '<div class="desc">' + esc(e.description || '') + '</div>' +
+    (e.description ? '<div class="desc">' + esc(e.description) + '</div>' : '') +
     '<div class="metrics">' +
       '<div class="m"><div class="l">Стоимость</div><div class="v">' + fmt(e.price) + '</div></div>' +
       '<div class="m"><div class="l">Начисл.</div><div class="v ok">+' + fmt(e.profit_amount) + '</div></div>' +
       '<div class="m"><div class="l">Итого</div><div class="v accent">' + fmt(e.total_amount) + '</div></div></div>' +
-    '<button class="btn" onclick="buyEra(' + e.id + ')">🛒 Подать заявку</button></div>';
+    '<button class="btn" onclick="buyEra(' + q(e.id) + ')">🛒 Подать заявку</button></div>';
 }
 
-async function screenMy(){
-  const list = await api('/api/purchases/my');
-  PURCHASES = list;
-
-  $('app').innerHTML =
-    '<div class="top"><h1>📦 Покупки</h1><span class="muted">' + list.length + '</span></div>' +
-    (list.length ? list.map(eraFull).join('')
-      : '<div class="card empty"><div class="ic">📦</div><p style="margin-bottom:12px">Покупок нет</p><button class="btn" style="max-width:200px;margin:0 auto" onclick="setTab(\'buy\')">🛒 В магазин</button></div>');
+function drawMy(){
+  const list = PURCHASES;
+  setApp('<div class="top"><h1>📦 Покупки</h1><div class="acts"><span class="muted" style="align-self:center">' + list.length + '</span>' + bell() + '</div></div>' +
+    (list.length ? list.map(p => eraCard(p, true)).join('')
+      : '<div class="card empty"><div class="ic">📦</div><p style="margin-bottom:12px">Покупок нет</p><button class="btn" style="max-width:200px;margin:0 auto" onclick="setTab(\'buy\')">🛒 В магазин</button></div>'));
 }
 
-function eraFull(p){
-  const prog = progressOf(p);
-  const cls = daysClass(p);
-  return '<div class="era">' +
-    '<div class="h"><div><div class="t">' + esc(p.era_title) + '</div><div class="s">📩 #' + p.id + ' · ' + p.duration_days + ' дн.</div></div>' +
-    '<span class="badge ' + p.status + '">' + statusLabel(p.status) + '</span></div>' +
-    '<div class="metrics">' +
-      '<div class="m"><div class="l">Вложено</div><div class="v">' + fmt(p.purchase_price) + '</div></div>' +
-      '<div class="m"><div class="l">Начисл.</div><div class="v ok">+' + fmt(p.profit_amount) + '</div></div>' +
-      '<div class="m"><div class="l">Итого</div><div class="v accent">' + fmt(p.total_amount) + '</div></div></div>' +
-    (p.status === 'active' ? '<div style="text-align:center;font-size:12px;font-weight:600">' + daysLabel(p) + '</div><div class="bar"><div class="f ' + cls + '" style="width:' + prog + '%"></div></div>' : '') +
-    '<div class="card" style="margin-top:10px;background:#1a212c;padding:10px">' +
-      (p.created_at ? '<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span class="muted">Создана</span><span>' + fmtDate(p.created_at) + '</span></div>' : '') +
-      (p.activated_at ? '<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span class="muted">Активирована</span><span>' + fmtDate(p.activated_at) + '</span></div>' : '') +
-      (p.last_day ? '<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span class="muted">Последний день</span><span>' + fmtDate(p.last_day) + '</span></div>' : '') +
-      (p.paid_at ? '<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span class="muted">Выплачено</span><span>' + fmtDate(p.paid_at) + '</span></div>' : '') +
-    '</div>' +
-    (p.status === 'completed' ? '<button class="btn green" style="margin-top:12px" onclick="requestPayout(' + p.id + ')">💰 Подать на вывод</button>' : '') +
-    '</div>';
-}
-
-async function screenProfile(){
-  const me = await api('/api/me'); ME = me;
-  const name = me.first_name || me.telegram_username || 'Пользователь';
-  const initial = (name[0] || '👤').toUpperCase();
-
-  $('app').innerHTML =
-    '<div class="top"><h1>👤 Профиль</h1></div>' +
+function drawProfile(){
+  const me = ME || {};
+  const u = tgUser() || {};
+  const name = me.first_name || u.first_name || me.telegram_username || 'Пользователь';
+  const photo = me.photo_url || u.photo_url || '';
+  setApp(
+    '<div class="top"><h1>👤 Профиль</h1><div class="acts">' + bell() + '</div></div>' +
     '<div class="hero" style="flex-direction:column;text-align:center;gap:8px">' +
-      (me.photo_url ? '<img src="' + esc(me.photo_url) + '" style="width:64px;height:64px">' : '<div class="av" style="width:64px;height:64px;font-size:26px">' + initial + '</div>') +
+      (photo ? '<img src="' + esc(photo) + '" style="width:64px;height:64px" alt="">' : '<div class="av" style="width:64px;height:64px;font-size:26px">' + esc((name[0] || '?').toUpperCase()) + '</div>') +
       '<div><div style="font-size:17px;font-weight:700">' + esc(name) + '</div>' +
       (me.telegram_username ? '<div class="muted">@' + esc(me.telegram_username) + '</div>' : '') + '</div></div>' +
     '<div class="menu">' +
@@ -526,49 +625,75 @@ async function screenProfile(){
       '<div class="menu-i" onclick="showContact()"><div><span class="ic">💬</span>Связь</div><span class="a">→</span></div>' +
       '<div class="menu-i" onclick="showNotif()"><div><span class="ic">🔔</span>Уведомления</div><span class="a">→</span></div></div>' +
     '<div class="list">' +
-      '<div class="list-i"><span class="l">Telegram ID</span><b>' + me.telegram_id + '</b></div>' +
-      '<div class="list-i"><span class="l">Username</span><b>@' + esc(me.telegram_username || '—') + '</b></div>' +
+      '<div class="list-i"><span class="l">Telegram ID</span><b>' + esc(me.telegram_id || u.id || '—') + '</b></div>' +
+      '<div class="list-i"><span class="l">Username</span><b>@' + esc(me.telegram_username || u.username || '—') + '</b></div>' +
       '<div class="list-i"><span class="l">Реферер</span><b>' + (me.referrer ? '@' + esc(me.referrer.username || '—') : '—') + '</b></div>' +
       '<div class="list-i"><span class="l">Регистрация</span><b>' + fmtDate(me.registered_at) + '</b></div>' +
       '<div class="list-i"><span class="l">Условия</span><b>' + (me.agreed_terms ? '✅' : '❌') + '</b></div></div>' +
     '<div class="menu">' +
       '<div class="menu-i" onclick="showContent(\'rules_text\',\'Правила\')"><div><span class="ic">📖</span>Правила</div><span class="a">→</span></div>' +
       '<div class="menu-i" onclick="showContent(\'terms_text\',\'Условия\')"><div><span class="ic">📄</span>Условия</div><span class="a">→</span></div></div>' +
-    '<button class="btn gray" onclick="logout()">🚪 Выйти</button>';
+    '<button class="btn gray" onclick="logout()">🚪 Выйти</button>');
 }
 
-async function render(){
+// ============================================================
+// Рендер: сначала из кэша (мгновенно), потом обновляем
+// ============================================================
+const SCREENS = {
+  home:    { need: ['me','purchases'], soft: [],       draw: drawHome },
+  buy:     { need: ['me'],             soft: ['eras'], draw: drawBuy },
+  my:      { need: ['purchases'],      soft: [],       draw: drawMy },
+  profile: { need: ['me'],             soft: [],       draw: drawProfile },
+};
+
+window.refresh = function(){ invalidate(); render(true); };
+
+async function render(force, silent){
+  const my = ++RID;
   try {
-    if (!TOKEN){
-      const r = await tryAuth();
-      if (!r.ok){ screenAuth(r.reason); return; }
+    const r = await ensureAuth();
+    if (my !== RID) return;
+    if (!r.ok) { screenAuth(r.reason, r.error); return; }
+    const sc = SCREENS[TAB] || SCREENS.home;
+    const ready = sc.need.every(k => HAVE[k]);
+    if (SUB && silent) return;
+    if (!silent) {
+      if (ready) sc.draw();
+      else { $('app').innerHTML = skeleton(); $('nav').classList.remove('hidden'); }
     }
-    const map = { home: screenHome, buy: screenBuy, my: screenMy, profile: screenProfile };
-    await (map[TAB] || screenHome)();
+    const res = await Promise.all([
+      ...sc.need.map(k => fetchKey(k, force)),
+      ...sc.soft.map(k => fetchKey(k, force).catch(() => false)),
+    ]);
+    if (my !== RID || SUB) return;
+    const changed = res.some(Boolean);
+    if (!ready || changed || (!silent && sc.soft.some(k => !HAVE[k]))) {
+      if (!(silent && $('modal').innerHTML)) { const y = window.scrollY; sc.draw(); if (silent) window.scrollTo(0, y); }
+    }
+    if (KNOWN === null) pollNotifs();
   } catch(e){
+    if (my !== RID) return;
     console.error(e);
-    if (e.message === 'Сессия истекла'){ screenAuth(); return; }
+    if (e.message === 'Сессия истекла') { render(); return; }
+    if (silent) return;
     $('app').innerHTML =
       '<div class="top"><h1>⚠️ Ошибка</h1></div>' +
       '<div class="card"><p style="margin-bottom:12px">' + esc(e.message) + '</p>' +
-      '<p class="muted" style="margin-bottom:12px">API: ' + esc(API) + '</p>' +
-      '<button class="btn" onclick="location.reload()">🔄 Обновить</button></div>';
+      '<p class="muted" style="margin-bottom:12px">Сервер: ' + esc(API) + '</p>' +
+      '<button class="btn" onclick="refresh()">🔄 Повторить</button></div>';
   }
 }
 
-(function(){
-  const nav = document.getElementById('nav');
-  if (nav) nav.addEventListener('click', function(e){
+// ============================================================
+// Старт
+// ============================================================
+(function init(){
+  try { if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor && tg.setHeaderColor('#0a0e14'); tg.setBackgroundColor && tg.setBackgroundColor('#0a0e14'); } } catch(e){}
+  $('nav').addEventListener('click', e => {
     const b = e.target.closest('button');
     if (b && b.dataset.tab) window.setTab(b.dataset.tab);
   });
-})();
-
-(function(){
-  const nav = document.getElementById('nav');
-  if (nav) nav.querySelectorAll('button').forEach(b => {
-    b.classList.toggle('active', b.dataset.tab === 'home');
-  });
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === TAB));
   render();
 })();
 </script>

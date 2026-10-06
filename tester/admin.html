@@ -19,7 +19,6 @@
   button,input,textarea,select{font-family:inherit}
   .layout{display:flex;min-height:100vh}
 
-  /* SIDEBAR */
   .side{width:220px;background:var(--card);border-right:1px solid var(--border);
     padding:16px 10px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
   .side .logo{display:flex;align-items:center;gap:10px;padding:0 8px 16px;
@@ -33,7 +32,8 @@
   .side .nav-item{display:flex;align-items:center;gap:9px;width:100%;
     text-align:left;background:none;border:0;color:var(--text2);
     padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;
-    margin-bottom:1px;font-weight:500}
+    margin-bottom:1px;font-weight:500;transition:background .1s}
+  .side .nav-item:hover{background:var(--card2)}
   .side .nav-item.active{background:var(--accent);color:#fff}
   .side .nav-item .emo{font-size:15px;width:18px;text-align:center}
   .side .nav-item .count{margin-left:auto;padding:1px 7px;border-radius:9px;
@@ -42,14 +42,12 @@
   .side .section{font-size:10px;color:var(--muted);text-transform:uppercase;
     letter-spacing:.06em;font-weight:700;padding:12px 12px 4px}
 
-  /* MAIN */
   .main{flex:1;padding:20px 24px;max-width:100%;overflow-x:hidden}
   .header{display:flex;justify-content:space-between;align-items:flex-start;
     gap:16px;margin-bottom:20px;flex-wrap:wrap}
   .header h1{font-size:22px;font-weight:700;margin-bottom:2px}
   .header .sub{font-size:12px;color:var(--muted)}
 
-  /* STATS */
   .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
     gap:10px;margin-bottom:20px}
   .stat{background:var(--card);border:1px solid var(--border);border-radius:11px;
@@ -66,11 +64,13 @@
   .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
     padding:16px;margin-bottom:14px}
 
-  /* BUTTONS */
   .btn{padding:8px 14px;border-radius:8px;border:0;
     background:var(--accent);color:#fff;
     font-size:12.5px;font-weight:600;cursor:pointer;
-    display:inline-flex;align-items:center;gap:6px;font-family:inherit}
+    display:inline-flex;align-items:center;gap:6px;font-family:inherit;
+    transition:opacity .15s}
+  .btn:hover{opacity:.9}
+  .btn:active{transform:scale(.97)}
   .btn:disabled{opacity:.5;cursor:not-allowed}
   .btn.secondary{background:var(--card2);border:1px solid var(--border2);color:var(--text)}
   .btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
@@ -79,16 +79,14 @@
   .btn.sm{padding:5px 10px;font-size:11.5px}
   .btn.xs{padding:4px 8px;font-size:11px}
 
-  /* INPUTS */
   .input{width:100%;padding:9px 11px;border-radius:8px;
     border:1px solid var(--border);background:var(--card2);color:var(--text);
-    font-size:13px;outline:none}
+    font-size:13px;outline:none;transition:border-color .15s}
   .input:focus{border-color:var(--accent)}
   .form-row{margin-bottom:11px}
   .form-row label{display:block;font-size:10.5px;color:var(--muted);
     margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
 
-  /* GRIDS */
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -96,7 +94,6 @@
   .muted{color:var(--muted);font-size:12px}
   .muted-sm{color:var(--muted);font-size:11px}
 
-  /* BADGES */
   .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;
     border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:.02em;
     text-transform:uppercase;white-space:nowrap}
@@ -109,7 +106,6 @@
   .badge.cancelled{background:rgba(255,92,92,.15);color:var(--err)}
   .badge.pending{background:rgba(245,181,71,.15);color:var(--warn)}
 
-  /* USER CARD */
   .user-card{background:var(--card);border:1px solid var(--border);
     border-radius:12px;padding:14px;margin-bottom:10px}
   .user-head{display:flex;gap:12px;align-items:center;margin-bottom:12px}
@@ -133,7 +129,6 @@
   .user-stat .v.accent{color:var(--accent)}
   .user-stat .v.warn{color:var(--warn)}
 
-  /* ORDER CARD */
   .order-card{background:var(--card);border:1px solid var(--border);
     border-radius:12px;padding:14px;margin-bottom:10px}
   .order-card.processed{background:var(--card2)}
@@ -149,7 +144,6 @@
   .meta-item .v.warn{color:var(--warn)}
   .meta-item .v.accent{color:var(--accent)}
 
-  /* MODAL */
   .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.8);
     z-index:999;display:flex;align-items:center;justify-content:center;
     padding:20px;overflow-y:auto}
@@ -168,7 +162,6 @@
     border:1px solid var(--border2);color:var(--text2);font-size:16px;
     cursor:pointer;display:flex;align-items:center;justify-content:center}
 
-  /* LOGIN */
   .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;
     padding:20px}
   .login-box{background:var(--card);border:1px solid var(--border2);
@@ -179,7 +172,6 @@
   .login-box h1{font-size:20px;margin-bottom:4px;text-align:center}
   .login-box .s{font-size:12px;color:var(--muted);text-align:center;margin-bottom:20px}
 
-  /* TABS */
   .tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;
     scrollbar-width:none}
   .tabs::-webkit-scrollbar{display:none}
@@ -188,13 +180,13 @@
     font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit}
   .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 
-  /* TOAST */
   .toast{position:fixed;top:16px;right:16px;background:var(--card2);
     border:1px solid var(--border2);padding:12px 18px;border-radius:10px;
     z-index:9999;font-size:13px;font-weight:500;max-width:300px;
-    box-shadow:0 8px 24px rgba(0,0,0,.4)}
+    box-shadow:0 8px 24px rgba(0,0,0,.4);animation:toastIn .2s ease}
   .toast.ok{border-color:rgba(57,217,138,.4);background:rgba(57,217,138,.1)}
   .toast.err{border-color:rgba(255,92,92,.4);background:rgba(255,92,92,.1)}
+  @keyframes toastIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 
   .empty{padding:50px 20px;text-align:center;color:var(--muted)}
   .empty .ic{font-size:44px;margin-bottom:10px;opacity:.4}
@@ -207,7 +199,6 @@
   .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.25);
     border-top-color:#fff;border-radius:50%;animation:sp .65s linear infinite}
   @keyframes sp{to{transform:rotate(360deg)}}
-  .loading-box{padding:40px 20px;text-align:center;color:var(--muted)}
 
   table{width:100%;border-collapse:collapse;font-size:12.5px}
   th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--border)}
@@ -246,11 +237,16 @@ let TOKEN = localStorage.getItem('admin_token') || '';
 let TAB = 'dashboard';
 let CACHE = { users: [], purchases: [], payouts: [], eras: [], logs: [] };
 let FILTER = { purchases: 'pending', payouts: 'pending', search: '' };
+let CACHE_TIME = 0;
 let REFRESH_TIMER = null;
+
+// ---------- SAFE HELPERS ----------
+function $(id){ return document.getElementById(id); }
 
 // ---------- TOAST ----------
 function toast(msg, type='ok', ms=2500){
-  const t = document.getElementById('toast');
+  const t = $('toast');
+  if (!t) return;
   t.textContent = msg;
   t.className = 'toast ' + type;
   clearTimeout(t._t);
@@ -259,13 +255,18 @@ function toast(msg, type='ok', ms=2500){
 
 // ---------- MODAL ----------
 function showModal(html){
-  document.getElementById('modal-root').innerHTML = `
+  const root = $('modal-root');
+  if (!root) return;
+  root.innerHTML = `
     <div class="modal-backdrop" onclick="if(event.target===this)closeModal()">
       <div class="modal">${html}</div>
     </div>
   `;
 }
-function closeModal(){ document.getElementById('modal-root').innerHTML = ''; }
+function closeModal(){
+  const r = $('modal-root');
+  if (r) r.innerHTML = '';
+}
 
 // ---------- API ----------
 async function api(path, opts={}){
@@ -276,7 +277,12 @@ async function api(path, opts={}){
     headers['Content-Type'] = 'application/json';
     opts.body = JSON.stringify(opts.body);
   }
-  const res = await fetch(API + path, {...opts, headers});
+  let res;
+  try {
+    res = await fetch(API + path, {...opts, headers});
+  } catch(e){
+    throw new Error('Сервер недоступен');
+  }
   if (res.status === 401){ logout(); throw new Error('Unauthorized'); }
   const data = await res.json().catch(()=>({}));
   if (!res.ok) throw new Error(data.detail || 'Ошибка');
@@ -287,11 +293,13 @@ function logout(){
   localStorage.removeItem('admin_token'); TOKEN = ''; location.reload();
 }
 
+function invalidateCache(){ CACHE_TIME = 0; }
+
 // ============================================================
 // LOGIN
 // ============================================================
 function renderLogin(){
-  document.getElementById('root').innerHTML = `
+  $('root').innerHTML = `
     <div class="login-wrap">
       <div class="login-box">
         <div class="ic">⚡</div>
@@ -319,13 +327,14 @@ function renderLogin(){
 }
 
 async function doLogin(){
-  const login = document.getElementById('login').value;
-  const password = document.getElementById('password').value;
-  const apiUrl = document.getElementById('api_url').value.trim();
+  const login = $('login').value;
+  const password = $('password').value;
+  const apiUrl = $('api_url').value.trim();
   if (apiUrl){ localStorage.setItem('admin_api', apiUrl); }
   try {
     const res = await api('/api/admin/login', {method:'POST', body:{login, password}});
-    TOKEN = res.token; localStorage.setItem('admin_token', TOKEN);
+    TOKEN = res.token;
+    localStorage.setItem('admin_token', TOKEN);
     toast('Добро пожаловать');
     render();
   } catch(e){ toast(e.message, 'err'); }
@@ -340,7 +349,7 @@ function layout(content){
     payouts: CACHE.payouts.filter(p=>p.status==='pending').length,
     users: CACHE.users.length,
   };
-  document.getElementById('root').innerHTML = `
+  $('root').innerHTML = `
     <div class="layout">
       <aside class="side">
         <div class="logo">
@@ -395,19 +404,15 @@ function layout(content){
     </div>
   `;
 }
+
 async function setTab(t){
   TAB = t;
+  stopRefresh();
   await render();
 }
 
 function stopRefresh(){
   if (REFRESH_TIMER){ clearInterval(REFRESH_TIMER); REFRESH_TIMER = null; }
-}
-function startRefresh(){
-  stopRefresh();
-  if (TAB === 'dashboard'){
-    REFRESH_TIMER = setInterval(()=>{ if (TAB === 'dashboard') tabDashboard(); }, 30000);
-  }
 }
 
 // ============================================================
@@ -422,7 +427,7 @@ async function tabDashboard(){
         <div class="sub">Общая статистика проекта</div>
       </div>
       <div class="flex">
-        <button class="btn secondary sm" onclick="tabDashboard()">🔄 Обновить</button>
+        <button class="btn secondary sm" onclick="invalidateCache();tabDashboard()">🔄 Обновить</button>
         <button class="btn sm" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">📢 Канал</button>
       </div>
     </div>
@@ -438,15 +443,17 @@ async function tabDashboard(){
       <div class="stat"><div class="ic">💰</div><div class="l">Выплачено</div><div class="v">${fmt(d.total_paid_sum)}</div></div>
     </div>
   `);
-  startRefresh();
+  REFRESH_TIMER = setInterval(()=>{
+    if (TAB === 'dashboard') tabDashboard();
+  }, 30000);
 }
 
 // ============================================================
 // PURCHASES
 // ============================================================
 async function tabPurchases(){
-  stopRefresh();
   CACHE.purchases = await api('/api/admin/purchases');
+  CACHE_TIME = Date.now();
 
   const filtered = CACHE.purchases.filter(p=>{
     if (FILTER.purchases === 'pending') return p.status === 'awaiting_payment';
@@ -482,7 +489,7 @@ async function tabPurchases(){
     <div class="search-bar">
       <input class="input" placeholder="Поиск: имя, @username, ID…"
         value="${esc(FILTER.search)}"
-        oninput="FILTER.search=this.value;tabPurchases()">
+        oninput="debouncedSearch(this.value,'purchases')">
     </div>
 
     <div class="tabs">
@@ -549,7 +556,7 @@ function orderCard(p){
           <button class="btn ok sm" onclick="confirmPurchase(${p.id})">✅ Подтвердить</button>
           <button class="btn danger sm" onclick="cancelPurchase(${p.id})">❌ Отменить</button>
         ` : ''}
-        <button class="btn ghost sm" onclick="writeUser('${p.telegram_username||''}', ${p.telegram_id||0})">
+        <button class="btn ghost sm" onclick="writeUser('${esc(p.telegram_username||'')}', ${p.telegram_id||0})">
           💬 Написать
         </button>
       </div>
@@ -562,6 +569,7 @@ async function confirmPurchase(id){
   try {
     await api(`/api/admin/purchases/${id}/confirm`, {method:'POST'});
     toast(`✅ Заявка #${id} подтверждена`);
+    invalidateCache();
     tabPurchases();
   } catch(e){ toast(e.message, 'err'); }
 }
@@ -571,6 +579,7 @@ async function cancelPurchase(id){
   try {
     await api(`/api/admin/purchases/${id}/cancel`, {method:'POST'});
     toast(`❌ Заявка #${id} отменена`);
+    invalidateCache();
     tabPurchases();
   } catch(e){ toast(e.message, 'err'); }
 }
@@ -579,8 +588,8 @@ async function cancelPurchase(id){
 // PAYOUTS
 // ============================================================
 async function tabPayouts(){
-  stopRefresh();
   CACHE.payouts = await api('/api/admin/payouts');
+  CACHE_TIME = Date.now();
 
   const filtered = CACHE.payouts.filter(p=>{
     if (FILTER.payouts === 'pending') return p.status === 'pending';
@@ -654,7 +663,7 @@ function payoutCard(po){
           <button class="btn ok sm" onclick="markPaid(${po.id})">✅ Выплачено</button>
           <button class="btn danger sm" onclick="cancelPayout(${po.id})">❌ Отменить</button>
         ` : ''}
-        <button class="btn ghost sm" onclick="writeUser('${po.telegram_username||''}', ${po.telegram_id||0})">
+        <button class="btn ghost sm" onclick="writeUser('${esc(po.telegram_username||'')}', ${po.telegram_id||0})">
           💬 Написать
         </button>
       </div>
@@ -667,6 +676,7 @@ async function markPaid(id){
   try {
     await api(`/api/admin/payouts/${id}/mark_paid`, {method:'POST'});
     toast('💰 Выплата отмечена');
+    invalidateCache();
     tabPayouts();
   } catch(e){ toast(e.message, 'err'); }
 }
@@ -676,6 +686,7 @@ async function cancelPayout(id){
   try {
     await api(`/api/admin/payouts/${id}/cancel`, {method:'POST'});
     toast('Отменено');
+    invalidateCache();
     tabPayouts();
   } catch(e){ toast(e.message, 'err'); }
 }
@@ -684,19 +695,13 @@ async function cancelPayout(id){
 // USERS
 // ============================================================
 async function tabUsers(){
-  stopRefresh();
-
-  // Загружаем ВСЕ данные одновременно — так быстрее и надёжнее
-  const [users, purchases, payouts] = await Promise.all([
+  const [users, purchases] = await Promise.all([
     api('/api/admin/users'),
-    api('/api/admin/purchases'),
-    api('/api/admin/payouts').catch(()=>[])
+    api('/api/admin/purchases')
   ]);
   CACHE.users = users;
   CACHE.purchases = purchases;
-  CACHE.payouts = payouts;
-
-  console.log('[Users] загружено:', users.length);
+  CACHE_TIME = Date.now();
 
   const filtered = CACHE.users.filter(u=>{
     if (!FILTER.search) return true;
@@ -717,7 +722,7 @@ async function tabUsers(){
     <div class="search-bar">
       <input class="input" placeholder="Поиск: имя, @username, Telegram ID…"
         value="${esc(FILTER.search)}"
-        oninput="FILTER.search=this.value;tabUsers()">
+        oninput="debouncedSearch(this.value,'users')">
     </div>
 
     ${filtered.length ? filtered.map(u=>userCard(u)).join('') : `
@@ -731,7 +736,6 @@ async function tabUsers(){
 }
 
 function userCard(u){
-  // ⚠️ ID пользователя — строка (Firebase). Приводим оба к строке для сравнения
   const uid = String(u.id || u._id || '');
   const userPurchases = CACHE.purchases.filter(p => String(p.user_uid) === uid);
   const active = userPurchases.filter(p => p.status === 'active');
@@ -894,16 +898,19 @@ function writeUser(username, tgId){
 // ERAS
 // ============================================================
 async function tabEras(){
-  stopRefresh();
   CACHE.eras = await api('/api/admin/eras');
+  CACHE_TIME = Date.now();
 
   layout(`
     <div class="header">
       <div>
-        <h1>🧩 Товары</h1>
-        <div class="sub">Всего: ${CACHE.eras.length}</div>
+        <h1>🧩 Товары (Эры)</h1>
+        <div class="sub">Всего: ${CACHE.eras.length} · Изменения влияют только на новые покупки</div>
       </div>
-      <button class="btn" onclick="openEraModal()">➕ Создать</button>
+      <div class="flex">
+        <button class="btn secondary sm" onclick="invalidateCache();tabEras()">🔄 Обновить</button>
+        <button class="btn" onclick="openEraModal()">➕ Создать</button>
+      </div>
     </div>
 
     ${CACHE.eras.length ? CACHE.eras.map(e => eraCard(e)).join('') : `
@@ -1002,43 +1009,57 @@ function openEraModal(id){
     </div>
     <div class="modal-foot">
       <button class="btn ghost" onclick="closeModal()">Отмена</button>
-      <button class="btn" onclick="saveEra(${id||0})">${isEdit ? '💾 Сохранить' : '✅ Создать'}</button>
+      <button class="btn" id="f_submit" onclick="saveEra(${id||0})">${isEdit ? '💾 Сохранить' : '✅ Создать'}</button>
     </div>
   `);
 
-  setTimeout(()=>{
-    const price = document.getElementById('f_price');
-    const profit = document.getElementById('f_profit');
-    const total = document.getElementById('f_total');
-    const recalc = ()=>{
-      total.value = (parseFloat(price.value)||0) + (parseFloat(profit.value)||0);
-    };
-    price.addEventListener('input', recalc);
-    profit.addEventListener('input', recalc);
-  }, 30);
+  // Авто-пересчёт итога
+  const recalc = () => {
+    const price = parseFloat($('f_price')?.value) || 0;
+    const profit = parseFloat($('f_profit')?.value) || 0;
+    const total = $('f_total');
+    if (total) total.value = price + profit;
+  };
+  const priceEl = $('f_price');
+  const profitEl = $('f_profit');
+  if (priceEl) priceEl.addEventListener('input', recalc);
+  if (profitEl) profitEl.addEventListener('input', recalc);
+  recalc();
 }
 
 async function saveEra(id){
+  const title = $('f_title')?.value?.trim();
+  if (!title){ toast('Введите название', 'err'); return; }
+
   const body = {
-    title: document.getElementById('f_title').value,
-    price: parseFloat(document.getElementById('f_price').value) || 0,
-    duration_days: parseInt(document.getElementById('f_duration').value) || 0,
-    profit_amount: parseFloat(document.getElementById('f_profit').value) || 0,
-    description: document.getElementById('f_description').value,
-    is_active: parseInt(document.getElementById('f_active').value),
+    title: title,
+    price: parseFloat($('f_price')?.value) || 0,
+    duration_days: parseInt($('f_duration')?.value) || 0,
+    profit_amount: parseFloat($('f_profit')?.value) || 0,
+    description: $('f_description')?.value || '',
+    is_active: parseInt($('f_active')?.value) || 1,
     sort_order: id || 99,
   };
+
+  const submitBtn = $('f_submit');
+  if (submitBtn){ submitBtn.disabled = true; submitBtn.textContent = '⏳ Сохранение…'; }
+
   try {
     if (id){
       await api('/api/admin/eras/' + id, {method:'PUT', body});
-      toast('💾 Сохранено');
+      toast('💾 Эра обновлена');
     } else {
-      await api('/api/admin/eras', {method:'POST', body});
-      toast('✅ Эра создана');
+      const res = await api('/api/admin/eras', {method:'POST', body});
+      toast(`✅ Эра #${res.id || '?'} создана`);
     }
     closeModal();
-    tabEras();
-  } catch(e){ toast(e.message, 'err'); }
+    invalidateCache();
+    // Небольшая задержка, чтобы Firebase успел записать
+    setTimeout(() => tabEras(), 300);
+  } catch(e){
+    toast(e.message, 'err');
+    if (submitBtn){ submitBtn.disabled = false; submitBtn.textContent = id ? '💾 Сохранить' : '✅ Создать'; }
+  }
 }
 
 async function toggleEra(id, newActive){
@@ -1047,18 +1068,28 @@ async function toggleEra(id, newActive){
   try {
     await api('/api/admin/eras/' + id, {
       method:'PUT',
-      body: {...e, is_active: newActive}
+      body: {
+        title: e.title,
+        price: e.price,
+        duration_days: e.duration_days,
+        profit_amount: e.profit_amount,
+        description: e.description || '',
+        is_active: newActive,
+        sort_order: e.sort_order || id,
+      }
     });
     toast(newActive ? '🟢 Включена' : '⚫ Отключена');
+    invalidateCache();
     tabEras();
   } catch(e){ toast(e.message, 'err'); }
 }
 
 async function deleteEra(id){
-  if (!confirm(`🗑 Удалить эру #${id}?`)) return;
+  if (!confirm(`🗑 Удалить эру #${id}?\n\nДействие необратимо.`)) return;
   try {
     await api('/api/admin/eras/' + id, {method:'DELETE'});
-    toast('🗑 Удалено');
+    toast('🗑 Эра удалена');
+    invalidateCache();
     tabEras();
   } catch(e){ toast(e.message, 'err'); }
 }
@@ -1067,7 +1098,6 @@ async function deleteEra(id){
 // CONTENT
 // ============================================================
 async function tabContent(){
-  stopRefresh();
   const keys = [
     {k:'marketing_image', t:'Маркетинговое изображение', upload:true},
     {k:'rules_text', t:'Правила проекта', textarea:true},
@@ -1114,7 +1144,7 @@ async function tabContent(){
 }
 
 async function saveContent(key){
-  const value = document.getElementById('c_' + key).value;
+  const value = $('c_' + key)?.value || '';
   try {
     await api('/api/admin/content', {method:'POST', body:{key, value}});
     toast('💾 Сохранено');
@@ -1122,7 +1152,7 @@ async function saveContent(key){
 }
 
 async function uploadFile(key){
-  const f = document.getElementById('f_' + key).files[0];
+  const f = $('f_' + key)?.files?.[0];
   if (!f) return toast('Выберите файл', 'err');
   const fd = new FormData(); fd.append('file', f);
   try {
@@ -1136,7 +1166,6 @@ async function uploadFile(key){
 // LOGS
 // ============================================================
 async function tabLogs(){
-  stopRefresh();
   const list = await api('/api/admin/actions');
   layout(`
     <div class="header">
@@ -1174,6 +1203,19 @@ async function tabLogs(){
 }
 
 // ============================================================
+// SEARCH DEBOUNCE
+// ============================================================
+let SEARCH_TIMER = null;
+function debouncedSearch(value, tab){
+  FILTER.search = value;
+  clearTimeout(SEARCH_TIMER);
+  SEARCH_TIMER = setTimeout(() => {
+    if (tab === 'purchases') tabPurchases();
+    else if (tab === 'users') tabUsers();
+  }, 300);
+}
+
+// ============================================================
 // UTILS
 // ============================================================
 function esc(s){ return String(s??'').replace(/[&<>"']/g,
@@ -1195,7 +1237,7 @@ function statusLabel(s){
 }
 
 // ============================================================
-// MAIN
+// MAIN RENDER
 // ============================================================
 async function render(){
   if (!TOKEN){ renderLogin(); return; }

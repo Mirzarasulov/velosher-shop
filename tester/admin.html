@@ -17,12 +17,12 @@
   html,body{
     background:var(--bg);color:var(--text);
     font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-    -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;
   }
   button,input,textarea,select{font-family:inherit;font-size:inherit}
   .layout{display:flex;min-height:100vh}
 
+  /* SIDEBAR */
   .side{
     width:230px;background:var(--card);
     border-right:1px solid var(--border);
@@ -55,20 +55,25 @@
   .header h1{font-size:22px;font-weight:700;margin-bottom:4px}
   .header .sub{font-size:12px;color:var(--muted)}
 
+  /* STATS */
   .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
     gap:10px;margin-bottom:20px}
-  .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;
+    position:relative;overflow:hidden}
   .stat .ic{font-size:22px;margin-bottom:6px}
   .stat .l{font-size:10px;color:var(--muted);text-transform:uppercase;
     font-weight:600;margin-bottom:4px;letter-spacing:.04em}
   .stat .v{font-size:20px;font-weight:700}
   .stat .v.ok{color:var(--ok)} .stat .v.warn{color:var(--warn)}
   .stat .v.info{color:var(--info)} .stat .v.accent{color:var(--accent)}
-  .stat .v.purple{color:var(--purple)}
+  .stat .v.purple{color:var(--purple)} .stat .v.err{color:var(--err)}
+  .stat .trend{font-size:11px;margin-top:4px;font-weight:600;color:var(--muted)}
+  .stat .trend.up{color:var(--ok)} .stat .trend.down{color:var(--err)}
 
   .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
     padding:16px;margin-bottom:14px}
 
+  /* BUTTONS */
   .btn{
     padding:10px 16px;border-radius:9px;border:0;
     background:var(--accent);color:#fff;font-size:13px;font-weight:600;
@@ -87,6 +92,7 @@
   .btn.sm{padding:7px 12px;font-size:12px;min-height:34px}
   .btn.lg{padding:14px 20px;font-size:15px;min-height:48px;width:100%}
 
+  /* BADGE */
   .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;
     border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;
     white-space:nowrap}
@@ -97,6 +103,7 @@
   .badge.cancelled,.badge.rejected{background:rgba(255,92,92,.15);color:var(--err)}
   .badge.purple{background:rgba(167,139,250,.15);color:var(--purple)}
 
+  /* GRID CELLS */
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
     gap:8px;margin:10px 0}
   .cell{background:var(--card2);border-radius:9px;padding:10px 12px}
@@ -104,21 +111,24 @@
     margin-bottom:3px;font-weight:600;letter-spacing:.04em}
   .cell span{font-size:14px;font-weight:600;color:var(--text)}
   .cell span.ok{color:var(--ok)} .cell span.accent{color:var(--accent)}
+  .cell span.warn{color:var(--warn)} .cell span.err{color:var(--err)}
 
   .row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
   .flex{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 
+  /* FORM */
   .form-row{margin-bottom:12px}
   .form-row label{display:block;font-size:11px;color:var(--muted);
     margin-bottom:6px;text-transform:uppercase;font-weight:600;letter-spacing:.04em}
   .input{
     width:100%;padding:12px 14px;border-radius:9px;
     border:1px solid var(--border);background:var(--card2);
-    color:var(--text);font-size:15px;outline:none;
-    min-height:44px;
+    color:var(--text);font-size:15px;outline:none;min-height:44px;
   }
   .input:focus{border-color:var(--accent)}
+  textarea.input{min-height:120px;resize:vertical;font-family:inherit;line-height:1.5}
 
+  /* TABS */
   .tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;
     padding-bottom:6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .tabs::-webkit-scrollbar{display:none}
@@ -129,6 +139,7 @@
   }
   .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 
+  /* TOAST */
   .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);
     background:var(--card2);border:1px solid var(--border2);
     padding:14px 20px;border-radius:12px;z-index:9999;font-size:14px;
@@ -137,6 +148,7 @@
   .toast.err{border-color:var(--err);color:#ffb3b3}
   .toast.ok{border-color:var(--ok);color:#a8f0cc}
 
+  /* LOGIN */
   .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
   .login-box{background:var(--card);border:1px solid var(--border2);
     border-radius:14px;padding:28px;width:100%;max-width:400px}
@@ -146,6 +158,7 @@
   .empty .ic{font-size:48px;margin-bottom:12px;opacity:.5}
   .muted{color:var(--muted);font-size:12.5px}
 
+  /* MODAL */
   .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.8);
     z-index:999;display:flex;align-items:center;justify-content:center;padding:16px}
   .modal{background:var(--card);border:1px solid var(--border2);
@@ -161,11 +174,13 @@
   .close-x{width:36px;height:36px;border-radius:50%;background:var(--card2);
     border:1px solid var(--border2);color:var(--text2);font-size:18px;cursor:pointer}
 
+  /* SEARCH */
   .search-bar{position:relative;margin-bottom:14px}
   .search-bar input{padding-left:38px;font-size:15px}
   .search-bar::before{content:'🔍';position:absolute;left:14px;top:50%;
     transform:translateY(-50%);font-size:14px;opacity:.6;pointer-events:none}
 
+  /* REF BLOCK */
   .ref-block{background:var(--card3);border-radius:10px;padding:12px 14px;
     margin-top:12px;border-left:3px solid var(--purple)}
   .ref-block .label{font-size:10.5px;text-transform:uppercase;color:var(--muted);
@@ -176,59 +191,176 @@
   .ref-item a{color:var(--accent);text-decoration:none}
   .tree-node{padding-left:16px;border-left:1px dashed var(--border2);margin-left:8px}
 
+  /* DATE BLOCK */
+  .date-block{
+    background:var(--card3);border-radius:10px;padding:12px 14px;
+    margin-top:12px;border-left:3px solid var(--accent);
+    cursor:pointer;transition:background .15s;
+  }
+  .date-block:hover{background:#2a3444}
+  .date-block:active{opacity:.8}
+  .date-label{
+    font-size:10.5px;text-transform:uppercase;color:var(--muted);
+    font-weight:700;margin-bottom:10px;letter-spacing:.05em;
+  }
+  .date-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+    gap:8px;margin-bottom:10px;
+  }
+  .date-cell{background:rgba(0,0,0,.25);border-radius:8px;padding:8px 10px;}
+  .date-cell b{
+    display:block;color:var(--muted);font-size:10px;
+    text-transform:uppercase;font-weight:600;margin-bottom:3px;
+    letter-spacing:.03em;
+  }
+  .date-cell span{font-size:13px;font-weight:600;color:var(--text)}
+  .date-left{
+    padding:8px 10px;border-radius:8px;font-size:13px;
+    display:flex;align-items:center;justify-content:space-between;
+    gap:8px;flex-wrap:wrap;
+  }
+  .date-left.ok{background:rgba(57,217,138,.12);color:var(--ok)}
+  .date-left.warn{background:rgba(245,181,71,.12);color:var(--warn)}
+  .date-left.err{
+    background:rgba(255,92,92,.15);color:var(--err);
+    animation:datePulse 1.6s infinite;
+  }
+  .date-left.muted{background:rgba(139,148,158,.12);color:var(--muted)}
+  @keyframes datePulse{0%,100%{opacity:1}50%{opacity:.7}}
+  .date-actions{display:flex;gap:5px;flex-wrap:wrap}
+  .date-actions .btn{min-height:30px;padding:5px 10px;font-size:11.5px}
+
+  /* CHART */
+  .chart{display:flex;align-items:flex-end;gap:3px;height:80px;
+    padding:10px 0;border-bottom:1px solid var(--border)}
+  .chart-bar{
+    flex:1;background:var(--accent);border-radius:3px 3px 0 0;
+    min-height:2px;position:relative;transition:background .15s;
+  }
+  .chart-bar:hover{background:var(--ok)}
+  .chart-bar span{
+    position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);
+    font-size:9px;color:var(--muted);white-space:nowrap;
+  }
+
+  /* REF TABLE */
+  .ref-row{
+    display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;
+    gap:8px;padding:10px 12px;border-bottom:1px solid var(--border);
+    font-size:13px;align-items:center;
+  }
+  .ref-row:last-child{border-bottom:0}
+  .ref-row.header{
+    font-size:10px;text-transform:uppercase;color:var(--muted);
+    font-weight:700;background:var(--card2);border-radius:8px 8px 0 0;
+    padding:10px 12px;
+  }
+  .ref-row .v{text-align:right}
+  .ref-row .v.ok{color:var(--ok)} .ref-row .v.warn{color:var(--warn)}
+  .ref-row .v.muted{color:var(--muted)}
+
+  /* ═══════ BROADCAST ═══════ */
+  .bc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .bc-preview{
+    background:#0e1116;border:1px solid var(--border2);border-radius:12px;
+    padding:14px;min-height:180px;position:relative;
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(79,140,255,.08), transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(57,217,138,.06), transparent 50%);
+  }
+  .bc-preview-head{
+    display:flex;align-items:center;gap:8px;margin-bottom:10px;
+    font-size:11px;color:var(--muted);text-transform:uppercase;
+    font-weight:700;letter-spacing:.05em;
+  }
+  .bc-preview-body{color:var(--text);font-size:14px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+  .bc-preview-body b{font-weight:700}
+  .bc-preview-body a{color:var(--accent);text-decoration:underline}
+  .bc-preview-body code{background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:12px}
+  .bc-preview-photo{
+    width:100%;max-height:240px;object-fit:cover;
+    border-radius:8px;margin-bottom:10px;border:1px solid var(--border2);
+  }
+  .bc-preview-btn{
+    display:inline-block;margin-top:10px;padding:9px 14px;border-radius:8px;
+    background:rgba(79,140,255,.15);color:var(--accent);
+    border:1px solid rgba(79,140,255,.3);font-size:12.5px;font-weight:600;
+  }
+  .bc-progress{
+    height:8px;background:var(--card3);border-radius:4px;overflow:hidden;
+    margin:12px 0 8px;
+  }
+  .bc-progress-fill{
+    height:100%;background:linear-gradient(90deg, var(--accent), var(--ok));
+    transition:width .2s linear;
+  }
+  .bc-stat{display:flex;gap:14px;font-size:12.5px;color:var(--text2)}
+  .bc-stat b{color:var(--text)}
+  .bc-log{
+    background:#0a0d12;border:1px solid var(--border);border-radius:8px;
+    padding:10px 12px;max-height:200px;overflow-y:auto;
+    font-family:ui-monospace,monospace;font-size:11.5px;color:var(--text2);
+    margin-top:10px;line-height:1.6;
+  }
+  .bc-log .err{color:var(--err)}
+  .bc-log .ok{color:var(--ok)}
+  .bc-audience{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .bc-audience .chip{
+    padding:7px 12px;border-radius:20px;background:var(--card2);
+    border:1px solid var(--border);color:var(--text2);
+    font-size:12.5px;font-weight:600;cursor:pointer;
+  }
+  .bc-audience .chip.active{background:var(--purple);color:#12002e;border-color:var(--purple)}
+
+  @media(max-width:900px){
+    .bc-grid{grid-template-columns:1fr}
+  }
   @media(max-width:768px){
     .layout{flex-direction:column}
     .side{
       width:100%;height:auto;position:sticky;top:0;z-index:50;
       border-right:0;border-bottom:1px solid var(--border);
-      padding:10px 10px 8px;
-      display:flex;flex-wrap:nowrap;overflow-x:auto;
-      gap:6px;scrollbar-width:none;
-      background:rgba(22,27,34,.98);
+      padding:10px 10px 8px;display:flex;flex-wrap:nowrap;overflow-x:auto;
+      gap:6px;scrollbar-width:none;background:rgba(22,27,34,.98);
     }
     .side::-webkit-scrollbar{display:none}
     .side .logo{display:none}
     .side .section{display:none}
     .side .nav-item{
       width:auto;flex-shrink:0;padding:9px 14px;
-      font-size:13px;margin-bottom:0;
-      border:1px solid var(--border);
+      font-size:13px;margin-bottom:0;border:1px solid var(--border);
     }
     .side .nav-item .emo{font-size:15px}
     .side .nav-item .count{display:none}
-
     .main{padding:14px 12px 80px}
-
     .header{margin-bottom:14px}
     .header h1{font-size:19px}
     .header .sub{font-size:11px}
-
     .stats{grid-template-columns:repeat(2,1fr);gap:8px}
     .stat{padding:12px}
     .stat .v{font-size:18px}
     .stat .ic{font-size:20px}
-
     .grid{grid-template-columns:1fr 1fr;gap:6px}
     .cell{padding:9px 10px}
     .cell span{font-size:13px}
-
     .card{padding:14px}
-
     .tabs{gap:5px;margin-bottom:12px;padding-bottom:4px}
     .tab{padding:8px 13px;font-size:12.5px}
-
     .btn{min-height:44px;padding:11px 16px;font-size:13.5px}
     .btn.sm{min-height:38px;padding:8px 13px;font-size:12.5px}
     .btn.lg{min-height:52px;font-size:15px}
-
     .modal-bg{padding:0;align-items:flex-end}
     .modal{max-width:100%;border-radius:20px 20px 0 0;max-height:92vh}
     .modal-f{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
-
     .ref-block{padding:10px 12px}
     .ref-item{font-size:13px}
+    .date-grid{grid-template-columns:1fr 1fr;gap:6px}
+    .date-cell{padding:7px 9px}
+    .date-cell span{font-size:12.5px}
+    .date-left{font-size:12.5px;padding:7px 9px}
+    .ref-row{grid-template-columns:1.5fr 1fr 1fr;font-size:12px}
+    .ref-row .hide-mobile{display:none}
   }
-
   @media(max-width:380px){
     .stats{grid-template-columns:1fr}
     .grid{grid-template-columns:1fr}
@@ -248,11 +380,16 @@
 const FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app';
 const ADMIN_PASSWORD = 'admin123';
 const LOG_CHANNEL_URL = 'https://t.me/c/4305451466';
+const REFERRAL_PERCENT = 5;
+
+// ⚠️ ТОКЕН БОТА — нужен для рассылки
+const BOT_TOKEN = '8880107122:AAFa0r2WsfEeDmKIqRZI_YvvwRdXLz7y2kQ';
 
 let AUTHED = sessionStorage.getItem('admin_auth') === '1';
 let TAB = 'dashboard';
 let DATA = { purchases: [], payouts: [], users: [], eras: [] };
 let SEARCH = '';
+let LOG = [];
 const $ = id => document.getElementById(id);
 
 // ============================================================
@@ -265,6 +402,12 @@ function fmtDate(s){
   if (!s) return '—';
   try { return new Date(s).toLocaleString('ru-RU',
     {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+  catch { return s; }
+}
+function fmtD(s){
+  if (!s) return '—';
+  try { return new Date(s).toLocaleDateString('ru-RU',
+    {day:'2-digit',month:'2-digit',year:'numeric'}); }
   catch { return s; }
 }
 function statusLabel(s){
@@ -303,9 +446,13 @@ async function fbDelete(path){
   const r = await fetch(`${FIREBASE}/${path}.json`, {method:'DELETE'});
   return r.ok;
 }
+function pushLog(action, info){
+  LOG.unshift({ ts: new Date().toISOString(), action, info });
+  if (LOG.length > 50) LOG.pop();
+}
 
 // ============================================================
-// HELPERS: рефералы
+// HELPERS
 // ============================================================
 function findUserByTg(users, tgId){
   if (!tgId) return null;
@@ -328,6 +475,19 @@ function userLink(u){
   if (u.username) return `<a href="https://t.me/${esc(u.username)}" target="_blank">@${esc(u.username)}</a>`;
   return `<a href="tg://user?id=${esc(u.telegram_id)}" target="_blank">ID ${esc(u.telegram_id)}</a>`;
 }
+function fmtLeft(ms){
+  if (ms == null) return '—';
+  if (ms <= 0) return '⏹ Завершено';
+  const s = Math.floor(ms / 1000);
+  const d = Math.floor(s / 86400);
+  const h = Math.floor((s % 86400) / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  if (d > 0) return `${d}д ${h}ч ${m}м`;
+  if (h > 0) return `${h}ч ${m}м ${sec}с`;
+  if (m > 0) return `${m}м ${sec}с`;
+  return `${sec}с`;
+}
 
 // ============================================================
 // LOGIN
@@ -340,8 +500,7 @@ function renderLogin(){
         <div class="form-row">
           <label>Пароль</label>
           <input class="input" id="pw" type="password"
-            onkeydown="if(event.key==='Enter')doLogin()"
-            autofocus>
+            onkeydown="if(event.key==='Enter')doLogin()" autofocus>
         </div>
         <button class="btn lg" onclick="doLogin()">🔓 Войти</button>
         <div class="muted" style="margin-top:16px;text-align:center;font-size:11.5px">
@@ -358,6 +517,12 @@ function doLogin(){
   } else toast('Неверный пароль', 'err');
 }
 window.doLogin = doLogin;
+function logout(){
+  sessionStorage.removeItem('admin_auth');
+  AUTHED = false;
+  render();
+}
+window.logout = logout;
 
 // ============================================================
 // LAYOUT
@@ -406,9 +571,16 @@ function layout(content){
           <span class="emo">🌳</span>Рефералы
           ${c.refs?`<span class="count">${c.refs}</span>`:''}
         </button>
+        <div class="section">Маркетинг</div>
+        <button class="nav-item ${TAB==='broadcast'?'active':''}" onclick="setTab('broadcast')">
+          <span class="emo">📢</span>Рассылка
+        </button>
         <div class="section">Система</div>
+        <button class="nav-item" onclick="openLog()">
+          <span class="emo">📜</span>Лог
+        </button>
         <button class="nav-item" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">
-          <span class="emo">📢</span>Канал
+          <span class="emo">📣</span>Канал
         </button>
         <button class="nav-item" onclick="logout()" style="color:var(--err)">
           <span class="emo">🚪</span>Выйти
@@ -418,24 +590,44 @@ function layout(content){
         <div class="header">
           <div>
             <h1>⚡ Era Admin</h1>
-            <div class="sub">@ROSTERAbot</div>
+            <div class="sub">@ROSTERAbot · реф. ${REFERRAL_PERCENT}%</div>
           </div>
         </div>
         <div id="content">${content}</div>
       </main>
     </div>`;
 }
-function logout(){
-  sessionStorage.removeItem('admin_auth');
-  AUTHED = false;
-  render();
-}
-window.logout = logout;
 function setTab(t){ TAB = t; render(); }
 window.setTab = setTab;
 
+// ═══════════════════════════════════════════════════════════
+// 📜 ЛОГ
+// ═══════════════════════════════════════════════════════════
+function openLog(){
+  $('modal-root').innerHTML = `
+    <div class="modal-bg" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <div class="modal-h">
+          <h2>📜 Лог действий</h2>
+          <button class="close-x" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-b">
+          ${LOG.length ? LOG.map(l => `
+            <div class="ref-item">
+              <div>
+                <div>${esc(l.action)}</div>
+                <div class="muted" style="font-size:11px">${esc(l.info||'')}</div>
+              </div>
+              <div class="muted" style="font-size:11px">${fmtDate(l.ts)}</div>
+            </div>`).join('') : '<div class="empty"><p>Пусто</p></div>'}
+        </div>
+      </div>
+    </div>`;
+}
+window.openLog = openLog;
+
 // ============================================================
-// DASHBOARD
+// 📊 DASHBOARD
 // ============================================================
 async function renderDashboard(){
   layout('<div class="empty">Загрузка…</div>');
@@ -446,17 +638,16 @@ async function renderDashboard(){
       fbGet('users').then(toList).catch(() => []),
       fbGet('eras').then(toList).catch(() => []),
     ]);
-    DATA.purchases = purchases;
-    DATA.payouts = payouts;
-    DATA.users = users;
-    DATA.eras = eras;
+    DATA = { purchases, payouts, users, eras };
+
+    const now = Date.now();
+    const day = 86400000;
 
     const active = purchases.filter(p => p.status === 'approved').length;
     const completed = purchases.filter(p => p.status === 'completed').length;
     const created = purchases.filter(p => p.status === 'created').length;
     const pendingPO = payouts.filter(p => p.status === 'pending').length;
     const refsCount = users.filter(u => u.referrer_uid).length;
-    const agreedCount = users.filter(u => u.agreed_terms).length;
 
     const totalPurch = purchases.filter(p => p.status !== 'cancelled')
       .reduce((s, p) => s + Number(p.purchase_price || 0), 0);
@@ -465,12 +656,54 @@ async function renderDashboard(){
     const totalPaid = payouts.filter(p => p.status === 'paid')
       .reduce((s, p) => s + Number(p.amount || 0), 0);
 
+    let refPending = 0, refApproved = 0, refPaid = 0;
+    for (const p of purchases){
+      if (!p.referrer_uid) continue;
+      if (['rejected','cancelled'].includes(p.status)) continue;
+      const bonus = Number(p.referral_bonus || 0) ||
+        Math.round(Number(p.purchase_price || 0) * REFERRAL_PERCENT / 100);
+      const st = p.referral_status || 'pending';
+      if (st === 'rejected') continue;
+      if (st === 'paid') refPaid += bonus;
+      else if (st === 'approved') refApproved += bonus;
+      else refPending += bonus;
+    }
+
+    const last7 = purchases.filter(p => now - new Date(p.created_at||0).getTime() < 7*day);
+    const prev7 = purchases.filter(p => {
+      const t = now - new Date(p.created_at||0).getTime();
+      return t >= 7*day && t < 14*day;
+    });
+    const delta = prev7.length ? Math.round((last7.length - prev7.length) / prev7.length * 100) : 0;
+
+    const bars = [];
+    for (let i = 13; i >= 0; i--){
+      const d0 = now - i * day;
+      const d1 = d0 + day;
+      const cnt = purchases.filter(p => {
+        const t = new Date(p.created_at || 0).getTime();
+        return t >= d0 && t < d1;
+      }).length;
+      bars.push({ date: new Date(d0), cnt });
+    }
+    const maxCnt = Math.max(1, ...bars.map(b => b.cnt));
+
+    const refStats = {};
+    for (const u of users){
+      if (!u.referrer_uid) continue;
+      const rid = String(u.referrer_uid);
+      refStats[rid] = (refStats[rid] || 0) + 1;
+    }
+    const topRefs = Object.entries(refStats)
+      .map(([rid, cnt]) => ({ user: findUserByTg(users, rid), cnt }))
+      .filter(x => x.user)
+      .sort((a, b) => b.cnt - a.cnt)
+      .slice(0, 5);
+
     layout(`
       <div class="stats">
         <div class="stat"><div class="ic">👥</div><div class="l">Юзеров</div>
           <div class="v">${users.length}</div></div>
-        <div class="stat"><div class="ic">✅</div><div class="l">Согласились</div>
-          <div class="v ok">${agreedCount}</div></div>
         <div class="stat"><div class="ic">🌳</div><div class="l">Рефералов</div>
           <div class="v purple">${refsCount}</div></div>
         <div class="stat"><div class="ic">🟢</div><div class="l">Активных</div>
@@ -482,12 +715,49 @@ async function renderDashboard(){
         <div class="stat"><div class="ic">💸</div><div class="l">Выплат ждут</div>
           <div class="v warn">${pendingPO}</div></div>
         <div class="stat"><div class="ic">💵</div><div class="l">Куплено</div>
-          <div class="v accent">${fmt(totalPurch)}</div></div>
+          <div class="v accent">${fmt(totalPurch)}</div>
+          <div class="trend ${delta>=0?'up':'down'}">${delta>=0?'▲':'▼'} ${Math.abs(delta)}% за неделю</div></div>
         <div class="stat"><div class="ic">📈</div><div class="l">Начислено</div>
           <div class="v ok">${fmt(totalProfit)}</div></div>
         <div class="stat"><div class="ic">💰</div><div class="l">Выплачено</div>
           <div class="v">${fmt(totalPaid)}</div></div>
+        <div class="stat"><div class="ic">🎁</div><div class="l">Реф. ожидает</div>
+          <div class="v warn">${fmt(refPending)}</div></div>
+        <div class="stat"><div class="ic">✅</div><div class="l">Реф. начислено</div>
+          <div class="v ok">${fmt(refApproved)}</div></div>
+        <div class="stat"><div class="ic">💸</div><div class="l">Реф. выплачено</div>
+          <div class="v accent">${fmt(refPaid)}</div></div>
       </div>
+
+      <div class="card">
+        <div class="row" style="margin-bottom:14px">
+          <b>📈 Активность за 14 дней</b>
+          <span class="muted">${bars.reduce((s,b)=>s+b.cnt,0)} заявок</span>
+        </div>
+        <div class="chart">
+          ${bars.map(b => `
+            <div class="chart-bar" style="height:${Math.max(2, b.cnt/maxCnt*100)}%"
+                 title="${b.cnt} (${fmtD(b.date)})">
+              <span>${b.date.getDate()}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      ${topRefs.length ? `
+        <div class="card">
+          <b style="display:block;margin-bottom:12px">🏆 Топ рефереров</b>
+          ${topRefs.map((t, i) => `
+            <div class="ref-item">
+              <div>
+                <b style="color:var(--purple)">#${i+1}</b>
+                ${esc(userName(t.user))} · ${userLink(t.user)}
+              </div>
+              <span class="badge purple">${t.cnt} реф.</span>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
       <button class="btn ghost" onclick="renderDashboard()">🔄 Обновить</button>
     `);
   } catch(e){
@@ -497,7 +767,7 @@ async function renderDashboard(){
 window.renderDashboard = renderDashboard;
 
 // ============================================================
-// PURCHASES
+// 📩 PURCHASES
 // ============================================================
 let purchaseFilter = 'created';
 async function renderPurchases(){
@@ -511,19 +781,30 @@ async function renderPurchases(){
     DATA.users = users;
     list.sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
 
+    const q = SEARCH.toLowerCase().trim();
+    const searched = q ? list.filter(p =>
+      String(p.user_first_name||'').toLowerCase().includes(q) ||
+      String(p.user_username||'').toLowerCase().includes(q) ||
+      String(p.user_telegram_id||'').includes(q) ||
+      String(p.era_title||'').toLowerCase().includes(q) ||
+      String(p.id||'').includes(q)
+    ) : list;
+
     const counts = {
-      created: list.filter(p => p.status === 'created').length,
-      in_progress: list.filter(p => p.status === 'in_progress').length,
-      approved: list.filter(p => p.status === 'approved').length,
-      completed: list.filter(p => p.status === 'completed').length,
-      all: list.length,
+      created: searched.filter(p => p.status === 'created').length,
+      approved: searched.filter(p => p.status === 'approved').length,
+      completed: searched.filter(p => p.status === 'completed').length,
+      all: searched.length,
     };
-    const filtered = purchaseFilter === 'all' ? list : list.filter(p => p.status === purchaseFilter);
+    const filtered = purchaseFilter === 'all' ? searched : searched.filter(p => p.status === purchaseFilter);
 
     layout(`
+      <div class="search-bar">
+        <input class="input" placeholder="Поиск: имя, @ник, ID, эра, номер заявки…"
+          value="${esc(SEARCH)}" oninput="SEARCH=this.value;renderPurchases()">
+      </div>
       <div class="tabs">
         <button class="tab ${purchaseFilter==='created'?'active':''}" onclick="purchaseFilter='created';renderPurchases()">⏳ Ждут (${counts.created})</button>
-        <button class="tab ${purchaseFilter==='in_progress'?'active':''}" onclick="purchaseFilter='in_progress';renderPurchases()">🟡 В работе (${counts.in_progress})</button>
         <button class="tab ${purchaseFilter==='approved'?'active':''}" onclick="purchaseFilter='approved';renderPurchases()">🟢 Активные (${counts.approved})</button>
         <button class="tab ${purchaseFilter==='completed'?'active':''}" onclick="purchaseFilter='completed';renderPurchases()">🏁 Завершено (${counts.completed})</button>
         <button class="tab ${purchaseFilter==='all'?'active':''}" onclick="purchaseFilter='all';renderPurchases()">📋 Все (${counts.all})</button>
@@ -544,12 +825,101 @@ function orderCard(p){
   const referrer = buyer ? getReferrer(users, buyer) : null;
 
   const canConfirm = ['created','in_progress'].includes(p.status);
-  const canCancel = ['created','in_progress'].includes(p.status);
+  const canCancel  = ['created','in_progress'].includes(p.status);
+  const isActive   = p.status === 'approved';
+  const isFinished = ['completed','paid'].includes(p.status);
+
+  let fastStatus = '⏳';
+  if (isActive && p.expires_at){
+    const leftMs = new Date(p.expires_at).getTime() - Date.now();
+    const h = leftMs / 3600000;
+    if (leftMs <= 0) fastStatus = '<span title="Просрочено">⚫</span>';
+    else if (h <= 24) fastStatus = '<span title="Истекает сегодня">🔴</span>';
+    else if (h <= 72) fastStatus = '<span title="Последние дни">🟡</span>';
+    else fastStatus = '<span title="Активна">🟢</span>';
+  } else if (isFinished){
+    fastStatus = '<span title="Завершено">🏁</span>';
+  }
+
+  let dateBlock = '';
+  if (isActive || isFinished){
+    const expMs = p.expires_at ? new Date(p.expires_at).getTime() : null;
+    const leftMs = expMs ? expMs - Date.now() : null;
+
+    let leftCls = 'ok', leftText = '—';
+    if (leftMs != null){
+      if (leftMs <= 0){ leftCls = 'muted'; leftText = 'Завершено'; }
+      else {
+        const h = leftMs / 3600000;
+        leftText = fmtLeft(leftMs);
+        if (h <= 24) leftCls = 'err';
+        else if (h <= 72) leftCls = 'warn';
+        else leftCls = 'ok';
+      }
+    }
+
+    const days = Number(p.duration_days || p.days || 0);
+
+    dateBlock = `
+      <div class="date-block" onclick="copyDates('${esc(k)}')" title="Клик — скопировать">
+        <div class="date-label">🗓 Сроки эры</div>
+        <div class="date-grid">
+          <div class="date-cell"><b>▶️ Начало</b><span>${fmtD(p.start_date)}</span></div>
+          <div class="date-cell"><b>🏁 Последний день</b><span>${fmtD(p.last_day)}</span></div>
+          <div class="date-cell"><b>⏰ Истекает</b><span>${fmtDate(p.expires_at)}</span></div>
+          <div class="date-cell"><b>📅 Длительность</b><span>${days} дн.</span></div>
+        </div>
+        <div class="date-left ${leftCls}" onclick="event.stopPropagation()">
+          <span>⏳ Осталось: <b data-timer="${esc(p.expires_at||'')}">${leftText}</b></span>
+          <div class="date-actions">
+            <button class="btn ghost sm" onclick="shiftDates('${esc(k)}',-1)">−1д</button>
+            <button class="btn ghost sm" onclick="shiftDates('${esc(k)}',1)">+1д</button>
+            <button class="btn ghost sm" onclick="copyDates('${esc(k)}')">📋</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  let refBonusBlock = '';
+  if (p.referrer_uid){
+    const bonus = Number(p.referral_bonus || 0) ||
+      Math.round(Number(p.purchase_price || 0) * REFERRAL_PERCENT / 100);
+    const st = p.referral_status || 'pending';
+    const stMap = {
+      pending:  { cls: 'pending',  label: '⏳ Ожидает' },
+      approved: { cls: 'approved', label: '✅ Начислено' },
+      paid:     { cls: 'paid',     label: '💸 Выплачено' },
+      rejected: { cls: 'rejected', label: '❌ Отклонено' },
+    };
+    const stInfo = stMap[st] || stMap.pending;
+    const refUser = users.find(u => String(u.telegram_id) === String(p.referrer_uid));
+    const refName = refUser ? userName(refUser) : 'ID ' + p.referrer_uid;
+    const refLink = refUser ? userLink(refUser) : `<a href="tg://user?id=${esc(p.referrer_uid)}">ID ${esc(p.referrer_uid)}</a>`;
+
+    refBonusBlock = `
+      <div class="ref-block" style="border-left-color:var(--ok)">
+        <div class="label">🎁 Реферальный бонус</div>
+        <div class="ref-item">
+          <div>Кому: <b>${esc(refName)}</b> · ${refLink}</div>
+          <div class="muted">${p.referral_percent||REFERRAL_PERCENT}% от покупки</div>
+        </div>
+        <div class="ref-item">
+          <div>Сумма: <b style="color:var(--ok)">${fmt(bonus)}</b></div>
+          <span class="badge ${stInfo.cls}">${stInfo.label}</span>
+        </div>
+        <div class="flex" style="margin-top:8px">
+          ${st !== 'paid' && st !== 'rejected' ? `
+            <button class="btn ok sm" onclick="payReferral('${esc(k)}')">💸 Выплатить бонус</button>
+          ` : ''}
+          <button class="btn ghost sm" onclick="editReferralBonus('${esc(k)}')">✏️ Изменить</button>
+        </div>
+      </div>`;
+  }
 
   return `
     <div class="card">
       <div class="row" style="margin-bottom:12px">
-        <b style="color:#4f8cff;font-size:16px">📩 Заявка #${esc(p.id)}</b>
+        <b style="color:#4f8cff;font-size:16px">📩 Заявка #${esc(p.id)} ${fastStatus}</b>
         <span class="badge ${esc(p.status)}">${esc(statusLabel(p.status))}</span>
       </div>
       <div class="grid">
@@ -560,7 +930,7 @@ function orderCard(p){
         <div class="cell"><b>💵 Номинал</b><span class="accent">${fmt(p.purchase_price)}</span></div>
         <div class="cell"><b>💰 Начисл.</b><span class="ok">+${fmt(p.profit_amount)}</span></div>
         <div class="cell"><b>🏆 Итого</b><span class="ok">${fmt(p.total_amount)}</span></div>
-        <div class="cell"><b>📅 Срок</b><span>${Number(p.duration_days||0)} дн.</span></div>
+        <div class="cell"><b>📅 Срок</b><span>${Number(p.duration_days||p.days||0)} дн.</span></div>
       </div>
 
       ${referrer ? `
@@ -578,9 +948,12 @@ function orderCard(p){
         </div>
       `}
 
+      ${dateBlock}
+      ${refBonusBlock}
+
       <div class="muted" style="margin:12px 0">
-        🕐 ${fmtDate(p.created_at)}
-        ${p.activated_at ? ' · ✅ ' + fmtDate(p.activated_at) : ''}
+        🕐 Создано: ${fmtDate(p.created_at)}
+        ${p.activated_at ? ' · ✅ Активировано: ' + fmtDate(p.activated_at) : ''}
       </div>
 
       <div class="flex">
@@ -598,19 +971,27 @@ async function admConfirm(k){
     const now = new Date();
     const d0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     d0.setDate(d0.getDate() + 1);
-    const days = Number(p.duration_days || 20);
+    const days = Number(p.duration_days || p.days || 20);
     const last = new Date(d0); last.setDate(d0.getDate() + days - 1);
     const exp = new Date(d0); exp.setDate(d0.getDate() + days);
 
-    await fbPatch(`purchases/${k}`, {
+    const patch = {
       status: 'approved',
       activated_at: now.toISOString(),
       start_date: d0.toISOString(),
       last_day: last.toISOString(),
       expires_at: exp.toISOString(),
       status_changed_at: now.toISOString(),
-      notified_1d: 0, notified_2d: 0, notified_1h: 0, completed_notified: 0,
-    });
+      notified_3d: 0, notified_1d: 0, notified_3h: 0, completed_notified: 0,
+    };
+    if (p.referrer_uid){
+      patch.referral_status = 'approved';
+      if (!p.referral_bonus){
+        patch.referral_bonus = Math.round(Number(p.purchase_price||0) * REFERRAL_PERCENT / 100);
+      }
+    }
+    await fbPatch(`purchases/${k}`, patch);
+    pushLog('✅ Подтвердил заявку', `#${p.id} · ${p.era_title||''}`);
     toast('✅ Заявка подтверждена', 'ok');
     renderPurchases();
   } catch(e){ toast(e.message, 'err'); }
@@ -620,7 +1001,11 @@ window.admConfirm = admConfirm;
 async function admCancel(k){
   if (!confirm('Отменить заявку?')) return;
   try {
-    await fbPatch(`purchases/${k}`, { status: 'cancelled', status_changed_at: new Date().toISOString() });
+    const p = DATA.purchases.find(x => x._key === k);
+    const patch = { status: 'cancelled', status_changed_at: new Date().toISOString() };
+    if (p.referrer_uid) patch.referral_status = 'rejected';
+    await fbPatch(`purchases/${k}`, patch);
+    pushLog('❌ Отменил заявку', `#${p.id}`);
     toast('❌ Отменено');
     renderPurchases();
   } catch(e){ toast(e.message, 'err'); }
@@ -638,29 +1023,108 @@ async function admContact(uid){
 }
 window.admContact = admContact;
 
+async function shiftDates(key, deltaDays){
+  const p = DATA.purchases.find(x => x._key === key);
+  if (!p || !p.expires_at) return;
+  if (!confirm(`Сдвинуть срок на ${deltaDays > 0 ? '+' : ''}${deltaDays} день?`)) return;
+  try {
+    const shift = deltaDays * 86400000;
+    const newExp = new Date(new Date(p.expires_at).getTime() + shift).toISOString();
+    const newLast = p.last_day
+      ? new Date(new Date(p.last_day).getTime() + shift).toISOString()
+      : null;
+    await fbPatch(`purchases/${key}`, {
+      expires_at: newExp,
+      last_day: newLast,
+      notified_3d: 0, notified_1d: 0, notified_3h: 0, completed_notified: 0,
+      status_changed_at: new Date().toISOString(),
+    });
+    pushLog(`🗓 Сдвинул срок #${p.id}`, `${deltaDays > 0 ? '+' : ''}${deltaDays} дн.`);
+    toast(`✅ Срок сдвинут на ${deltaDays > 0 ? '+' : ''}${deltaDays} дн.`, 'ok');
+    renderPurchases();
+  } catch(e){ toast(e.message, 'err'); }
+}
+window.shiftDates = shiftDates;
+
+function copyDates(key){
+  const p = DATA.purchases.find(x => x._key === key);
+  if (!p) return;
+  const txt = `${p.era_title||'—'} · активна с ${fmtD(p.start_date)} по ${fmtD(p.last_day)} · истекает ${fmtDate(p.expires_at)}`;
+  navigator.clipboard.writeText(txt).then(
+    () => toast('📋 Скопировано', 'ok'),
+    () => toast('Не удалось', 'err')
+  );
+}
+window.copyDates = copyDates;
+
+async function payReferral(key){
+  if (!confirm('Отметить реферальный бонус как выплаченный?')) return;
+  try {
+    const p = DATA.purchases.find(x => x._key === key);
+    await fbPatch(`purchases/${key}`, {
+      referral_status: 'paid',
+      referral_paid_at: new Date().toISOString(),
+    });
+    pushLog('💸 Выплатил реф. бонус', `#${p.id}`);
+    toast('💸 Бонус отмечен выплаченным', 'ok');
+    renderPurchases();
+  } catch(e){ toast(e.message, 'err'); }
+}
+window.payReferral = payReferral;
+
+function editReferralBonus(key){
+  const p = DATA.purchases.find(x => x._key === key);
+  if (!p) return;
+  const cur = Number(p.referral_bonus || 0) ||
+    Math.round(Number(p.purchase_price||0) * REFERRAL_PERCENT / 100);
+  const v = prompt('Сумма реферального бонуса, ₽:', cur);
+  if (v == null) return;
+  const val = Number(v);
+  if (!isFinite(val) || val < 0){ toast('Неверная сумма', 'err'); return; }
+  (async () => {
+    try {
+      await fbPatch(`purchases/${key}`, { referral_bonus: val });
+      pushLog('✏️ Изменил реф. бонус', `#${p.id} → ${val} ₽`);
+      toast('💾 Сохранено', 'ok');
+      renderPurchases();
+    } catch(e){ toast(e.message, 'err'); }
+  })();
+}
+window.editReferralBonus = editReferralBonus;
+
 // ============================================================
-// PAYOUTS
+// 💸 PAYOUTS
 // ============================================================
+let payoutFilter = 'pending';
 async function renderPayouts(){
   layout('<div class="empty">Загрузка…</div>');
   try {
-    const [list, users] = await Promise.all([
+    const [list, users, purchases] = await Promise.all([
       fbGet('payouts').then(toList).catch(() => []),
       fbGet('users').then(toList).catch(() => []),
+      fbGet('purchases').then(toList).catch(() => []),
     ]);
     DATA.payouts = list;
     DATA.users = users;
+    DATA.purchases = purchases;
     list.sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
 
-    const pending = list.filter(p => p.status === 'pending');
-    const paid = list.filter(p => p.status === 'paid');
+    const counts = {
+      pending: list.filter(p => p.status === 'pending').length,
+      paid: list.filter(p => p.status === 'paid').length,
+      rejected: list.filter(p => p.status === 'rejected').length,
+      all: list.length,
+    };
+    const filtered = payoutFilter === 'all' ? list : list.filter(p => p.status === payoutFilter);
 
     layout(`
       <div class="tabs">
-        <button class="tab active">⏳ Ожидают (${pending.length})</button>
-        <button class="tab">✅ Выплачено (${paid.length})</button>
+        <button class="tab ${payoutFilter==='pending'?'active':''}" onclick="payoutFilter='pending';renderPayouts()">⏳ Ожидают (${counts.pending})</button>
+        <button class="tab ${payoutFilter==='paid'?'active':''}" onclick="payoutFilter='paid';renderPayouts()">✅ Выплачено (${counts.paid})</button>
+        <button class="tab ${payoutFilter==='rejected'?'active':''}" onclick="payoutFilter='rejected';renderPayouts()">❌ Отклонено (${counts.rejected})</button>
+        <button class="tab ${payoutFilter==='all'?'active':''}" onclick="payoutFilter='all';renderPayouts()">📋 Все (${counts.all})</button>
       </div>
-      ${pending.length ? pending.map(payoutCard).join('') :
+      ${filtered.length ? filtered.map(payoutCard).join('') :
         '<div class="empty"><div class="ic">📭</div><p>Нет заявок на вывод</p></div>'}
     `);
   } catch(e){
@@ -672,8 +1136,31 @@ window.renderPayouts = renderPayouts;
 function payoutCard(po){
   const k = po._key;
   const users = DATA.users || [];
+  const purchases = DATA.purchases || [];
   const buyer = findUserByTg(users, po.user_telegram_id);
   const referrer = buyer ? getReferrer(users, buyer) : null;
+  const purchase = purchases.find(x => String(x.id) === String(po.purchase_id));
+
+  let dateBlock = '';
+  if (purchase && purchase.expires_at){
+    const leftMs = new Date(purchase.expires_at).getTime() - Date.now();
+    const leftCls = leftMs <= 0 ? 'muted' : (leftMs < 86400000 ? 'err' : leftMs < 3*86400000 ? 'warn' : 'ok');
+    dateBlock = `
+      <div class="date-block">
+        <div class="date-label">🗓 Покупка #${esc(purchase.id)}</div>
+        <div class="date-grid">
+          <div class="date-cell"><b>▶️ Начало</b><span>${fmtD(purchase.start_date)}</span></div>
+          <div class="date-cell"><b>🏁 Последний</b><span>${fmtD(purchase.last_day)}</span></div>
+          <div class="date-cell"><b>⏰ Истекает</b><span>${fmtDate(purchase.expires_at)}</span></div>
+          <div class="date-cell"><b>🏆 Сумма</b><span class="ok">${fmt(purchase.total_amount)}</span></div>
+        </div>
+        <div class="date-left ${leftCls}">
+          ⏳ ${leftMs <= 0 ? 'Завершено' : 'Осталось: ' + fmtLeft(leftMs)}
+        </div>
+      </div>`;
+  }
+
+  const isPending = po.status === 'pending';
 
   return `
     <div class="card">
@@ -700,10 +1187,13 @@ function payoutCard(po){
         </div>
       ` : ''}
 
+      ${dateBlock}
+
       <div class="muted" style="margin:12px 0">🕐 ${fmtDate(po.requested_at)}</div>
 
       <div class="flex">
-        <button class="btn ok" onclick="admMarkPaid('${esc(k)}')">✅ Выплачено</button>
+        ${isPending ? `<button class="btn ok" onclick="admMarkPaid('${esc(k)}')">✅ Выплачено</button>` : ''}
+        ${isPending ? `<button class="btn danger" onclick="admRejectPayout('${esc(k)}')">❌ Отклонить</button>` : ''}
         <button class="btn ghost" onclick="admContact('${esc(po.user_telegram_id||'')}')">💬 Написать</button>
       </div>
     </div>`;
@@ -715,18 +1205,32 @@ async function admMarkPaid(k){
     const po = DATA.payouts.find(x => x._key === k);
     await fbPatch(`payouts/${k}`, { status: 'paid', paid_at: new Date().toISOString() });
 
-    const purchases = DATA.purchases || [];
-    const p = purchases.find(x => String(x.id) === String(po.purchase_id));
+    const p = (DATA.purchases||[]).find(x => String(x.id) === String(po.purchase_id));
     if (p) await fbPatch(`purchases/${p._key}`, { status: 'paid', paid_at: new Date().toISOString() });
 
+    pushLog('💸 Отметил выплату', `#${po.id} · ${po.amount} ₽`);
     toast('💰 Выплата отмечена', 'ok');
     renderPayouts();
   } catch(e){ toast(e.message, 'err'); }
 }
 window.admMarkPaid = admMarkPaid;
 
+async function admRejectPayout(k){
+  if (!confirm('Отклонить заявку на вывод?')) return;
+  try {
+    const po = DATA.payouts.find(x => x._key === k);
+    await fbPatch(`payouts/${k}`, { status: 'rejected', status_changed_at: new Date().toISOString() });
+    const p = (DATA.purchases||[]).find(x => String(x.id) === String(po.purchase_id));
+    if (p) await fbPatch(`purchases/${p._key}`, { status: 'completed', status_changed_at: new Date().toISOString() });
+    pushLog('❌ Отклонил выплату', `#${po.id}`);
+    toast('❌ Отклонено');
+    renderPayouts();
+  } catch(e){ toast(e.message, 'err'); }
+}
+window.admRejectPayout = admRejectPayout;
+
 // ============================================================
-// USERS
+// 👥 USERS
 // ============================================================
 async function renderUsers(){
   layout('<div class="empty">Загрузка…</div>');
@@ -771,6 +1275,20 @@ function userCard(u, allUsers, purchases){
   const referrer = getReferrer(allUsers, u);
   const refs = getRefs(allUsers, u);
 
+  const myIds = new Set(refs.map(r => String(r.telegram_id)));
+  let refPending = 0, refApproved = 0, refPaid = 0;
+  for (const p of purchases){
+    if (!myIds.has(String(p.user_telegram_id))) continue;
+    if (['rejected','cancelled'].includes(p.status)) continue;
+    const bonus = Number(p.referral_bonus||0) || Math.round(Number(p.purchase_price||0) * REFERRAL_PERCENT / 100);
+    const st = p.referral_status || 'pending';
+    if (st === 'rejected') continue;
+    if (st === 'paid') refPaid += bonus;
+    else if (st === 'approved') refApproved += bonus;
+    else refPending += bonus;
+  }
+  const refTotal = refPending + refApproved + refPaid;
+
   return `
     <div class="card">
       <div class="row" style="margin-bottom:12px">
@@ -789,6 +1307,18 @@ function userCard(u, allUsers, purchases){
         <div class="cell"><b>Заявок</b><span>${myP.length}</span></div>
         <div class="cell"><b>Пригласил</b><span style="color:var(--purple)">${refs.length}</span></div>
       </div>
+
+      ${refTotal > 0 ? `
+        <div class="ref-block" style="border-left-color:var(--ok)">
+          <div class="label">💰 Реферальный баланс</div>
+          <div class="ref-item"><div>⏳ Ожидает</div>
+            <div><b style="color:var(--warn)">${fmt(refPending)}</b></div></div>
+          <div class="ref-item"><div>✅ Начислено</div>
+            <div><b style="color:var(--ok)">${fmt(refApproved)}</b></div></div>
+          <div class="ref-item"><div>💸 Выплачено</div>
+            <div><b style="color:var(--accent)">${fmt(refPaid)}</b></div></div>
+        </div>
+      ` : ''}
 
       ${referrer ? `
         <div class="ref-block">
@@ -860,7 +1390,7 @@ function showTree(uid){
 window.showTree = showTree;
 
 // ============================================================
-// ERAS
+// 🧩 ERAS
 // ============================================================
 async function renderEras(){
   layout('<div class="empty">Загрузка…</div>');
@@ -908,6 +1438,7 @@ function eraCard(e){
         <button class="btn ${e.is_active?'warn':'ok'}" onclick="toggleEra('${esc(e._key)}',${e.is_active?0:1})">
           ${e.is_active?'⚫ Выкл':'🟢 Вкл'}
         </button>
+        <button class="btn purple" onclick="testBuy('${esc(e._key)}')">🧪 Тест</button>
         <button class="btn danger" onclick="deleteEra('${esc(e._key)}')">🗑</button>
       </div>
     </div>`;
@@ -922,39 +1453,26 @@ function eraForm(e){
           <button class="close-x" onclick="closeModal()">✕</button>
         </div>
         <div class="modal-b">
-          <div class="form-row">
-            <label>Название</label>
-            <input class="input" id="f_title" value="${esc(e?.title||'Новая эра')}">
-          </div>
-          <div class="form-row">
-            <label>Стоимость (₽)</label>
-            <input class="input" id="f_price" type="number" value="${e?.price||1500}">
-          </div>
-          <div class="form-row">
-            <label>Начисление (₽)</label>
-            <input class="input" id="f_profit" type="number" value="${e?.profit_amount||1000}">
-          </div>
-          <div class="form-row">
-            <label>Срок (дней)</label>
-            <input class="input" id="f_days" type="number" value="${e?.duration_days||20}">
-          </div>
-          <div class="form-row">
-            <label>Описание</label>
-            <textarea class="input" id="f_desc" rows="3">${esc(e?.description||'')}</textarea>
-          </div>
-          <div class="form-row">
-            <label>Активна</label>
+          <div class="form-row"><label>Название</label>
+            <input class="input" id="f_title" value="${esc(e?.title||'Новая эра')}"></div>
+          <div class="form-row"><label>Стоимость (₽)</label>
+            <input class="input" id="f_price" type="number" value="${e?.price||1500}"></div>
+          <div class="form-row"><label>Начисление (₽)</label>
+            <input class="input" id="f_profit" type="number" value="${e?.profit_amount||1000}"></div>
+          <div class="form-row"><label>Срок (дней)</label>
+            <input class="input" id="f_days" type="number" value="${e?.duration_days||20}"></div>
+          <div class="form-row"><label>Описание</label>
+            <textarea class="input" id="f_desc" rows="3">${esc(e?.description||'')}</textarea></div>
+          <div class="form-row"><label>Активна</label>
             <select class="input" id="f_active">
               <option value="1" ${(!e||e.is_active)?'selected':''}>Да</option>
               <option value="0" ${(e&&!e.is_active)?'selected':''}>Нет</option>
-            </select>
-          </div>
+            </select></div>
         </div>
         <div class="modal-f">
           <button class="btn ghost" onclick="closeModal()">Отмена</button>
           <button class="btn" id="f_save" onclick="saveEra('${e?e._key:''}')">
-            ${e?'💾 Сохранить':'✅ Создать'}
-          </button>
+            ${e?'💾 Сохранить':'✅ Создать'}</button>
         </div>
       </div>
     </div>`;
@@ -997,6 +1515,7 @@ async function saveEra(key){
       data.id = e?.id || key;
       data.sort_order = e?.sort_order || data.id;
       await fbPut(`eras/${key}`, data);
+      pushLog('✏️ Изменил эру', title);
       toast('💾 Сохранено', 'ok');
     } else {
       const eras = DATA.eras || [];
@@ -1005,6 +1524,7 @@ async function saveEra(key){
       data.id = newId;
       data.sort_order = newId;
       await fbPut(`eras/${newId}`, data);
+      pushLog('➕ Создал эру', title);
       toast(`✅ Эра #${newId} создана`, 'ok');
     }
     closeModal();
@@ -1030,61 +1550,156 @@ async function deleteEra(key){
   if (!confirm('Удалить эру? Существующие заказы не пострадают.')) return;
   try {
     await fbDelete(`eras/${key}`);
+    pushLog('🗑 Удалил эру', key);
     toast('🗑 Удалено', 'ok');
     renderEras();
   } catch(e){ toast(e.message, 'err'); }
 }
 window.deleteEra = deleteEra;
 
+async function testBuy(eraKey){
+  const era = (DATA.eras||[]).find(x => x._key === eraKey);
+  if (!era) return;
+  if (!confirm(`Создать тестовую заявку на "${era.title}"?`)) return;
+  try {
+    const cur = await fbGet('counters/purchase') || 0;
+    const pid = Number(cur) + 1;
+    await fbPut('counters/purchase', pid);
+
+    const now = new Date().toISOString();
+    await fetch(`${FIREBASE}/purchases.json`, {
+      method: 'POST',
+      body: JSON.stringify({
+        id: pid,
+        user_telegram_id: 999999999,
+        user_username: 'testadmin',
+        user_first_name: 'Тест',
+        era_id: era.id,
+        era_title: era.title,
+        purchase_price: era.price,
+        profit_amount: era.profit_amount,
+        total_amount: era.total_amount,
+        duration_days: era.duration_days,
+        days: era.duration_days,
+        status: 'created',
+        created_at: now,
+        status_changed_at: now,
+        is_test: 1,
+      })
+    });
+    pushLog('🧪 Тестовая покупка', era.title);
+    toast(`✅ Заявка #${pid} создана`, 'ok');
+    setTab('purchases');
+  } catch(e){ toast(e.message, 'err'); }
+}
+window.testBuy = testBuy;
+
 // ============================================================
-// REFS
+// 🌳 REFS
 // ============================================================
 async function renderRefs(){
   layout('<div class="empty">Загрузка…</div>');
   try {
-    const users = await fbGet('users').then(toList).catch(() => []);
+    const [users, purchases] = await Promise.all([
+      fbGet('users').then(toList).catch(() => []),
+      fbGet('purchases').then(toList).catch(() => []),
+    ]);
     DATA.users = users;
+    DATA.purchases = purchases;
 
     const refs = users.filter(u => u.referrer_uid);
-    const inviters = users.filter(u => refs.some(r => String(r.referrer_uid) === String(u.telegram_id)));
+    const inviterIds = new Set(refs.map(r => String(r.referrer_uid)));
+    const inviters = users.filter(u => inviterIds.has(String(u.telegram_id)));
+
+    const stat = {};
+    for (const inv of inviters){
+      const myRefs = getRefs(users, inv);
+      const myRefIds = new Set(myRefs.map(r => String(r.telegram_id)));
+      let bonus = 0, approved = 0, paid = 0, purchasesCnt = 0, totalPurchased = 0;
+      for (const p of purchases){
+        if (!myRefIds.has(String(p.user_telegram_id))) continue;
+        if (['rejected','cancelled'].includes(p.status)) continue;
+        purchasesCnt++;
+        totalPurchased += Number(p.purchase_price || 0);
+        const b = Number(p.referral_bonus||0) || Math.round(Number(p.purchase_price||0) * REFERRAL_PERCENT / 100);
+        const st = p.referral_status || 'pending';
+        if (st === 'rejected') continue;
+        bonus += b;
+        if (st === 'paid') paid += b;
+        else if (st === 'approved') approved += b;
+      }
+      stat[inv.telegram_id] = { bonus, approved, paid, pending: bonus - approved - paid, purchasesCnt, totalPurchased };
+    }
+
+    let totalPending = 0, totalApproved = 0, totalPaid = 0;
+    for (const s of Object.values(stat)){
+      totalPending += s.pending;
+      totalApproved += s.approved;
+      totalPaid += s.paid;
+    }
 
     layout(`
       <h2 style="font-size:17px;margin-bottom:14px">🌳 Реферальная система</h2>
 
       <div class="stats" style="margin-bottom:16px">
-        <div class="stat"><div class="ic">👥</div><div class="l">Всего</div>
-          <div class="v">${users.length}</div></div>
         <div class="stat"><div class="ic">🌳</div><div class="l">Рефералов</div>
           <div class="v purple">${refs.length}</div></div>
-        <div class="stat"><div class="ic">⭐</div><div class="l">Прямых</div>
-          <div class="v accent">${users.length - refs.length}</div></div>
         <div class="stat"><div class="ic">🎁</div><div class="l">Пригласивших</div>
           <div class="v ok">${inviters.length}</div></div>
+        <div class="stat"><div class="ic">⏳</div><div class="l">Ожидает</div>
+          <div class="v warn">${fmt(totalPending)}</div></div>
+        <div class="stat"><div class="ic">✅</div><div class="l">Начислено</div>
+          <div class="v ok">${fmt(totalApproved)}</div></div>
+        <div class="stat"><div class="ic">💸</div><div class="l">Выплачено</div>
+          <div class="v accent">${fmt(totalPaid)}</div></div>
       </div>
 
-      ${inviters.length ? inviters
-        .map(inv => ({inv, refs: getRefs(users, inv)}))
-        .sort((a, b) => b.refs.length - a.refs.length)
-        .map(({inv, refs}) => `
-          <div class="card">
-            <div class="row" style="margin-bottom:12px">
-              <div>
-                <b style="color:var(--purple);font-size:15px">🎁 ${esc(userName(inv))}</b>
-                <div class="muted">${userLink(inv)} · ID ${esc(inv.telegram_id)}</div>
-              </div>
-              <div class="flex">
-                <span class="badge purple">${refs.length} реф.</span>
-                <button class="btn purple sm" onclick="showTree('${esc(inv.telegram_id)}')">🌳</button>
-              </div>
-            </div>
-            ${refs.map(r => `
-              <div class="ref-item">
-                <div><b>${esc(userName(r))}</b> · ${userLink(r)}</div>
-                <div class="muted">📅 ${fmtDate(r.registered_at)}</div>
-              </div>
-            `).join('')}
+      ${inviters.length ? `
+        <div class="card" style="padding:0;overflow:hidden">
+          <div class="ref-row header">
+            <div>Реферер</div>
+            <div class="v">Рефералов</div>
+            <div class="v hide-mobile">Покупок</div>
+            <div class="v hide-mobile">Куплено</div>
+            <div class="v">Бонус</div>
           </div>
-        `).join('') : '<div class="empty"><div class="ic">🌳</div><p>Пока нет рефералов</p></div>'}
+          ${inviters.map(inv => {
+            const s = stat[inv.telegram_id] || {};
+            return `
+              <div class="ref-row">
+                <div>
+                  <b>${esc(userName(inv))}</b>
+                  <div class="muted" style="font-size:11px">${userLink(inv)}</div>
+                </div>
+                <div class="v">${getRefs(users, inv).length}</div>
+                <div class="v hide-mobile">${s.purchasesCnt||0}</div>
+                <div class="v hide-mobile muted">${fmt(s.totalPurchased||0)}</div>
+                <div class="v ok">${fmt(s.bonus||0)}</div>
+              </div>`;
+          }).join('')}
+        </div>
+        ${inviters.sort((a,b) => (stat[b.telegram_id].bonus) - (stat[a.telegram_id].bonus)).map(inv => {
+          const refsList = getRefs(users, inv);
+          return `
+            <div class="card">
+              <div class="row" style="margin-bottom:12px">
+                <div>
+                  <b style="color:var(--purple);font-size:15px">🎁 ${esc(userName(inv))}</b>
+                  <div class="muted">${userLink(inv)} · ID ${esc(inv.telegram_id)}</div>
+                </div>
+                <div class="flex">
+                  <span class="badge purple">${refsList.length} реф.</span>
+                  <button class="btn purple sm" onclick="showTree('${esc(inv.telegram_id)}')">🌳</button>
+                </div>
+              </div>
+              ${refsList.map(r => `
+                <div class="ref-item">
+                  <div><b>${esc(userName(r))}</b> · ${userLink(r)}</div>
+                  <div class="muted">📅 ${fmtDate(r.registered_at)}</div>
+                </div>
+              `).join('')}
+            </div>`;
+        }).join('') : '<div class="empty"><div class="ic">🌳</div><p>Пока нет рефералов</p></div>'}
     `);
   } catch(e){
     layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`);
@@ -1093,7 +1708,377 @@ async function renderRefs(){
 window.renderRefs = renderRefs;
 
 // ============================================================
-// MAIN
+// 📢 BROADCAST — Рассылка всем пользователям
+// ============================================================
+let BC_AUDIENCE = 'all';       // all / agreed / buyers / refs
+let BC_IMAGE_URL = '';
+let BC_SENDING = false;
+let BC_STOP = false;
+let BC_STATS = { sent: 0, failed: 0, total: 0, errors: [] };
+
+async function renderBroadcast(){
+  layout('<div class="empty">Загрузка…</div>');
+  try {
+    const [users] = await Promise.all([
+      fbGet('users').then(toList).catch(() => []),
+    ]);
+    DATA.users = users;
+
+    // статистика аудитории
+    const totalUsers = users.length;
+    const agreedUsers = users.filter(u => u.agreed_terms).length;
+    const refsUsers = users.filter(u => u.referrer_uid).length;
+    const buyersUsers = users.filter(u => {
+      // примитивно: если telegram_id есть в purchases
+      return true; // посчитаем ниже
+    }).length;
+
+    // правильный подсчёт покупателей — по уникальным tg из purchases
+    const purchases = await fbGet('purchases').then(toList).catch(() => []);
+    const buyerIds = new Set(purchases.map(p => String(p.user_telegram_id)));
+    const buyersCount = users.filter(u => buyerIds.has(String(u.telegram_id))).length;
+
+    const counts = {
+      all: totalUsers,
+      agreed: agreedUsers,
+      buyers: buyersCount,
+      refs: refsUsers,
+    };
+
+    layout(`
+      <h2 style="font-size:17px;margin-bottom:14px">📢 Рассылка пользователям</h2>
+
+      <div class="stats" style="margin-bottom:16px">
+        <div class="stat"><div class="ic">👥</div><div class="l">Всего юзеров</div>
+          <div class="v">${counts.all}</div></div>
+        <div class="stat"><div class="ic">✅</div><div class="l">Согласны с условиями</div>
+          <div class="v ok">${counts.agreed}</div></div>
+        <div class="stat"><div class="ic">🛒</div><div class="l">С покупками</div>
+          <div class="v accent">${counts.buyers}</div></div>
+        <div class="stat"><div class="ic">🌳</div><div class="l">Чьи-то рефералы</div>
+          <div class="v purple">${counts.refs}</div></div>
+      </div>
+
+      <div class="card">
+        <div class="bc-grid">
+
+          <!-- ЛЕВАЯ КОЛОНКА: форма -->
+          <div>
+            <div class="form-row">
+              <label>Кому отправлять</label>
+              <div class="bc-audience">
+                <div class="chip ${BC_AUDIENCE==='all'?'active':''}" onclick="bcSetAudience('all')">👥 Всем (${counts.all})</div>
+                <div class="chip ${BC_AUDIENCE==='agreed'?'active':''}" onclick="bcSetAudience('agreed')">✅ Согласным (${counts.agreed})</div>
+                <div class="chip ${BC_AUDIENCE==='buyers'?'active':''}" onclick="bcSetAudience('buyers')">🛒 С покупками (${counts.buyers})</div>
+                <div class="chip ${BC_AUDIENCE==='refs'?'active':''}" onclick="bcSetAudience('refs')">🌳 Рефералам (${counts.refs})</div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label>Текст сообщения (поддержка HTML: &lt;b&gt;, &lt;i&gt;, &lt;a href=""&gt;, &lt;code&gt;)</label>
+              <textarea class="input" id="bc_text" rows="6" placeholder="🎉 Скидка 20% на все эры!&#10;&#10;Только сегодня — успей купить эру со скидкой."
+                oninput="bcPreview()"></textarea>
+            </div>
+
+            <div class="form-row">
+              <label>Ссылка на картинку (опционально)</label>
+              <input class="input" id="bc_image" placeholder="https://example.com/image.jpg"
+                oninput="bcPreview()">
+              <div class="muted" style="margin-top:6px;font-size:11.5px">
+                Прямая ссылка на .jpg / .png. Telegram скачает и покажет фото.
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label>Кнопка — текст (опционально)</label>
+              <input class="input" id="bc_btn_text" placeholder="🚀 Открыть приложение"
+                oninput="bcPreview()">
+            </div>
+
+            <div class="form-row">
+              <label>Кнопка — ссылка</label>
+              <input class="input" id="bc_btn_url" placeholder="https://t.me/ROSTERAbot?start=ref_xxx"
+                oninput="bcPreview()">
+            </div>
+
+            <div class="flex" style="margin-top:16px">
+              <button class="btn ghost" onclick="bcSendTest()">🧪 Тест мне</button>
+              <button class="btn" onclick="bcSend()">🚀 Отправить</button>
+            </div>
+          </div>
+
+          <!-- ПРАВАЯ КОЛОНКА: предпросмотр -->
+          <div>
+            <div class="form-row">
+              <label>Предпросмотр</label>
+              <div class="bc-preview">
+                <div class="bc-preview-head">📱 Сообщение в Telegram</div>
+                <div id="bc_preview_body"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div id="bc_progress_box" class="hidden" style="margin-top:20px">
+          <div class="row" style="margin-bottom:8px">
+            <b>📤 Отправка…</b>
+            <div class="bc-stat">
+              <span>✅ <b id="bc_sent">0</b></span>
+              <span>❌ <b id="bc_failed">0</b></span>
+              <span>из <b id="bc_total">0</b></span>
+            </div>
+          </div>
+          <div class="bc-progress">
+            <div class="bc-progress-fill" id="bc_progress_fill" style="width:0%"></div>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <div class="muted" id="bc_status_text">Готовим получателей…</div>
+            <button class="btn danger sm" onclick="bcStop()">⏹ Стоп</button>
+          </div>
+          <div class="bc-log hidden" id="bc_log"></div>
+        </div>
+      </div>
+    `);
+
+    bcPreview();
+  } catch(e){
+    layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`);
+  }
+}
+window.renderBroadcast = renderBroadcast;
+
+function bcSetAudience(a){
+  BC_AUDIENCE = a;
+  renderBroadcast();
+}
+window.bcSetAudience = bcSetAudience;
+
+// Простой безопасный предпросмотр HTML для Telegram
+function tgParseHtml(text){
+  // Экранируем всё
+  let s = esc(text);
+  // Разрешаем <b>, <strong>, <i>, <em>, <u>, <s>, <code>, <pre>
+  s = s.replace(/&lt;(\/?)(b|strong|i|em|u|s|code|pre)&gt;/gi, '<$1$2>');
+  // Разрешаем <a href="...">...</a>
+  s = s.replace(/&lt;a\s+href=&quot;([^&]+)&quot;&gt;(.*?)&lt;\/a&gt;/gi,
+    '<a href="$1" target="_blank">$2</a>');
+  // Переносы строк
+  s = s.replace(/\n/g, '<br>');
+  return s;
+}
+
+function bcPreview(){
+  const text = $('bc_text')?.value || '';
+  const img = $('bc_image')?.value || '';
+  const btnText = $('bc_btn_text')?.value || '';
+  const btnUrl = $('bc_btn_url')?.value || '';
+  const body = $('bc_preview_body');
+  if (!body) return;
+
+  let html = '';
+  if (img){
+    html += `<img class="bc-preview-photo" src="${esc(img)}" onerror="this.style.display='none'">`;
+  }
+  html += `<div class="bc-preview-body">${tgParseHtml(text || '<i>Введите текст сообщения…</i>')}</div>`;
+  if (btnText && btnUrl){
+    html += `<div class="bc-preview-btn">${esc(btnText)}</div>`;
+  } else if (btnText){
+    html += `<div class="bc-preview-btn" style="opacity:.5">${esc(btnText)} (нет ссылки)</div>`;
+  }
+  body.innerHTML = html;
+}
+window.bcPreview = bcPreview;
+
+// ═══════════════════════════════════════════════════════════
+// АУДИТОРИЯ
+// ═══════════════════════════════════════════════════════════
+async function bcGetRecipients(){
+  const users = await fbGet('users').then(toList).catch(() => []);
+  const purchases = await fbGet('purchases').then(toList).catch(() => []);
+  const buyerIds = new Set(purchases.map(p => String(p.user_telegram_id)));
+
+  let list = users;
+  if (BC_AUDIENCE === 'agreed') list = users.filter(u => u.agreed_terms);
+  else if (BC_AUDIENCE === 'buyers') list = users.filter(u => buyerIds.has(String(u.telegram_id)));
+  else if (BC_AUDIENCE === 'refs') list = users.filter(u => u.referrer_uid);
+
+  return list.map(u => ({
+    tg_id: u.telegram_id,
+    name: userName(u),
+    username: u.username || '',
+  })).filter(r => r.tg_id);
+}
+
+// ═══════════════════════════════════════════════════════════
+// ОТПРАВКА
+// ═══════════════════════════════════════════════════════════
+async function bcSendTest(){
+  const text = $('bc_text')?.value.trim();
+  if (!text){ toast('Введите текст', 'err'); return; }
+
+  const img = $('bc_image')?.value.trim();
+  const btnText = $('bc_btn_text')?.value.trim();
+  const btnUrl = $('bc_btn_url')?.value.trim();
+
+  // Отправляем только админам
+  const myTgId = prompt('Введите ваш Telegram ID для теста:');
+  if (!myTgId) return;
+
+  try {
+    toast('🧪 Отправляю тест…', 'ok');
+    await bcSendOne(myTgId, text, img, btnText, btnUrl);
+    toast('✅ Тест отправлен! Проверьте чат.', 'ok');
+  } catch(e){
+    toast('❌ ' + e.message, 'err');
+  }
+}
+window.bcSendTest = bcSendTest;
+
+async function bcSend(){
+  if (BC_SENDING){ toast('Уже идёт отправка', 'err'); return; }
+  const text = $('bc_text')?.value.trim();
+  if (!text){ toast('Введите текст', 'err'); return; }
+
+  const img = $('bc_image')?.value.trim();
+  const btnText = $('bc_btn_text')?.value.trim();
+  const btnUrl = $('bc_btn_url')?.value.trim();
+
+  const recipients = await bcGetRecipients();
+  if (!recipients.length){ toast('Нет получателей', 'err'); return; }
+
+  if (!confirm(`Отправить сообщение ${recipients.length} получателям?\n\nЭто может занять несколько минут.`)) return;
+
+  // Сбрасываем статистику
+  BC_SENDING = true;
+  BC_STOP = false;
+  BC_STATS = { sent: 0, failed: 0, total: recipients.length, errors: [] };
+
+  // Показываем прогресс
+  const box = $('bc_progress_box');
+  if (box) box.classList.remove('hidden');
+  bcUpdateProgress(0, recipients.length);
+
+  pushLog('📢 Запустил рассылку', `Получателей: ${recipients.length}`);
+
+  // Отправляем с задержкой 50 мс между сообщениями
+  for (let i = 0; i < recipients.length; i++){
+    if (BC_STOP){
+      pushLog('⏹ Рассылка остановлена', `Отправлено: ${BC_STATS.sent}`);
+      break;
+    }
+
+    const r = recipients[i];
+    try {
+      await bcSendOne(r.tg_id, text, img, btnText, btnUrl);
+      BC_STATS.sent++;
+    } catch(e){
+      BC_STATS.failed++;
+      BC_STATS.errors.push(`#${r.tg_id} ${r.name}: ${e.message}`);
+    }
+
+    bcUpdateProgress(i + 1, recipients.length);
+
+    // Задержка для соблюдения лимитов Telegram
+    await new Promise(res => setTimeout(res, 50));
+  }
+
+  BC_SENDING = false;
+  bcUpdateProgress(recipients.length, recipients.length);
+  pushLog('✅ Рассылка завершена',
+    `Отправлено: ${BC_STATS.sent}, ошибок: ${BC_STATS.failed}`);
+
+  toast(`✅ Готово! Отправлено: ${BC_STATS.sent}, ошибок: ${BC_STATS.failed}`, 'ok', 6000);
+}
+window.bcSend = bcSend;
+
+function bcStop(){
+  BC_STOP = true;
+  toast('⏹ Останавливаю…', 'warn');
+}
+window.bcStop = bcStop;
+
+function bcUpdateProgress(done, total){
+  const sent = $('bc_sent');
+  const failed = $('bc_failed');
+  const totalEl = $('bc_total');
+  const fill = $('bc_progress_fill');
+  const status = $('bc_status_text');
+
+  if (sent) sent.textContent = BC_STATS.sent;
+  if (failed) failed.textContent = BC_STATS.failed;
+  if (totalEl) totalEl.textContent = total;
+  if (fill) fill.style.width = Math.round((done / total) * 100) + '%';
+  if (status){
+    if (done >= total) status.textContent = `✅ Готово! Отправлено: ${BC_STATS.sent}, ошибок: ${BC_STATS.failed}`;
+    else status.textContent = `Отправлено ${done} из ${total}…`;
+  }
+}
+window.bcUpdateProgress = bcUpdateProgress;
+
+// Отправка одного сообщения через Telegram Bot API
+async function bcSendOne(chatId, text, imgUrl, btnText, btnUrl){
+  const method = imgUrl ? 'sendPhoto' : 'sendMessage';
+  const url = `https://api.telegram.org/bot${BOT_TOKEN}/${method}`;
+
+  let body;
+  if (imgUrl){
+    body = {
+      chat_id: chatId,
+      photo: imgUrl,
+      caption: text,
+      parse_mode: 'HTML',
+    };
+  } else {
+    body = {
+      chat_id: chatId,
+      text: text,
+      parse_mode: 'HTML',
+      disable_web_page_preview: true,
+    };
+  }
+
+  // Инлайн-кнопка
+  if (btnText && btnUrl){
+    body.reply_markup = {
+      inline_keyboard: [[{ text: btnText, url: btnUrl }]]
+    };
+  }
+
+  const r = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  const data = await r.json();
+  if (!data.ok){
+    // Обработка типовых ошибок Telegram
+    const desc = data.description || 'unknown';
+    if (desc.includes('chat not found') || desc.includes('bot was blocked') ||
+        desc.includes('user is deactivated') || desc.includes('bot can\'t initiate')){
+      throw new Error('юзер не нажал /start или заблокировал');
+    }
+    throw new Error(desc);
+  }
+  return data.result;
+}
+window.bcSendOne = bcSendOne;
+
+// ============================================================
+// 🕐 ЖИВЫЕ ТАЙМЕРЫ
+// ============================================================
+setInterval(() => {
+  document.querySelectorAll('[data-timer]').forEach(el => {
+    const exp = el.dataset.timer;
+    if (!exp) return;
+    const ms = new Date(exp).getTime() - Date.now();
+    el.textContent = fmtLeft(ms);
+  });
+}, 1000);
+
+// ============================================================
+// 🚀 MAIN
 // ============================================================
 async function render(){
   if (!AUTHED){ renderLogin(); return; }
@@ -1104,6 +2089,7 @@ async function render(){
     users: renderUsers,
     eras: renderEras,
     refs: renderRefs,
+    broadcast: renderBroadcast,
   };
   await (tabs[TAB] || renderDashboard)();
 }

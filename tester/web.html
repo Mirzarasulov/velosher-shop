@@ -18,8 +18,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
 html,body{background:var(--bg);color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
-  font-size:15px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased;
-  overflow-x:hidden}
+  font-size:15px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 .app{max-width:560px;margin:0 auto;padding:0 16px calc(100px + env(safe-area-inset-bottom))}
 .topbar{position:sticky;top:0;z-index:40;background:var(--bg);
   border-bottom:1px solid var(--border);margin:0 -16px 16px;padding:12px 16px;
@@ -39,15 +38,14 @@ h3{font-size:15px;font-weight:600}
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
 .card2{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px}
 .hero{background:#1a2540;border:1px solid var(--border2);border-radius:18px;padding:20px;margin-bottom:16px}
-.hero .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.hero .user{display:flex;gap:14px;align-items:center;min-width:0;flex:1}
+.hero .user{display:flex;gap:14px;align-items:center}
 .avatar{width:56px;height:56px;border-radius:50%;background:var(--card3);
   display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;
   color:var(--accent);border:2px solid var(--border2);overflow:hidden;flex-shrink:0}
 .avatar img{width:100%;height:100%;object-fit:cover}
 .avatar.lg{width:88px;height:88px;font-size:36px}
 .hero .info{min-width:0;flex:1}
-.hero .info h1{font-size:20px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hero .info h1{font-size:20px;margin-bottom:2px}
 .hero .info .sub{color:var(--text2);font-size:13px}
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px}
 .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
@@ -56,22 +54,18 @@ h3{font-size:15px;font-weight:600}
 .stat .value{font-size:22px;font-weight:700}
 .stat .value.sm{font-size:18px}
 .stat .value.ok{color:var(--ok)} .stat .value.accent{color:var(--accent)}
-.stat .value.warn{color:var(--warn)} .stat .value.purple{color:var(--purple)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;
   padding:14px 18px;border-radius:12px;border:0;background:var(--accent);color:#fff;
-  font-weight:600;font-size:15px;cursor:pointer;text-align:center;font-family:inherit}
+  font-weight:600;font-size:15px;cursor:pointer;font-family:inherit}
 .btn:active{background:var(--accent2)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .btn.secondary{background:var(--card2);color:var(--text);border:1px solid var(--border2)}
 .btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
 .btn.ok{background:var(--ok);color:#04241a}
 .btn.warn{background:var(--warn);color:#2a1a00}
-.btn.purple{background:var(--purple);color:#12002e}
 .btn.sm{padding:10px 14px;font-size:13px;border-radius:10px;width:auto}
 .btn.xs{padding:7px 12px;font-size:12px;border-radius:8px;width:auto}
-
-.era-card{background:var(--card);border:1px solid var(--border);border-radius:16px;
-  padding:0;margin-bottom:14px;overflow:hidden}
+.era-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:0;margin-bottom:14px;overflow:hidden}
 .era-card .head{padding:18px 18px 14px;background:var(--card2);border-bottom:1px solid var(--border)}
 .era-card .head .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .era-card .title-wrap{display:flex;gap:12px;align-items:center;min-width:0;flex:1}
@@ -81,10 +75,8 @@ h3{font-size:15px;font-weight:600}
 .era-card .tier{font-size:11px;color:var(--muted);text-transform:uppercase;
   letter-spacing:.08em;font-weight:600;margin-top:2px}
 .era-card .body{padding:16px 18px}
-.era-card .desc{color:var(--text2);font-size:13px;margin-bottom:14px;line-height:1.5}
 .era-card .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.metric{background:var(--card2);border-radius:10px;padding:10px 8px;text-align:center;
-  border:1px solid var(--border)}
+.metric{background:var(--card2);border-radius:10px;padding:10px 8px;text-align:center;border:1px solid var(--border)}
 .metric .l{color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:4px}
 .metric .v{font-size:14px;font-weight:700}
 .metric .v.profit{color:var(--ok)} .metric .v.total{color:var(--accent)}
@@ -95,21 +87,10 @@ h3{font-size:15px;font-weight:600}
 .badge.created{background:rgba(99,169,255,.15);color:var(--info)}
 .badge.approved,.badge.completed,.badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
 .badge.cancelled,.badge.rejected{background:rgba(255,92,92,.15);color:var(--err)}
-.badge.pending{background:rgba(245,181,71,.15);color:var(--warn)}
-.badge.frozen{background:rgba(245,181,71,.2);color:var(--warn)}
-.badge.purple{background:rgba(167,139,250,.15);color:var(--purple)}
-.searchbar{display:flex;gap:8px;margin-bottom:12px}
-.search-input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid var(--border);
-  background:var(--card);color:var(--text);font-size:14px;outline:none}
-.filters{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
-.filters::-webkit-scrollbar{display:none}
-.chip{padding:8px 14px;border-radius:20px;background:var(--card2);border:1px solid var(--border);
-  color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0}
-.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);
-  border-top:1px solid var(--border);display:flex;justify-content:space-around;
-  padding:8px 8px calc(8px + env(safe-area-inset-bottom));z-index:50;
-  max-width:560px;margin:0 auto}
+.badge.pending,.badge.frozen,.badge.pending_active{background:rgba(245,181,71,.15);color:var(--warn)}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);
+  display:flex;justify-content:space-around;padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+  z-index:50;max-width:560px;margin:0 auto}
 .nav button{background:none;border:0;color:var(--muted);font-size:11px;padding:8px 4px;
   display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;flex:1;font-weight:600}
 .nav button.active{color:var(--accent)}
@@ -118,32 +99,28 @@ h3{font-size:15px;font-weight:600}
   display:flex;align-items:flex-end;justify-content:center}
 .modal{background:var(--card);border-radius:22px 22px 0 0;width:100%;max-width:560px;
   max-height:88vh;overflow-y:auto;border:1px solid var(--border2);border-bottom:0}
-.modal-head{position:sticky;top:0;background:var(--card2);padding:20px;
-  border-bottom:1px solid var(--border);z-index:1;display:flex;justify-content:space-between;align-items:center}
+.modal-head{position:sticky;top:0;background:var(--card2);padding:20px;border-bottom:1px solid var(--border);
+  z-index:1;display:flex;justify-content:space-between;align-items:center}
 .modal-body{padding:20px}
-.close-x{width:34px;height:34px;border-radius:50%;background:var(--card3);
-  border:1px solid var(--border2);color:var(--text2);font-size:18px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center}
+.close-x{width:34px;height:34px;border-radius:50%;background:var(--card3);border:1px solid var(--border2);
+  color:var(--text2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .row{display:flex;justify-content:space-between;gap:12px;align-items:center}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .hidden{display:none !important}
 .center{text-align:center}
 .toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);
-  background:var(--card2);border:1px solid var(--border2);padding:12px 18px;
-  border-radius:12px;font-size:13px;z-index:999;max-width:90%;text-align:center;
-  box-shadow:0 8px 24px rgba(0,0,0,.5)}
+  background:var(--card2);border:1px solid var(--border2);padding:12px 18px;border-radius:12px;
+  font-size:13px;z-index:999;max-width:90%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.5)}
 .toast.ok{border-color:var(--ok);color:#a8f0cc}
 .toast.err{border-color:var(--err);color:#ffb3b3}
 .toast.info{border-color:var(--accent);color:#cfe0ff}
 a{color:var(--accent);text-decoration:none}
-.ref-box{background:var(--card2);border:1px solid var(--border2);border-radius:12px;
-  padding:12px 14px;font-size:13px;font-family:ui-monospace,monospace;
-  word-break:break-all;color:var(--text2)}
+.ref-box{background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;
+  font-size:13px;font-family:ui-monospace,monospace;word-break:break-all;color:var(--text2)}
 .order-num{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;
-  background:rgba(79,140,255,.12);border:1px solid rgba(79,140,255,.25);
-  border-radius:8px;font-size:11px;font-weight:700;color:var(--accent);margin-bottom:8px}
-.list-item{padding:14px 0;border-bottom:1px solid var(--border);
-  display:flex;justify-content:space-between;align-items:center}
+  background:rgba(79,140,255,.12);border:1px solid rgba(79,140,255,.25);border-radius:8px;
+  font-size:11px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.list-item{padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 .list-item:last-child{border-bottom:0}
 .empty{padding:44px 20px;text-align:center}
 .empty .icon{font-size:52px;margin-bottom:12px;opacity:.5}
@@ -155,81 +132,52 @@ a{color:var(--accent);text-decoration:none}
   justify-content:center;font-size:19px;background:var(--card2);border:1px solid var(--border)}
 .progress{height:8px;background:var(--card3);border-radius:4px;overflow:hidden;margin-top:8px}
 .progress .fill{height:100%;border-radius:4px;background:var(--accent);transition:width 1s linear}
-.progress .fill.ok{background:#39d98a} .progress .fill.warn{background:#f5b547}
-.progress .fill.err{background:#ff5c5c}
-.days-left{padding:6px 12px;border-radius:10px;font-size:12px;font-weight:700;
-  display:inline-flex;align-items:center;gap:6px}
+.days-left{padding:6px 12px;border-radius:10px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
 .days-left.ok{background:rgba(57,217,138,.15);color:var(--ok)}
 .days-left.warn{background:rgba(245,181,71,.15);color:var(--warn)}
 .days-left.err{background:rgba(255,92,92,.15);color:var(--err)}
 .days-left.info{background:rgba(99,169,255,.15);color:var(--info)}
-.timer-live{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:22px;
-  font-weight:800;text-align:center;margin-top:14px;padding:10px 14px;
-  border-radius:12px;background:var(--card3);border:1px solid var(--border2);
-  letter-spacing:.5px;color:var(--accent);transition:color .3s,border-color .3s}
-.timer-live.warn{color:var(--warn);border-color:rgba(245,181,71,.4)}
-.timer-live.err{color:var(--err);border-color:rgba(255,92,92,.4);animation:pulse 1.5s infinite}
-.timer-live.ok{color:var(--ok);border-color:rgba(57,217,138,.4)}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.65}}
 .skel{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);
-  background-size:200% 100%;animation:sh 1.2s infinite;border-radius:14px;
-  border:1px solid var(--border);margin-bottom:12px}
+  background-size:200% 100%;animation:sh 1.2s infinite;border-radius:14px;border:1px solid var(--border);margin-bottom:12px}
 @keyframes sh{to{background-position:-200% 0}}
 
+/* REF HERO */
 .ref-hero{
   background:linear-gradient(135deg,#1b2a4a 0%,#16233f 100%);
   border:1px solid #2c3d63;border-radius:16px;padding:18px;margin-bottom:12px;
   position:relative;overflow:hidden
 }
-.ref-hero.paid{
-  background:linear-gradient(135deg,#12351f 0%,#0f2a1a 100%);
-  border-color:#1f6b41
-}
-.ref-hero.frozen{
-  background:linear-gradient(135deg,#3a2d12 0%,#2a1f0a 100%);
-  border-color:#6b501f
-}
-.ref-hero::after{
-  content:'';position:absolute;top:-30%;right:-20%;width:200px;height:200px;
-  background:radial-gradient(circle,rgba(79,140,255,.18) 0%,transparent 70%);
-  pointer-events:none
-}
-.ref-hero .title{display:flex;align-items:center;gap:8px;font-weight:700;
-  font-size:15px;margin-bottom:14px;position:relative}
+.ref-hero.paid{background:linear-gradient(135deg,#12351f 0%,#0f2a1a 100%);border-color:#1f6b41}
+.ref-hero.frozen{background:linear-gradient(135deg,#3a2d12 0%,#2a1f0a 100%);border-color:#6b501f}
+.ref-hero .title{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;margin-bottom:14px}
 .ref-hero .title .emo{font-size:20px}
-.ref-hero .percent-badge{margin-left:auto;background:rgba(57,217,138,.18);
-  color:var(--ok);padding:4px 10px;border-radius:20px;font-size:11px;
-  font-weight:800;letter-spacing:.5px}
-.ref-balances{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
-  margin-bottom:14px;position:relative}
-.ref-bal{background:rgba(0,0,0,.25);border-radius:10px;padding:10px 8px;
-  text-align:center;border:1px solid rgba(255,255,255,.06)}
-.ref-bal .l{color:var(--muted);font-size:10px;text-transform:uppercase;
-  font-weight:700;margin-bottom:4px;letter-spacing:.5px}
+.ref-hero .percent-badge{margin-left:auto;background:rgba(57,217,138,.18);color:var(--ok);
+  padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:.5px}
+.ref-balances{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.ref-bal{background:rgba(0,0,0,.25);border-radius:10px;padding:10px 8px;text-align:center;
+  border:1px solid rgba(255,255,255,.06)}
+.ref-bal .l{color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:700;
+  margin-bottom:4px;letter-spacing:.5px}
 .ref-bal .v{font-size:15px;font-weight:800}
 .ref-bal .v.pending{color:var(--warn)}
 .ref-bal .v.approved{color:var(--ok)}
 .ref-bal .v.paid{color:var(--accent)}
 .ref-bal .v.zero{color:var(--ok)}
-.ref-hero .last-paid{font-size:12px;color:var(--text2);text-align:center;
-  padding:8px;background:rgba(0,0,0,.2);border-radius:8px;position:relative}
+.ref-hero .last-paid{font-size:12px;color:var(--text2);text-align:center;padding:8px;
+  background:rgba(0,0,0,.2);border-radius:8px}
 .ref-hero .last-paid b{color:var(--ok)}
-.ref-hero .frozen-note{
-  font-size:12px;color:var(--warn);text-align:center;
-  padding:8px;background:rgba(245,181,71,.12);border-radius:8px;
-  margin-bottom:10px;position:relative
-}
-.ref-item{background:var(--card2);border:1px solid var(--border);border-radius:12px;
-  padding:12px 14px;margin-bottom:8px}
-.ref-item .head{display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:6px;gap:8px}
+.ref-hero .frozen-note{font-size:12px;color:var(--warn);text-align:center;padding:8px;
+  background:rgba(245,181,71,.12);border-radius:8px;margin-bottom:10px}
+.ref-hero .warn-note{font-size:12px;color:var(--info);text-align:center;padding:10px;
+  background:rgba(99,169,255,.12);border-radius:8px;margin-bottom:10px;line-height:1.4}
+.ref-item{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.ref-item .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px}
 .ref-item .name{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ref-item .date{color:var(--muted);font-size:11px;white-space:nowrap}
 .ref-item .meta{color:var(--muted);font-size:12px;margin-bottom:8px}
 .ref-item .stat-row{display:flex;gap:8px;flex-wrap:wrap}
-.ref-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;
-  border-radius:8px;font-size:11px;font-weight:700;
-  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+.ref-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:8px;
+  font-size:11px;font-weight:700;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
 .ref-chip.ok{background:rgba(57,217,138,.12);color:var(--ok);border-color:rgba(57,217,138,.25)}
 .ref-chip.warn{background:rgba(245,181,71,.12);color:var(--warn);border-color:rgba(245,181,71,.25)}
 .ref-chip.info{background:rgba(99,169,255,.12);color:var(--info);border-color:rgba(99,169,255,.25)}
@@ -269,18 +217,11 @@ var $ = function(id){ return document.getElementById(id); };
 var CURRENT_TAB = 'home';
 var ME = null, PURCHASES = [], PAYOUTS = [], ERAS = [], USER_UID = '';
 var ALL_REFERRALS = [], ALL_MY_REF_PURCHASES = [];
-var HAVE = {};
-var BUSY = {};
+var HAVE = {}, BUSY = {};
 var shopFilter = 'all', shopSearch = '';
 
-// ═══════════════════════════════════════════════════════════
-// UTILS
-// ═══════════════════════════════════════════════════════════
-function esc(s){
-  return String(s==null?'':s).replace(/[&<>"']/g, function(c){
-    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
-  });
-}
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 var num = function(v){ var n = Number(v); return isFinite(n) ? n : 0; };
 function fmt(n){ return num(n).toLocaleString('ru-RU') + ' ₽'; }
 function fmtDate(s){
@@ -294,20 +235,17 @@ function fmtDT(s){
   var d = new Date(s); if (isNaN(d)) return String(s);
   return d.toLocaleDateString('ru-RU',
     {day:'2-digit',month:'2-digit',year:'numeric',timeZone:TZ_TASHKENT}) + ' ' +
-    d.toLocaleTimeString('ru-RU',
-      {hour:'2-digit',minute:'2-digit',timeZone:TZ_TASHKENT});
+    d.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit',timeZone:TZ_TASHKENT});
 }
 function fmtCountdown(ms){
   if (ms <= 0) return '0с';
   var s = Math.floor(ms/1000);
-  var d = Math.floor(s/86400);
-  var h = Math.floor((s%86400)/3600);
-  var m = Math.floor((s%3600)/60);
-  var sec = s%60;
-  if (d > 0) return d + 'д ' + h + 'ч ' + m + 'м';
-  if (h > 0) return h + 'ч ' + m + 'м ' + sec + 'с';
-  if (m > 0) return m + 'м ' + sec + 'с';
-  return sec + 'с';
+  var d = Math.floor(s/86400), h = Math.floor((s%86400)/3600);
+  var m = Math.floor((s%3600)/60), sec = s%60;
+  if (d > 0) return d+'д '+h+'ч '+m+'м';
+  if (h > 0) return h+'ч '+m+'м '+sec+'с';
+  if (m > 0) return m+'м '+sec+'с';
+  return sec+'с';
 }
 function msLeft(p){
   if (!p.expires_at) return null;
@@ -315,66 +253,54 @@ function msLeft(p){
   if (isNaN(e)) return null;
   return e - Date.now();
 }
-function hoursLeft(p){
-  var ms = msLeft(p);
-  if (ms == null || ms <= 0) return 0;
-  return ms / 3600000;
-}
+function hoursLeft(p){ var ms = msLeft(p); if (ms == null || ms <= 0) return 0; return ms/3600000; }
 function progressOf(p){
   if (!p.start_date || !p.expires_at) return 0;
-  var a = new Date(p.start_date).getTime();
-  var e = new Date(p.expires_at).getTime();
-  var n = Date.now();
-  if (isNaN(a) || isNaN(e) || e <= a) return 0;
-  if (n >= e) return 100;
-  if (n <= a) return 0;
-  return Math.min(100, Math.max(0, Math.round(((n - a) / (e - a)) * 100)));
+  var a = new Date(p.start_date).getTime(), e = new Date(p.expires_at).getTime(), n = Date.now();
+  if (isNaN(a)||isNaN(e)||e<=a) return 0;
+  if (n >= e) return 100; if (n <= a) return 0;
+  return Math.min(100, Math.max(0, Math.round(((n-a)/(e-a))*100)));
 }
 function canWithdraw(p){
   var expired = msLeft(p) != null && msLeft(p) <= 0;
   var eligible = p.status === 'completed' || (p.status === 'approved' && expired);
   if (!eligible) return false;
   return !PAYOUTS.some(function(po){
-    return String(po.purchase_id) === String(p.id) &&
-      (po.status === 'pending' || po.status === 'paid');
+    return String(po.purchase_id) === String(p.id) && (po.status==='pending'||po.status==='paid');
   });
 }
 function dayCls(p){
   if (['completed','paid'].indexOf(p.status) >= 0) return 'info';
   if (p.status === 'approved'){
     var h = hoursLeft(p);
-    if (h <= 0) return 'err';
-    if (h <= 24) return 'err';
-    if (h <= 72) return 'warn';
-    return 'ok';
+    if (h <= 0) return 'err'; if (h <= 24) return 'err';
+    if (h <= 72) return 'warn'; return 'ok';
   }
   return 'info';
 }
 function dayLabel(p){
   if (p.status === 'created')     return '⏳ админ скоро свяжется';
-  if (p.status === 'in_progress') return '🟡 В процессе';
   if (p.status === 'cancelled')   return '❌ Отменён';
-  if (p.status === 'rejected')    return '❌ Отклонён';
   if (p.status === 'completed')   return '🏁 Период завершён';
   if (p.status === 'paid')        return '💰 Выплачено';
   if (p.status === 'approved'){
     var ms = msLeft(p);
     if (ms == null) return '—';
     if (ms <= 0) return '🏁 Завершение';
-    var d = ms / 86400000;
+    var d = ms/86400000;
     if (d < 1) return '⏰ Осталось ' + fmtCountdown(ms);
-    if (d < 2) return '⚠️ Остался 1 день · ' + fmtCountdown(ms);
-    if (d < 4) return '⏰ Осталось ' + Math.ceil(d) + ' дня · ' + fmtCountdown(ms);
+    if (d < 2) return '⚠️ 1 день · ' + fmtCountdown(ms);
     return '✅ Осталось ' + Math.ceil(d) + ' дн.';
   }
   return '';
 }
 function statusLabel(s){
-  return ({created:'Создан', in_progress:'В процессе', approved:'Одобрен',
-    completed:'Завершён', paid:'Выплачен', cancelled:'Отменён',
-    pending:'Ожидает', rejected:'Отклонён', frozen:'Заморожен'})[s] || s;
+  return ({created:'Создан', approved:'Одобрен', completed:'Завершён',
+    paid:'Выплачен', cancelled:'Отменён', pending:'Ожидает',
+    rejected:'Отклонён', frozen:'Заморожен',
+    pending_active:'Ждёт активности'})[s] || s;
 }
-function haptic(k){ try { tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(k || 'success'); } catch(e){} }
+function haptic(k){ try { tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(k||'success'); } catch(e){} }
 function toast(msg, type, ms){
   var t = $('toast');
   t.textContent = msg;
@@ -384,94 +310,69 @@ function toast(msg, type, ms){
 }
 function ask(msg){
   return new Promise(function(res){
-    if (tg && tg.showConfirm){
-      try { tg.showConfirm(msg, function(ok){ res(!!ok); }); return; } catch(e){}
-    }
+    if (tg && tg.showConfirm){ try { tg.showConfirm(msg, function(ok){ res(!!ok); }); return; } catch(e){} }
     res(confirm(msg));
   });
 }
 function once(key, fn){
   if (BUSY[key]) return;
   BUSY[key] = 1;
-  return Promise.resolve()
-    .then(fn)
+  return Promise.resolve().then(fn)
     .catch(function(e){ toast('⚠️ ' + e.message, 'err'); haptic('error'); })
     .then(function(){ delete BUSY[key]; });
 }
 
-// ═══════════════════════════════════════════════════════════
-// FIREBASE
-// ═══════════════════════════════════════════════════════════
 async function fbGet(path){
   var r = await fetch(FIREBASE + '/' + path + '.json');
   if (!r.ok) throw new Error('Firebase ' + r.status);
   return r.json();
 }
 async function fbPost(path, data){
-  var r = await fetch(FIREBASE + '/' + path + '.json',
-    {method:'POST', body: JSON.stringify(data)});
+  var r = await fetch(FIREBASE + '/' + path + '.json', {method:'POST', body: JSON.stringify(data)});
   if (!r.ok) throw new Error('Firebase ' + r.status);
   return r.json();
 }
 async function fbPut(path, data){
-  var r = await fetch(FIREBASE + '/' + path + '.json',
-    {method:'PUT', body: JSON.stringify(data)});
+  var r = await fetch(FIREBASE + '/' + path + '.json', {method:'PUT', body: JSON.stringify(data)});
   if (!r.ok) throw new Error('Firebase ' + r.status);
   return r.json();
 }
 async function fbPatch(path, data){
-  var r = await fetch(FIREBASE + '/' + path + '.json',
-    {method:'PATCH', body: JSON.stringify(data)});
+  var r = await fetch(FIREBASE + '/' + path + '.json', {method:'PATCH', body: JSON.stringify(data)});
   if (!r.ok) throw new Error('Firebase ' + r.status);
   return r.json();
 }
 function toList(raw){
-  if (Array.isArray(raw)) {
-    return raw.filter(function(x){ return x && typeof x === 'object'; })
-      .map(function(v,i){ var o = Object.assign({}, v); o._key = String(i); return o; });
-  }
-  if (raw && typeof raw === 'object') {
-    return Object.keys(raw)
-      .filter(function(k){ return raw[k] && typeof raw[k] === 'object'; })
-      .map(function(k){ var o = Object.assign({}, raw[k]); o._key = k; return o; });
-  }
+  if (Array.isArray(raw)) return raw.filter(function(x){return x && typeof x === 'object';})
+    .map(function(v,i){ var o = Object.assign({}, v); o._key = String(i); return o; });
+  if (raw && typeof raw === 'object') return Object.keys(raw)
+    .filter(function(k){ return raw[k] && typeof raw[k] === 'object'; })
+    .map(function(k){ var o = Object.assign({}, raw[k]); o._key = k; return o; });
   return [];
 }
 function tgUser(){ return tg && tg.initDataUnsafe && tg.initDataUnsafe.user; }
 
-// ═══════════════════════════════════════════════════════════
-// LOAD
-// ═══════════════════════════════════════════════════════════
 async function loadMe(){
-  var u = tgUser();
-  if (!u) return null;
+  var u = tgUser(); if (!u) return null;
   USER_UID = String(u.id);
   var existing = await fbGet('users/' + u.id);
   var now = new Date().toISOString();
-
   var refCode = '';
   if (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param){
     refCode = tg.initDataUnsafe.start_param.replace(/^ref_/, '');
   }
-
   var data = {
-    telegram_id: u.id,
-    username: u.username || '',
-    first_name: u.first_name || '',
-    last_name: u.last_name || '',
+    telegram_id: u.id, username: u.username || '',
+    first_name: u.first_name || '', last_name: u.last_name || '',
     photo_url: u.photo_url || (existing && existing.photo_url) || '',
     registered_at: (existing && existing.registered_at) || now
   };
-
   if (existing && existing.referrer_uid){
     data.referrer_uid = existing.referrer_uid;
   } else if (!existing && refCode && refCode !== String(u.id)){
-    var referrer = await fbGet('users/' + refCode).catch(function(){ return null; });
-    if (referrer && referrer.telegram_id){
-      data.referrer_uid = String(refCode);
-    }
+    var referrer = await fbGet('users/' + refCode).catch(function(){return null;});
+    if (referrer && referrer.telegram_id) data.referrer_uid = String(refCode);
   }
-
   if (!existing || existing.photo_url !== data.photo_url ||
       existing.username !== data.username ||
       existing.first_name !== data.first_name ||
@@ -487,108 +388,79 @@ async function loadEras(){
     .filter(function(e){ return e.is_active !== 0 && e.is_active !== false; })
     .map(function(e){
       var o = Object.assign({}, e);
-      o.price = num(e.price);
-      o.profit_amount = num(e.profit_amount);
+      o.price = num(e.price); o.profit_amount = num(e.profit_amount);
       o.total_amount = num(e.total_amount) || num(e.price) + num(e.profit_amount);
       o.duration_days = num(e.duration_days);
       return o;
     })
-    .sort(function(a, b){
-      return (num(a.sort_order) - num(b.sort_order)) || (num(a.id) - num(b.id));
-    });
+    .sort(function(a,b){ return (num(a.sort_order)-num(b.sort_order)) || (num(a.id)-num(b.id)); });
 }
-
 async function loadPurchases(){
   if (!USER_UID) return [];
   var raw = await fbGet('purchases');
   return toList(raw)
     .filter(function(p){ return String(p.user_telegram_id) === String(USER_UID); })
-    .sort(function(a, b){
-      return new Date(b.created_at||0) - new Date(a.created_at||0);
-    });
+    .sort(function(a,b){ return new Date(b.created_at||0) - new Date(a.created_at||0); });
 }
-
 async function loadPayouts(){
   if (!USER_UID) return [];
   var raw = await fbGet('payouts');
   return toList(raw)
     .filter(function(p){ return String(p.user_telegram_id) === String(USER_UID); })
-    .sort(function(a, b){
-      return new Date(b.requested_at||0) - new Date(a.requested_at||0);
-    });
+    .sort(function(a,b){ return new Date(b.requested_at||0) - new Date(a.requested_at||0); });
 }
-
 async function loadMyReferrals(){
   if (!USER_UID){ ALL_REFERRALS = []; ALL_MY_REF_PURCHASES = []; return; }
-  var res = await Promise.all([
-    fbGet('users'),
-    fbGet('purchases')
-  ]);
+  var res = await Promise.all([fbGet('users'), fbGet('purchases')]);
   var users = toList(res[0]);
   ALL_REFERRALS = users.filter(function(x){
     return String(x.referrer_uid || '') === String(USER_UID);
-  }).sort(function(a, b){
+  }).sort(function(a,b){
     return new Date(b.registered_at||0) - new Date(a.registered_at||0);
   });
-
-  var ids = {};
-  ALL_REFERRALS.forEach(function(r){ ids[String(r.telegram_id)] = 1; });
-  ALL_MY_REF_PURCHASES = toList(res[1])
-    .filter(function(p){ return ids[String(p.user_telegram_id)]; })
-    .sort(function(a, b){
-      return new Date(b.created_at||0) - new Date(a.created_at||0);
-    });
+  var ids = {}; ALL_REFERRALS.forEach(function(r){ ids[String(r.telegram_id)] = 1; });
+  ALL_MY_REF_PURCHASES = toList(res[1]).filter(function(p){
+    return ids[String(p.user_telegram_id)];
+  }).sort(function(a,b){
+    return new Date(b.created_at||0) - new Date(a.created_at||0);
+  });
 }
 
-// ═══════════════════════════════════════════════════════════
-// 💰 РЕФ. БАЛАНС
-// ═══════════════════════════════════════════════════════════
+// ═══════ 💰 РЕФ БАЛАНС ═══════
 function calcRefBalance(){
-  var accrued = 0;      // начислено (approved + frozen + paid)
-  var paid = 0;         // выплачено
-  var pending = 0;      // ожидает подтверждения
-  var frozen = 0;       // в активной заявке
-  var lastPaidAt = null;
-  var lastPaidAmount = 0;
+  var accrued=0, paid=0, pending=0, frozen=0, pendingActive=0;
+  var lastAt=null, lastAmount=0;
 
-  for (var i = 0; i < ALL_MY_REF_PURCHASES.length; i++){
-    var p = ALL_MY_REF_PURCHASES[i];
-    if (['rejected','cancelled'].indexOf(p.status) >= 0) continue;
-
-    var bonus = num(p.referral_bonus) ||
-      Math.round(num(p.purchase_price) * REFERRAL_PERCENT / 100);
+  ALL_MY_REF_PURCHASES.forEach(function(p){
+    if (['rejected','cancelled'].indexOf(p.status) >= 0) return;
+    var bonus = num(p.referral_bonus) || Math.round(num(p.purchase_price) * REFERRAL_PERCENT / 100);
     var st = p.referral_status || 'pending';
-    if (st === 'rejected') continue;
-
-    var frozenAmt = num(p.referral_frozen_amount) || 0;
+    if (st === 'rejected') return;
 
     if (st === 'paid'){
-      accrued += bonus;
-      paid += bonus;
-      if (p.referral_paid_at && (!lastPaidAt || p.referral_paid_at > lastPaidAt)){
-        lastPaidAt = p.referral_paid_at;
-        lastPaidAmount = num(p.referral_paid_amount) || bonus;
+      accrued += bonus; paid += bonus;
+      if (p.referral_paid_at && (!lastAt || p.referral_paid_at > lastAt)){
+        lastAt = p.referral_paid_at;
+        lastAmount = num(p.referral_paid_amount) || bonus;
       }
     } else if (st === 'frozen'){
       accrued += bonus;
-      frozen += frozenAmt || bonus;
+      frozen += num(p.referral_frozen_amount) || bonus;
     } else if (st === 'approved'){
       accrued += bonus;
+    } else if (st === 'pending_active'){
+      // Ждёт активности реферера
+      pendingActive += bonus;
     } else {
       pending += bonus;
     }
-  }
-
-  var owed = Math.max(0, accrued - paid - frozen);
+  });
 
   return {
-    accrued: accrued,
-    paid: paid,
-    pending: pending,
-    frozen: frozen,
-    owed: owed,
-    lastPaidAt: lastPaidAt,
-    lastPaidAmount: lastPaidAmount
+    accrued: accrued, paid: paid, pending: pending,
+    frozen: frozen, pendingActive: pendingActive,
+    owed: Math.max(0, accrued - paid - frozen),
+    lastAt: lastAt, lastAmount: lastAmount
   };
 }
 
@@ -596,108 +468,76 @@ function renderRefHero(){
   var b = calcRefBalance();
   var isFrozen = b.frozen > 0;
   var isFullyPaid = b.owed <= 0 && b.paid > 0 && !isFrozen;
-  var hasNothing = b.owed <= 0 && b.paid === 0 && b.pending === 0 && !isFrozen;
+  var nothing = b.owed <= 0 && b.paid === 0 && b.pending === 0 &&
+                !isFrozen && b.pendingActive === 0;
 
-  if (hasNothing){
+  if (nothing){
     return '<div class="ref-hero">' +
       '<div class="title"><span class="emo">💰</span> Реферальный баланс' +
         '<span class="percent-badge">' + REFERRAL_PERCENT + '%</span></div>' +
       '<div class="last-paid" style="text-align:center">' +
         'Приглашайте друзей — получайте ' + REFERRAL_PERCENT + '% с каждой их покупки' +
-      '</div>' +
+      '</div></div>';
+  }
+
+  var cls = 'ref-hero' + (isFullyPaid ? ' paid' : '') + (isFrozen ? ' frozen' : '');
+  var title = isFullyPaid ? '✅ Все бонусы выплачены' :
+              isFrozen ? '⏳ Заявка отправлена' :
+              '💰 Реферальный баланс';
+
+  var last = b.lastAt
+    ? '<div class="last-paid">Последняя выплата: <b>' + fmt(b.lastAmount) + '</b> · ' +
+      fmtDT(b.lastAt) + ' <span style="opacity:.6">(Ташкент)</span></div>'
+    : '';
+
+  // Инфо о pending_active — отложенные бонусы
+  var pendingActiveNote = '';
+  if (b.pendingActive > 0){
+    pendingActiveNote = '<div class="warn-note">' +
+      '⏳ <b>Отложено: ' + fmt(b.pendingActive) + '</b><br>' +
+      'Купите эру — и эти бонусы сразу зачислятся на баланс' +
     '</div>';
   }
 
-  var heroCls = 'ref-hero';
-  if (isFullyPaid) heroCls += ' paid';
-  if (isFrozen) heroCls += ' frozen';
-
-  var mainTitle = isFullyPaid ? '✅ Все бонусы выплачены' :
-                  isFrozen ? '⏳ Заявка отправлена' :
-                  '💰 Реферальный баланс';
-
-  var lastLine = '';
-  if (b.lastPaidAt){
-    lastLine = '<div class="last-paid">' +
-      'Последняя выплата: <b>' + fmt(b.lastPaidAmount) + '</b> · ' +
-      fmtDT(b.lastPaidAt) + ' <span style="opacity:.6">(Ташкент)</span>' +
-    '</div>';
-  }
-
-  // Кнопка
-  var actionBtn = '';
+  var btn = '';
   if (isFrozen){
-    actionBtn = '<button class="btn warn sm" style="flex:1" disabled>' +
-      '⏳ Заявка на ' + fmt(b.frozen) + ' ждёт</button>';
+    btn = '<button class="btn warn sm" style="flex:1" disabled>⏳ Заявка на ' + fmt(b.frozen) + ' ждёт</button>';
   } else if (b.owed >= 100){
-    actionBtn = '<button class="btn ok sm" style="flex:1" onclick="requestRefPayout()">' +
-      '💸 Вывести всё (' + fmt(b.owed) + ')</button>';
+    btn = '<button class="btn ok sm" style="flex:1" onclick="requestRefPayout()">💸 Вывести всё (' + fmt(b.owed) + ')</button>';
   } else if (b.owed > 0){
-    actionBtn = '<button class="btn ghost sm" style="flex:1" disabled>' +
-      'Минимум 100 ₽ · у вас ' + fmt(b.owed) + '</button>';
+    btn = '<button class="btn ghost sm" style="flex:1" disabled>Минимум 100 ₽ · у вас ' + fmt(b.owed) + '</button>';
   }
 
-  var frozenNote = '';
+  var note = '';
   if (isFrozen){
-    frozenNote = '<div class="frozen-note">' +
-      '⏳ Заявка на <b>' + fmt(b.frozen) + '</b> — ждёт подтверждения админа' +
-    '</div>';
+    note = '<div class="frozen-note">⏳ Заявка на <b>' + fmt(b.frozen) + '</b> — ждёт админа</div>';
   } else if (b.pending > 0){
-    frozenNote = '<div style="text-align:center;font-size:11.5px;color:var(--warn);margin-bottom:10px">' +
-      '⏳ На проверке: ' + fmt(b.pending) +
-    '</div>';
+    note = '<div style="text-align:center;font-size:11.5px;color:var(--warn);margin-bottom:10px">⏳ На проверке: ' + fmt(b.pending) + '</div>';
   }
 
-  return '<div class="' + heroCls + '">' +
-    '<div class="title">' +
-      '<span class="emo">' + (isFullyPaid ? '✅' : isFrozen ? '⏳' : '💰') + '</span> ' + mainTitle +
-      '<span class="percent-badge">' + REFERRAL_PERCENT + '%</span>' +
-    '</div>' +
-
+  return '<div class="' + cls + '">' +
+    '<div class="title"><span class="emo">' + (isFullyPaid?'✅':isFrozen?'⏳':'💰') + '</span> ' + title +
+      '<span class="percent-badge">' + REFERRAL_PERCENT + '%</span></div>' +
     '<div class="ref-balances">' +
-      '<div class="ref-bal">' +
-        '<div class="l">К выводу</div>' +
-        '<div class="v ' + (b.owed > 0 ? 'pending' : 'zero') + '">' + fmt(b.owed) + '</div>' +
-      '</div>' +
-      '<div class="ref-bal">' +
-        '<div class="l">Начислено</div>' +
-        '<div class="v approved">' + fmt(b.accrued) + '</div>' +
-      '</div>' +
-      '<div class="ref-bal">' +
-        '<div class="l">Выплачено</div>' +
-        '<div class="v paid">' + fmt(b.paid) + '</div>' +
-      '</div>' +
-    '</div>' +
-
-    frozenNote +
-    lastLine +
-
-    '<div style="display:flex;gap:8px;margin-top:12px">' +
-      actionBtn +
+      '<div class="ref-bal"><div class="l">К выводу</div>' +
+        '<div class="v ' + (b.owed>0?'pending':'zero') + '">' + fmt(b.owed) + '</div></div>' +
+      '<div class="ref-bal"><div class="l">Начислено</div>' +
+        '<div class="v approved">' + fmt(b.accrued) + '</div></div>' +
+      '<div class="ref-bal"><div class="l">Выплачено</div>' +
+        '<div class="v paid">' + fmt(b.paid) + '</div></div>' +
+    '</div>' + note + pendingActiveNote + last +
+    '<div style="display:flex;gap:8px;margin-top:12px">' + btn +
       '<button class="btn secondary sm" style="flex:1" onclick="openMyRefs()">' +
-        '👥 Рефералы (' + ALL_REFERRALS.length + ')</button>' +
-    '</div>' +
-  '</div>';
+        '👥 Рефералы (' + ALL_REFERRALS.length + ')</button></div></div>';
 }
 
-// ═══════════════════════════════════════════════════════════
-// 💸 ЗАЯВКА НА ВЫВОД ВСЕЙ СУММЫ
-// ═══════════════════════════════════════════════════════════
+// ═══════ 💸 ЗАЯВКА НА ВЫВОД ═══════
 window.requestRefPayout = function(){
   return once('refPayout', async function(){
     var b = calcRefBalance();
+    if (b.frozen > 0) return toast('⏳ Заявка уже отправлена', 'info', 4000);
+    if (b.owed < 100) return toast('Минимум 100 ₽', 'err');
 
-    if (b.frozen > 0){
-      toast('⏳ Заявка уже отправлена, ждите админа', 'info', 4000);
-      return;
-    }
-
-    if (b.owed < 100){
-      toast('Минимум 100 ₽ для вывода', 'err');
-      return;
-    }
-
-    // Проверяем активные заявки
     var requests = await fbGet('ref_payout_requests') || {};
     var mine = toList(requests).filter(function(r){
       return String(r.user_telegram_id) === String(USER_UID);
@@ -705,64 +545,41 @@ window.requestRefPayout = function(){
     var active = mine.filter(function(r){
       return r.status === 'pending' || r.status === 'processing';
     })[0];
+    if (active) return toast('⏳ Уже есть заявка #' + active.id, 'info', 4000);
 
-    if (active){
-      toast('⏳ У вас уже есть активная заявка #' + active.id, 'info', 4000);
-      return;
-    }
-
-    // ═══ ПОДТВЕРЖДЕНИЕ ═══
-    var ok = await ask(
-      'Вывести всю сумму бонусов?\n\n' +
-      '💰 Сумма: ' + fmt(b.owed) + '\n\n' +
-      'Заявка уйдёт администратору.'
-    );
+    var ok = await ask('Вывести всю сумму бонусов?\n\n💰 ' + fmt(b.owed) +
+      '\n\nЗаявка уйдёт администратору.');
     if (!ok) return;
 
-    try {
-      var cur = await fbGet('counters/ref_payout') || 0;
-      var rid = Number(cur) + 1;
-      await fbPut('counters/ref_payout', rid);
+    var cur = await fbGet('counters/ref_payout') || 0;
+    var rid = Number(cur) + 1;
+    await fbPut('counters/ref_payout', rid);
 
-      var now = new Date().toISOString();
-      var amount = b.owed;
+    var now = new Date().toISOString();
+    await fbPost('ref_payout_requests', {
+      id: rid, user_telegram_id: USER_UID,
+      user_username: ME.username || '',
+      user_first_name: ME.first_name || '',
+      amount: b.owed, balance_before: b.owed,
+      status: 'pending', requested_at: now
+    });
 
-      await fbPost('ref_payout_requests', {
-        id: rid,
-        user_telegram_id: USER_UID,
-        user_username: ME.username || '',
-        user_first_name: ME.first_name || '',
-        amount: amount,
-        balance_before: amount,
-        status: 'pending',
-        requested_at: now
-      });
+    await freezeRefBonuses(USER_UID, b.owed, rid);
 
-      // ═══ Замораживаем суммы в покупках ═══
-      await freezeRefBonuses(USER_UID, amount, rid);
-
-      toast('✅ Заявка #' + rid + ' на ' + fmt(amount) + ' отправлена', 'ok', 5000);
-      haptic();
-      await reload();
-      render();
-    } catch(e){
-      toast('❌ ' + e.message, 'err');
-    }
+    toast('✅ Заявка #' + rid + ' на ' + fmt(b.owed), 'ok', 5000);
+    haptic();
+    await reload();
+    render();
   });
 };
 
-// Замораживание бонусов — пометить все approved покупки как frozen
 async function freezeRefBonuses(uid, amount, requestId){
   var users = await fbGet('users') || {};
   var purchases = await fbGet('purchases') || {};
-
   var myIds = {};
   toList(users).forEach(function(u){
-    if (String(u.referrer_uid || '') === String(uid)){
-      myIds[String(u.telegram_id)] = 1;
-    }
+    if (String(u.referrer_uid || '') === String(uid)) myIds[String(u.telegram_id)] = 1;
   });
-
   var queue = [];
   Object.keys(purchases).forEach(function(k){
     var p = purchases[k];
@@ -772,19 +589,14 @@ async function freezeRefBonuses(uid, amount, requestId){
     if ((p.referral_status || '') !== 'approved') return;
     queue.push({ key: k, p: p });
   });
+  queue.sort(function(a,b){ return new Date(a.p.created_at||0) - new Date(b.p.created_at||0); });
 
-  queue.sort(function(a,b){
-    return new Date(a.p.created_at||0) - new Date(b.p.created_at||0);
-  });
-
-  var left = amount;
-  var now = new Date().toISOString();
+  var left = amount, now = new Date().toISOString();
   for (var i = 0; i < queue.length && left > 0; i++){
     var item = queue[i];
     var b = Number(item.p.referral_bonus || 0)
       || Math.round(Number(item.p.purchase_price || 0) * REFERRAL_PERCENT / 100);
     if (b <= 0) continue;
-
     var freezeNow = Math.min(b, left);
     await fbPatch('purchases/' + item.key, {
       referral_status: 'frozen',
@@ -796,9 +608,7 @@ async function freezeRefBonuses(uid, amount, requestId){
   }
 }
 
-// ═══════════════════════════════════════════════════════════
-// ДЕЙСТВИЯ
-// ═══════════════════════════════════════════════════════════
+// ═══════ ДЕЙСТВИЯ ═══════
 window.setTab = function(tab){
   CURRENT_TAB = tab;
   document.querySelectorAll('#nav button').forEach(function(b){
@@ -811,41 +621,31 @@ window.buyEra = function(id){
   return once('buy' + id, async function(){
     var era = ERAS.filter(function(e){ return String(e.id) === String(id); })[0];
     if (!era) return;
-    if (!await ask('Создать заявку на покупку?\n\n' + era.title + ' — ' + fmt(era.price))) return;
+    if (!await ask('Создать заявку?\n\n' + era.title + ' — ' + fmt(era.price))) return;
 
     var u = tgUser() || {};
     var now = new Date().toISOString();
     var nextId = await getNextId('purchase');
 
-    var meData = await fbGet('users/' + u.id).catch(function(){ return null; });
+    var meData = await fbGet('users/' + u.id).catch(function(){return null;});
     var referrerUid = meData && meData.referrer_uid ? String(meData.referrer_uid) : null;
-    var refBonus = referrerUid
-      ? Math.round(num(era.price) * REFERRAL_PERCENT / 100)
-      : 0;
+    var refBonus = referrerUid ? Math.round(num(era.price) * REFERRAL_PERCENT / 100) : 0;
 
     await fbPost('purchases', {
-      id: nextId,
-      user_telegram_id: u.id,
-      user_username: u.username || '',
-      user_first_name: u.first_name || '',
-      era_id: era.id,
-      era_title: era.title,
-      purchase_price: era.price,
-      profit_amount: era.profit_amount,
-      total_amount: era.total_amount,
-      duration_days: era.duration_days,
-      days: era.duration_days,
-      status: 'created',
-      created_at: now,
-      status_changed_at: now,
+      id: nextId, user_telegram_id: u.id,
+      user_username: u.username || '', user_first_name: u.first_name || '',
+      era_id: era.id, era_title: era.title,
+      purchase_price: era.price, profit_amount: era.profit_amount,
+      total_amount: era.total_amount, duration_days: era.duration_days,
+      days: era.duration_days, status: 'created',
+      created_at: now, status_changed_at: now,
       referrer_uid: referrerUid,
       referral_percent: REFERRAL_PERCENT,
       referral_bonus: refBonus,
-      referral_status: referrerUid ? 'pending' : null,
-      referral_paid_at: null
+      referral_status: referrerUid ? 'pending' : null
     });
 
-    toast('✅ Заявка #' + nextId + ' создана', 'ok', 4500);
+    toast('✅ Заявка #' + nextId, 'ok', 4500);
     haptic();
     await reload();
     window.setTab('purchases');
@@ -860,15 +660,11 @@ window.requestPayout = function(pid){
     var u = tgUser() || {};
     var nextId = await getNextId('payout');
     await fbPost('payouts', {
-      id: nextId,
-      purchase_id: p.id,
-      user_telegram_id: u.id,
-      user_username: u.username || '',
+      id: nextId, purchase_id: p.id,
+      user_telegram_id: u.id, user_username: u.username || '',
       user_first_name: u.first_name || '',
-      era_title: p.era_title,
-      purchase_price: p.purchase_price,
-      amount: p.total_amount,
-      status: 'pending',
+      era_title: p.era_title, purchase_price: p.purchase_price,
+      amount: p.total_amount, status: 'pending',
       requested_at: new Date().toISOString()
     });
     toast('✅ Заявка на вывод #' + nextId, 'ok', 4000);
@@ -891,18 +687,13 @@ window.copyRef = function(){
   var ok = function(){ toast('📋 Скопировано', 'ok'); haptic(); };
   if (navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(refLink).then(ok).catch(function(){ fallbackCopy(refLink, ok); });
-  } else {
-    fallbackCopy(refLink, ok);
-  }
+  } else fallbackCopy(refLink, ok);
 };
 function fallbackCopy(text, ok){
   var ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.cssText = 'position:fixed;opacity:0';
-  document.body.appendChild(ta);
-  ta.select();
-  try { document.execCommand('copy'); ok(); }
-  catch(e){ toast('Не удалось', 'err'); }
+  ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); ok(); } catch(e){ toast('Не удалось', 'err'); }
   ta.remove();
 }
 
@@ -914,12 +705,12 @@ function showModal(html){
 window.openEraDetail = function(id){
   var e = ERAS.filter(function(x){ return String(x.id) === String(id); })[0];
   if (!e) return;
-  var roi = e.price > 0 ? Math.round(e.profit_amount / e.price * 100) : 0;
+  var roi = e.price > 0 ? Math.round(e.profit_amount/e.price*100) : 0;
   showModal(
     '<div class="modal-head"><div><div class="muted-sm">ЭРА</div><h2>' + esc(e.title) + '</h2></div>' +
       '<button class="close-x" onclick="closeModal()">✕</button></div>' +
     '<div class="modal-body">' +
-      '<p class="muted" style="margin-bottom:16px;line-height:1.6">' + esc(e.description || '') + '</p>' +
+      '<p class="muted" style="margin-bottom:16px;line-height:1.6">' + esc(e.description||'') + '</p>' +
       '<div class="grid2" style="margin-bottom:14px">' +
         '<div class="stat"><div class="label">Стоимость</div><div class="value sm">' + fmt(e.price) + '</div></div>' +
         '<div class="stat"><div class="label">Начисление</div><div class="value sm ok">+' + fmt(e.profit_amount) + '</div></div>' +
@@ -935,55 +726,52 @@ window.openContact = function(){
     '<div class="modal-head"><h2>💬 Связь</h2><button class="close-x" onclick="closeModal()">✕</button></div>' +
     '<div class="modal-body">' +
       '<a class="menu-item" href="https://t.me/' + esc(ADMIN_USERNAME) + '" target="_blank" style="text-decoration:none;color:inherit">' +
-        '<div class="left"><div class="emo">👨‍💼</div><div><div style="font-weight:600">Администратор</div><div class="muted-sm">@' + esc(ADMIN_USERNAME) + '</div></div></div>' +
-        '<div style="color:var(--muted)">→</div></a>' +
+        '<div class="left"><div class="emo">👨‍💼</div><div><div style="font-weight:600">Администратор</div><div class="muted-sm">@' + esc(ADMIN_USERNAME) + '</div></div></div><div style="color:var(--muted)">→</div></a>' +
       '<a class="menu-item" href="https://t.me/' + esc(BOT_USERNAME) + '" target="_blank" style="text-decoration:none;color:inherit">' +
-        '<div class="left"><div class="emo">🤖</div><div><div style="font-weight:600">Бот проекта</div><div class="muted-sm">@' + esc(BOT_USERNAME) + '</div></div></div>' +
-        '<div style="color:var(--muted)">→</div></a>' +
+        '<div class="left"><div class="emo">🤖</div><div><div style="font-weight:600">Бот проекта</div><div class="muted-sm">@' + esc(BOT_USERNAME) + '</div></div></div><div style="color:var(--muted)">→</div></a>' +
     '</div>');
 };
 
 window.openMyRefs = function(){
   var refLink = 'https://t.me/' + BOT_USERNAME + '?start=ref_' + ME.telegram_id;
-  var purchasesByRef = {};
+  var byRef = {};
   ALL_MY_REF_PURCHASES.forEach(function(p){
     var rid = String(p.user_telegram_id);
-    if (!purchasesByRef[rid]) purchasesByRef[rid] = [];
-    purchasesByRef[rid].push(p);
+    if (!byRef[rid]) byRef[rid] = [];
+    byRef[rid].push(p);
   });
 
   var items = ALL_REFERRALS.length ? ALL_REFERRALS.map(function(r){
-    var rp = purchasesByRef[String(r.telegram_id)] || [];
-    var totalSum = 0, paid = 0, pending = 0, approved = 0, frozen = 0;
+    var rp = byRef[String(r.telegram_id)] || [];
+    var sum=0, paid=0, pending=0, approved=0, frozen=0, pendingActive=0;
     rp.forEach(function(p){
       if (['rejected','cancelled'].indexOf(p.status) >= 0) return;
       var price = num(p.purchase_price);
       var b = num(p.referral_bonus) || Math.round(price * REFERRAL_PERCENT / 100);
       var st = p.referral_status || 'pending';
       if (st === 'rejected') return;
-      totalSum += price;
+      sum += price;
       if (st === 'paid') paid += b;
       else if (st === 'frozen') frozen += num(p.referral_frozen_amount) || b;
       else if (st === 'approved') approved += b;
+      else if (st === 'pending_active') pendingActive += b;
       else pending += b;
     });
     var chips = [];
-    if (rp.length === 0) chips.push('<span class="ref-chip info">🕓 Пока без покупок</span>');
+    if (!rp.length) chips.push('<span class="ref-chip info">🕓 Пока без покупок</span>');
     else {
       if (pending > 0)  chips.push('<span class="ref-chip warn">⏳ ' + fmt(pending) + '</span>');
+      if (pendingActive > 0) chips.push('<span class="ref-chip info">⏸ Отложено ' + fmt(pendingActive) + '</span>');
       if (approved > 0) chips.push('<span class="ref-chip ok">✅ ' + fmt(approved) + '</span>');
       if (frozen > 0)   chips.push('<span class="ref-chip warn">⏳ В заявке ' + fmt(frozen) + '</span>');
       if (paid > 0)     chips.push('<span class="ref-chip purple">💸 ' + fmt(paid) + '</span>');
     }
     return '<div class="ref-item">' +
-      '<div class="head">' +
-        '<div class="name">' + esc(r.first_name || 'Пользователь') + '</div>' +
-        '<div class="date">' + fmtDate(r.registered_at) + '</div>' +
-      '</div>' +
+      '<div class="head"><div class="name">' + esc(r.first_name || 'Пользователь') + '</div>' +
+        '<div class="date">' + fmtDate(r.registered_at) + '</div></div>' +
       '<div class="meta">@' + esc(r.username || '—') + ' · ID ' + esc(r.telegram_id) + '</div>' +
-      (rp.length ? '<div class="meta">🛒 Покупок: <b>' + rp.length + '</b> · на ' + fmt(totalSum) + '</div>' : '') +
-      '<div class="stat-row">' + chips.join('') + '</div>' +
-    '</div>';
+      (rp.length ? '<div class="meta">🛒 Покупок: <b>' + rp.length + '</b> · на ' + fmt(sum) + '</div>' : '') +
+      '<div class="stat-row">' + chips.join('') + '</div></div>';
   }).join('') : '<div class="empty"><div class="icon">👥</div><p>Пока никого нет</p></div>';
 
   var b = calcRefBalance();
@@ -992,43 +780,36 @@ window.openMyRefs = function(){
     '<div class="modal-head"><h2>👥 Рефералы (' + ALL_REFERRALS.length + ')</h2>' +
       '<button class="close-x" onclick="closeModal()">✕</button></div>' +
     '<div class="modal-body">' +
-
-      '<div class="ref-hero">' +
-        '<div class="title"><span class="emo">💰</span> Ваш баланс' +
-          '<span class="percent-badge">' + REFERRAL_PERCENT + '%</span></div>' +
+      '<div class="ref-hero"><div class="title"><span class="emo">💰</span> Ваш баланс' +
+        '<span class="percent-badge">' + REFERRAL_PERCENT + '%</span></div>' +
         '<div class="ref-balances">' +
           '<div class="ref-bal"><div class="l">К выводу</div>' +
-            '<div class="v ' + (b.owed > 0 ? 'pending' : 'zero') + '">' + fmt(b.owed) + '</div></div>' +
+            '<div class="v ' + (b.owed>0?'pending':'zero') + '">' + fmt(b.owed) + '</div></div>' +
           '<div class="ref-bal"><div class="l">Начислено</div>' +
             '<div class="v approved">' + fmt(b.accrued) + '</div></div>' +
           '<div class="ref-bal"><div class="l">Выплачено</div>' +
             '<div class="v paid">' + fmt(b.paid) + '</div></div>' +
         '</div>' +
+        (b.pendingActive > 0
+          ? '<div class="warn-note">⏸ Отложено <b>' + fmt(b.pendingActive) + '</b> — купите эру, чтобы активировать</div>'
+          : '') +
       '</div>' +
-
       '<div class="card2" style="margin-bottom:14px">' +
         '<div class="muted-sm" style="margin-bottom:6px">Ваша реферальная ссылка:</div>' +
         '<div class="ref-box">' + esc(refLink) + '</div>' +
         '<button class="btn secondary sm" style="margin-top:10px;width:100%" onclick="copyRef()">📋 Скопировать</button>' +
-      '</div>' +
-
-      items +
+      '</div>' + items +
     '</div>');
 };
 
-// ═══════════════════════════════════════════════════════════
-// РЕНДЕР ЭКРАНОВ
-// ═══════════════════════════════════════════════════════════
+// ═══════ ЭКРАНЫ ═══════
 function skeleton(){
-  return '<div class="skel" style="height:56px"></div>' +
-    '<div class="skel" style="height:110px"></div>' +
-    '<div class="skel" style="height:150px"></div>';
+  return '<div class="skel" style="height:56px"></div><div class="skel" style="height:110px"></div><div class="skel" style="height:150px"></div>';
 }
 function setApp(html){
   $('app').innerHTML = html;
   $('nav').classList.remove('hidden');
 }
-
 function screenNoTg(){
   $('nav').classList.add('hidden');
   $('app').innerHTML =
@@ -1036,17 +817,14 @@ function screenNoTg(){
     '<div class="hero center" style="padding:36px 20px">' +
       '<div style="font-size:56px;margin-bottom:8px">✨</div>' +
       '<h1 style="font-size:26px;margin-bottom:6px">Проект «Эры»</h1>' +
-      '<div class="muted">Откройте через Telegram-бота</div>' +
-    '</div>' +
-    '<div class="card center">' +
-      '<p class="muted">Нажмите кнопку в боте @' + esc(BOT_USERNAME) + '</p>' +
-      '<a class="btn" href="https://t.me/' + esc(BOT_USERNAME) + '" style="margin-top:12px">🚀 Открыть бота</a>' +
-    '</div>';
+      '<div class="muted">Откройте через Telegram-бота</div></div>' +
+    '<div class="card center"><p class="muted">Нажмите кнопку в боте @' + esc(BOT_USERNAME) + '</p>' +
+      '<a class="btn" href="https://t.me/' + esc(BOT_USERNAME) + '" style="margin-top:12px">🚀 Открыть бота</a></div>';
 }
 
 function drawHome(){
   var me = ME || {}, P = PURCHASES, u = tgUser() || {};
-  var active = P.filter(function(p){ return ['created','in_progress','approved'].indexOf(p.status) >= 0; });
+  var active = P.filter(function(p){ return ['created','approved'].indexOf(p.status) >= 0; });
   var completed = P.filter(function(p){ return p.status === 'completed'; });
   var invested = P.filter(function(p){ return p.status !== 'cancelled'; })
     .reduce(function(s,p){ return s + num(p.purchase_price); }, 0);
@@ -1056,89 +834,64 @@ function drawHome(){
 
   setApp(
     '<div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div>' +
-      '<div style="display:flex;gap:8px">' +
-        '<button class="icon-btn" onclick="refresh()">🔄</button>' +
-      '</div></div>' +
-
-    '<div class="hero"><div class="row">' +
-      '<div class="user">' +
-        '<div class="avatar">' + (photo ? '<img src="' + esc(photo) + '" alt="">' : esc((name[0] || '?').toUpperCase())) + '</div>' +
-        '<div class="info"><div class="muted-sm">Привет 👋</div><h1>' + esc(name) + '</h1>' +
-          (me.username ? '<div class="sub">@' + esc(me.username) + '</div>' : '') +
-        '</div>' +
-      '</div>' +
+      '<div><button class="icon-btn" onclick="refresh()">🔄</button></div></div>' +
+    '<div class="hero"><div class="user">' +
+      '<div class="avatar">' + (photo ? '<img src="' + esc(photo) + '" alt="">' : esc((name[0]||'?').toUpperCase())) + '</div>' +
+      '<div class="info"><div class="muted-sm">Привет 👋</div><h1>' + esc(name) + '</h1>' +
+        (me.username ? '<div class="sub">@' + esc(me.username) + '</div>' : '') + '</div>' +
     '</div></div>' +
-
     '<div class="stats">' +
       '<div class="stat"><div class="label">Инвестировано</div><div class="value sm accent">' + fmt(invested) + '</div></div>' +
       '<div class="stat"><div class="label">Активных</div><div class="value">' + active.length + '</div></div>' +
       '<div class="stat"><div class="label">Завершено</div><div class="value">' + completed.length + '</div></div>' +
-      '<div class="stat"><div class="label">К выводу</div><div class="value sm ' + (available > 0 ? 'ok' : '') + '">' + fmt(available) + '</div></div>' +
+      '<div class="stat"><div class="label">К выводу</div><div class="value sm ' + (available>0?'ok':'') + '">' + fmt(available) + '</div></div>' +
     '</div>' +
-
     renderRefHero() +
-
     '<div class="section-title"><h2>Мои заявки</h2>' +
-      (P.length ? '<button class="btn ghost xs" onclick="setTab(\'purchases\')">Все →</button>' : '') +
-    '</div>' +
-
+      (P.length ? '<button class="btn ghost xs" onclick="setTab(\'purchases\')">Все →</button>' : '') + '</div>' +
     (P.length ? P.slice(0, 3).map(eraCardPurchase).join('')
       : '<div class="card empty"><div class="icon">🌱</div><h3>Пока нет заявок</h3>' +
-        '<p class="muted" style="margin-bottom:16px">Выберите эру и начните</p>' +
-        '<button class="btn" style="max-width:240px;margin:0 auto" onclick="setTab(\'buy\')">🛒 Открыть каталог</button></div>')
+        '<p class="muted" style="margin-bottom:16px">Выберите эру</p>' +
+        '<button class="btn" style="max-width:240px;margin:0 auto" onclick="setTab(\'buy\')">🛒 Каталог</button></div>')
   );
 }
 
 function eraCardPurchase(p){
   var cls = dayCls(p);
   var prog = progressOf(p);
-  var showProgress = p.status === 'approved';
   var canW = canWithdraw(p);
   var ms = msLeft(p);
-  var timerId = 'timer-' + p.id;
   var timerHtml = (p.status === 'approved' && ms != null && ms > 0)
-    ? '<div class="timer-live ' + cls + '" id="' + timerId + '" data-expires="' + esc(p.expires_at) + '">' + fmtCountdown(ms) + '</div>'
+    ? '<div class="timer-live ' + cls + '" data-expires="' + esc(p.expires_at) + '">' + fmtCountdown(ms) + '</div>'
     : '';
 
   return '<div class="era-card" data-pid="' + esc(p.id) + '">' +
-    '<div class="head">' +
-      '<div class="order-num">📩 Заявка #' + esc(p.id) + '</div>' +
+    '<div class="head"><div class="order-num">📩 Заявка #' + esc(p.id) + '</div>' +
       '<div class="row">' +
         '<div class="title-wrap"><div class="icon">🌿</div>' +
-          '<div style="min-width:0"><div class="name">' + esc(p.era_title) + '</div>' +
+          '<div><div class="name">' + esc(p.era_title) + '</div>' +
             '<div class="tier">' + num(p.duration_days) + ' дней</div></div></div>' +
         '<span class="badge ' + esc(p.status) + '">' + esc(statusLabel(p.status)) + '</span>' +
-      '</div>' +
-    '</div>' +
+      '</div></div>' +
     '<div class="body">' +
       '<div class="metrics">' +
         '<div class="metric"><div class="l">Вложено</div><div class="v">' + fmt(p.purchase_price) + '</div></div>' +
         '<div class="metric"><div class="l">Начисл.</div><div class="v profit">+' + fmt(p.profit_amount) + '</div></div>' +
         '<div class="metric"><div class="l">Итого</div><div class="v total">' + fmt(p.total_amount) + '</div></div>' +
-      '</div>' +
-      timerHtml +
+      '</div>' + timerHtml +
       '<div style="text-align:center;margin-top:10px">' +
-        '<span class="days-left ' + cls + '" id="label-' + esc(p.id) + '">' + esc(dayLabel(p)) + '</span>' +
-      '</div>' +
-      (showProgress
-        ? '<div class="progress" style="margin-top:12px">' +
-            '<div class="fill ' + cls + '" id="prog-' + esc(p.id) + '" style="width:' + prog + '%"></div>' +
-          '</div>'
-        : '') +
+        '<span class="days-left ' + cls + '" id="label-' + esc(p.id) + '">' + esc(dayLabel(p)) + '</span></div>' +
+      (p.status === 'approved' ? '<div class="progress" style="margin-top:12px">' +
+        '<div class="fill ' + cls + '" id="prog-' + esc(p.id) + '" style="width:' + prog + '%"></div></div>' : '') +
       '<div class="muted-sm" style="margin-top:12px;line-height:1.8">' +
-        '🕐 <b>Куплено:</b> ' + fmtDT(p.created_at) + ' <span style="opacity:.6">(Ташкент)</span>' +
+        '🕐 <b>Куплено:</b> ' + fmtDT(p.created_at) +
         (p.approved_at ? '<br>✅ <b>Одобрено:</b> ' + fmtDT(p.approved_at) : '') +
         (p.start_date ? '<br>📅 <b>Начало:</b> ' + fmtDate(p.start_date) : '') +
-        (p.last_day ? ' · 🏁 <b>Последний:</b> ' + fmtDate(p.last_day) : '') +
         (p.expires_at ? '<br>⏰ <b>Истекает:</b> ' + fmtDT(p.expires_at) : '') +
-        (p.completed_at ? '<br>🏁 <b>Завершено:</b> ' + fmtDT(p.completed_at) : '') +
       '</div>' +
     '</div>' +
-    (canW
-      ? '<div class="actions">' +
-          '<button class="btn ok" onclick="requestPayout(' + JSON.stringify(p.id) + ')">💸 Вывести ' + fmt(p.total_amount) + '</button>' +
-        '</div>'
-      : '') +
+    (canW ? '<div class="actions"><button class="btn ok" onclick="requestPayout(' +
+      JSON.stringify(p.id) + ')">💸 Вывести ' + fmt(p.total_amount) + '</button></div>' : '') +
   '</div>';
 }
 
@@ -1147,9 +900,14 @@ function drawBuy(){
   setApp(
     '<div class="topbar"><div class="brand"><div class="logo">🛒</div>Каталог</div>' +
       '<div><span class="muted-sm">' + ERAS.length + ' эр</span></div></div>' +
-    '<div class="searchbar"><input class="search-input" placeholder="🔍 Поиск…" value="' + esc(shopSearch) + '" oninput="shopSearch=this.value;fillShop()"></div>' +
-    '<div class="filters">' + chips.map(function(c){
-      return '<button class="chip ' + (shopFilter === c[0] ? 'active' : '') + '" onclick="shopFilter=\'' + c[0] + '\';drawBuy()">' + c[1] + '</button>';
+    '<div class="searchbar" style="display:flex;gap:8px;margin-bottom:12px"><input class="search-input" ' +
+      'style="flex:1;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:14px;outline:none" ' +
+      'placeholder="🔍 Поиск…" value="' + esc(shopSearch) + '" oninput="shopSearch=this.value;fillShop()"></div>' +
+    '<div class="filters" style="display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px">' + chips.map(function(c){
+      return '<button class="chip ' + (shopFilter === c[0] ? 'active' : '') + '" ' +
+        'style="padding:8px 14px;border-radius:20px;background:' + (shopFilter===c[0]?'var(--accent)':'var(--card2)') + ';border:1px solid var(--border);' +
+        'color:' + (shopFilter===c[0]?'#fff':'var(--text2)') + ';font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap" ' +
+        'onclick="shopFilter=\'' + c[0] + '\';drawBuy()">' + c[1] + '</button>';
     }).join('') + '</div>' +
     '<div id="shopList"></div>');
   fillShop();
@@ -1161,36 +919,34 @@ function fillShop(){
   var list = ERAS.slice();
   var s = shopSearch.trim().toLowerCase();
   if (s) list = list.filter(function(e){
-    return String(e.title || '').toLowerCase().indexOf(s) >= 0 ||
-      String(e.description || '').toLowerCase().indexOf(s) >= 0;
+    return String(e.title||'').toLowerCase().indexOf(s) >= 0 ||
+      String(e.description||'').toLowerCase().indexOf(s) >= 0;
   });
   if (shopFilter === 'starter') list = list.filter(function(e){ return e.price < 5000; });
   if (shopFilter === 'middle') list = list.filter(function(e){ return e.price >= 5000 && e.price < 15000; });
   if (shopFilter === 'premium') list = list.filter(function(e){ return e.price >= 15000; });
   box.innerHTML = list.length ? list.map(eraCardShop).join('')
     : '<div class="card empty"><div class="icon">📦</div><h3>' +
-      (ERAS.length ? 'Ничего не найдено' : 'Товаров пока нет') + '</h3></div>';
+      (ERAS.length ? 'Ничего не найдено' : 'Товаров нет') + '</h3></div>';
 }
 
 function eraCardShop(e){
-  var roi = e.price > 0 ? Math.round(e.profit_amount / e.price * 100) : 0;
+  var roi = e.price > 0 ? Math.round(e.profit_amount/e.price*100) : 0;
   return '<div class="era-card">' +
     '<div class="head"><div class="title-wrap"><div class="icon">⚡</div>' +
-      '<div style="min-width:0"><div class="name">' + esc(e.title) + '</div>' +
+      '<div><div class="name">' + esc(e.title) + '</div>' +
         '<div class="tier">Срок ' + e.duration_days + ' дней · +' + roi + '% ROI</div></div></div></div>' +
     '<div class="body">' +
-      (e.description ? '<div class="desc">' + esc(e.description) + '</div>' : '') +
+      (e.description ? '<p class="muted" style="font-size:13px;margin-bottom:14px;line-height:1.5">' + esc(e.description) + '</p>' : '') +
       '<div class="metrics">' +
         '<div class="metric"><div class="l">Стоимость</div><div class="v">' + fmt(e.price) + '</div></div>' +
         '<div class="metric"><div class="l">Начисл.</div><div class="v profit">+' + fmt(e.profit_amount) + '</div></div>' +
         '<div class="metric"><div class="l">Итого</div><div class="v total">' + fmt(e.total_amount) + '</div></div>' +
-      '</div>' +
-    '</div>' +
+      '</div></div>' +
     '<div class="actions">' +
       '<button class="btn secondary" onclick="openEraDetail(' + JSON.stringify(e.id) + ')">Подробнее</button>' +
       '<button class="btn" onclick="buyEra(' + JSON.stringify(e.id) + ')">Купить</button>' +
-    '</div>' +
-  '</div>';
+    '</div></div>';
 }
 
 function drawPurchases(){
@@ -1198,36 +954,25 @@ function drawPurchases(){
     '<div class="topbar"><div class="brand"><div class="logo">📦</div>Мои покупки</div>' +
       '<div><button class="icon-btn" onclick="refresh()">🔄</button></div></div>' +
     (PURCHASES.length ? PURCHASES.map(eraCardPurchase).join('')
-      : '<div class="card empty"><div class="icon">📦</div><h3>Покупок пока нет</h3>' +
-        '<button class="btn" style="max-width:240px;margin:16px auto 0" onclick="setTab(\'buy\')">🛒 В Каталог</button></div>') +
-    (PAYOUTS.length
-      ? '<div class="section-title"><h2>Заявки на вывод</h2></div>' +
-        PAYOUTS.map(payoutCard).join('')
-      : '')
-  );
+      : '<div class="card empty"><div class="icon">📦</div><h3>Покупок нет</h3>' +
+        '<button class="btn" style="max-width:240px;margin:16px auto 0" onclick="setTab(\'buy\')">🛒 Каталог</button></div>') +
+    (PAYOUTS.length ? '<div class="section-title"><h2>Заявки на вывод</h2></div>' +
+      PAYOUTS.map(payoutCard).join('') : ''));
 }
 
 function payoutCard(po){
   return '<div class="era-card">' +
-    '<div class="head">' +
-      '<div class="order-num">📤 Вывод #' + esc(po.id) + '</div>' +
-      '<div class="row">' +
-        '<div class="title-wrap"><div class="icon">💸</div>' +
-          '<div><div class="name">' + esc(po.era_title || '—') + '</div>' +
-            '<div class="tier">от заявки #' + esc(po.purchase_id) + '</div></div></div>' +
-        '<span class="badge ' + esc(po.status) + '">' + esc(statusLabel(po.status)) + '</span>' +
-      '</div>' +
-    '</div>' +
+    '<div class="head"><div class="order-num">📤 Вывод #' + esc(po.id) + '</div>' +
+      '<div class="row"><div class="title-wrap"><div class="icon">💸</div>' +
+        '<div><div class="name">' + esc(po.era_title||'—') + '</div>' +
+          '<div class="tier">от заявки #' + esc(po.purchase_id) + '</div></div></div>' +
+        '<span class="badge ' + esc(po.status) + '">' + esc(statusLabel(po.status)) + '</span></div></div>' +
     '<div class="body">' +
       '<div class="row"><span class="muted">Сумма</span>' +
         '<b style="color:var(--ok)">' + fmt(po.amount) + '</b></div>' +
-      '<div class="muted-sm" style="margin-top:8px">' +
-        '🕐 ' + fmtDT(po.requested_at) +
-        (po.paid_at ? ' · ✅ ' + fmtDT(po.paid_at) : '') +
-        ' <span style="opacity:.6">(Ташкент)</span>' +
-      '</div>' +
-    '</div>' +
-  '</div>';
+      '<div class="muted-sm" style="margin-top:8px">🕐 ' + fmtDT(po.requested_at) +
+        (po.paid_at ? ' · ✅ ' + fmtDT(po.paid_at) : '') + '</div>' +
+    '</div></div>';
 }
 
 function drawProfile(){
@@ -1242,29 +987,23 @@ function drawProfile(){
 
   setApp(
     '<div class="topbar"><div class="brand"><div class="logo">👤</div>Профиль</div></div>' +
-    '<div class="hero center" style="padding:24px 20px">' +
+    '<div class="hero center" style="padding:24px 20px;text-align:center">' +
       '<div class="avatar lg" style="margin:0 auto 12px">' +
-        (photo ? '<img src="' + esc(photo) + '" alt="">' : esc((name[0] || '?').toUpperCase())) + '</div>' +
+        (photo ? '<img src="' + esc(photo) + '" alt="">' : esc((name[0]||'?').toUpperCase())) + '</div>' +
       '<h2 style="margin-bottom:4px">' + esc(name) + '</h2>' +
-      (me.username ? '<div class="muted">@' + esc(me.username) + '</div>' : '') +
-    '</div>' +
-
+      (me.username ? '<div class="muted">@' + esc(me.username) + '</div>' : '') + '</div>' +
     renderRefHero() +
-
     '<div class="section-title"><h2>Мой аккаунт</h2></div>' +
     '<div class="card" style="padding:0 16px">' +
       item('👥', 'Мои рефералы', 'openMyRefs()') +
-      item('💬', 'Связь с админом', 'openContact()') +
-    '</div>' +
-
+      item('💬', 'Связь с админом', 'openContact()') + '</div>' +
     '<div class="section-title"><h2>Данные</h2></div>' +
     '<div class="card" style="padding:0 16px">' +
-      '<div class="list-item"><span class="muted">Telegram ID</span><b>' + esc(me.telegram_id || u.id || '—') + '</b></div>' +
-      '<div class="list-item"><span class="muted">Username</span><b>@' + esc(me.username || u.username || '—') + '</b></div>' +
+      '<div class="list-item"><span class="muted">Telegram ID</span><b>' + esc(me.telegram_id||u.id||'—') + '</b></div>' +
+      '<div class="list-item"><span class="muted">Username</span><b>@' + esc(me.username||u.username||'—') + '</b></div>' +
       '<div class="list-item"><span class="muted">Рефералов</span><b>' + ALL_REFERRALS.length + '</b></div>' +
       '<div class="list-item"><span class="muted">Регистрация</span><b>' + fmtDT(me.registered_at) + '</b></div>' +
-    '</div>'
-  );
+    '</div>');
 }
 
 var SCREENS = { home: drawHome, buy: drawBuy, purchases: drawPurchases, profile: drawProfile };
@@ -1287,43 +1026,30 @@ async function render(force){
       $('nav').classList.remove('hidden');
       ME = await loadMe();
     }
-    if (!HAVE.eras || force){
-      await reload();
-    }
+    if (!HAVE.eras || force) await reload();
     var y = window.scrollY;
     (SCREENS[CURRENT_TAB] || drawHome)();
     window.scrollTo(0, y);
   } catch(e){
     console.error(e);
-    $('app').innerHTML =
-      '<div class="topbar"><div class="brand"><div class="logo">⚠️</div>Ошибка</div></div>' +
+    $('app').innerHTML = '<div class="topbar"><div class="brand"><div class="logo">⚠️</div>Ошибка</div></div>' +
       '<div class="card"><p style="margin-bottom:12px">' + esc(e.message) + '</p>' +
-        '<button class="btn" onclick="refresh()">🔄 Повторить</button></div>';
-  } finally {
-    RENDER_LOCK = false;
-  }
+      '<button class="btn" onclick="refresh()">🔄 Повторить</button></div>';
+  } finally { RENDER_LOCK = false; }
 }
 
 window.refresh = function(){ HAVE = {}; render(true); };
 window.drawBuy = drawBuy;
 
-// ═══════════════════════════════════════════════════════════
-// ЖИВОЙ ТАЙМЕР
-// ═══════════════════════════════════════════════════════════
 function tickTimers(){
   document.querySelectorAll('.timer-live').forEach(function(el){
     var exp = el.dataset.expires;
     if (!exp) return;
     var ms = new Date(exp).getTime() - Date.now();
-    if (ms <= 0){
-      el.textContent = '🏁 Завершено';
-      el.classList.remove('ok', 'warn');
-      el.classList.add('err');
-      return;
-    }
+    if (ms <= 0){ el.textContent = '🏁 Завершено'; el.classList.remove('ok','warn'); el.classList.add('err'); return; }
     el.textContent = fmtCountdown(ms);
-    var h = ms / 3600000;
-    el.classList.remove('ok', 'warn', 'err');
+    var h = ms/3600000;
+    el.classList.remove('ok','warn','err');
     if (h <= 1) el.classList.add('err');
     else if (h <= 24) el.classList.add('warn');
     else el.classList.add('ok');
@@ -1334,36 +1060,21 @@ function tickTimers(){
     var p = PURCHASES.filter(function(x){ return String(x.id) === pid; })[0];
     if (!p || p.status !== 'approved') return;
     var labelEl = document.getElementById('label-' + pid);
-    if (labelEl){
-      labelEl.textContent = dayLabel(p);
-      labelEl.className = 'days-left ' + dayCls(p);
-    }
+    if (labelEl){ labelEl.textContent = dayLabel(p); labelEl.className = 'days-left ' + dayCls(p); }
     var progEl = document.getElementById('prog-' + pid);
     if (progEl) progEl.style.width = progressOf(p) + '%';
   });
 }
 
-// ═══════════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════════
 (function init(){
-  try {
-    if (tg){
-      tg.ready(); tg.expand();
-      tg.setHeaderColor && tg.setHeaderColor('#0a0e14');
-      tg.setBackgroundColor && tg.setBackgroundColor('#0a0e14');
-    }
-  } catch(e){}
-
+  try { if (tg){ tg.ready(); tg.expand(); tg.setHeaderColor && tg.setHeaderColor('#0a0e14'); tg.setBackgroundColor && tg.setBackgroundColor('#0a0e14'); } } catch(e){}
   document.querySelectorAll('#nav button').forEach(function(b){
     b.classList.toggle('active', b.dataset.tab === CURRENT_TAB);
   });
-
   $('nav').addEventListener('click', function(e){
     var b = e.target.closest('button');
     if (b && b.dataset.tab) window.setTab(b.dataset.tab);
   });
-
   render();
   setInterval(function(){ if (!document.hidden && tgUser()) render(true); }, POLL_MS);
   setInterval(tickTimers, 1000);

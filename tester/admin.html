@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0d1117">
 <title>Era Admin</title>
-
-<!-- Защита от чёрного фона -->
 <script>
 window.addEventListener('error', function(e){
   var app = document.getElementById('app');
@@ -23,7 +21,6 @@ window.addEventListener('error', function(e){
     '</div>';
 });
 </script>
-
 <style>
 :root{
   --bg:#0d1117; --card:#161b22; --card2:#1c2330; --card3:#232b38;
@@ -38,7 +35,6 @@ html,body{background:var(--bg);color:var(--text);
   -webkit-font-smoothing:antialiased;overflow-x:hidden}
 button,input,textarea,select{font-family:inherit;font-size:inherit}
 .hidden{display:none !important}
-
 .layout{display:flex;min-height:100vh}
 .side{width:230px;background:var(--card);border-right:1px solid var(--border);
   padding:16px 10px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
@@ -61,7 +57,6 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .main{flex:1;min-width:0;padding:20px 24px}
 .h1{font-size:22px;font-weight:700;margin-bottom:4px}
 .sub{font-size:12px;color:var(--muted);margin-bottom:20px}
-
 .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
   gap:10px;margin-bottom:20px}
 .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
@@ -71,10 +66,9 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .stat .v{font-size:20px;font-weight:700}
 .stat .v.ok{color:var(--ok)} .stat .v.warn{color:var(--warn)}
 .stat .v.accent{color:var(--accent)} .stat .v.purple{color:var(--purple)}
-
+.stat .v.info{color:var(--info)}
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
   padding:16px;margin-bottom:14px}
-
 .btn{padding:10px 16px;border-radius:9px;border:0;background:var(--accent);
   color:#fff;font-size:13px;font-weight:600;cursor:pointer;
   display:inline-flex;align-items:center;gap:6px;text-decoration:none;
@@ -86,77 +80,63 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .btn.ok{background:var(--ok);color:#04241a}
 .btn.purple{background:var(--purple);color:#12002e}
 .btn.sm{padding:7px 12px;font-size:12px;min-height:34px}
-
 .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;
   border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase}
 .badge.created{background:rgba(99,169,255,.15);color:#63a9ff}
-.badge.pending{background:rgba(245,181,71,.15);color:var(--warn)}
+.badge.pending,.badge.frozen,.badge.pending_active{background:rgba(245,181,71,.15);color:var(--warn)}
 .badge.approved,.badge.completed,.badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
 .badge.cancelled,.badge.rejected{background:rgba(255,92,92,.15);color:var(--err)}
 .badge.purple{background:rgba(167,139,250,.15);color:var(--purple)}
-
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
   gap:8px;margin:10px 0}
 .cell{background:var(--card2);border-radius:9px;padding:10px 12px}
 .cell b{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;
   margin-bottom:3px;font-weight:600}
 .cell span{font-size:14px;font-weight:600}
-.cell span.ok{color:var(--ok)} .cell span.accent{color:var(--accent)}
-.cell span.warn{color:var(--warn)}
-
+.cell span.ok{color:var(--ok)} .cell span.accent{color:var(--accent)} .cell span.warn{color:var(--warn)}
 .row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .flex{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-
 .frow{margin-bottom:12px}
 .frow label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px;
   text-transform:uppercase;font-weight:600}
 .input{width:100%;padding:12px 14px;border-radius:9px;border:1px solid var(--border);
   background:var(--card2);color:var(--text);font-size:15px;outline:none;min-height:44px}
 .input:focus{border-color:var(--accent)}
-
-.tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:6px;
-  scrollbar-width:none}
+.tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{padding:9px 15px;border-radius:20px;background:var(--card2);
   border:1px solid var(--border);color:#c4ccd6;font-size:13px;font-weight:600;
   cursor:pointer;white-space:nowrap}
 .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-
 .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);
   background:var(--card2);border:1px solid var(--border2);padding:14px 20px;
   border-radius:12px;z-index:9999;font-size:14px;font-weight:500;
   max-width:90%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.5)}
 .toast.ok{border-color:var(--ok);color:#a8f0cc}
 .toast.err{border-color:var(--err);color:#ffb3b3}
-
 .login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 .login-box{background:var(--card);border:1px solid var(--border2);
   border-radius:14px;padding:28px;width:100%;max-width:400px}
 .login-box h1{font-size:22px;text-align:center;margin-bottom:24px}
-
 .empty{padding:50px 20px;text-align:center;color:var(--muted)}
 .empty .ic{font-size:48px;margin-bottom:12px;opacity:.5}
 .muted{color:var(--muted);font-size:12.5px}
-
 .mbg{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999;
   display:flex;align-items:center;justify-content:center;padding:16px}
 .modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;
   width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
 .mh{padding:18px;border-bottom:1px solid var(--border);display:flex;
-  justify-content:space-between;align-items:center;position:sticky;top:0;
-  background:var(--card)}
+  justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--card)}
 .mh h2{font-size:17px}
 .mb{padding:18px}
 .mf{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:10px}
 .mf .btn{flex:1}
 .x{width:36px;height:36px;border-radius:50%;background:var(--card2);
   border:1px solid var(--border2);color:#c4ccd6;font-size:18px;cursor:pointer}
-
 .search{position:relative;margin-bottom:14px}
 .search input{padding-left:38px}
 .search::before{content:'🔍';position:absolute;left:14px;top:50%;
   transform:translateY(-50%);opacity:.6;pointer-events:none}
-
 .ref{background:var(--card3);border-radius:10px;padding:12px 14px;margin-top:12px;
   border-left:3px solid var(--purple)}
 .ref .lbl{font-size:10.5px;text-transform:uppercase;color:var(--muted);
@@ -165,7 +145,6 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
   font-size:13.5px;gap:10px;flex-wrap:wrap}
 .ri+.ri{border-top:1px solid var(--border)}
 .ri a{color:var(--accent);text-decoration:none}
-
 .date{background:var(--card3);border-radius:10px;padding:12px 14px;margin-top:12px;
   border-left:3px solid var(--accent)}
 .date .lbl{font-size:10.5px;text-transform:uppercase;color:var(--muted);
@@ -176,76 +155,33 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .dcell b{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;
   font-weight:600;margin-bottom:3px}
 .dcell span{font-size:13px;font-weight:600}
-.dleft{padding:8px 10px;border-radius:8px;font-size:13px;display:flex;
-  align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.dleft{padding:8px 10px;border-radius:8px;font-size:13px}
 .dleft.ok{background:rgba(57,217,138,.12);color:var(--ok)}
 .dleft.warn{background:rgba(245,181,71,.12);color:var(--warn)}
 .dleft.err{background:rgba(255,92,92,.15);color:var(--err)}
 .dleft.muted{background:rgba(139,148,158,.12);color:var(--muted)}
-
-.bc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.bc-prev{background:#0e1116;border:1px solid var(--border2);border-radius:12px;
-  padding:14px;min-height:180px}
-.bc-prev .hd{font-size:11px;color:var(--muted);text-transform:uppercase;
-  font-weight:700;margin-bottom:10px}
-.bc-prev .body{font-size:14px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
-.bc-prev .body b{font-weight:700}
-.bc-prev .body a{color:var(--accent);text-decoration:underline}
-.bc-prev .body code{background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px}
-.bc-prev .photo{width:100%;max-height:240px;object-fit:cover;border-radius:8px;
-  margin-bottom:10px;border:1px solid var(--border2)}
-.bc-prev .btn-prev{display:inline-block;margin-top:10px;padding:9px 14px;
-  border-radius:8px;background:rgba(79,140,255,.15);color:var(--accent);
-  border:1px solid rgba(79,140,255,.3);font-size:12.5px;font-weight:600}
-.bc-prog{height:8px;background:var(--card3);border-radius:4px;overflow:hidden;
-  margin:12px 0 8px}
-.bc-prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--ok));
-  transition:width .2s linear;width:0%}
-.bc-stat{display:flex;gap:14px;font-size:12.5px}
-.bc-log{background:#0a0d12;border:1px solid var(--border);border-radius:8px;
-  padding:10px 12px;max-height:200px;overflow-y:auto;font-family:monospace;
-  font-size:11.5px;margin-top:10px;line-height:1.6}
-.bc-log .err{color:var(--err)}
-.bc-aud{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
-.bc-aud .chip{padding:7px 12px;border-radius:20px;background:var(--card2);
-  border:1px solid var(--border);color:#c4ccd6;font-size:12.5px;font-weight:600;cursor:pointer}
-.bc-aud .chip.active{background:var(--purple);color:#12002e;border-color:var(--purple)}
-
-@media(max-width:900px){
-  .bc-grid{grid-template-columns:1fr}
-}
 @media(max-width:768px){
   .layout{flex-direction:column}
-  .side{width:100%;height:auto;position:sticky;top:0;z-index:50;
-    border-right:0;border-bottom:1px solid var(--border);padding:10px;
-    display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;scrollbar-width:none}
+  .side{width:100%;height:auto;position:sticky;top:0;z-index:50;border-right:0;
+    border-bottom:1px solid var(--border);padding:10px;display:flex;flex-wrap:nowrap;
+    overflow-x:auto;gap:6px;scrollbar-width:none}
   .side::-webkit-scrollbar{display:none}
   .side .logo,.side .sect{display:none}
-  .side .nav{width:auto;flex-shrink:0;padding:9px 14px;margin-bottom:0;
-    border:1px solid var(--border)}
+  .side .nav{width:auto;flex-shrink:0;padding:9px 14px;margin-bottom:0;border:1px solid var(--border)}
   .side .nav .badge-n{display:none}
   .main{padding:14px 12px 60px}
   .stats{grid-template-columns:repeat(2,1fr)}
-  .grid{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
 <body>
-
-<div id="app">
-  <div class="login">
-    <div class="login-box">
-      <h1>⚡ Era Admin</h1>
-      <div class="empty">Загрузка…</div>
-    </div>
-  </div>
-</div>
+<div id="app"><div class="login"><div class="login-box"><h1>⚡ Era Admin</h1>
+  <div class="empty">Загрузка…</div></div></div></div>
 <div id="toast" class="toast hidden"></div>
 <div id="modal-root"></div>
 
 <script>
 'use strict';
-
 var FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app';
 var ADMIN_PASSWORD = 'admin123';
 var BOT_TOKEN = '8880107122:AAFa0r2WsfEeDmKIqRZI_YvvwRdXLz7y2kQ';
@@ -255,41 +191,30 @@ var TZ_TASHKENT = 'Asia/Tashkent';
 
 var AUTH = sessionStorage.getItem('admin_auth') === '1';
 var TAB = 'dashboard';
-var DATA = { purchases: [], payouts: [], users: [], eras: [],
-  refPayouts: [], refPayoutsLog: [] };
+var DATA = { purchases: [], payouts: [], users: [], eras: [], refPayouts: [] };
 var SEARCH = '';
 var LOG = [];
 var $ = function(id){ return document.getElementById(id); };
 
-// ═══════════════════════════════════════════════════════════
-// UTILS
-// ═══════════════════════════════════════════════════════════
-function esc(s){
-  return String(s==null?'':s).replace(/[&<>"']/g, function(c){
-    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
-  });
-}
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function fmt(n){ return Number(n||0).toLocaleString('ru-RU') + ' ₽'; }
 function fmtDate(s){
   if (!s) return '—';
-  try {
-    return new Date(s).toLocaleString('ru-RU',
-      {day:'2-digit',month:'2-digit',year:'numeric',
-       hour:'2-digit',minute:'2-digit',timeZone:TZ_TASHKENT});
-  } catch(e){ return s; }
+  try { return new Date(s).toLocaleString('ru-RU',
+    {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',timeZone:TZ_TASHKENT}); }
+  catch(e){ return s; }
 }
 function fmtD(s){
   if (!s) return '—';
-  try {
-    return new Date(s).toLocaleDateString('ru-RU',
-      {day:'2-digit',month:'2-digit',year:'numeric',timeZone:TZ_TASHKENT});
-  } catch(e){ return s; }
+  try { return new Date(s).toLocaleDateString('ru-RU',
+    {day:'2-digit',month:'2-digit',year:'numeric',timeZone:TZ_TASHKENT}); }
+  catch(e){ return s; }
 }
 function statusLabel(s){
-  return {
-    created:'Ожидает', in_progress:'В процессе', approved:'Активен',
-    completed:'Завершён', paid:'Выплачен', cancelled:'Отменён',
-    pending:'Ожидает', rejected:'Отклонён', processing:'Обработка'
+  return {created:'Ожидает', approved:'Активен', completed:'Завершён',
+    paid:'Выплачен', cancelled:'Отменён', pending:'Ожидает',
+    rejected:'Отклонён', frozen:'Заморожен', pending_active:'Ждёт активности'
   }[s] || s;
 }
 function toast(msg, type){
@@ -301,15 +226,11 @@ function toast(msg, type){
   t._t = setTimeout(function(){ t.classList.add('hidden'); }, 2600);
 }
 function toList(raw){
-  if (Array.isArray(raw)) {
-    return raw.filter(function(x){ return x && typeof x === 'object'; })
-      .map(function(v,i){ var o = Object.assign({}, v); o._key = String(i); return o; });
-  }
-  if (raw && typeof raw === 'object') {
-    return Object.keys(raw)
-      .filter(function(k){ return raw[k] && typeof raw[k] === 'object'; })
-      .map(function(k){ var o = Object.assign({}, raw[k]); o._key = k; return o; });
-  }
+  if (Array.isArray(raw)) return raw.filter(function(x){ return x && typeof x === 'object'; })
+    .map(function(v,i){ var o = Object.assign({}, v); o._key = String(i); return o; });
+  if (raw && typeof raw === 'object') return Object.keys(raw)
+    .filter(function(k){ return raw[k] && typeof raw[k] === 'object'; })
+    .map(function(k){ var o = Object.assign({}, raw[k]); o._key = k; return o; });
   return [];
 }
 async function fbGet(path){
@@ -318,18 +239,15 @@ async function fbGet(path){
   return r.json();
 }
 async function fbPut(path, data){
-  var r = await fetch(FIREBASE + '/' + path + '.json',
-    {method:'PUT', body: JSON.stringify(data)});
+  var r = await fetch(FIREBASE + '/' + path + '.json', {method:'PUT', body: JSON.stringify(data)});
   return r.ok;
 }
 async function fbPatch(path, data){
-  var r = await fetch(FIREBASE + '/' + path + '.json',
-    {method:'PATCH', body: JSON.stringify(data)});
+  var r = await fetch(FIREBASE + '/' + path + '.json', {method:'PATCH', body: JSON.stringify(data)});
   return r.ok;
 }
 async function fbPost(path, data){
-  var r = await fetch(FIREBASE + '/' + path + '.json',
-    {method:'POST', body: JSON.stringify(data)});
+  var r = await fetch(FIREBASE + '/' + path + '.json', {method:'POST', body: JSON.stringify(data)});
   return r.ok ? r.json() : null;
 }
 async function fbDelete(path){
@@ -340,10 +258,6 @@ function pushLog(action, info){
   LOG.unshift({ ts: new Date().toISOString(), action: action, info: info });
   if (LOG.length > 50) LOG.pop();
 }
-
-// ═══════════════════════════════════════════════════════════
-// HELPERS
-// ═══════════════════════════════════════════════════════════
 function findUser(users, tgId){
   if (!tgId) return null;
   for (var i=0;i<users.length;i++){
@@ -366,157 +280,112 @@ function fmtLeft(ms){
   var s = Math.floor(ms/1000);
   var d = Math.floor(s/86400), h = Math.floor((s%86400)/3600),
       m = Math.floor((s%3600)/60), sec = s%60;
-  if (d > 0) return d + 'д ' + h + 'ч ' + m + 'м';
-  if (h > 0) return h + 'ч ' + m + 'м ' + sec + 'с';
-  if (m > 0) return m + 'м ' + sec + 'с';
-  return sec + 'с';
+  if (d > 0) return d+'д '+h+'ч '+m+'м';
+  if (h > 0) return h+'ч '+m+'м '+sec+'с';
+  if (m > 0) return m+'м '+sec+'с';
+  return sec+'с';
 }
-
-// Расчёт баланса реф. бонусов конкретного юзера
 function calcUserRefBalance(uid){
-  var accrued = 0, paid = 0, pending = 0;
-  var lastPaidAt = null, lastPaidAmount = 0;
-
-  // Юзер — реферер
-  var myRefIds = {};
+  var accrued=0, paid=0, pending=0, frozen=0, pendingActive=0;
+  var lastPaidAt=null, lastPaidAmount=0;
+  var myIds = {};
   DATA.users.forEach(function(u){
-    if (String(u.referrer_uid || '') === String(uid)){
-      myRefIds[String(u.telegram_id)] = 1;
-    }
+    if (String(u.referrer_uid || '') === String(uid)) myIds[String(u.telegram_id)] = 1;
   });
-
   DATA.purchases.forEach(function(p){
-    if (!myRefIds[String(p.user_telegram_id)]) return;
+    if (!myIds[String(p.user_telegram_id)]) return;
     if (['rejected','cancelled'].indexOf(p.status) >= 0) return;
     var b = Number(p.referral_bonus || 0)
       || Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
     var st = p.referral_status || 'pending';
     if (st === 'rejected') return;
     if (st === 'paid'){
-      accrued += b;
-      paid += b;
+      accrued += b; paid += b;
       if (p.referral_paid_at && (!lastPaidAt || p.referral_paid_at > lastPaidAt)){
         lastPaidAt = p.referral_paid_at;
-        lastPaidAmount = b;
+        lastPaidAmount = Number(p.referral_paid_amount || 0) || b;
       }
+    } else if (st === 'frozen'){
+      accrued += b;
+      frozen += Number(p.referral_frozen_amount || 0) || b;
     } else if (st === 'approved'){
       accrued += b;
+    } else if (st === 'pending_active'){
+      pendingActive += b;
     } else {
       pending += b;
     }
   });
-
-  return {
-    accrued: accrued,
-    paid: paid,
-    pending: pending,
-    owed: Math.max(0, accrued - paid),
-    lastPaidAt: lastPaidAt,
-    lastPaidAmount: lastPaidAmount
-  };
+  return { accrued: accrued, paid: paid, pending: pending, frozen: frozen,
+    pendingActive: pendingActive,
+    owed: Math.max(0, accrued - paid - frozen),
+    lastPaidAt: lastPaidAt, lastPaidAmount: lastPaidAmount };
 }
 
-// ═══════════════════════════════════════════════════════════
-// LOGIN
-// ═══════════════════════════════════════════════════════════
 function renderLogin(){
   $('app').innerHTML =
-    '<div class="login">' +
-      '<div class="login-box">' +
-        '<h1>⚡ Era Admin</h1>' +
-        '<div class="frow"><label>Пароль</label>' +
-          '<input class="input" id="pw" type="password" ' +
-            'onkeydown="if(event.key===\'Enter\')doLogin()" autofocus></div>' +
-        '<button class="btn" style="width:100%;min-height:48px" onclick="doLogin()">🔓 Войти</button>' +
-        '<div class="muted" style="margin-top:16px;text-align:center">Панель управления</div>' +
-      '</div>' +
-    '</div>';
+    '<div class="login"><div class="login-box"><h1>⚡ Era Admin</h1>' +
+      '<div class="frow"><label>Пароль</label>' +
+        '<input class="input" id="pw" type="password" onkeydown="if(event.key===\'Enter\')doLogin()" autofocus></div>' +
+      '<button class="btn" style="width:100%;min-height:48px" onclick="doLogin()">🔓 Войти</button>' +
+    '</div></div>';
 }
 function doLogin(){
   if ($('pw').value === ADMIN_PASSWORD){
-    AUTH = true;
-    sessionStorage.setItem('admin_auth', '1');
-    render();
+    AUTH = true; sessionStorage.setItem('admin_auth', '1'); render();
   } else toast('Неверный пароль', 'err');
 }
-function logout(){
-  sessionStorage.removeItem('admin_auth');
-  AUTH = false;
-  render();
-}
+function logout(){ sessionStorage.removeItem('admin_auth'); AUTH = false; render(); }
 
-// ═══════════════════════════════════════════════════════════
-// LAYOUT
-// ═══════════════════════════════════════════════════════════
 function layout(content){
   var newCnt = DATA.purchases.filter(function(p){ return p.status === 'created'; }).length;
   var payCnt = DATA.payouts.filter(function(p){ return p.status === 'pending'; }).length;
   var refPayCnt = (DATA.refPayouts || []).filter(function(r){ return r.status === 'pending'; }).length;
   var userCnt = DATA.users.length;
   var eraCnt = DATA.eras.length;
-
   var nav = function(tab, emo, label, cnt){
     var cls = TAB === tab ? 'active' : '';
     var badge = cnt ? '<span class="badge-n">' + cnt + '</span>' : '';
     return '<button class="nav ' + cls + '" onclick="setTab(\'' + tab + '\')">' +
       '<span class="emo">' + emo + '</span>' + label + badge + '</button>';
   };
-
   $('app').innerHTML =
-    '<div class="layout">' +
-      '<aside class="side">' +
-        '<div class="logo">' +
-          '<div class="ic">⚡</div>' +
-          '<div><div class="t">Era Admin</div><div class="s">Управление</div></div>' +
-        '</div>' +
-        '<div class="sect">Обзор</div>' +
-        nav('dashboard', '📊', 'Дашборд') +
-        '<div class="sect">Операции</div>' +
-        nav('purchases', '📩', 'Заявки', newCnt) +
-        nav('payouts', '💸', 'Выплаты', payCnt) +
-        nav('refPayouts', '💰', 'Реф. выплаты', refPayCnt) +
-        '<div class="sect">Управление</div>' +
-        nav('users', '👥', 'Юзеры', userCnt) +
-        nav('eras', '🧩', 'Товары', eraCnt) +
-        nav('refs', '🌳', 'Рефералы') +
-        '<div class="sect">Маркетинг</div>' +
-        nav('broadcast', '📢', 'Рассылка') +
-        '<div class="sect">Система</div>' +
-        '<button class="nav" onclick="openLog()"><span class="emo">📜</span>Лог</button>' +
-        '<button class="nav" onclick="logout()" style="color:var(--err)"><span class="emo">🚪</span>Выйти</button>' +
-      '</aside>' +
-      '<main class="main">' +
-        '<div class="h1">⚡ Era Admin</div>' +
-        '<div class="sub">@ROSTERAbot · реф. ' + REF_PERCENT + '%</div>' +
-        '<div id="content">' + content + '</div>' +
-      '</main>' +
-    '</div>';
+    '<div class="layout"><aside class="side">' +
+      '<div class="logo"><div class="ic">⚡</div>' +
+        '<div><div class="t">Era Admin</div><div class="s">Управление</div></div></div>' +
+      '<div class="sect">Обзор</div>' + nav('dashboard','📊','Дашборд') +
+      '<div class="sect">Операции</div>' +
+      nav('purchases','📩','Заявки', newCnt) +
+      nav('payouts','💸','Выплаты', payCnt) +
+      nav('refPayouts','💰','Реф. выплаты', refPayCnt) +
+      '<div class="sect">Управление</div>' +
+      nav('users','👥','Юзеры', userCnt) +
+      nav('eras','🧩','Товары', eraCnt) +
+      nav('refs','🌳','Рефералы') +
+      '<div class="sect">Система</div>' +
+      '<button class="nav" onclick="openLog()"><span class="emo">📜</span>Лог</button>' +
+      '<button class="nav" onclick="logout()" style="color:var(--err)"><span class="emo">🚪</span>Выйти</button>' +
+    '</aside><main class="main">' +
+      '<div class="h1">⚡ Era Admin</div>' +
+      '<div class="sub">@ROSTERAbot · реф. ' + REF_PERCENT + '%</div>' +
+      '<div id="content">' + content + '</div>' +
+    '</main></div>';
 }
 function setTab(t){ TAB = t; render(); }
 
-// ═══════════════════════════════════════════════════════════
-// LOG MODAL
-// ═══════════════════════════════════════════════════════════
 function openLog(){
-  var body = LOG.length
-    ? LOG.map(function(l){
-        return '<div class="ri"><div><div>' + esc(l.action) + '</div>' +
-          '<div class="muted" style="font-size:11px">' + esc(l.info||'') + '</div></div>' +
-          '<div class="muted" style="font-size:11px">' + fmtDate(l.ts) + '</div></div>';
-      }).join('')
-    : '<div class="empty"><p>Пусто</p></div>';
-  $('modal-root').innerHTML =
-    '<div class="mbg" onclick="if(event.target===this)closeModal()"><div class="modal">' +
-      '<div class="mh"><h2>📜 Лог</h2>' +
-        '<button class="x" onclick="closeModal()">✕</button></div>' +
-      '<div class="mb">' + body + '</div>' +
-    '</div></div>';
+  var body = LOG.length ? LOG.map(function(l){
+    return '<div class="ri"><div><div>' + esc(l.action) + '</div>' +
+      '<div class="muted" style="font-size:11px">' + esc(l.info||'') + '</div></div>' +
+      '<div class="muted" style="font-size:11px">' + fmtDate(l.ts) + '</div></div>';
+  }).join('') : '<div class="empty"><p>Пусто</p></div>';
+  $('modal-root').innerHTML = '<div class="mbg" onclick="if(event.target===this)closeModal()">' +
+    '<div class="modal"><div class="mh"><h2>📜 Лог</h2>' +
+    '<button class="x" onclick="closeModal()">✕</button></div>' +
+    '<div class="mb">' + body + '</div></div></div>';
 }
 function closeModal(){ $('modal-root').innerHTML = ''; }
 
-// ═══════════════════════════════════════════════════════════
-// DASHBOARD
-// ═══════════════════════════════════════════════════════════
 async function renderDashboard(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -527,9 +396,8 @@ async function renderDashboard(){
       fbGet('eras').then(toList).catch(function(){ return []; }),
       fbGet('ref_payout_requests').then(toList).catch(function(){ return []; })
     ]);
-    DATA.purchases = res[0]; DATA.payouts = res[1];
-    DATA.users = res[2]; DATA.eras = res[3];
-    DATA.refPayouts = res[4];
+    DATA.purchases = res[0]; DATA.payouts = res[1]; DATA.users = res[2];
+    DATA.eras = res[3]; DATA.refPayouts = res[4];
 
     var active = DATA.purchases.filter(function(p){ return p.status === 'approved'; }).length;
     var done = DATA.purchases.filter(function(p){ return p.status === 'completed'; }).length;
@@ -537,32 +405,26 @@ async function renderDashboard(){
     var pendingPO = DATA.payouts.filter(function(p){ return p.status === 'pending'; }).length;
     var refsCnt = DATA.users.filter(function(u){ return u.referrer_uid; }).length;
 
-    var totalBuy = 0, totalProfit = 0, totalPaid = 0;
-    var refPend = 0, refAppr = 0, refPaid = 0;
-    var refPayPending = 0;   // заявки на вывод реф, ждут
-
+    var totalBuy=0, totalProfit=0, totalPaid=0;
+    var refPend=0, refAppr=0, refFrozen=0, refPaid=0, refPendingActive=0;
     DATA.purchases.forEach(function(p){
       if (p.status !== 'cancelled') totalBuy += Number(p.purchase_price || 0);
-      if (['approved','completed','paid'].indexOf(p.status) >= 0){
-        totalProfit += Number(p.profit_amount || 0);
-      }
+      if (['approved','completed','paid'].indexOf(p.status) >= 0) totalProfit += Number(p.profit_amount || 0);
       if (p.referrer_uid && ['rejected','cancelled'].indexOf(p.status) < 0){
         var b = Number(p.referral_bonus || 0)
           || Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
         var st = p.referral_status || 'pending';
         if (st === 'paid') refPaid += b;
+        else if (st === 'frozen') refFrozen += Number(p.referral_frozen_amount || 0) || b;
         else if (st === 'approved') refAppr += b;
+        else if (st === 'pending_active') refPendingActive += b;
         else if (st !== 'rejected') refPend += b;
       }
     });
     DATA.payouts.forEach(function(p){
       if (p.status === 'paid') totalPaid += Number(p.amount || 0);
     });
-    DATA.refPayouts.forEach(function(r){
-      if (r.status === 'pending'){
-        refPayPending += Number(r.amount || 0);
-      }
-    });
+    var refPayPendingCnt = DATA.refPayouts.filter(function(r){ return r.status === 'pending'; }).length;
 
     var stat = function(ic, label, val, cls){
       return '<div class="stat"><div class="ic">' + ic + '</div>' +
@@ -572,32 +434,29 @@ async function renderDashboard(){
 
     layout(
       '<div class="stats">' +
-        stat('👥', 'Юзеров', DATA.users.length) +
-        stat('🌳', 'Рефералов', refsCnt, 'purple') +
-        stat('🟢', 'Активных', active, 'ok') +
-        stat('🏁', 'Завершено', done) +
-        stat('⏳', 'Новых заявок', created, 'warn') +
-        stat('💸', 'Выплат ждут', pendingPO, 'warn') +
-        stat('💵', 'Куплено', fmt(totalBuy), 'accent') +
-        stat('📈', 'Начислено', fmt(totalProfit), 'ok') +
-        stat('💰', 'Выплачено', fmt(totalPaid)) +
-        stat('🎁', 'Реф. ждёт подтв.', fmt(refPend), 'warn') +
-        stat('✅', 'Реф. к выводу', fmt(refAppr), 'ok') +
-        stat('💸', 'Реф. выплачено', fmt(refPaid), 'accent') +
-        stat('📤', 'Реф. заявок', DATA.refPayouts.filter(function(r){ return r.status === 'pending'; }).length, 'purple') +
+        stat('👥','Юзеров', DATA.users.length) +
+        stat('🌳','Рефералов', refsCnt, 'purple') +
+        stat('🟢','Активных', active, 'ok') +
+        stat('🏁','Завершено', done) +
+        stat('⏳','Новых заявок', created, 'warn') +
+        stat('💸','Выплат ждут', pendingPO, 'warn') +
+        stat('💵','Куплено', fmt(totalBuy), 'accent') +
+        stat('📈','Начислено', fmt(totalProfit), 'ok') +
+        stat('💰','Выплачено', fmt(totalPaid)) +
+        stat('🎁','Реф. ждёт подтв.', fmt(refPend), 'warn') +
+        stat('⏸','Реф. отложено', fmt(refPendingActive), 'info') +
+        stat('✅','Реф. к выводу', fmt(refAppr), 'ok') +
+        stat('❄️','Реф. в заявках', fmt(refFrozen), 'warn') +
+        stat('💸','Реф. выплачено', fmt(refPaid), 'accent') +
+        stat('📤','Реф. заявок', refPayPendingCnt, 'purple') +
       '</div>' +
-      '<button class="btn ghost" onclick="renderDashboard()">🔄 Обновить</button>'
-    );
+      '<button class="btn ghost" onclick="renderDashboard()">🔄 Обновить</button>');
   } catch(e){
     layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
   }
 }
 
-// ═══════════════════════════════════════════════════════════
-// PURCHASES
-// ═══════════════════════════════════════════════════════════
 var purchaseFilter = 'created';
-
 async function renderPurchases(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -636,8 +495,7 @@ async function renderPurchases(){
         '<button class="tab ' + (purchaseFilter==='all'?'active':'') + '" onclick="purchaseFilter=\'all\';renderPurchases()">📋 Все (' + counts.all + ')</button>' +
       '</div>' +
       (shown.length ? shown.map(orderCard).join('')
-        : '<div class="empty"><div class="ic">📭</div><p>Нет заявок</p></div>')
-    );
+        : '<div class="empty"><div class="ic">📭</div><p>Нет заявок</p></div>'));
   } catch(e){
     layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
   }
@@ -647,8 +505,7 @@ function orderCard(p){
   var k = p._key;
   var buyer = findUser(DATA.users, p.user_telegram_id);
   var referrer = buyer && buyer.referrer_uid ? findUser(DATA.users, buyer.referrer_uid) : null;
-
-  var canConfirm = ['created','in_progress'].indexOf(p.status) >= 0;
+  var canConfirm = ['created'].indexOf(p.status) >= 0;
   var canCancel = canConfirm;
   var isActive = p.status === 'approved';
   var isDone = ['completed','paid'].indexOf(p.status) >= 0;
@@ -671,27 +528,21 @@ function orderCard(p){
     if (remain != null){
       if (remain <= 0){ cls = 'muted'; txt = 'Завершено'; }
       else {
-        var hh = remain / 3600000;
+        var hh = remain/3600000;
         txt = fmtLeft(remain);
         if (hh <= 24) cls = 'err';
         else if (hh <= 72) cls = 'warn';
         else cls = 'ok';
       }
     }
-    var days = Number(p.duration_days || p.days || 0);
-    dateBlock =
-      '<div class="date">' +
-        '<div class="lbl">🗓 Сроки эры</div>' +
-        '<div class="dgrid">' +
-          '<div class="dcell"><b>▶️ Начало</b><span>' + fmtD(p.start_date) + '</span></div>' +
-          '<div class="dcell"><b>🏁 Последний</b><span>' + fmtD(p.last_day) + '</span></div>' +
-          '<div class="dcell"><b>⏰ Истекает</b><span>' + fmtDate(p.expires_at) + '</span></div>' +
-          '<div class="dcell"><b>📅 Длит.</b><span>' + days + ' дн.</span></div>' +
-        '</div>' +
-        '<div class="dleft ' + cls + '">' +
-          '⏳ Осталось: <b data-timer="' + esc(p.expires_at||'') + '">' + txt + '</b>' +
-        '</div>' +
-      '</div>';
+    dateBlock = '<div class="date"><div class="lbl">🗓 Сроки эры</div>' +
+      '<div class="dgrid">' +
+        '<div class="dcell"><b>▶️ Начало</b><span>' + fmtD(p.start_date) + '</span></div>' +
+        '<div class="dcell"><b>🏁 Последний</b><span>' + fmtD(p.last_day) + '</span></div>' +
+        '<div class="dcell"><b>⏰ Истекает</b><span>' + fmtDate(p.expires_at) + '</span></div>' +
+        '<div class="dcell"><b>📅 Длит.</b><span>' + Number(p.duration_days||p.days||0) + ' дн.</span></div>' +
+      '</div>' +
+      '<div class="dleft ' + cls + '">⏳ Осталось: <b>' + txt + '</b></div></div>';
   }
 
   var refBlock = '';
@@ -699,24 +550,42 @@ function orderCard(p){
     var bonus = Number(p.referral_bonus || 0)
       || Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
     var st = p.referral_status || 'pending';
-    var stLabel = {pending:'⏳ Ожидает', approved:'✅ К выплате', paid:'💸 Выплачено', rejected:'❌ Отклонено'}[st] || st;
+    var stLabel = {
+      pending:'⏳ Ожидает',
+      approved:'✅ К выплате',
+      frozen:'❄️ В заявке',
+      paid:'💸 Выплачено',
+      rejected:'❌ Отклонено',
+      pending_active:'⏸ Ждёт активности'
+    }[st] || st;
+    var stColor = (st === 'rejected') ? 'var(--err)' :
+                  (st === 'pending_active') ? 'var(--info)' :
+                  (st === 'frozen') ? 'var(--warn)' : 'var(--ok)';
     var refU = findUser(DATA.users, p.referrer_uid);
     var refName = refU ? userName(refU) : ('ID ' + p.referrer_uid);
-    refBlock =
-      '<div class="ref" style="border-left-color:var(--ok)">' +
-        '<div class="lbl">🎁 Реферальный бонус</div>' +
-        '<div class="ri"><div>Кому: <b>' + esc(refName) + '</b></div>' +
-          '<div class="muted">' + REF_PERCENT + '% от покупки</div></div>' +
-        '<div class="ri"><div>Сумма: <b style="color:var(--ok)">' + fmt(bonus) + '</b></div>' +
-          '<span class="badge ' + (st === 'approved' ? 'pending' : st) + '">' + stLabel + '</span></div>' +
-      '</div>';
+
+    var refNote = '';
+    if (st === 'pending_active'){
+      refNote = '<div class="muted" style="margin-top:6px;font-size:11.5px;color:var(--info)">' +
+        '⏸ Бонус зачислится, когда реферер купит эру</div>';
+    } else if (st === 'rejected'){
+      refNote = '<div class="muted" style="margin-top:6px;font-size:11.5px;color:var(--err)">' +
+        '❌ Бонус не начислен</div>';
+    }
+
+    refBlock = '<div class="ref" style="border-left-color:' + stColor + '">' +
+      '<div class="lbl">🎁 Реферальный бонус</div>' +
+      '<div class="ri"><div>Кому: <b>' + esc(refName) + '</b></div>' +
+        '<div class="muted">' + REF_PERCENT + '% от покупки</div></div>' +
+      '<div class="ri"><div>Сумма: <b style="color:var(--ok)">' + fmt(bonus) + '</b></div>' +
+        '<span class="badge ' + st + '">' + stLabel + '</span></div>' +
+      refNote + '</div>';
   }
 
   return '<div class="card">' +
     '<div class="row" style="margin-bottom:12px">' +
       '<b style="color:#4f8cff;font-size:16px">📩 Заявка #' + esc(p.id) + ' ' + fast + '</b>' +
-      '<span class="badge ' + esc(p.status) + '">' + statusLabel(p.status) + '</span>' +
-    '</div>' +
+      '<span class="badge ' + esc(p.status) + '">' + statusLabel(p.status) + '</span></div>' +
     '<div class="grid">' +
       '<div class="cell"><b>👤 Участник</b><span>' + esc(p.user_first_name||'—') + '</span></div>' +
       '<div class="cell"><b>🔗 Ник</b><span>@' + esc(p.user_username||'—') + '</span></div>' +
@@ -727,21 +596,17 @@ function orderCard(p){
       '<div class="cell"><b>🏆 Итого</b><span class="ok">' + fmt(p.total_amount) + '</span></div>' +
       '<div class="cell"><b>📅 Срок</b><span>' + Number(p.duration_days||p.days||0) + ' дн.</span></div>' +
     '</div>' +
-    (referrer
-      ? '<div class="ref"><div class="lbl">🎁 Пригласил</div>' +
-          '<div class="ri"><div><b>' + esc(userName(referrer)) + '</b> · ' + userLink(referrer) + '</div>' +
-          '<div class="muted">ID ' + esc(referrer.telegram_id) + '</div></div></div>'
+    (referrer ? '<div class="ref"><div class="lbl">🎁 Пригласил</div>' +
+      '<div class="ri"><div><b>' + esc(userName(referrer)) + '</b> · ' + userLink(referrer) + '</div></div></div>'
       : '<div class="ref" style="border-left-color:var(--muted)"><div class="lbl">🎁 Пригласил</div>' +
-        '<div class="ri"><span class="muted">Прямая регистрация</span></div></div>') +
-    dateBlock +
-    refBlock +
+      '<div class="ri"><span class="muted">Прямая регистрация</span></div></div>') +
+    dateBlock + refBlock +
     '<div class="muted" style="margin:12px 0">🕐 Создано: ' + fmtDate(p.created_at) + '</div>' +
     '<div class="flex">' +
       (canConfirm ? '<button class="btn ok" onclick="admConfirm(\'' + esc(k) + '\')">✅ Подтвердить</button>' : '') +
       (canCancel ? '<button class="btn danger" onclick="admCancel(\'' + esc(k) + '\')">❌ Отменить</button>' : '') +
       '<button class="btn ghost" onclick="admContact(\'' + esc(p.user_telegram_id||'') + '\')">💬 Написать</button>' +
-    '</div>' +
-  '</div>';
+    '</div></div>';
 }
 
 async function admConfirm(k){
@@ -758,15 +623,13 @@ async function admConfirm(k){
 
     var patch = {
       status: 'approved',
-      activated_at: now.toISOString(),
+      approved_at: now.toISOString(),
       start_date: d0.toISOString(),
       last_day: last.toISOString(),
       expires_at: exp.toISOString(),
       status_changed_at: now.toISOString(),
       notified_3d: 0, notified_1d: 0, notified_3h: 0, completed_notified: 0
     };
-
-    // 💰 Бонус активируется сразу при подтверждении
     if (p.referrer_uid){
       patch.referral_status = 'approved';
       patch.referral_activated_at = now.toISOString();
@@ -774,7 +637,6 @@ async function admConfirm(k){
         patch.referral_bonus = Math.round(Number(p.purchase_price||0) * REF_PERCENT / 100);
       }
     }
-
     await fbPatch('purchases/' + k, patch);
     pushLog('✅ Подтвердил заявку', '#' + p.id);
     toast('✅ Подтверждено', 'ok');
@@ -805,22 +667,16 @@ async function admContact(uid){
   } catch(e){ toast(e.message, 'err'); }
 }
 
-// ═══════════════════════════════════════════════════════════
-// PAYOUTS (обычные)
-// ═══════════════════════════════════════════════════════════
 var payoutFilter = 'pending';
-
 async function renderPayouts(){
   layout('<div class="empty">Загрузка…</div>');
   try {
     var res = await Promise.all([
       fbGet('payouts').then(toList).catch(function(){ return []; }),
-      fbGet('users').then(toList).catch(function(){ return []; }),
-      fbGet('purchases').then(toList).catch(function(){ return []; })
+      fbGet('users').then(toList).catch(function(){ return []; })
     ]);
-    DATA.payouts = res[0]; DATA.users = res[1]; DATA.purchases = res[2];
+    DATA.payouts = res[0]; DATA.users = res[1];
     DATA.payouts.sort(function(a,b){ return Number(b.id||0) - Number(a.id||0); });
-
     var counts = {
       pending: DATA.payouts.filter(function(p){ return p.status === 'pending'; }).length,
       paid: DATA.payouts.filter(function(p){ return p.status === 'paid'; }).length,
@@ -829,115 +685,70 @@ async function renderPayouts(){
     };
     var shown = payoutFilter === 'all' ? DATA.payouts
       : DATA.payouts.filter(function(p){ return p.status === payoutFilter; });
-
     layout(
       '<div class="tabs">' +
         '<button class="tab ' + (payoutFilter==='pending'?'active':'') + '" onclick="payoutFilter=\'pending\';renderPayouts()">⏳ Ожидают (' + counts.pending + ')</button>' +
         '<button class="tab ' + (payoutFilter==='paid'?'active':'') + '" onclick="payoutFilter=\'paid\';renderPayouts()">✅ Выплачено (' + counts.paid + ')</button>' +
-        '<button class="tab ' + (payoutFilter==='rejected'?'active':'') + '" onclick="payoutFilter=\'rejected\';renderPayouts()">❌ Отклонено (' + counts.rejected + ')</button>' +
         '<button class="tab ' + (payoutFilter==='all'?'active':'') + '" onclick="payoutFilter=\'all\';renderPayouts()">📋 Все (' + counts.all + ')</button>' +
       '</div>' +
       (shown.length ? shown.map(payoutCard).join('')
-        : '<div class="empty"><div class="ic">📭</div><p>Нет заявок</p></div>')
-    );
+        : '<div class="empty"><div class="ic">📭</div><p>Нет заявок</p></div>'));
   } catch(e){
     layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
   }
 }
-
 function payoutCard(po){
   var k = po._key;
-  var buyer = findUser(DATA.users, po.user_telegram_id);
-  var purchase = DATA.purchases.filter(function(x){ return String(x.id) === String(po.purchase_id); })[0];
   var isPending = po.status === 'pending';
-
-  var dateBlock = '';
-  if (purchase && purchase.expires_at){
-    var remain = new Date(purchase.expires_at).getTime() - Date.now();
-    var cls = remain <= 0 ? 'muted' : (remain < 86400000 ? 'err' : remain < 3*86400000 ? 'warn' : 'ok');
-    dateBlock =
-      '<div class="date">' +
-        '<div class="lbl">🗓 Покупка #' + esc(purchase.id) + '</div>' +
-        '<div class="dgrid">' +
-          '<div class="dcell"><b>▶️ Начало</b><span>' + fmtD(purchase.start_date) + '</span></div>' +
-          '<div class="dcell"><b>🏁 Последний</b><span>' + fmtD(purchase.last_day) + '</span></div>' +
-          '<div class="dcell"><b>⏰ Истекает</b><span>' + fmtDate(purchase.expires_at) + '</span></div>' +
-          '<div class="dcell"><b>🏆 Сумма</b><span class="ok">' + fmt(purchase.total_amount) + '</span></div>' +
-        '</div>' +
-        '<div class="dleft ' + cls + '">⏳ ' + (remain <= 0 ? 'Завершено' : 'Осталось: ' + fmtLeft(remain)) + '</div>' +
-      '</div>';
-  }
-
   return '<div class="card">' +
     '<div class="row" style="margin-bottom:12px">' +
       '<b style="color:#4f8cff;font-size:16px">💸 Выплата #' + esc(po.id) + '</b>' +
-      '<span class="badge ' + esc(po.status) + '">' + statusLabel(po.status) + '</span>' +
-    '</div>' +
+      '<span class="badge ' + esc(po.status) + '">' + statusLabel(po.status) + '</span></div>' +
     '<div class="grid">' +
-      '<div class="cell"><b>👤 Участник</b><span>' + esc(po.user_first_name||'—') + '</span></div>' +
-      '<div class="cell"><b>🔗 Ник</b><span>@' + esc(po.user_username||'—') + '</span></div>' +
-      '<div class="cell"><b>🆔 TG ID</b><span>' + esc(po.user_telegram_id||'—') + '</span></div>' +
-      '<div class="cell"><b>💳 Эра</b><span>' + esc(po.era_title||'—') + '</span></div>' +
+      '<div class="cell"><b>👤</b><span>' + esc(po.user_first_name||'—') + '</span></div>' +
+      '<div class="cell"><b>🔗</b><span>@' + esc(po.user_username||'—') + '</span></div>' +
+      '<div class="cell"><b>🆔</b><span>' + esc(po.user_telegram_id||'—') + '</span></div>' +
       '<div class="cell"><b>💰 Сумма</b><span class="ok">' + fmt(po.amount) + '</span></div>' +
-      '<div class="cell"><b>📄 Покупка</b><span>#' + esc(po.purchase_id||'—') + '</span></div>' +
     '</div>' +
-    dateBlock +
     '<div class="muted" style="margin:12px 0">🕐 ' + fmtDate(po.requested_at) + '</div>' +
     '<div class="flex">' +
       (isPending ? '<button class="btn ok" onclick="admPaid(\'' + esc(k) + '\')">✅ Выплачено</button>' : '') +
       (isPending ? '<button class="btn danger" onclick="admPayoutReject(\'' + esc(k) + '\')">❌ Отклонить</button>' : '') +
       '<button class="btn ghost" onclick="admContact(\'' + esc(po.user_telegram_id||'') + '\')">💬 Написать</button>' +
-    '</div>' +
-  '</div>';
+    '</div></div>';
 }
-
 async function admPaid(k){
   if (!confirm('Отметить выплату?')) return;
   try {
     var po = DATA.payouts.filter(function(x){ return x._key === k; })[0];
     await fbPatch('payouts/' + k, { status: 'paid', paid_at: new Date().toISOString() });
-    var p = DATA.purchases.filter(function(x){ return String(x.id) === String(po.purchase_id); })[0];
-    if (p) await fbPatch('purchases/' + p._key, { status: 'paid', paid_at: new Date().toISOString() });
     pushLog('💸 Отметил выплату', '#' + po.id);
     toast('💰 Готово', 'ok');
     renderPayouts();
   } catch(e){ toast(e.message, 'err'); }
 }
-
 async function admPayoutReject(k){
-  if (!confirm('Отклонить заявку на вывод?')) return;
+  if (!confirm('Отклонить заявку?')) return;
   try {
     var po = DATA.payouts.filter(function(x){ return x._key === k; })[0];
     await fbPatch('payouts/' + k, { status: 'rejected', status_changed_at: new Date().toISOString() });
-    var p = DATA.purchases.filter(function(x){ return String(x.id) === String(po.purchase_id); })[0];
-    if (p) await fbPatch('purchases/' + p._key, { status: 'completed', status_changed_at: new Date().toISOString() });
     pushLog('❌ Отклонил выплату', '#' + po.id);
     toast('❌ Отклонено');
     renderPayouts();
   } catch(e){ toast(e.message, 'err'); }
 }
 
-// ═══════════════════════════════════════════════════════════
-// 💰 РЕФ. ВЫПЛАТЫ (новый раздел)
-// ═══════════════════════════════════════════════════════════
 var refPayoutFilter = 'pending';
-
 async function renderRefPayouts(){
   layout('<div class="empty">Загрузка…</div>');
   try {
     var res = await Promise.all([
       fbGet('ref_payout_requests').then(toList).catch(function(){ return []; }),
       fbGet('users').then(toList).catch(function(){ return []; }),
-      fbGet('purchases').then(toList).catch(function(){ return []; }),
-      fbGet('ref_payouts_log').then(toList).catch(function(){ return []; })
+      fbGet('purchases').then(toList).catch(function(){ return []; })
     ]);
-    DATA.refPayouts = res[0];
-    DATA.users = res[1];
-    DATA.purchases = res[2];
-    DATA.refPayoutsLog = res[3];
-
+    DATA.refPayouts = res[0]; DATA.users = res[1]; DATA.purchases = res[2];
     DATA.refPayouts.sort(function(a,b){ return Number(b.id||0) - Number(a.id||0); });
-
     var counts = {
       pending: DATA.refPayouts.filter(function(r){ return r.status === 'pending'; }).length,
       paid: DATA.refPayouts.filter(function(r){ return r.status === 'paid'; }).length,
@@ -946,7 +757,6 @@ async function renderRefPayouts(){
     };
     var shown = refPayoutFilter === 'all' ? DATA.refPayouts
       : DATA.refPayouts.filter(function(r){ return r.status === refPayoutFilter; });
-
     layout(
       '<h2 style="font-size:17px;margin-bottom:14px">💰 Заявки на вывод реф. бонусов</h2>' +
       '<div class="tabs">' +
@@ -956,46 +766,35 @@ async function renderRefPayouts(){
         '<button class="tab ' + (refPayoutFilter==='all'?'active':'') + '" onclick="refPayoutFilter=\'all\';renderRefPayouts()">📋 Все (' + counts.all + ')</button>' +
       '</div>' +
       (shown.length ? shown.map(refRequestCard).join('')
-        : '<div class="empty"><div class="ic">💰</div><p>Нет заявок</p></div>')
-    );
+        : '<div class="empty"><div class="ic">💰</div><p>Нет заявок</p></div>'));
   } catch(e){
     layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
   }
 }
-
 function refRequestCard(r){
   var k = r._key;
   var u = findUser(DATA.users, r.user_telegram_id);
   var isPending = r.status === 'pending';
   var bal = calcUserRefBalance(r.user_telegram_id);
-
   return '<div class="card">' +
     '<div class="row" style="margin-bottom:12px">' +
       '<b style="color:#4f8cff;font-size:16px">💰 Заявка #' + esc(r.id) + '</b>' +
-      '<span class="badge ' + esc(r.status) + '">' + statusLabel(r.status) + '</span>' +
-    '</div>' +
+      '<span class="badge ' + esc(r.status) + '">' + statusLabel(r.status) + '</span></div>' +
     '<div class="grid">' +
-      '<div class="cell"><b>👤 Юзер</b><span>' + esc(r.user_first_name || (u && userName(u)) || '—') + '</span></div>' +
-      '<div class="cell"><b>🔗 Ник</b><span>@' + esc(r.user_username || (u && u.username) || '—') + '</span></div>' +
-      '<div class="cell"><b>🆔 TG ID</b><span>' + esc(r.user_telegram_id) + '</span></div>' +
+      '<div class="cell"><b>👤</b><span>' + esc(r.user_first_name || (u && userName(u)) || '—') + '</span></div>' +
+      '<div class="cell"><b>🔗</b><span>@' + esc(r.user_username || (u && u.username) || '—') + '</span></div>' +
+      '<div class="cell"><b>🆔</b><span>' + esc(r.user_telegram_id) + '</span></div>' +
       '<div class="cell"><b>💰 Запрошено</b><span class="accent">' + fmt(r.amount) + '</span></div>' +
-      '<div class="cell"><b>💎 К выводу сейчас</b><span class="warn">' + fmt(bal.owed) + '</span></div>' +
+      '<div class="cell"><b>💎 К выводу</b><span class="warn">' + fmt(bal.owed) + '</span></div>' +
       '<div class="cell"><b>📈 Начислено</b><span class="ok">' + fmt(bal.accrued) + '</span></div>' +
     '</div>' +
-    (bal.lastPaidAt
-      ? '<div class="ref"><div class="lbl">💸 Последняя выплата</div>' +
-          '<div class="ri"><div>' + fmt(bal.lastPaidAmount) + ' · ' + fmtDate(bal.lastPaidAt) + '</div></div></div>'
-      : '') +
-    '<div class="muted" style="margin:12px 0">🕐 Заявка создана: ' + fmtDate(r.requested_at) + '</div>' +
+    '<div class="muted" style="margin:12px 0">🕐 ' + fmtDate(r.requested_at) + '</div>' +
     '<div class="flex">' +
       (isPending ? '<button class="btn ok" onclick="refPayoutPaid(\'' + esc(k) + '\')">✅ Выплачено</button>' : '') +
       (isPending ? '<button class="btn danger" onclick="refPayoutReject(\'' + esc(k) + '\')">❌ Отклонить</button>' : '') +
       '<button class="btn ghost" onclick="admContact(\'' + esc(r.user_telegram_id) + '\')">💬 Написать</button>' +
-    '</div>' +
-  '</div>';
+    '</div></div>';
 }
-
-// Отметить заявку на вывод РЕФ как выплаченную
 async function refPayoutPaid(key){
   if (!confirm('Подтвердить выплату?')) return;
   try {
@@ -1005,110 +804,82 @@ async function refPayoutPaid(key){
     var uid = String(r.user_telegram_id);
     var now = new Date().toISOString();
 
-    // ═══ Помечаем покупки юзера (referral_status = paid) ═══
-    var myRefIds = {};
-    DATA.users.forEach(function(u){
-      if (String(u.referrer_uid || '') === uid){
-        myRefIds[String(u.telegram_id)] = 1;
-      }
-    });
-
-    // Сортируем по дате покупки (сначала старые)
-    var queue = DATA.purchases.filter(function(p){
-      if (!myRefIds[String(p.user_telegram_id)]) return false;
-      if (['rejected','cancelled'].indexOf(p.status) >= 0) return false;
-      var st = p.referral_status || 'pending';
-      return st === 'approved';
-    });
-    queue.sort(function(a,b){
-      return new Date(a.created_at||0) - new Date(b.created_at||0);
-    });
-
-    var left = amount;
-    for (var i = 0; i < queue.length && left > 0; i++){
-      var p = queue[i];
-      var b = Number(p.referral_bonus || 0)
-        || Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
-      if (b <= 0) continue;
-      var payNow = Math.min(b, left);
-      // Помечаем как paid (пока без частичной — упрощённо)
+    for (var i=0; i<DATA.purchases.length; i++){
+      var p = DATA.purchases[i];
+      if (String(p.referral_request_id||'') !== String(r.id)) continue;
+      if ((p.referral_status||'') !== 'frozen') continue;
+      var fz = Number(p.referral_frozen_amount || 0) || Number(p.referral_bonus || 0);
       await fbPatch('purchases/' + p._key, {
         referral_status: 'paid',
         referral_paid_at: now,
-        referral_paid_amount: payNow
+        referral_paid_amount: fz,
+        referral_frozen_amount: 0,
+        referral_frozen_at: null,
+        referral_request_id: null
       });
-      left -= payNow;
     }
-
-    // ═══ Обновляем заявку ═══
     await fbPatch('ref_payout_requests/' + key, {
-      status: 'paid',
-      paid_at: now,
-      paid_by: ADMIN_IDS[0]
+      status: 'paid', paid_at: now, status_changed_at: now
     });
-
-    // ═══ Пишем в журнал ═══
     await fbPost('ref_payouts_log', {
-      user_telegram_id: uid,
-      amount: amount,
-      request_id: r.id,
-      paid_at: now,
-      paid_by: ADMIN_IDS[0]
+      user_telegram_id: uid, amount: amount, request_id: r.id,
+      paid_at: now, paid_by: ADMIN_IDS[0]
     });
-
+    try {
+      var bal = calcUserRefBalance(uid);
+      var remainText = bal.owed > 0
+        ? '🎁 Осталось к выводу: <b>' + fmt(bal.owed) + '</b>'
+        : '✅ <b>Все бонусы выплачены!</b>';
+      await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          chat_id: uid, parse_mode: 'HTML',
+          text: '💸 <b>Вам выплачен реферальный бонус!</b>\n\n' +
+            '💰 Сумма: <b>' + fmt(amount) + '</b>\n' +
+            '🕐 ' + fmtDate(now) + ' (Ташкент)\n\n' + remainText
+        })
+      });
+    } catch(e){}
     pushLog('💸 Реф. выплата', '#' + r.id + ' · ' + fmt(amount));
     toast('✅ Выплачено ' + fmt(amount), 'ok');
-
-    // Уведомляем юзера
-    try {
-      await notifyUserAboutRefPayout(uid, amount, calcUserRefBalance(uid).owed);
-    } catch(e){ console.warn('notify failed', e); }
-
     renderRefPayouts();
   } catch(e){ toast(e.message, 'err'); }
 }
-
 async function refPayoutReject(key){
-  if (!confirm('Отклонить заявку на вывод?')) return;
+  if (!confirm('Отклонить заявку?')) return;
   try {
     var r = DATA.refPayouts.filter(function(x){ return x._key === key; })[0];
+    var now = new Date().toISOString();
+    for (var i=0; i<DATA.purchases.length; i++){
+      var p = DATA.purchases[i];
+      if (String(p.referral_request_id||'') !== String(r.id)) continue;
+      if ((p.referral_status||'') !== 'frozen') continue;
+      await fbPatch('purchases/' + p._key, {
+        referral_status: 'approved',
+        referral_frozen_amount: 0,
+        referral_frozen_at: null,
+        referral_request_id: null
+      });
+    }
     await fbPatch('ref_payout_requests/' + key, {
-      status: 'rejected',
-      rejected_at: new Date().toISOString(),
-      rejected_by: ADMIN_IDS[0]
+      status: 'rejected', status_changed_at: now
     });
-    pushLog('❌ Отклонена реф. заявка', '#' + (r ? r.id : key));
+    try {
+      await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          chat_id: r.user_telegram_id, parse_mode: 'HTML',
+          text: '❌ <b>Заявка на вывод бонуса отклонена</b>\n\n' +
+            '💰 ' + fmt(r.amount) + '\n\nСумма вернулась к выводу.'
+        })
+      });
+    } catch(e){}
+    pushLog('❌ Отклонил реф. заявку', '#' + r.id);
     toast('❌ Отклонено');
     renderRefPayouts();
   } catch(e){ toast(e.message, 'err'); }
 }
 
-// Уведомление юзеру о выплате через Telegram Bot API
-async function notifyUserAboutRefPayout(uid, amount, remain){
-  var remainText = remain > 0
-    ? '🎁 Осталось к выводу: <b>' + fmt(remain) + '</b>'
-    : '✅ <b>Все бонусы выплачены!</b>';
-  var text =
-    '💸 <b>Вам выплачен реферальный бонус!</b>\n\n' +
-    '💰 Сумма: <b>' + fmt(amount) + '</b>\n' +
-    '🕐 ' + fmtDate(new Date().toISOString()) + ' (Ташкент)\n\n' +
-    remainText;
-  try {
-    await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        chat_id: uid,
-        text: text,
-        parse_mode: 'HTML'
-      })
-    });
-  } catch(e){ console.warn('sendMessage failed', e); }
-}
-
-// ═══════════════════════════════════════════════════════════
-// USERS
-// ═══════════════════════════════════════════════════════════
 async function renderUsers(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -1117,29 +888,22 @@ async function renderUsers(){
       fbGet('purchases').then(toList).catch(function(){ return []; })
     ]);
     DATA.users = res[0]; DATA.purchases = res[1];
-    DATA.users.sort(function(a,b){
-      return new Date(b.registered_at||0) - new Date(a.registered_at||0);
-    });
-
+    DATA.users.sort(function(a,b){ return new Date(b.registered_at||0) - new Date(a.registered_at||0); });
     var q = SEARCH.toLowerCase().trim();
     var filtered = q ? DATA.users.filter(function(u){
       return String(u.first_name||'').toLowerCase().indexOf(q) >= 0 ||
         String(u.username||'').toLowerCase().indexOf(q) >= 0 ||
         String(u.telegram_id||'').indexOf(q) >= 0;
     }) : DATA.users;
-
     layout(
       '<div class="search"><input class="input" placeholder="Поиск: имя, @username, ID…" ' +
         'value="' + esc(SEARCH) + '" oninput="SEARCH=this.value;renderUsers()"></div>' +
       (filtered.length ? filtered.map(userCard).join('')
-        : '<div class="empty"><div class="ic">👤</div><p>' +
-          (DATA.users.length ? 'Ничего не найдено' : 'Нет пользователей') + '</p></div>')
-    );
+        : '<div class="empty"><div class="ic">👤</div><p>Нет пользователей</p></div>'));
   } catch(e){
     layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
   }
 }
-
 function userCard(u){
   var myP = DATA.purchases.filter(function(p){
     return String(p.user_telegram_id) === String(u.telegram_id);
@@ -1149,240 +913,49 @@ function userCard(u){
     if (p.status !== 'cancelled') invested += Number(p.purchase_price||0);
     if (['completed','paid'].indexOf(p.status) >= 0) earned += Number(p.total_amount||0);
   });
-
-  var referrer = u.referrer_uid ? findUser(DATA.users, u.referrer_uid) : null;
   var refs = DATA.users.filter(function(x){
     return String(x.referrer_uid || '') === String(u.telegram_id);
   });
-
   var bal = calcUserRefBalance(u.telegram_id);
-
+  var refBlock = (bal.accrued > 0 || bal.pending > 0 || bal.pendingActive > 0)
+    ? '<div class="ref" style="border-left-color:var(--ok)">' +
+        '<div class="lbl">💰 Реферальный баланс</div>' +
+        '<div class="ri" style="font-size:15px"><div>💎 <b>К выводу</b></div>' +
+          '<div><b style="color:' + (bal.owed>0?'var(--warn)':'var(--ok)') + ';font-size:16px">' +
+          fmt(bal.owed) + '</b></div></div>' +
+        '<div class="ri"><div>📈 Начислено</div>' +
+          '<div><b style="color:var(--ok)">' + fmt(bal.accrued) + '</b></div></div>' +
+        (bal.pending > 0
+          ? '<div class="ri"><div>⏳ Ожидает подтв.</div>' +
+            '<div><b style="color:var(--warn)">' + fmt(bal.pending) + '</b></div></div>' : '') +
+        (bal.pendingActive > 0
+          ? '<div class="ri"><div>⏸ Отложено</div>' +
+            '<div><b style="color:var(--info)">' + fmt(bal.pendingActive) + '</b></div></div>' : '') +
+        (bal.frozen > 0
+          ? '<div class="ri"><div>❄️ В заявке</div>' +
+            '<div><b style="color:var(--warn)">' + fmt(bal.frozen) + '</b></div></div>' : '') +
+        '<div class="ri"><div>💸 Выплачено</div>' +
+          '<div><b style="color:var(--accent)">' + fmt(bal.paid) + '</b></div></div>' +
+      '</div>' : '';
   return '<div class="card">' +
     '<div class="row" style="margin-bottom:12px">' +
       '<div><b style="font-size:15px">' + esc(userName(u)) + '</b>' +
         '<div class="muted">@' + esc(u.username||'—') + ' · ID ' + esc(u.telegram_id) + '</div></div>' +
-      (u.referrer_uid
-        ? '<span class="badge purple">🌳 реферал</span>'
-        : '<span class="badge created">⭐ прямой</span>') +
-    '</div>' +
+      (u.referrer_uid ? '<span class="badge purple">🌳 реферал</span>'
+        : '<span class="badge created">⭐ прямой</span>') + '</div>' +
     '<div class="grid">' +
       '<div class="cell"><b>Вложено</b><span class="accent">' + fmt(invested) + '</span></div>' +
       '<div class="cell"><b>Получено</b><span class="ok">' + fmt(earned) + '</span></div>' +
       '<div class="cell"><b>Заявок</b><span>' + myP.length + '</span></div>' +
       '<div class="cell"><b>Пригласил</b><span style="color:var(--purple)">' + refs.length + '</span></div>' +
-    '</div>' +
-
-    // 💰 РЕФ. БАЛАНС
-    (bal.accrued > 0 || bal.pending > 0
-      ? '<div class="ref" style="border-left-color:var(--ok)">' +
-          '<div class="lbl">💰 Реферальный баланс</div>' +
-
-          '<div class="ri" style="font-size:15px">' +
-            '<div>💎 <b>К выводу</b></div>' +
-            '<div><b style="color:' + (bal.owed > 0 ? 'var(--warn)' : 'var(--ok)') + ';font-size:16px">' +
-              fmt(bal.owed) + '</b></div>' +
-          '</div>' +
-
-          '<div class="ri"><div>📈 Начислено (подтв.)</div>' +
-            '<div><b style="color:var(--ok)">' + fmt(bal.accrued) + '</b></div></div>' +
-
-          (bal.pending > 0
-            ? '<div class="ri"><div>⏳ Ожидает подтв.</div>' +
-              '<div><b style="color:var(--warn)">' + fmt(bal.pending) + '</b></div></div>'
-            : '') +
-
-          '<div class="ri"><div>💸 Выплачено</div>' +
-            '<div><b style="color:var(--accent)">' + fmt(bal.paid) + '</b></div></div>' +
-
-          (bal.lastPaidAt
-            ? '<div class="muted" style="font-size:11px;margin-top:6px">' +
-              'Последняя выплата: <b>' + fmt(bal.lastPaidAmount) + '</b> · ' +
-              fmtDate(bal.lastPaidAt) + '</div>'
-            : '') +
-
-          '<div class="flex" style="margin-top:10px">' +
-            (bal.owed > 0
-              ? '<button class="btn ok sm" onclick="openRefPay(\'' + esc(u.telegram_id) + '\',' + bal.owed + ')">' +
-                '💸 Выплатить ' + fmt(bal.owed) + '</button>'
-              : '<button class="btn ghost sm" disabled>✅ Всё выплачено</button>') +
-          '</div>' +
-        '</div>'
-      : '') +
-
-    (referrer
-      ? '<div class="ref"><div class="lbl">🎁 Кто пригласил</div>' +
-          '<div class="ri"><div><b>' + esc(userName(referrer)) + '</b> · ' + userLink(referrer) + '</div></div></div>'
-      : '') +
-
-    (refs.length
-      ? '<div class="ref"><div class="lbl">👥 Пригласил (' + refs.length + ')</div>' +
-          refs.map(function(r){
-            return '<div class="ri"><div><b>' + esc(userName(r)) + '</b> · ' + userLink(r) + '</div>' +
-              '<div class="muted">' + fmtDate(r.registered_at) + '</div></div>';
-          }).join('') + '</div>'
-      : '') +
-
+    '</div>' + refBlock +
     '<div class="row" style="margin-top:12px">' +
       '<div class="muted">📅 ' + fmtDate(u.registered_at) + '</div>' +
       '<div class="flex">' +
         '<button class="btn ghost sm" onclick="admContact(\'' + esc(u.telegram_id||'') + '\')">💬</button>' +
-      '</div>' +
-    '</div>' +
-  '</div>';
+      '</div></div></div>';
 }
 
-// ═══════════════════════════════════════════════════════════
-// 💸 МОДАЛКА ВЫПЛАТЫ РЕФ. БОНУСА
-// ═══════════════════════════════════════════════════════════
-function openRefPay(uid, maxAmount){
-  maxAmount = Number(maxAmount) || 0;
-  if (maxAmount <= 0) return toast('Нечего выплачивать', 'err');
-
-  $('modal-root').innerHTML =
-    '<div class="mbg" onclick="if(event.target===this)closeModal()"><div class="modal">' +
-      '<div class="mh"><h2>💸 Выплата реф. бонуса</h2>' +
-        '<button class="x" onclick="closeModal()">✕</button></div>' +
-      '<div class="mb">' +
-
-        '<div class="frow"><label>К выплате всего</label>' +
-          '<div style="font-size:24px;font-weight:800;color:var(--ok)">' + fmt(maxAmount) + '</div></div>' +
-
-        '<div class="frow">' +
-          '<label>Сумма выплаты (₽)</label>' +
-          '<input class="input" id="rp_amount" type="number" min="1" max="' + maxAmount + '" ' +
-            'value="' + maxAmount + '" oninput="rpUpdate(' + maxAmount + ')">' +
-          '<div class="flex" style="margin-top:8px">' +
-            '<button class="btn ghost sm" onclick="rpSet(' + maxAmount + ')">Всё ' + fmt(maxAmount) + '</button>' +
-            '<button class="btn ghost sm" onclick="rpSet(' + Math.round(maxAmount/2) + ')">Половина</button>' +
-            '<button class="btn ghost sm" onclick="rpSet(100)">100 ₽</button>' +
-          '</div>' +
-        '</div>' +
-
-        '<div class="frow">' +
-          '<label>Комментарий (опционально)</label>' +
-          '<input class="input" id="rp_comment" placeholder="Например: перевод на карту">' +
-        '</div>' +
-
-        '<div class="ref" style="border-left-color:var(--accent)">' +
-          '<div class="ri"><div>Остаток после выплаты</div>' +
-            '<div><b id="rp_remain" style="color:var(--warn)">' + fmt(0) + '</b></div></div>' +
-        '</div>' +
-
-      '</div>' +
-      '<div class="mf">' +
-        '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
-        '<button class="btn ok" onclick="doRefPay(\'' + esc(uid) + '\')">💸 Выплатить</button>' +
-      '</div>' +
-    '</div></div>';
-  rpUpdate(maxAmount);
-}
-
-function rpSet(v){
-  var el = $('rp_amount');
-  if (el) el.value = v;
-  var maxEl = el ? Number(el.getAttribute('max')) : 0;
-  rpUpdate(maxEl);
-}
-
-function rpUpdate(maxAmount){
-  var v = Number($('rp_amount').value) || 0;
-  if (v < 0) v = 0;
-  if (v > maxAmount) v = maxAmount;
-  var remain = maxAmount - v;
-  var el = $('rp_remain');
-  if (el){
-    el.textContent = fmt(remain);
-    el.style.color = remain > 0 ? 'var(--warn)' : 'var(--ok)';
-  }
-}
-
-async function doRefPay(uid){
-  var v = Number($('rp_amount').value) || 0;
-  var comment = ($('rp_comment').value || '').trim();
-  if (v <= 0) return toast('Введите сумму', 'err');
-
-  try {
-    var bal = calcUserRefBalance(uid);
-    if (v > bal.owed + 1) return toast('Сумма больше долга', 'err');
-
-    var now = new Date().toISOString();
-
-    // ═══ Помечаем покупки как paid (по очереди, от старых) ═══
-    var myRefIds = {};
-    DATA.users.forEach(function(u){
-      if (String(u.referrer_uid || '') === String(uid)){
-        myRefIds[String(u.telegram_id)] = 1;
-      }
-    });
-
-    var queue = DATA.purchases.filter(function(p){
-      if (!myRefIds[String(p.user_telegram_id)]) return false;
-      if (['rejected','cancelled'].indexOf(p.status) >= 0) return false;
-      var st = p.referral_status || 'pending';
-      return st === 'approved';
-    }).sort(function(a, b){
-      return new Date(a.created_at||0) - new Date(b.created_at||0);
-    });
-
-    var left = v;
-    for (var i = 0; i < queue.length && left > 0; i++){
-      var p = queue[i];
-      var b = Number(p.referral_bonus || 0)
-        || Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
-      if (b <= 0) continue;
-
-      if (b <= left){
-        // Закрываем полностью
-        await fbPatch('purchases/' + p._key, {
-          referral_status: 'paid',
-          referral_paid_at: now,
-          referral_paid_amount: b
-        });
-        left -= b;
-      } else {
-        // Частично (не должны попадать сюда при точных суммах, но на всякий)
-        await fbPatch('purchases/' + p._key, {
-          referral_status: 'paid',
-          referral_paid_at: now,
-          referral_paid_amount: left
-        });
-        left = 0;
-      }
-    }
-
-    // ═══ Журнал ═══
-    await fbPost('ref_payouts_log', {
-      user_telegram_id: uid,
-      amount: v,
-      comment: comment,
-      paid_at: now,
-      paid_by: ADMIN_IDS[0]
-    });
-
-    pushLog('💸 Выплата реф. бонуса', userName(findUser(DATA.users, uid)) + ': ' + fmt(v));
-
-    // ═══ Уведомление юзеру ═══
-    var newBal = calcUserRefBalance(uid);
-    // пересчёт "после" — все ещё approved минус что мы списали
-    var afterOwed = Math.max(0, bal.owed - v);
-    try {
-      await notifyUserAboutRefPayout(uid, v, afterOwed);
-    } catch(e){ console.warn('notify failed', e); }
-
-    toast('✅ Выплачено ' + fmt(v), 'ok');
-    closeModal();
-
-    // Перерисовываем активную вкладку
-    if (TAB === 'users') renderUsers();
-    else if (TAB === 'refPayouts') renderRefPayouts();
-    else if (TAB === 'refs') renderRefs();
-    else if (TAB === 'dashboard') renderDashboard();
-  } catch(e){ toast(e.message, 'err'); }
-}
-
-// ═══════════════════════════════════════════════════════════
-// ERAS
-// ═══════════════════════════════════════════════════════════
 async function renderEras(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -1390,29 +963,24 @@ async function renderEras(){
     DATA.eras.sort(function(a,b){
       return Number(a.sort_order || a.id || 0) - Number(b.sort_order || b.id || 0);
     });
-
     layout(
       '<div class="row" style="margin-bottom:14px">' +
         '<h2 style="font-size:17px">🧩 Товары (' + DATA.eras.length + ')</h2>' +
-        '<button class="btn" onclick="createEra()">➕ Создать</button>' +
-      '</div>' +
-      DATA.eras.map(eraCard).join('')
-    );
+        '<button class="btn" onclick="createEra()">➕ Создать</button></div>' +
+      DATA.eras.map(eraCard).join(''));
   } catch(e){
     layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
   }
 }
-
 function eraCard(e){
   var price = Number(e.price || 0);
-  var roi = price > 0 ? Math.round(Number(e.profit_amount) / price * 100) : 0;
+  var roi = price > 0 ? Math.round(Number(e.profit_amount)/price*100) : 0;
   return '<div class="card">' +
     '<div class="row" style="margin-bottom:12px">' +
       '<div><b style="color:#4f8cff;font-size:15px">🧩 ' + esc(e.title||'Без названия') + '</b>' +
         '<div class="muted">ID #' + esc(e.id||e._key) + '</div></div>' +
       '<span class="badge ' + (e.is_active ? 'approved' : 'cancelled') + '">' +
-        (e.is_active ? '🟢 Активна' : '⚫ Отключена') + '</span>' +
-    '</div>' +
+        (e.is_active ? '🟢 Активна' : '⚫ Отключена') + '</span></div>' +
     '<div class="grid">' +
       '<div class="cell"><b>💵 Стоимость</b><span class="accent">' + fmt(e.price) + '</span></div>' +
       '<div class="cell"><b>💰 Начисл.</b><span class="ok">+' + fmt(e.profit_amount) + '</span></div>' +
@@ -1422,13 +990,10 @@ function eraCard(e){
     '</div>' +
     '<div class="flex" style="margin-top:12px">' +
       '<button class="btn" onclick="editEra(\'' + esc(e._key) + '\')">✏️ Изменить</button>' +
-      '<button class="btn ' + (e.is_active ? 'ghost' : 'ok') + '" onclick="toggleEra(\'' + esc(e._key) + '\',' + (e.is_active ? 0 : 1) + ')">' +
+      '<button class="btn ' + (e.is_active ? 'ghost' : 'ok') + '" onclick="toggleEra(\'' + esc(e._key) + '\',' + (e.is_active?0:1) + ')">' +
         (e.is_active ? '⚫ Выкл' : '🟢 Вкл') + '</button>' +
-      '<button class="btn danger" onclick="deleteEra(\'' + esc(e._key) + '\')">🗑</button>' +
-    '</div>' +
-  '</div>';
+      '<button class="btn danger" onclick="deleteEra(\'' + esc(e._key) + '\')">🗑</button></div></div>';
 }
-
 function eraForm(e){
   e = e || {};
   return '<div class="mbg" onclick="if(event.target===this)closeModal()"><div class="modal">' +
@@ -1442,23 +1007,17 @@ function eraForm(e){
       '<div class="frow"><label>Описание</label><textarea class="input" id="f_desc" rows="3">' + esc(e.description||'') + '</textarea></div>' +
       '<div class="frow"><label>Активна</label><select class="input" id="f_active">' +
         '<option value="1"' + (!e._key || e.is_active ? ' selected' : '') + '>Да</option>' +
-        '<option value="0"' + (e._key && !e.is_active ? ' selected' : '') + '>Нет</option>' +
-      '</select></div>' +
+        '<option value="0"' + (e._key && !e.is_active ? ' selected' : '') + '>Нет</option></select></div>' +
     '</div>' +
-    '<div class="mf">' +
-      '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
+    '<div class="mf"><button class="btn ghost" onclick="closeModal()">Отмена</button>' +
       '<button class="btn" id="f_save" onclick="saveEra(\'' + (e._key||'') + '\')">' +
-        (e._key ? '💾 Сохранить' : '✅ Создать') + '</button>' +
-    '</div>' +
-  '</div></div>';
+        (e._key ? '💾 Сохранить' : '✅ Создать') + '</button></div></div></div>';
 }
-
 function createEra(){ $('modal-root').innerHTML = eraForm(null); }
 function editEra(key){
   var e = DATA.eras.filter(function(x){ return x._key === key; })[0];
   if (e) $('modal-root').innerHTML = eraForm(e);
 }
-
 async function saveEra(key){
   var title = $('f_title').value.trim();
   if (!title) return toast('Введите название', 'err');
@@ -1467,62 +1026,39 @@ async function saveEra(key){
   var days = Number($('f_days').value) || 20;
   var desc = $('f_desc').value.trim();
   var active = Number($('f_active').value);
-
-  var btn = $('f_save');
-  btn.disabled = true;
-  btn.textContent = '⏳...';
-
+  var btn = $('f_save'); btn.disabled = true; btn.textContent = '⏳...';
   try {
-    var data = {
-      title: title, price: price, profit_amount: profit,
+    var data = { title: title, price: price, profit_amount: profit,
       total_amount: price + profit, duration_days: days,
-      description: desc, is_active: active
-    };
+      description: desc, is_active: active };
     if (key){
       var e = DATA.eras.filter(function(x){ return x._key === key; })[0] || {};
-      data.id = e.id || key;
-      data.sort_order = e.sort_order || data.id;
-      await fbPut('eras/' + key, data);
-      pushLog('✏️ Изменил эру', title);
+      data.id = e.id || key; data.sort_order = e.sort_order || data.id;
+      await fbPut('eras/' + key, data); pushLog('✏️ Изменил эру', title);
     } else {
       var usedIds = DATA.eras.map(function(x){ return Number(x.id||0); }).filter(Boolean);
       var newId = usedIds.length ? Math.max.apply(null, usedIds) + 1 : 1;
-      data.id = newId;
-      data.sort_order = newId;
-      await fbPut('eras/' + newId, data);
-      pushLog('➕ Создал эру', title);
+      data.id = newId; data.sort_order = newId;
+      await fbPut('eras/' + newId, data); pushLog('➕ Создал эру', title);
     }
-    closeModal();
-    toast('💾 Сохранено', 'ok');
-    renderEras();
+    closeModal(); toast('💾 Сохранено', 'ok'); renderEras();
   } catch(err){
-    toast(err.message, 'err');
-    btn.disabled = false;
+    toast(err.message, 'err'); btn.disabled = false;
     btn.textContent = key ? '💾 Сохранить' : '✅ Создать';
   }
 }
-
 async function toggleEra(key, active){
-  try {
-    await fbPatch('eras/' + key, { is_active: active });
-    toast(active ? '🟢 Включено' : '⚫ Отключено', 'ok');
-    renderEras();
+  try { await fbPatch('eras/' + key, { is_active: active });
+    toast(active ? '🟢 Включено' : '⚫ Отключено', 'ok'); renderEras();
   } catch(e){ toast(e.message, 'err'); }
 }
-
 async function deleteEra(key){
   if (!confirm('Удалить эру?')) return;
-  try {
-    await fbDelete('eras/' + key);
-    pushLog('🗑 Удалил эру', key);
-    toast('🗑 Удалено', 'ok');
-    renderEras();
+  try { await fbDelete('eras/' + key);
+    pushLog('🗑 Удалил эру', key); toast('🗑 Удалено', 'ok'); renderEras();
   } catch(e){ toast(e.message, 'err'); }
 }
 
-// ═══════════════════════════════════════════════════════════
-// REFS
-// ═══════════════════════════════════════════════════════════
 async function renderRefs(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -1531,33 +1067,31 @@ async function renderRefs(){
       fbGet('purchases').then(toList).catch(function(){ return []; })
     ]);
     DATA.users = res[0]; DATA.purchases = res[1];
-
     var refs = DATA.users.filter(function(u){ return u.referrer_uid; });
-    var inviterIds = {};
-    refs.forEach(function(r){ inviterIds[String(r.referrer_uid)] = 1; });
+    var inviterIds = {}; refs.forEach(function(r){ inviterIds[String(r.referrer_uid)] = 1; });
     var inviters = DATA.users.filter(function(u){ return inviterIds[String(u.telegram_id)]; });
-
     var stat = {};
     inviters.forEach(function(inv){
-      var bal = calcUserRefBalance(inv.telegram_id);
-      stat[inv.telegram_id] = bal;
+      stat[inv.telegram_id] = calcUserRefBalance(inv.telegram_id);
     });
-
-    var totPend = 0, totAppr = 0, totPaid = 0;
+    var totPend=0, totAppr=0, totFrozen=0, totPaid=0, totPendingActive=0;
     Object.keys(stat).forEach(function(k){
       totPend += stat[k].pending;
       totAppr += stat[k].owed;
+      totFrozen += stat[k].frozen;
       totPaid += stat[k].paid;
+      totPendingActive += stat[k].pendingActive;
     });
-
     layout(
       '<h2 style="font-size:17px;margin-bottom:14px">🌳 Реферальная система</h2>' +
       '<div class="stats" style="margin-bottom:16px">' +
         '<div class="stat"><div class="ic">🌳</div><div class="l">Рефералов</div><div class="v purple">' + refs.length + '</div></div>' +
         '<div class="stat"><div class="ic">🎁</div><div class="l">Пригласивших</div><div class="v ok">' + inviters.length + '</div></div>' +
         '<div class="stat"><div class="ic">⏳</div><div class="l">Ждёт подтв.</div><div class="v warn">' + fmt(totPend) + '</div></div>' +
-        '<div class="stat"><div class="ic">💎</div><div class="l">К выводу всего</div><div class="v accent">' + fmt(totAppr) + '</div></div>' +
-        '<div class="stat"><div class="ic">💸</div><div class="l">Выплачено всего</div><div class="v accent">' + fmt(totPaid) + '</div></div>' +
+        '<div class="stat"><div class="ic">⏸</div><div class="l">Отложено</div><div class="v info">' + fmt(totPendingActive) + '</div></div>' +
+        '<div class="stat"><div class="ic">💎</div><div class="l">К выводу</div><div class="v accent">' + fmt(totAppr) + '</div></div>' +
+        '<div class="stat"><div class="ic">❄️</div><div class="l">В заявках</div><div class="v warn">' + fmt(totFrozen) + '</div></div>' +
+        '<div class="stat"><div class="ic">💸</div><div class="l">Выплачено</div><div class="v ok">' + fmt(totPaid) + '</div></div>' +
       '</div>' +
       (inviters.length
         ? inviters.map(function(inv){
@@ -1569,299 +1103,29 @@ async function renderRefs(){
               '<div class="row" style="margin-bottom:12px">' +
                 '<div><b style="color:var(--purple);font-size:15px">🎁 ' + esc(userName(inv)) + '</b>' +
                   '<div class="muted">' + userLink(inv) + ' · ID ' + esc(inv.telegram_id) + '</div></div>' +
-                '<div class="flex">' +
-                  '<span class="badge purple">' + rl.length + ' реф.</span>' +
-                  '<span class="badge ' + (s.owed > 0 ? 'pending' : 'approved') + '">' +
-                    (s.owed > 0 ? '💎 ' + fmt(s.owed) : '✅ 0 ₽') + '</span>' +
-                '</div>' +
-              '</div>' +
+                '<div class="flex"><span class="badge purple">' + rl.length + ' реф.</span>' +
+                  '<span class="badge ' + (s.owed>0?'pending':'approved') + '">' +
+                    (s.owed>0 ? '💎 ' + fmt(s.owed) : '✅ 0 ₽') + '</span></div></div>' +
               '<div class="grid">' +
                 '<div class="cell"><b>К выводу</b><span class="warn">' + fmt(s.owed) + '</span></div>' +
                 '<div class="cell"><b>Начислено</b><span class="ok">' + fmt(s.accrued) + '</span></div>' +
+                (s.pendingActive > 0
+                  ? '<div class="cell"><b>Отложено</b><span style="color:var(--info)">' + fmt(s.pendingActive) + '</span></div>' : '') +
+                '<div class="cell"><b>В заявке</b><span class="warn">' + fmt(s.frozen) + '</span></div>' +
                 '<div class="cell"><b>Выплачено</b><span class="accent">' + fmt(s.paid) + '</span></div>' +
               '</div>' +
               (rl.map(function(r){
                 return '<div class="ri"><div><b>' + esc(userName(r)) + '</b> · ' + userLink(r) + '</div>' +
                   '<div class="muted">' + fmtDate(r.registered_at) + '</div></div>';
               }).join('')) +
-              (s.owed > 0
-                ? '<div class="flex" style="margin-top:12px">' +
-                    '<button class="btn ok sm" onclick="openRefPay(\'' + esc(inv.telegram_id) + '\',' + s.owed + ')">' +
-                      '💸 Выплатить ' + fmt(s.owed) + '</button>' +
-                  '</div>'
-                : '') +
             '</div>';
           }).join('')
-        : '<div class="empty"><div class="ic">🌳</div><p>Пока нет рефералов</p></div>')
-    );
+        : '<div class="empty"><div class="ic">🌳</div><p>Пока нет рефералов</p></div>'));
   } catch(e){
     layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
   }
 }
 
-// ═══════════════════════════════════════════════════════════
-// BROADCAST
-// ═══════════════════════════════════════════════════════════
-var BC_AUD = 'all';
-var BC_SENDING = false;
-var BC_STOP = false;
-var BC_STATS = { sent:0, failed:0, total:0 };
-
-async function renderBroadcast(){
-  layout('<div class="empty">Загрузка…</div>');
-  try {
-    var res = await Promise.all([
-      fbGet('users').then(toList).catch(function(){ return []; }),
-      fbGet('purchases').then(toList).catch(function(){ return []; })
-    ]);
-    DATA.users = res[0];
-    var purchases = res[1];
-    var buyerIds = {};
-    purchases.forEach(function(p){ buyerIds[String(p.user_telegram_id)] = 1; });
-
-    var cntAll = DATA.users.length;
-    var cntAgreed = DATA.users.filter(function(u){ return u.agreed_terms; }).length;
-    var cntBuyers = DATA.users.filter(function(u){ return buyerIds[String(u.telegram_id)]; }).length;
-    var cntRefs = DATA.users.filter(function(u){ return u.referrer_uid; }).length;
-
-    layout(
-      '<h2 style="font-size:17px;margin-bottom:14px">📢 Рассылка</h2>' +
-      '<div class="stats" style="margin-bottom:16px">' +
-        '<div class="stat"><div class="ic">👥</div><div class="l">Всего</div><div class="v">' + cntAll + '</div></div>' +
-        '<div class="stat"><div class="ic">✅</div><div class="l">Согласны</div><div class="v ok">' + cntAgreed + '</div></div>' +
-        '<div class="stat"><div class="ic">🛒</div><div class="l">С покупками</div><div class="v accent">' + cntBuyers + '</div></div>' +
-        '<div class="stat"><div class="ic">🌳</div><div class="l">Рефералы</div><div class="v purple">' + cntRefs + '</div></div>' +
-      '</div>' +
-      '<div class="card">' +
-        '<div class="bc-grid">' +
-          '<div>' +
-            '<div class="frow"><label>Аудитория</label>' +
-              '<div class="bc-aud">' +
-                '<div class="chip ' + (BC_AUD==='all'?'active':'') + '" onclick="bcSet(\'all\')">👥 Всем (' + cntAll + ')</div>' +
-                '<div class="chip ' + (BC_AUD==='agreed'?'active':'') + '" onclick="bcSet(\'agreed\')">✅ Согласным (' + cntAgreed + ')</div>' +
-                '<div class="chip ' + (BC_AUD==='buyers'?'active':'') + '" onclick="bcSet(\'buyers\')">🛒 С покупками (' + cntBuyers + ')</div>' +
-                '<div class="chip ' + (BC_AUD==='refs'?'active':'') + '" onclick="bcSet(\'refs\')">🌳 Рефералам (' + cntRefs + ')</div>' +
-              '</div></div>' +
-            '<div class="frow"><label>Текст (HTML: &lt;b&gt; &lt;i&gt; &lt;a href=""&gt;)</label>' +
-              '<textarea class="input" id="bc_text" rows="6" placeholder="🎉 Скидка 20% только сегодня!" oninput="bcPrev()"></textarea></div>' +
-            '<div class="frow"><label>Картинка (URL, опционально)</label>' +
-              '<input class="input" id="bc_image" placeholder="https://..." oninput="bcPrev()"></div>' +
-            '<div class="frow"><label>Кнопка — текст</label>' +
-              '<input class="input" id="bc_btn_text" placeholder="🚀 Открыть" oninput="bcPrev()"></div>' +
-            '<div class="frow"><label>Кнопка — ссылка</label>' +
-              '<input class="input" id="bc_btn_url" placeholder="https://t.me/ROSTERAbot" oninput="bcPrev()"></div>' +
-            '<div class="flex" style="margin-top:16px">' +
-              '<button class="btn ghost" onclick="bcSendTest()">🧪 Тест админам</button>' +
-              '<button class="btn" onclick="bcSend()">🚀 Отправить</button>' +
-            '</div>' +
-          '</div>' +
-          '<div>' +
-            '<div class="frow"><label>Предпросмотр</label>' +
-              '<div class="bc-prev"><div class="hd">📱 Сообщение</div><div id="bc_prev_body"></div></div></div>' +
-          '</div>' +
-        '</div>' +
-        '<div id="bc_progress" class="hidden" style="margin-top:20px">' +
-          '<div class="row" style="margin-bottom:8px">' +
-            '<b>📤 Отправка…</b>' +
-            '<div class="bc-stat">' +
-              '<span>✅ <b id="bc_sent">0</b></span>' +
-              '<span>❌ <b id="bc_failed">0</b></span>' +
-              '<span>из <b id="bc_total">0</b></span>' +
-            '</div>' +
-          '</div>' +
-          '<div class="bc-prog"><div class="bc-prog-fill" id="bc_fill"></div></div>' +
-          '<div class="row"><div class="muted" id="bc_status">Готовим…</div>' +
-            '<button class="btn danger sm" onclick="bcStop()">⏹ Стоп</button></div>' +
-          '<div class="bc-log hidden" id="bc_log"></div>' +
-        '</div>' +
-      '</div>'
-    );
-    bcPrev();
-  } catch(e){
-    layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
-  }
-}
-
-function bcSet(a){ BC_AUD = a; renderBroadcast(); }
-
-function bcPrev(){
-  var body = $('bc_prev_body');
-  if (!body) return;
-  var txt = $('bc_text') ? $('bc_text').value : '';
-  var img = $('bc_image') ? $('bc_image').value : '';
-  var bt = $('bc_btn_text') ? $('bc_btn_text').value : '';
-  var bu = $('bc_btn_url') ? $('bc_btn_url').value : '';
-
-  var html = '';
-  if (img) html += '<img class="photo" src="' + esc(img) + '" onerror="this.style.display=\'none\'">';
-  html += '<div class="body">' + tgHtml(txt || '<i>Введите текст…</i>') + '</div>';
-  if (bt && bu) html += '<div class="btn-prev">' + esc(bt) + '</div>';
-  else if (bt) html += '<div class="btn-prev" style="opacity:.5">' + esc(bt) + ' (нет URL)</div>';
-  body.innerHTML = html;
-}
-
-function tgHtml(text){
-  var s = esc(text);
-  s = s.replace(/&lt;(\/?)(b|strong|i|em|u|s|code|pre)&gt;/gi, '<$1$2>');
-  s = s.replace(/&lt;a\s+href=&quot;([^&]+)&quot;&gt;(.*?)&lt;\/a&gt;/gi,
-    '<a href="$1" target="_blank">$2</a>');
-  s = s.replace(/\n/g, '<br>');
-  return s;
-}
-
-async function bcGetRecipients(){
-  var users = await fbGet('users').then(toList).catch(function(){ return []; });
-  var purchases = await fbGet('purchases').then(toList).catch(function(){ return []; });
-  var buyerIds = {};
-  purchases.forEach(function(p){ buyerIds[String(p.user_telegram_id)] = 1; });
-
-  var list = users;
-  if (BC_AUD === 'agreed') list = users.filter(function(u){ return u.agreed_terms; });
-  else if (BC_AUD === 'buyers') list = users.filter(function(u){ return buyerIds[String(u.telegram_id)]; });
-  else if (BC_AUD === 'refs') list = users.filter(function(u){ return u.referrer_uid; });
-
-  return list
-    .filter(function(u){ return u.telegram_id; })
-    .map(function(u){ return { id: u.telegram_id, name: userName(u) }; });
-}
-
-async function bcSendTest(){
-  var txt = $('bc_text').value.trim();
-  if (!txt) return toast('Введите текст', 'err');
-  var img = $('bc_image').value.trim();
-  var bt = $('bc_btn_text').value.trim();
-  var bu = $('bc_btn_url').value.trim();
-  var ok = 0, fail = 0;
-  for (var i = 0; i < ADMIN_IDS.length; i++){
-    try { await bcSendOne(ADMIN_IDS[i], txt, img, bt, bu); ok++; }
-    catch(e){ fail++; }
-  }
-  toast(ok ? '✅ Отправлено ' + ok : '❌ Ошибка ' + fail, ok ? 'ok' : 'err');
-}
-
-async function bcSend(){
-  if (BC_SENDING) return toast('Уже идёт', 'err');
-  var txt = $('bc_text').value.trim();
-  if (!txt) return toast('Введите текст', 'err');
-  var img = $('bc_image').value.trim();
-  var bt = $('bc_btn_text').value.trim();
-  var bu = $('bc_btn_url').value.trim();
-
-  var rec = await bcGetRecipients();
-  if (!rec.length) return toast('Нет получателей', 'err');
-  if (!confirm('Отправить ' + rec.length + ' получателям?')) return;
-
-  BC_SENDING = true;
-  BC_STOP = false;
-  BC_STATS = { sent:0, failed:0, total: rec.length };
-
-  $('bc_progress').classList.remove('hidden');
-  $('bc_log').classList.remove('hidden');
-  $('bc_log').innerHTML = '';
-  bcProgress(0, rec.length);
-  pushLog('📢 Запустил рассылку', 'Получателей: ' + rec.length);
-
-  for (var i = 0; i < rec.length; i++){
-    if (BC_STOP) break;
-    var r = rec[i];
-    try { await bcSendOne(r.id, txt, img, bt, bu); BC_STATS.sent++; }
-    catch(e){
-      BC_STATS.failed++;
-      bcLog('#' + r.id + ' ' + r.name + ': ' + e.message, 'err');
-    }
-    bcProgress(i+1, rec.length);
-    await new Promise(function(res){ setTimeout(res, 50); });
-  }
-
-  BC_SENDING = false;
-  bcProgress(rec.length, rec.length);
-  pushLog('✅ Готово', 'Отправлено ' + BC_STATS.sent + ', ошибок ' + BC_STATS.failed);
-  toast('✅ Отправлено ' + BC_STATS.sent + ', ошибок ' + BC_STATS.failed, 'ok', 6000);
-}
-
-function bcStop(){ BC_STOP = true; toast('⏹ Стоп…', 'warn'); }
-
-function bcLog(text, cls){
-  var box = $('bc_log');
-  if (!box) return;
-  var d = document.createElement('div');
-  if (cls) d.className = cls;
-  d.textContent = '[' + new Date().toLocaleTimeString('ru-RU') + '] ' + text;
-  box.appendChild(d);
-  box.scrollTop = box.scrollHeight;
-}
-
-function bcProgress(done, total){
-  if ($('bc_sent')) $('bc_sent').textContent = BC_STATS.sent;
-  if ($('bc_failed')) $('bc_failed').textContent = BC_STATS.failed;
-  if ($('bc_total')) $('bc_total').textContent = total;
-  if ($('bc_fill')) $('bc_fill').style.width = Math.round(done/total*100) + '%';
-  if ($('bc_status')){
-    $('bc_status').textContent = done >= total
-      ? '✅ Готово! Отправлено: ' + BC_STATS.sent + ', ошибок: ' + BC_STATS.failed
-      : 'Отправлено ' + done + ' из ' + total + '…';
-  }
-}
-
-async function bcSendOne(chatId, text, imgUrl, btnText, btnUrl){
-  if (imgUrl){
-    try {
-      return await bcApi('sendPhoto', {
-        chat_id: chatId, photo: imgUrl, caption: text, parse_mode: 'HTML',
-        reply_markup: (btnText && btnUrl) ? { inline_keyboard: [[{ text: btnText, url: btnUrl }]] } : undefined
-      });
-    } catch(e){
-      if (!/photo|wrong file|failed to get HTTP URL|IMAGE_PROCESS_FAILED/i.test(e.message)) throw e;
-    }
-  }
-  return await bcApi('sendMessage', {
-    chat_id: chatId, text: text, parse_mode: 'HTML',
-    disable_web_page_preview: true,
-    reply_markup: (btnText && btnUrl) ? { inline_keyboard: [[{ text: btnText, url: btnUrl }]] } : undefined
-  });
-}
-
-async function bcApi(method, body, attempt){
-  attempt = attempt || 1;
-  if (!body.reply_markup) delete body.reply_markup;
-  var r = await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/' + method, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-  var data = await r.json();
-  if (data.ok) return data.result;
-  var desc = data.description || 'unknown';
-  if (data.error_code === 429 && attempt <= 3){
-    var wait = (data.parameters && data.parameters.retry_after || 2) * 1000;
-    await new Promise(function(res){ setTimeout(res, wait); });
-    return bcApi(method, body, attempt + 1);
-  }
-  if (desc.indexOf('chat not found') >= 0 ||
-      desc.indexOf('bot was blocked') >= 0 ||
-      desc.indexOf('user is deactivated') >= 0 ||
-      desc.indexOf("bot can't initiate") >= 0){
-    throw new Error('не нажал /start или заблокировал');
-  }
-  throw new Error(desc);
-}
-
-// ═══════════════════════════════════════════════════════════
-// TIMERS
-// ═══════════════════════════════════════════════════════════
-setInterval(function(){
-  var nodes = document.querySelectorAll('[data-timer]');
-  for (var i = 0; i < nodes.length; i++){
-    var el = nodes[i];
-    var exp = el.getAttribute('data-timer');
-    if (!exp) continue;
-    el.textContent = fmtLeft(new Date(exp).getTime() - Date.now());
-  }
-}, 1000);
-
-// ═══════════════════════════════════════════════════════════
-// MAIN
-// ═══════════════════════════════════════════════════════════
 async function render(){
   if (!AUTH){ renderLogin(); return; }
   var tabs = {
@@ -1871,20 +1135,16 @@ async function render(){
     refPayouts: renderRefPayouts,
     users: renderUsers,
     eras: renderEras,
-    refs: renderRefs,
-    broadcast: renderBroadcast
+    refs: renderRefs
   };
-  try {
-    await (tabs[TAB] || renderDashboard)();
-  } catch(e){
-    $('app').innerHTML =
-      '<div style="max-width:600px;margin:60px auto;padding:24px;' +
-      'background:#1c2330;border:1px solid #ff5c5c;border-radius:12px;color:#e6edf3">' +
-      '<b style="color:#ff5c5c">Ошибка:</b> ' + esc(e.message) + '</div>';
+  try { await (tabs[TAB] || renderDashboard)(); }
+  catch(e){
+    $('app').innerHTML = '<div style="max-width:600px;margin:60px auto;padding:24px;background:#1c2330;' +
+      'border:1px solid #ff5c5c;border-radius:12px;color:#e6edf3"><b style="color:#ff5c5c">Ошибка:</b> ' +
+      esc(e.message) + '</div>';
   }
 }
 
-// Экспорт в window
 window.doLogin = doLogin;
 window.logout = logout;
 window.setTab = setTab;
@@ -1897,7 +1157,6 @@ window.renderRefPayouts = renderRefPayouts;
 window.renderUsers = renderUsers;
 window.renderEras = renderEras;
 window.renderRefs = renderRefs;
-window.renderBroadcast = renderBroadcast;
 window.admConfirm = admConfirm;
 window.admCancel = admCancel;
 window.admContact = admContact;
@@ -1905,20 +1164,11 @@ window.admPaid = admPaid;
 window.admPayoutReject = admPayoutReject;
 window.refPayoutPaid = refPayoutPaid;
 window.refPayoutReject = refPayoutReject;
-window.openRefPay = openRefPay;
-window.rpSet = rpSet;
-window.rpUpdate = rpUpdate;
-window.doRefPay = doRefPay;
 window.createEra = createEra;
 window.editEra = editEra;
 window.saveEra = saveEra;
 window.toggleEra = toggleEra;
 window.deleteEra = deleteEra;
-window.bcSet = bcSet;
-window.bcPrev = bcPrev;
-window.bcSend = bcSend;
-window.bcSendTest = bcSendTest;
-window.bcStop = bcStop;
 
 render();
 </script>

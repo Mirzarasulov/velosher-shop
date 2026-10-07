@@ -666,7 +666,7 @@ function drawHome(){
     ${P.length ? P.slice(0, 3).map(eraCardPurchase).join('') : `
       <div class="card empty"><div class="icon">🌱</div><h3>Пока нет заявок</h3>
         <p class="muted" style="margin-bottom:16px">Выберите эру и начните</p>
-        <button class="btn" style="max-width:240px;margin:0 auto" onclick="setTab('buy')">🛒 Открыть магазин</button></div>`}
+        <button class="btn" style="max-width:240px;margin:0 auto" onclick="setTab('buy')">🛒 Открыть каталог</button></div>`}
   `);
 }
 
@@ -779,7 +779,7 @@ function drawPurchases(){
       <div class="actions"><button class="icon-btn" onclick="refresh()">🔄</button></div></div>
     ${PURCHASES.length ? PURCHASES.map(eraCardPurchase).join('') : `
       <div class="card empty"><div class="icon">📦</div><h3>Покупок пока нет</h3>
-        <button class="btn" style="max-width:240px;margin:16px auto 0" onclick="setTab('buy')">🛒 В магазин</button></div>`}
+        <button class="btn" style="max-width:240px;margin:16px auto 0" onclick="setTab('buy')">🛒 В Каталог </button></div>`}
     ${PAYOUTS.length ? `
       <div class="section-title"><h2>Заявки на вывод</h2></div>
       ${PAYOUTS.map(payoutCard).join('')}` : ''}

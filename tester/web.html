@@ -138,13 +138,34 @@
   .contact-btn .info .t{font-weight:600;font-size:14px}
   .contact-btn .info .s{font-size:12px;color:var(--muted)}
   .progress{height:8px;background:var(--card3);border-radius:4px;overflow:hidden;margin-top:8px}
-  .progress .fill{height:100%;border-radius:4px;background:var(--accent)}
+  .progress .fill{height:100%;border-radius:4px;background:var(--accent);transition:width 1s linear}
   .progress .fill.ok{background:#39d98a} .progress .fill.warn{background:#f5b547} .progress .fill.err{background:#ff5c5c}
   .days-left{padding:6px 12px;border-radius:10px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
   .days-left.ok{background:rgba(57,217,138,.15);color:var(--ok)}
   .days-left.warn{background:rgba(245,181,71,.15);color:var(--warn)}
   .days-left.err{background:rgba(255,92,92,.15);color:var(--err)}
   .days-left.info{background:rgba(99,169,255,.15);color:var(--info)}
+  .timer-live{
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 22px;
+    font-weight: 800;
+    text-align: center;
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: var(--card3);
+    border: 1px solid var(--border2);
+    letter-spacing: .5px;
+    color: var(--accent);
+    transition: color .3s, border-color .3s;
+  }
+  .timer-live.warn{color:var(--warn); border-color: rgba(245,181,71,.4)}
+  .timer-live.err{color:var(--err); border-color: rgba(255,92,92,.4); animation: pulse 1.5s infinite}
+  .timer-live.ok{color:var(--ok); border-color: rgba(57,217,138,.4)}
+  @keyframes pulse{
+    0%,100%{opacity:1}
+    50%{opacity:.65}
+  }
   .skel{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);background-size:200% 100%;
     animation:sh 1.2s infinite;border-radius:14px;border:1px solid var(--border);margin-bottom:12px}
   @keyframes sh{to{background-position:-200% 0}}
@@ -173,6 +194,7 @@ const FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebaseda
 const BOT_USERNAME = 'ROSTERAbot';
 const ADMIN_USERNAME = 'Dma12r';
 const POLL_MS = 25000;
+const TZ_TASHKENT = 'Asia/Tashkent';
 
 const tg = window.Telegram && window.Telegram.WebApp;
 const $ = id => document.getElementById(id);
@@ -182,26 +204,138 @@ let HAVE = {};
 const BUSY = new Set();
 let shopFilter = 'all', shopSearch = '';
 
+// ═══════════════════════════════════════════════════════════
+// УТИЛИТЫ
+// ═══════════════════════════════════════════════════════════
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function q(v){ return esc(JSON.stringify(v ?? '')); }
 const num = v => { const n = Number(v); return isFinite(n) ? n : 0; };
 function fmt(n){ return num(n).toLocaleString('ru-RU') + ' ₽'; }
+
+// ═══════════════════════════════════════════════════════════
+// ФОРМАТИРОВАНИЕ ДАТ — ТАШКЕНТ (UTC+5)
+// ═══════════════════════════════════════════════════════════
 function fmtDate(s){
   if (!s) return '—';
   const d = new Date(s); if (isNaN(d)) return String(s);
-  return d.toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric'});
+  return d.toLocaleDateString('ru-RU', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    timeZone: TZ_TASHKENT
+  });
 }
+
 function fmtDT(s){
   if (!s) return '—';
   const d = new Date(s); if (isNaN(d)) return String(s);
-  return d.toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' +
-         d.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+  return d.toLocaleDateString('ru-RU', {
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      timeZone: TZ_TASHKENT
+    }) + ' ' +
+    d.toLocaleTimeString('ru-RU', {
+      hour: '2-digit', minute: '2-digit',
+      timeZone: TZ_TASHKENT
+    });
 }
+
+// ⏱ «2д 5ч 30м» / «5ч 12м 3с» / «12м 3с» / «3с»
+function fmtCountdown(ms){
+  if (ms <= 0) return '0с';
+  const s = Math.floor(ms / 1000);
+  const d = Math.floor(s / 86400);
+  const h = Math.floor((s % 86400) / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  if (d > 0) return `${d}д ${h}ч ${m}м`;
+  if (h > 0) return `${h}ч ${m}м ${sec}с`;
+  if (m > 0) return `${m}м ${sec}с`;
+  return `${sec}с`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// ЛОГИКА ТАЙМЕРА
+// ═══════════════════════════════════════════════════════════
+function msLeft(p){
+  if (!p.expires_at) return null;
+  const e = new Date(p.expires_at).getTime();
+  if (isNaN(e)) return null;
+  return e - Date.now();
+}
+
+function hoursLeft(p){
+  const ms = msLeft(p);
+  if (ms == null || ms <= 0) return 0;
+  return ms / 3600000;
+}
+
+function daysLeft(p){
+  const ms = msLeft(p);
+  if (ms == null || ms <= 0) return 0;
+  return Math.ceil(ms / 86400000);
+}
+
+function progressOf(p){
+  if (!p.start_date || !p.expires_at) return 0;
+  const a = new Date(p.start_date).getTime();
+  const e = new Date(p.expires_at).getTime();
+  const n = Date.now();
+  if (isNaN(a) || isNaN(e) || e <= a) return 0;
+  if (n >= e) return 100;
+  if (n <= a) return 0;
+  return Math.min(100, Math.max(0, Math.round(((n - a) / (e - a)) * 100)));
+}
+
+function canWithdraw(p){
+  const expired = msLeft(p) != null && msLeft(p) <= 0;
+  const eligible = p.status === 'completed' || (p.status === 'approved' && expired);
+  if (!eligible) return false;
+  return !PAYOUTS.some(po =>
+    String(po.purchase_id) === String(p.id) &&
+    (po.status === 'pending' || po.status === 'paid')
+  );
+}
+
+function dayCls(p){
+  if (['completed','paid'].includes(p.status)) return 'info';
+  if (p.status === 'approved'){
+    const h = hoursLeft(p);
+    if (h <= 0) return 'err';
+    if (h <= 24) return 'err';
+    if (h <= 72) return 'warn';
+    return 'ok';
+  }
+  return 'info';
+}
+
+function dayLabel(p){
+  if (p.status === 'created')     return '⏳ Ожидает связи';
+  if (p.status === 'in_progress') return '🟡 В процессе';
+  if (p.status === 'cancelled')   return '❌ Отменён';
+  if (p.status === 'rejected')    return '❌ Отклонён';
+  if (p.status === 'completed')   return '🏁 Период завершён';
+  if (p.status === 'paid')        return '💰 Выплачено';
+
+  if (p.status === 'approved'){
+    const ms = msLeft(p);
+    if (ms == null) return '—';
+    if (ms <= 0) return '🏁 Завершение';
+
+    const h = ms / 3600000;
+    const d = ms / 86400000;
+
+    if (d < 1) return `⏰ Осталось ${fmtCountdown(ms)}`;
+    if (d < 2) return `⚠️ Остался 1 день · ${fmtCountdown(ms)}`;
+    if (d < 4) return `⏰ Осталось ${Math.ceil(d)} дня · ${fmtCountdown(ms)}`;
+    return `✅ Осталось ${Math.ceil(d)} дн.`;
+  }
+  return '';
+}
+
 function statusLabel(s){
   return ({created:'Создан', in_progress:'В процессе', approved:'Одобрен',
     completed:'Завершён', paid:'Выплачен', cancelled:'Отменён',
     pending:'Ожидает', rejected:'Отклонён'})[s] || s;
 }
+
 function haptic(k){ try { tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(k || 'success'); } catch(e){} }
 function toast(msg, type, ms){
   const t = $('toast');
@@ -223,6 +357,9 @@ async function once(key, fn){
   finally { BUSY.delete(key); }
 }
 
+// ═══════════════════════════════════════════════════════════
+// FIREBASE
+// ═══════════════════════════════════════════════════════════
 async function fbGet(path){
   const r = await fetch(`${FIREBASE}/${path}.json`);
   if (!r.ok) throw new Error('Firebase ' + r.status);
@@ -244,9 +381,11 @@ function toList(raw){
     return Object.entries(raw).filter(([, v]) => v && typeof v === 'object').map(([k, v]) => ({...v, _key: k}));
   return [];
 }
-
 function tgUser(){ return tg && tg.initDataUnsafe && tg.initDataUnsafe.user; }
 
+// ═══════════════════════════════════════════════════════════
+// ЗАГРУЗКА ДАННЫХ
+// ═══════════════════════════════════════════════════════════
 async function loadMe(){
   const u = tgUser();
   if (!u) return null;
@@ -254,7 +393,6 @@ async function loadMe(){
   const existing = await fbGet(`users/${u.id}`);
   const now = new Date().toISOString();
 
-  // Реферальная система: при первом входе сохраняем ref_code из start_param
   let refCode = '';
   if (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param){
     refCode = tg.initDataUnsafe.start_param.replace(/^ref_/, '');
@@ -269,7 +407,6 @@ async function loadMe(){
     registered_at: (existing && existing.registered_at) || now,
   };
 
-  // Реферер закрепляется ТОЛЬКО при первой регистрации
   if (existing && existing.referrer_uid){
     data.referrer_uid = existing.referrer_uid;
   } else if (!existing && refCode && refCode !== String(u.id)){
@@ -311,51 +448,9 @@ async function loadPayouts(){
     .sort((a, b) => new Date(b.requested_at || 0) - new Date(a.requested_at || 0));
 }
 
-function daysLeft(p){
-  if (p.expires_at){
-    const e = new Date(p.expires_at).getTime();
-    if (!isNaN(e)) return Math.max(0, Math.ceil((e - Date.now()) / 86400000));
-  }
-  return 0;
-}
-function progressOf(p){
-  if (!p.start_date || !p.expires_at) return 0;
-  const a = new Date(p.start_date).getTime(), e = new Date(p.expires_at).getTime(), n = Date.now();
-  if (isNaN(a) || isNaN(e) || e <= a) return 0;
-  if (n >= e) return 100;
-  if (n <= a) return 0;
-  return Math.round(((n - a) / (e - a)) * 100);
-}
-function canWithdraw(p){
-  if (p.status !== 'completed') return false;
-  return !PAYOUTS.some(po => String(po.purchase_id) === String(p.id)
-    && (po.status === 'pending' || po.status === 'paid'));
-}
-function dayCls(p){
-  if (['completed','paid'].includes(p.status)) return 'info';
-  if (p.status === 'approved'){
-    const d = daysLeft(p);
-    return d <= 1 ? 'err' : d <= 3 ? 'warn' : 'ok';
-  }
-  return 'info';
-}
-function dayLabel(p){
-  if (p.status === 'created') return '⏳ Ожидает связи';
-  if (p.status === 'in_progress') return '🟡 В процессе';
-  if (p.status === 'cancelled') return '❌ Отменён';
-  if (p.status === 'completed') return '🏁 Период завершён';
-  if (p.status === 'paid') return '💰 Выплачено';
-  if (p.status === 'approved'){
-    const d = daysLeft(p);
-    if (d <= 0) return '🏁 Завершение';
-    if (d === 1) return '⏰ Остался 1 день';
-    if (d === 2) return '⏰ Осталось 2 дня';
-    if (d <= 3) return `⏰ Осталось ${d} дня`;
-    return `✅ Осталось ${d} дн.`;
-  }
-  return '';
-}
-
+// ═══════════════════════════════════════════════════════════
+// ДЕЙСТВИЯ
+// ═══════════════════════════════════════════════════════════
 window.setTab = function(tab){
   CURRENT_TAB = tab;
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
@@ -380,6 +475,7 @@ window.buyEra = id => once('buy' + id, async () => {
     profit_amount: era.profit_amount,
     total_amount: era.total_amount,
     duration_days: era.duration_days,
+    days: era.duration_days,
     status: 'created',
     created_at: now,
     status_changed_at: now,
@@ -505,6 +601,9 @@ window.openMyRefs = async function(){
   } catch(e){ toast(e.message, 'err'); }
 };
 
+// ═══════════════════════════════════════════════════════════
+// РЕНДЕР
+// ═══════════════════════════════════════════════════════════
 function skeleton(){
   return '<div class="skel" style="height:56px"></div><div class="skel" style="height:110px"></div>' +
     '<div class="skel" style="height:150px"></div>';
@@ -576,8 +675,15 @@ function eraCardPurchase(p){
   const prog = progressOf(p);
   const showProgress = p.status === 'approved';
   const canW = canWithdraw(p);
+
+  const ms = msLeft(p);
+  const timerId = `timer-${p.id}`;
+  const timerHtml = (p.status === 'approved' && ms != null && ms > 0)
+    ? `<div class="timer-live ${cls}" id="${timerId}" data-expires="${esc(p.expires_at)}">${fmtCountdown(ms)}</div>`
+    : '';
+
   return `
-    <div class="era-card">
+    <div class="era-card" data-pid="${esc(p.id)}">
       <div class="head">
         <div class="order-num">📩 Заявка #${esc(p.id)}</div>
         <div class="row">
@@ -593,17 +699,24 @@ function eraCardPurchase(p){
           <div class="metric"><div class="l">Начисл.</div><div class="v profit">+${fmt(p.profit_amount)}</div></div>
           <div class="metric"><div class="l">Итого</div><div class="v total">${fmt(p.total_amount)}</div></div>
         </div>
-        <div style="text-align:center;margin-top:14px">
-          <span class="days-left ${cls}">${esc(dayLabel(p))}</span>
+
+        ${timerHtml}
+
+        <div style="text-align:center;margin-top:10px">
+          <span class="days-left ${cls}" id="label-${esc(p.id)}">${esc(dayLabel(p))}</span>
         </div>
+
         ${showProgress ? `<div class="progress" style="margin-top:12px">
-          <div class="fill ${cls}" style="width:${prog}%"></div>
+          <div class="fill ${cls}" id="prog-${esc(p.id)}" style="width:${prog}%"></div>
         </div>` : ''}
-        <div class="muted-sm" style="margin-top:12px;line-height:1.7">
-          🕐 ${fmtDT(p.created_at)}
-          ${p.activated_at ? '<br>✅ ' + fmtDT(p.activated_at) : ''}
-          ${p.start_date ? '<br>📅 Начало: ' + fmtDate(p.start_date) : ''}
-          ${p.last_day ? ' · 🏁 Последний: ' + fmtDate(p.last_day) : ''}
+
+        <div class="muted-sm" style="margin-top:12px;line-height:1.8">
+          🕐 <b>Куплено:</b> ${fmtDT(p.created_at)} <span style="opacity:.6">(Ташкент)</span>
+          ${p.approved_at ? `<br>✅ <b>Одобрено:</b> ${fmtDT(p.approved_at)}` : ''}
+          ${p.start_date ? `<br>📅 <b>Начало:</b> ${fmtDate(p.start_date)}` : ''}
+          ${p.last_day ? ` · 🏁 <b>Последний:</b> ${fmtDate(p.last_day)}` : ''}
+          ${p.expires_at ? `<br>⏰ <b>Истекает:</b> ${fmtDT(p.expires_at)}` : ''}
+          ${p.completed_at ? `<br>🏁 <b>Завершено:</b> ${fmtDT(p.completed_at)}` : ''}
         </div>
       </div>
       ${canW ? `<div class="actions">
@@ -687,7 +800,10 @@ function payoutCard(po){
       </div>
       <div class="body">
         <div class="row"><span class="muted">Сумма</span><b style="color:var(--ok)">${fmt(po.amount)}</b></div>
-        <div class="muted-sm" style="margin-top:8px">🕐 ${fmtDT(po.requested_at)}${po.paid_at ? ' · ✅ ' + fmtDT(po.paid_at) : ''}</div>
+        <div class="muted-sm" style="margin-top:8px">
+          🕐 ${fmtDT(po.requested_at)}${po.paid_at ? ' · ✅ ' + fmtDT(po.paid_at) : ''}
+          <span style="opacity:.6">(Ташкент)</span>
+        </div>
       </div>
     </div>`;
 }
@@ -761,16 +877,88 @@ async function render(force){
 
 window.refresh = function(){ HAVE = {}; render(true); };
 
+// ═══════════════════════════════════════════════════════════
+// ЖИВОЙ ТАЙМЕР — обновляет каждую секунду
+// ═══════════════════════════════════════════════════════════
+function tickTimers(){
+  // Обновляем цифры таймера
+  document.querySelectorAll('.timer-live').forEach(el => {
+    const exp = el.dataset.expires;
+    if (!exp) return;
+    const ms = new Date(exp).getTime() - Date.now();
+    if (ms <= 0){
+      el.textContent = '🏁 Завершено';
+      el.classList.remove('ok','warn');
+      el.classList.add('err');
+      return;
+    }
+    el.textContent = fmtCountdown(ms);
+    const h = ms / 3600000;
+    el.classList.remove('ok', 'warn', 'err');
+    if (h <= 1) el.classList.add('err');
+    else if (h <= 24) el.classList.add('warn');
+    else el.classList.add('ok');
+  });
+
+  // Обновляем плашку «Осталось X» и прогресс-бар
+  document.querySelectorAll('.era-card').forEach(card => {
+    const pid = card.dataset.pid;
+    if (!pid) return;
+    const p = PURCHASES.find(x => String(x.id) === pid);
+    if (!p || p.status !== 'approved') return;
+
+    const labelEl = document.getElementById('label-' + pid);
+    if (labelEl){
+      const newLabel = dayLabel(p);
+      if (labelEl.textContent !== newLabel) labelEl.textContent = newLabel;
+      // обновляем класс
+      const newCls = dayCls(p);
+      labelEl.className = 'days-left ' + newCls;
+    }
+
+    const progEl = document.getElementById('prog-' + pid);
+    if (progEl){
+      const newProg = progressOf(p);
+      progEl.style.width = newProg + '%';
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
 (function init(){
-  try { if (tg){ tg.ready(); tg.expand(); tg.setHeaderColor && tg.setHeaderColor('#0a0e14'); tg.setBackgroundColor && tg.setBackgroundColor('#0a0e14'); } } catch(e){}
-  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === CURRENT_TAB));
+  try {
+    if (tg){
+      tg.ready(); tg.expand();
+      tg.setHeaderColor && tg.setHeaderColor('#0a0e14');
+      tg.setBackgroundColor && tg.setBackgroundColor('#0a0e14');
+    }
+  } catch(e){}
+
+  document.querySelectorAll('#nav button').forEach(b =>
+    b.classList.toggle('active', b.dataset.tab === CURRENT_TAB)
+  );
+
   $('nav').addEventListener('click', e => {
     const b = e.target.closest('button');
     if (b && b.dataset.tab) window.setTab(b.dataset.tab);
   });
+
   render();
-  setInterval(() => { if (!document.hidden && tgUser()) render(true); }, POLL_MS);
-  document.addEventListener('visibilitychange', () => { if (!document.hidden && tgUser()) render(true); });
+
+  // Обновление данных каждые 25 сек
+  setInterval(() => {
+    if (!document.hidden && tgUser()) render(true);
+  }, POLL_MS);
+
+  // ⏱ Живой таймер — каждую секунду
+  setInterval(tickTimers, 1000);
+
+  // Обновление при возврате на вкладку
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && tgUser()) render(true);
+  });
 })();
 </script>
 </body>

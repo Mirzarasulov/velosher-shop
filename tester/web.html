@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -181,7 +182,7 @@
 
 <nav class="nav hidden" id="nav">
   <button data-tab="home"><span class="ico">🏠</span>Главная</button>
-  <button data-tab="buy"><span class="ico">🛒</span>Купить</button>
+  <button data-tab="buy"><span class="ico">🛒</span>Каталог</button>
   <button data-tab="purchases"><span class="ico">📦</span>Покупки</button>
   <button data-tab="profile"><span class="ico">👤</span>Профиль</button>
 </nav>
@@ -728,7 +729,7 @@ function eraCardPurchase(p){
 function drawBuy(){
   const chips = [['all','Все'],['starter','⚡ Старт'],['middle','🚀 Бизнес'],['premium','💎 Premium']];
   setApp(`
-    <div class="topbar"><div class="brand"><div class="logo">🛒</div>каталог</div>
+    <div class="topbar"><div class="brand"><div class="logo">🛒</div>Каталог</div>
       <div class="actions"><span class="muted-sm">${ERAS.length} эр</span></div></div>
     <div class="searchbar"><input class="search-input" placeholder="🔍 Поиск…" value="${esc(shopSearch)}"
       oninput="shopSearch=this.value;fillShop()"></div>

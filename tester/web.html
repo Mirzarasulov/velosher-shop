@@ -2,226 +2,230 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0a0e14">
 <title>Эры — Личный кабинет</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-  :root{
-    --bg:#0a0e14; --card:#131820; --card2:#1a212c; --card3:#232b38;
-    --border:#252e3a; --border2:#2f3a48;
-    --text:#e8edf3; --text2:#c4ccd6; --muted:#7a8595;
-    --accent:#4f8cff; --accent2:#356fd8;
-    --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c; --info:#63a9ff;
-  }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
-  html,body{background:var(--bg);color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
-    font-size:15px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-  .app{max-width:560px;margin:0 auto;padding:0 16px calc(100px + env(safe-area-inset-bottom))}
-  .topbar{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:1px solid var(--border);
-    margin:0 -16px 16px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .topbar .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}
-  .topbar .brand .logo{width:34px;height:34px;border-radius:10px;background:var(--accent);
-    display:flex;align-items:center;justify-content:center;font-size:16px}
-  .topbar .actions{display:flex;gap:8px;align-items:center}
-  .icon-btn{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);background:var(--card2);
-    color:var(--text2);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-  h1{font-size:24px;font-weight:700;line-height:1.25}
-  h2{font-size:18px;font-weight:700}
-  h3{font-size:15px;font-weight:600}
-  .muted{color:var(--muted);font-size:13px}
-  .muted-sm{color:var(--muted);font-size:11px}
-  .section-title{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
-  .card2{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px}
-  .hero{background:#1a2540;border:1px solid var(--border2);border-radius:18px;padding:20px;margin-bottom:16px}
-  .hero .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
-  .hero .user{display:flex;gap:14px;align-items:center;min-width:0;flex:1}
-  .avatar{width:56px;height:56px;border-radius:50%;background:var(--card3);display:flex;align-items:center;
-    justify-content:center;font-size:22px;font-weight:700;color:var(--accent);border:2px solid var(--border2);
-    overflow:hidden;flex-shrink:0}
-  .avatar img{width:100%;height:100%;object-fit:cover}
-  .avatar.lg{width:88px;height:88px;font-size:36px}
-  .hero .info{min-width:0;flex:1}
-  .hero .info h1{font-size:20px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .hero .info .sub{color:var(--text2);font-size:13px}
-  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px}
-  .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
-  .stat .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:6px}
-  .stat .value{font-size:22px;font-weight:700}
-  .stat .value.sm{font-size:18px}
-  .stat .value.ok{color:var(--ok)} .stat .value.accent{color:var(--accent)}
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 18px;
-    border-radius:12px;border:0;background:var(--accent);color:#fff;font-weight:600;font-size:15px;
-    cursor:pointer;text-align:center;font-family:inherit}
-  .btn:active{background:var(--accent2)}
-  .btn:disabled{opacity:.5;cursor:not-allowed}
-  .btn.secondary{background:var(--card2);color:var(--text);border:1px solid var(--border2)}
-  .btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
-  .btn.success{background:#39d98a;color:#04241a}
-  .btn.sm{padding:10px 14px;font-size:13px;border-radius:10px;width:auto}
-  .btn.xs{padding:7px 12px;font-size:12px;border-radius:8px;width:auto}
-  .era-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:0;margin-bottom:14px;overflow:hidden}
-  .era-card .head{padding:18px 18px 14px;background:var(--card2);border-bottom:1px solid var(--border)}
-  .era-card .head .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-  .era-card .title-wrap{display:flex;gap:12px;align-items:center;min-width:0;flex:1}
-  .era-card .icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;
-    font-size:22px;background:var(--card3);border:1px solid var(--border2);flex-shrink:0}
-  .era-card .name{font-size:17px;font-weight:700}
-  .era-card .tier{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-top:2px}
-  .era-card .body{padding:16px 18px}
-  .era-card .desc{color:var(--text2);font-size:13px;margin-bottom:14px;line-height:1.5}
-  .era-card .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-  .metric{background:var(--card2);border-radius:10px;padding:10px 8px;text-align:center;border:1px solid var(--border)}
-  .metric .l{color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:4px}
-  .metric .v{font-size:14px;font-weight:700}
-  .metric .v.profit{color:var(--ok)} .metric .v.total{color:var(--accent)}
-  .era-card .actions{padding:0 18px 18px;display:flex;gap:8px}
-  .era-card .actions .btn{flex:1}
-  .badge{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:11px;
-    font-weight:700;text-transform:uppercase;white-space:nowrap}
-  .badge.created{background:rgba(99,169,255,.15);color:var(--info)}
-  .badge.in_progress{background:rgba(245,181,71,.15);color:var(--warn)}
-  .badge.approved,.badge.completed,.badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
-  .badge.cancelled,.badge.rejected{background:rgba(255,92,92,.15);color:var(--err)}
-  .badge.pending{background:rgba(245,181,71,.15);color:var(--warn)}
-  .searchbar{display:flex;gap:8px;margin-bottom:12px}
-  .search-input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--card);
-    color:var(--text);font-size:14px;outline:none}
-  .filters{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
-  .filters::-webkit-scrollbar{display:none}
-  .chip{padding:8px 14px;border-radius:20px;background:var(--card2);border:1px solid var(--border);color:var(--text2);
-    font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0}
-  .chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-  .nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);display:flex;
-    justify-content:space-around;padding:8px 8px calc(8px + env(safe-area-inset-bottom));z-index:50;max-width:560px;margin:0 auto}
-  .nav button{background:none;border:0;color:var(--muted);font-size:10px;padding:8px 2px;display:flex;flex-direction:column;
-    align-items:center;gap:4px;cursor:pointer;flex:1;font-weight:600}
-  .nav button.active{color:var(--accent)}
-  .nav button .ico{font-size:19px;line-height:1}
-  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;align-items:flex-end;justify-content:center}
-  .modal{background:var(--card);border-radius:22px 22px 0 0;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;border:1px solid var(--border2);border-bottom:0}
-  .modal-head{position:sticky;top:0;background:var(--card2);padding:20px;border-bottom:1px solid var(--border);z-index:1;
-    display:flex;justify-content:space-between;align-items:center}
-  .modal-body{padding:20px}
-  .close-x{width:34px;height:34px;border-radius:50%;background:var(--card3);border:1px solid var(--border2);color:var(--text2);
-    font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-  .row{display:flex;justify-content:space-between;gap:12px;align-items:center}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .hidden{display:none !important}
-  .center{text-align:center}
-  .toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--border2);
-    padding:12px 18px;border-radius:12px;font-size:13px;z-index:999;max-width:90%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.5)}
-  .toast.ok{border-color:var(--ok);color:#a8f0cc}
-  .toast.err{border-color:var(--err);color:#ffb3b3}
-  .toast.info{border-color:var(--accent);color:#cfe0ff}
-  a{color:var(--accent);text-decoration:none}
-  .ref-box{background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;font-size:13px;
-    font-family:ui-monospace,monospace;word-break:break-all;color:var(--text2)}
-  .order-num{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(79,140,255,.12);
-    border:1px solid rgba(79,140,255,.25);border-radius:8px;font-size:11px;font-weight:700;color:var(--accent);margin-bottom:8px}
-  .list-item{padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-  .list-item:last-child{border-bottom:0}
-  .empty{padding:44px 20px;text-align:center}
-  .empty .icon{font-size:52px;margin-bottom:12px;opacity:.5}
-  .menu-item{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);cursor:pointer}
-  .menu-item:last-child{border-bottom:0}
-  .menu-item .left{display:flex;align-items:center;gap:14px}
-  .menu-item .emo{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;
-    background:var(--card2);border:1px solid var(--border)}
-  .contact-btn{display:flex;align-items:center;gap:14px;padding:16px;background:var(--card2);border:1px solid var(--border);
-    border-radius:12px;cursor:pointer;color:var(--text);margin-bottom:10px}
-  .contact-btn .emo{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;
-    background:var(--accent);color:#fff;flex-shrink:0}
-  .contact-btn .info{flex:1;min-width:0}
-  .contact-btn .info .t{font-weight:600;font-size:14px}
-  .contact-btn .info .s{font-size:12px;color:var(--muted)}
-  .progress{height:8px;background:var(--card3);border-radius:4px;overflow:hidden;margin-top:8px}
-  .progress .fill{height:100%;border-radius:4px;background:var(--accent);transition:width 1s linear}
-  .progress .fill.ok{background:#39d98a} .progress .fill.warn{background:#f5b547} .progress .fill.err{background:#ff5c5c}
-  .days-left{padding:6px 12px;border-radius:10px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
-  .days-left.ok{background:rgba(57,217,138,.15);color:var(--ok)}
-  .days-left.warn{background:rgba(245,181,71,.15);color:var(--warn)}
-  .days-left.err{background:rgba(255,92,92,.15);color:var(--err)}
-  .days-left.info{background:rgba(99,169,255,.15);color:var(--info)}
-  .timer-live{
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 22px;
-    font-weight: 800;
-    text-align: center;
-    margin-top: 14px;
-    padding: 10px 14px;
-    border-radius: 12px;
-    background: var(--card3);
-    border: 1px solid var(--border2);
-    letter-spacing: .5px;
-    color: var(--accent);
-    transition: color .3s, border-color .3s;
-  }
-  .timer-live.warn{color:var(--warn); border-color: rgba(245,181,71,.4)}
-  .timer-live.err{color:var(--err); border-color: rgba(255,92,92,.4); animation: pulse 1.5s infinite}
-  .timer-live.ok{color:var(--ok); border-color: rgba(57,217,138,.4)}
-  @keyframes pulse{
-    0%,100%{opacity:1}
-    50%{opacity:.65}
-  }
-  .skel{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);background-size:200% 100%;
-    animation:sh 1.2s infinite;border-radius:14px;border:1px solid var(--border);margin-bottom:12px}
-  @keyframes sh{to{background-position:-200% 0}}
+:root{
+  --bg:#0a0e14; --card:#131820; --card2:#1a212c; --card3:#232b38;
+  --border:#252e3a; --border2:#2f3a48;
+  --text:#e8edf3; --text2:#c4ccd6; --muted:#7a8595;
+  --accent:#4f8cff; --accent2:#356fd8;
+  --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c; --info:#63a9ff;
+  --purple:#a78bfa;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+  font-size:15px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased;
+  overflow-x:hidden}
+.app{max-width:560px;margin:0 auto;padding:0 16px calc(100px + env(safe-area-inset-bottom))}
+.topbar{position:sticky;top:0;z-index:40;background:var(--bg);
+  border-bottom:1px solid var(--border);margin:0 -16px 16px;padding:12px 16px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topbar .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}
+.topbar .brand .logo{width:34px;height:34px;border-radius:10px;background:var(--accent);
+  display:flex;align-items:center;justify-content:center;font-size:16px}
+.icon-btn{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);
+  background:var(--card2);color:var(--text2);font-size:17px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center}
+h1{font-size:24px;font-weight:700;line-height:1.25}
+h2{font-size:18px;font-weight:700}
+h3{font-size:15px;font-weight:600}
+.muted{color:var(--muted);font-size:13px}
+.muted-sm{color:var(--muted);font-size:11px}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+.card2{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px}
+.hero{background:#1a2540;border:1px solid var(--border2);border-radius:18px;padding:20px;margin-bottom:16px}
+.hero .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.hero .user{display:flex;gap:14px;align-items:center;min-width:0;flex:1}
+.avatar{width:56px;height:56px;border-radius:50%;background:var(--card3);
+  display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;
+  color:var(--accent);border:2px solid var(--border2);overflow:hidden;flex-shrink:0}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.avatar.lg{width:88px;height:88px;font-size:36px}
+.hero .info{min-width:0;flex:1}
+.hero .info h1{font-size:20px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hero .info .sub{color:var(--text2);font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
+.stat .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+  font-weight:600;margin-bottom:6px}
+.stat .value{font-size:22px;font-weight:700}
+.stat .value.sm{font-size:18px}
+.stat .value.ok{color:var(--ok)} .stat .value.accent{color:var(--accent)}
+.stat .value.warn{color:var(--warn)} .stat .value.purple{color:var(--purple)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;
+  padding:14px 18px;border-radius:12px;border:0;background:var(--accent);color:#fff;
+  font-weight:600;font-size:15px;cursor:pointer;text-align:center;font-family:inherit}
+.btn:active{background:var(--accent2)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.secondary{background:var(--card2);color:var(--text);border:1px solid var(--border2)}
+.btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+.btn.ok{background:var(--ok);color:#04241a}
+.btn.warn{background:var(--warn);color:#2a1a00}
+.btn.purple{background:var(--purple);color:#12002e}
+.btn.sm{padding:10px 14px;font-size:13px;border-radius:10px;width:auto}
+.btn.xs{padding:7px 12px;font-size:12px;border-radius:8px;width:auto}
 
-  /* ════════ РЕФЕРАЛЬНЫЙ БЛОК ════════ */
-  .ref-hero{
-    background:linear-gradient(135deg, #1b2a4a 0%, #16233f 100%);
-    border:1px solid #2c3d63;border-radius:16px;padding:18px;margin-bottom:12px;
-    position:relative;overflow:hidden;
-  }
-  .ref-hero::after{
-    content:'';position:absolute;top:-30%;right:-20%;width:200px;height:200px;
-    background:radial-gradient(circle, rgba(79,140,255,.18) 0%, transparent 70%);
-    pointer-events:none;
-  }
-  .ref-hero .title{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;margin-bottom:14px}
-  .ref-hero .title .emo{font-size:20px}
-  .ref-hero .percent-badge{
-    margin-left:auto;background:rgba(57,217,138,.18);color:var(--ok);
-    padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:.5px;
-  }
-  .ref-balances{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
-  .ref-bal{background:rgba(0,0,0,.25);border-radius:10px;padding:10px 8px;text-align:center;border:1px solid rgba(255,255,255,.06)}
-  .ref-bal .l{color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:700;margin-bottom:4px;letter-spacing:.5px}
-  .ref-bal .v{font-size:15px;font-weight:800}
-  .ref-bal .v.pending{color:var(--warn)}
-  .ref-bal .v.approved{color:var(--ok)}
-  .ref-bal .v.paid{color:var(--accent)}
+/* ERA CARD */
+.era-card{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:0;margin-bottom:14px;overflow:hidden}
+.era-card .head{padding:18px 18px 14px;background:var(--card2);border-bottom:1px solid var(--border)}
+.era-card .head .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.era-card .title-wrap{display:flex;gap:12px;align-items:center;min-width:0;flex:1}
+.era-card .icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;
+  justify-content:center;font-size:22px;background:var(--card3);border:1px solid var(--border2);flex-shrink:0}
+.era-card .name{font-size:17px;font-weight:700}
+.era-card .tier{font-size:11px;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.08em;font-weight:600;margin-top:2px}
+.era-card .body{padding:16px 18px}
+.era-card .desc{color:var(--text2);font-size:13px;margin-bottom:14px;line-height:1.5}
+.era-card .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.metric{background:var(--card2);border-radius:10px;padding:10px 8px;text-align:center;
+  border:1px solid var(--border)}
+.metric .l{color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:4px}
+.metric .v{font-size:14px;font-weight:700}
+.metric .v.profit{color:var(--ok)} .metric .v.total{color:var(--accent)}
+.era-card .actions{padding:0 18px 18px;display:flex;gap:8px}
+.era-card .actions .btn{flex:1}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;
+  font-size:11px;font-weight:700;text-transform:uppercase;white-space:nowrap}
+.badge.created{background:rgba(99,169,255,.15);color:var(--info)}
+.badge.approved,.badge.completed,.badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
+.badge.cancelled,.badge.rejected{background:rgba(255,92,92,.15);color:var(--err)}
+.badge.pending{background:rgba(245,181,71,.15);color:var(--warn)}
+.badge.purple{background:rgba(167,139,250,.15);color:var(--purple)}
+.searchbar{display:flex;gap:8px;margin-bottom:12px}
+.search-input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid var(--border);
+  background:var(--card);color:var(--text);font-size:14px;outline:none}
+.filters{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.chip{padding:8px 14px;border-radius:20px;background:var(--card2);border:1px solid var(--border);
+  color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);
+  border-top:1px solid var(--border);display:flex;justify-content:space-around;
+  padding:8px 8px calc(8px + env(safe-area-inset-bottom));z-index:50;
+  max-width:560px;margin:0 auto}
+.nav button{background:none;border:0;color:var(--muted);font-size:11px;padding:8px 4px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;flex:1;font-weight:600}
+.nav button.active{color:var(--accent)}
+.nav button .ico{font-size:20px;line-height:1}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;
+  display:flex;align-items:flex-end;justify-content:center}
+.modal{background:var(--card);border-radius:22px 22px 0 0;width:100%;max-width:560px;
+  max-height:88vh;overflow-y:auto;border:1px solid var(--border2);border-bottom:0}
+.modal-head{position:sticky;top:0;background:var(--card2);padding:20px;
+  border-bottom:1px solid var(--border);z-index:1;display:flex;justify-content:space-between;align-items:center}
+.modal-body{padding:20px}
+.close-x{width:34px;height:34px;border-radius:50%;background:var(--card3);
+  border:1px solid var(--border2);color:var(--text2);font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center}
+.row{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hidden{display:none !important}
+.center{text-align:center}
+.toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);
+  background:var(--card2);border:1px solid var(--border2);padding:12px 18px;
+  border-radius:12px;font-size:13px;z-index:999;max-width:90%;text-align:center;
+  box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.toast.ok{border-color:var(--ok);color:#a8f0cc}
+.toast.err{border-color:var(--err);color:#ffb3b3}
+.toast.info{border-color:var(--accent);color:#cfe0ff}
+a{color:var(--accent);text-decoration:none}
+.ref-box{background:var(--card2);border:1px solid var(--border2);border-radius:12px;
+  padding:12px 14px;font-size:13px;font-family:ui-monospace,monospace;
+  word-break:break-all;color:var(--text2)}
+.order-num{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;
+  background:rgba(79,140,255,.12);border:1px solid rgba(79,140,255,.25);
+  border-radius:8px;font-size:11px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.list-item{padding:14px 0;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center}
+.list-item:last-child{border-bottom:0}
+.empty{padding:44px 20px;text-align:center}
+.empty .icon{font-size:52px;margin-bottom:12px;opacity:.5}
+.menu-item{display:flex;align-items:center;justify-content:space-between;padding:16px 0;
+  border-bottom:1px solid var(--border);cursor:pointer}
+.menu-item:last-child{border-bottom:0}
+.menu-item .left{display:flex;align-items:center;gap:14px}
+.menu-item .emo{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;
+  justify-content:center;font-size:19px;background:var(--card2);border:1px solid var(--border)}
+.progress{height:8px;background:var(--card3);border-radius:4px;overflow:hidden;margin-top:8px}
+.progress .fill{height:100%;border-radius:4px;background:var(--accent);transition:width 1s linear}
+.progress .fill.ok{background:#39d98a} .progress .fill.warn{background:#f5b547}
+.progress .fill.err{background:#ff5c5c}
+.days-left{padding:6px 12px;border-radius:10px;font-size:12px;font-weight:700;
+  display:inline-flex;align-items:center;gap:6px}
+.days-left.ok{background:rgba(57,217,138,.15);color:var(--ok)}
+.days-left.warn{background:rgba(245,181,71,.15);color:var(--warn)}
+.days-left.err{background:rgba(255,92,92,.15);color:var(--err)}
+.days-left.info{background:rgba(99,169,255,.15);color:var(--info)}
+.timer-live{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:22px;
+  font-weight:800;text-align:center;margin-top:14px;padding:10px 14px;
+  border-radius:12px;background:var(--card3);border:1px solid var(--border2);
+  letter-spacing:.5px;color:var(--accent);transition:color .3s,border-color .3s}
+.timer-live.warn{color:var(--warn);border-color:rgba(245,181,71,.4)}
+.timer-live.err{color:var(--err);border-color:rgba(255,92,92,.4);animation:pulse 1.5s infinite}
+.timer-live.ok{color:var(--ok);border-color:rgba(57,217,138,.4)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.65}}
+.skel{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);
+  background-size:200% 100%;animation:sh 1.2s infinite;border-radius:14px;
+  border:1px solid var(--border);margin-bottom:12px}
+@keyframes sh{to{background-position:-200% 0}}
 
-  .ref-item{
-    background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;
-  }
-  .ref-item .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px}
-  .ref-item .name{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .ref-item .date{color:var(--muted);font-size:11px;white-space:nowrap}
-  .ref-item .meta{color:var(--muted);font-size:12px;margin-bottom:8px}
-  .ref-item .stat-row{display:flex;gap:8px;flex-wrap:wrap}
-  .ref-chip{
-    display:inline-flex;align-items:center;gap:5px;
-    padding:4px 9px;border-radius:8px;font-size:11px;font-weight:700;
-    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
-  }
-  .ref-chip.ok{background:rgba(57,217,138,.12);color:var(--ok);border-color:rgba(57,217,138,.25)}
-  .ref-chip.warn{background:rgba(245,181,71,.12);color:var(--warn);border-color:rgba(245,181,71,.25)}
-  .ref-chip.info{background:rgba(99,169,255,.12);color:var(--info);border-color:rgba(99,169,255,.25)}
-
-  /* ════════ ЗАГЛУШКА "В РАЗРАБОТКЕ" ════════ */
-  .soon{
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    text-align:center;padding:60px 24px;
-  }
-  .soon .emo{font-size:64px;margin-bottom:16px;animation:float 3s ease-in-out infinite}
-  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-  .soon h2{font-size:20px;margin-bottom:10px}
-  .soon p{color:var(--muted);font-size:14px;max-width:300px;line-height:1.6}
-  .soon .spark{color:var(--accent);font-weight:700}
+/* ═══ REFERRAL BALANCE ═══ */
+.ref-hero{
+  background:linear-gradient(135deg,#1b2a4a 0%,#16233f 100%);
+  border:1px solid #2c3d63;border-radius:16px;padding:18px;margin-bottom:12px;
+  position:relative;overflow:hidden
+}
+.ref-hero.paid{
+  background:linear-gradient(135deg,#12351f 0%,#0f2a1a 100%);
+  border-color:#1f6b41
+}
+.ref-hero::after{
+  content:'';position:absolute;top:-30%;right:-20%;width:200px;height:200px;
+  background:radial-gradient(circle,rgba(79,140,255,.18) 0%,transparent 70%);
+  pointer-events:none
+}
+.ref-hero .title{display:flex;align-items:center;gap:8px;font-weight:700;
+  font-size:15px;margin-bottom:14px;position:relative}
+.ref-hero .title .emo{font-size:20px}
+.ref-hero .percent-badge{margin-left:auto;background:rgba(57,217,138,.18);
+  color:var(--ok);padding:4px 10px;border-radius:20px;font-size:11px;
+  font-weight:800;letter-spacing:.5px}
+.ref-balances{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  margin-bottom:14px;position:relative}
+.ref-bal{background:rgba(0,0,0,.25);border-radius:10px;padding:10px 8px;
+  text-align:center;border:1px solid rgba(255,255,255,.06)}
+.ref-bal .l{color:var(--muted);font-size:10px;text-transform:uppercase;
+  font-weight:700;margin-bottom:4px;letter-spacing:.5px}
+.ref-bal .v{font-size:15px;font-weight:800}
+.ref-bal .v.pending{color:var(--warn)}
+.ref-bal .v.approved{color:var(--ok)}
+.ref-bal .v.paid{color:var(--accent)}
+.ref-bal .v.zero{color:var(--ok)}
+.ref-hero .last-paid{font-size:12px;color:var(--text2);text-align:center;
+  padding:8px;background:rgba(0,0,0,.2);border-radius:8px;position:relative}
+.ref-hero .last-paid b{color:var(--ok)}
+.ref-item{background:var(--card2);border:1px solid var(--border);border-radius:12px;
+  padding:12px 14px;margin-bottom:8px}
+.ref-item .head{display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:6px;gap:8px}
+.ref-item .name{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ref-item .date{color:var(--muted);font-size:11px;white-space:nowrap}
+.ref-item .meta{color:var(--muted);font-size:12px;margin-bottom:8px}
+.ref-item .stat-row{display:flex;gap:8px;flex-wrap:wrap}
+.ref-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;
+  border-radius:8px;font-size:11px;font-weight:700;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+.ref-chip.ok{background:rgba(57,217,138,.12);color:var(--ok);border-color:rgba(57,217,138,.25)}
+.ref-chip.warn{background:rgba(245,181,71,.12);color:var(--warn);border-color:rgba(245,181,71,.25)}
+.ref-chip.info{background:rgba(99,169,255,.12);color:var(--info);border-color:rgba(99,169,255,.25)}
+.ref-chip.purple{background:rgba(167,139,250,.12);color:var(--purple);border-color:rgba(167,139,250,.25)}
 </style>
 </head>
 <body>
@@ -243,112 +247,94 @@
 <div id="toast" class="toast hidden"></div>
 
 <script>
-const FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app';
-const BOT_USERNAME = 'ROSTERAbot';
-const ADMIN_USERNAME = 'DAMIR1500';
-const POLL_MS = 25000;
-const TZ_TASHKENT = 'Asia/Tashkent';
+'use strict';
 
-// 💰 Реферальный процент
-const REFERRAL_PERCENT = 5;
+var FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app';
+var BOT_USERNAME = 'ROSTERAbot';
+var ADMIN_USERNAME = 'Dma12r';
+var REFERRAL_PERCENT = 5;
+var POLL_MS = 25000;
+var TZ_TASHKENT = 'Asia/Tashkent';
 
-const tg = window.Telegram && window.Telegram.WebApp;
-const $ = id => document.getElementById(id);
-let CURRENT_TAB = 'home';
-let ME = null, PURCHASES = [], PAYOUTS = [], ERAS = [], USER_UID = '';
-let ALL_REFERRALS = [];
-let ALL_MY_REF_PURCHASES = [];
-let HAVE = {};
-const BUSY = new Set();
-let shopFilter = 'all', shopSearch = '';
-
-// ═══════════════════════════════════════════════════════════
-// УТИЛИТЫ
-// ═══════════════════════════════════════════════════════════
-function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function q(v){ return esc(JSON.stringify(v ?? '')); }
-const num = v => { const n = Number(v); return isFinite(n) ? n : 0; };
-function fmt(n){ return num(n).toLocaleString('ru-RU') + ' ₽'; }
+var tg = window.Telegram && window.Telegram.WebApp;
+var $ = function(id){ return document.getElementById(id); };
+var CURRENT_TAB = 'home';
+var ME = null, PURCHASES = [], PAYOUTS = [], ERAS = [], USER_UID = '';
+var ALL_REFERRALS = [], ALL_MY_REF_PURCHASES = [];
+var HAVE = {};
+var BUSY = {};
+var shopFilter = 'all', shopSearch = '';
 
 // ═══════════════════════════════════════════════════════════
-// ФОРМАТИРОВАНИЕ ДАТ — ТАШКЕНТ (UTC+5)
+// UTILS
 // ═══════════════════════════════════════════════════════════
-function fmtDate(s){
-  if (!s) return '—';
-  const d = new Date(s); if (isNaN(d)) return String(s);
-  return d.toLocaleDateString('ru-RU', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-    timeZone: TZ_TASHKENT
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
   });
 }
-
+var num = function(v){ var n = Number(v); return isFinite(n) ? n : 0; };
+function fmt(n){ return num(n).toLocaleString('ru-RU') + ' ₽'; }
+function fmtDate(s){
+  if (!s) return '—';
+  var d = new Date(s); if (isNaN(d)) return String(s);
+  return d.toLocaleDateString('ru-RU',
+    {day:'2-digit',month:'2-digit',year:'numeric',timeZone:TZ_TASHKENT});
+}
 function fmtDT(s){
   if (!s) return '—';
-  const d = new Date(s); if (isNaN(d)) return String(s);
-  return d.toLocaleDateString('ru-RU', {
-      day: '2-digit', month: '2-digit', year: 'numeric',
-      timeZone: TZ_TASHKENT
-    }) + ' ' +
-    d.toLocaleTimeString('ru-RU', {
-      hour: '2-digit', minute: '2-digit',
-      timeZone: TZ_TASHKENT
-    });
+  var d = new Date(s); if (isNaN(d)) return String(s);
+  return d.toLocaleDateString('ru-RU',
+    {day:'2-digit',month:'2-digit',year:'numeric',timeZone:TZ_TASHKENT}) + ' ' +
+    d.toLocaleTimeString('ru-RU',
+      {hour:'2-digit',minute:'2-digit',timeZone:TZ_TASHKENT});
 }
-
 function fmtCountdown(ms){
   if (ms <= 0) return '0с';
-  const s = Math.floor(ms / 1000);
-  const d = Math.floor(s / 86400);
-  const h = Math.floor((s % 86400) / 3600);
-  const m = Math.floor((s % 3600) / 60);
-  const sec = s % 60;
-  if (d > 0) return `${d}д ${h}ч ${m}м`;
-  if (h > 0) return `${h}ч ${m}м ${sec}с`;
-  if (m > 0) return `${m}м ${sec}с`;
-  return `${sec}с`;
+  var s = Math.floor(ms/1000);
+  var d = Math.floor(s/86400);
+  var h = Math.floor((s%86400)/3600);
+  var m = Math.floor((s%3600)/60);
+  var sec = s%60;
+  if (d > 0) return d + 'д ' + h + 'ч ' + m + 'м';
+  if (h > 0) return h + 'ч ' + m + 'м ' + sec + 'с';
+  if (m > 0) return m + 'м ' + sec + 'с';
+  return sec + 'с';
 }
-
-// ═══════════════════════════════════════════════════════════
-// ЛОГИКА ТАЙМЕРА
-// ═══════════════════════════════════════════════════════════
 function msLeft(p){
   if (!p.expires_at) return null;
-  const e = new Date(p.expires_at).getTime();
+  var e = new Date(p.expires_at).getTime();
   if (isNaN(e)) return null;
   return e - Date.now();
 }
-
 function hoursLeft(p){
-  const ms = msLeft(p);
+  var ms = msLeft(p);
   if (ms == null || ms <= 0) return 0;
   return ms / 3600000;
 }
-
 function progressOf(p){
   if (!p.start_date || !p.expires_at) return 0;
-  const a = new Date(p.start_date).getTime();
-  const e = new Date(p.expires_at).getTime();
-  const n = Date.now();
+  var a = new Date(p.start_date).getTime();
+  var e = new Date(p.expires_at).getTime();
+  var n = Date.now();
   if (isNaN(a) || isNaN(e) || e <= a) return 0;
   if (n >= e) return 100;
   if (n <= a) return 0;
   return Math.min(100, Math.max(0, Math.round(((n - a) / (e - a)) * 100)));
 }
-
 function canWithdraw(p){
-  const expired = msLeft(p) != null && msLeft(p) <= 0;
-  const eligible = p.status === 'completed' || (p.status === 'approved' && expired);
+  var expired = msLeft(p) != null && msLeft(p) <= 0;
+  var eligible = p.status === 'completed' || (p.status === 'approved' && expired);
   if (!eligible) return false;
-  return !PAYOUTS.some(po =>
-    String(po.purchase_id) === String(p.id) &&
-    (po.status === 'pending' || po.status === 'paid')
-  );
+  return !PAYOUTS.some(function(po){
+    return String(po.purchase_id) === String(p.id) &&
+      (po.status === 'pending' || po.status === 'paid');
+  });
 }
-
 function dayCls(p){
-  if (['completed','paid'].includes(p.status)) return 'info';
+  if (['completed','paid'].indexOf(p.status) >= 0) return 'info';
   if (p.status === 'approved'){
-    const h = hoursLeft(p);
+    var h = hoursLeft(p);
     if (h <= 0) return 'err';
     if (h <= 24) return 'err';
     if (h <= 72) return 'warn';
@@ -356,7 +342,6 @@ function dayCls(p){
   }
   return 'info';
 }
-
 function dayLabel(p){
   if (p.status === 'created')     return '⏳ админ скоро свяжется';
   if (p.status === 'in_progress') return '🟡 В процессе';
@@ -364,717 +349,827 @@ function dayLabel(p){
   if (p.status === 'rejected')    return '❌ Отклонён';
   if (p.status === 'completed')   return '🏁 Период завершён';
   if (p.status === 'paid')        return '💰 Выплачено';
-
   if (p.status === 'approved'){
-    const ms = msLeft(p);
+    var ms = msLeft(p);
     if (ms == null) return '—';
     if (ms <= 0) return '🏁 Завершение';
-
-    const h = ms / 3600000;
-    const d = ms / 86400000;
-
-    if (d < 1) return `⏰ Осталось ${fmtCountdown(ms)}`;
-    if (d < 2) return `⚠️ Остался 1 день · ${fmtCountdown(ms)}`;
-    if (d < 4) return `⏰ Осталось ${Math.ceil(d)} дня · ${fmtCountdown(ms)}`;
-    return `✅ Осталось ${Math.ceil(d)} дн.`;
+    var d = ms / 86400000;
+    if (d < 1) return '⏰ Осталось ' + fmtCountdown(ms);
+    if (d < 2) return '⚠️ Остался 1 день · ' + fmtCountdown(ms);
+    if (d < 4) return '⏰ Осталось ' + Math.ceil(d) + ' дня · ' + fmtCountdown(ms);
+    return '✅ Осталось ' + Math.ceil(d) + ' дн.';
   }
   return '';
 }
-
 function statusLabel(s){
   return ({created:'Создан', in_progress:'В процессе', approved:'Одобрен',
     completed:'Завершён', paid:'Выплачен', cancelled:'Отменён',
     pending:'Ожидает', rejected:'Отклонён'})[s] || s;
 }
-
 function haptic(k){ try { tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(k || 'success'); } catch(e){} }
 function toast(msg, type, ms){
-  const t = $('toast');
+  var t = $('toast');
   t.textContent = msg;
   t.className = 'toast ' + (type || '');
   clearTimeout(t._t);
-  t._t = setTimeout(() => t.classList.add('hidden'), ms || 2800);
+  t._t = setTimeout(function(){ t.classList.add('hidden'); }, ms || 2800);
 }
 function ask(msg){
-  return new Promise(res => {
-    if (tg && tg.showConfirm){ try { tg.showConfirm(msg, ok => res(!!ok)); return; } catch(e){} }
+  return new Promise(function(res){
+    if (tg && tg.showConfirm){ try { tg.showConfirm(msg, function(ok){ res(!!ok); }); return; } catch(e){} }
     res(confirm(msg));
   });
 }
-async function once(key, fn){
-  if (BUSY.has(key)) return;
-  BUSY.add(key);
-  try { await fn(); } catch(e){ toast('⚠️ ' + e.message, 'err'); haptic('error'); }
-  finally { BUSY.delete(key); }
+function once(key, fn){
+  if (BUSY[key]) return;
+  BUSY[key] = 1;
+  return Promise.resolve()
+    .then(fn)
+    .catch(function(e){ toast('⚠️ ' + e.message, 'err'); haptic('error'); })
+    .then(function(){ delete BUSY[key]; });
 }
 
 // ═══════════════════════════════════════════════════════════
 // FIREBASE
 // ═══════════════════════════════════════════════════════════
 async function fbGet(path){
-  const r = await fetch(`${FIREBASE}/${path}.json`);
+  var r = await fetch(FIREBASE + '/' + path + '.json');
   if (!r.ok) throw new Error('Firebase ' + r.status);
   return r.json();
 }
 async function fbPost(path, data){
-  const r = await fetch(`${FIREBASE}/${path}.json`, {method:'POST', body: JSON.stringify(data)});
+  var r = await fetch(FIREBASE + '/' + path + '.json',
+    {method:'POST', body: JSON.stringify(data)});
   if (!r.ok) throw new Error('Firebase ' + r.status);
   return r.json();
 }
 async function fbPut(path, data){
-  const r = await fetch(`${FIREBASE}/${path}.json`, {method:'PUT', body: JSON.stringify(data)});
+  var r = await fetch(FIREBASE + '/' + path + '.json',
+    {method:'PUT', body: JSON.stringify(data)});
   if (!r.ok) throw new Error('Firebase ' + r.status);
   return r.json();
 }
 async function fbPatch(path, data){
-  const r = await fetch(`${FIREBASE}/${path}.json`, {method:'PATCH', body: JSON.stringify(data)});
+  var r = await fetch(FIREBASE + '/' + path + '.json',
+    {method:'PATCH', body: JSON.stringify(data)});
   if (!r.ok) throw new Error('Firebase ' + r.status);
   return r.json();
 }
 function toList(raw){
-  if (Array.isArray(raw)) return raw.filter(x => x && typeof x === 'object').map((v, i) => ({...v, _key: String(i)}));
-  if (raw && typeof raw === 'object')
-    return Object.entries(raw).filter(([, v]) => v && typeof v === 'object').map(([k, v]) => ({...v, _key: k}));
+  if (Array.isArray(raw)) {
+    return raw.filter(function(x){ return x && typeof x === 'object'; })
+      .map(function(v,i){ var o = Object.assign({}, v); o._key = String(i); return o; });
+  }
+  if (raw && typeof raw === 'object') {
+    return Object.keys(raw)
+      .filter(function(k){ return raw[k] && typeof raw[k] === 'object'; })
+      .map(function(k){ var o = Object.assign({}, raw[k]); o._key = k; return o; });
+  }
   return [];
 }
 function tgUser(){ return tg && tg.initDataUnsafe && tg.initDataUnsafe.user; }
 
 // ═══════════════════════════════════════════════════════════
-// ЗАГРУЗКА ДАННЫХ
+// LOAD
 // ═══════════════════════════════════════════════════════════
 async function loadMe(){
-  const u = tgUser();
+  var u = tgUser();
   if (!u) return null;
   USER_UID = String(u.id);
-  const existing = await fbGet(`users/${u.id}`);
-  const now = new Date().toISOString();
+  var existing = await fbGet('users/' + u.id);
+  var now = new Date().toISOString();
 
-  let refCode = '';
+  var refCode = '';
   if (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param){
     refCode = tg.initDataUnsafe.start_param.replace(/^ref_/, '');
   }
 
-  const data = {
+  var data = {
     telegram_id: u.id,
     username: u.username || '',
     first_name: u.first_name || '',
     last_name: u.last_name || '',
     photo_url: u.photo_url || (existing && existing.photo_url) || '',
-    registered_at: (existing && existing.registered_at) || now,
+    registered_at: (existing && existing.registered_at) || now
   };
 
   if (existing && existing.referrer_uid){
     data.referrer_uid = existing.referrer_uid;
   } else if (!existing && refCode && refCode !== String(u.id)){
-    const referrer = await fbGet(`users/${refCode}`).catch(() => null);
+    var referrer = await fbGet('users/' + refCode).catch(function(){ return null; });
     if (referrer && referrer.telegram_id){
       data.referrer_uid = String(refCode);
     }
   }
 
-  if (!existing || existing.photo_url !== data.photo_url || existing.username !== data.username
-      || existing.first_name !== data.first_name
-      || (data.referrer_uid && existing.referrer_uid !== data.referrer_uid)){
-    await fbPut(`users/${u.id}`, data);
+  if (!existing || existing.photo_url !== data.photo_url ||
+      existing.username !== data.username ||
+      existing.first_name !== data.first_name ||
+      (data.referrer_uid && existing.referrer_uid !== data.referrer_uid)){
+    await fbPut('users/' + u.id, data);
   }
   return data;
 }
 
 async function loadEras(){
-  const raw = await fbGet('eras');
+  var raw = await fbGet('eras');
   return toList(raw)
-    .filter(e => e.is_active !== 0 && e.is_active !== false)
-    .map(e => ({...e, price: num(e.price), profit_amount: num(e.profit_amount),
-      total_amount: num(e.total_amount) || num(e.price) + num(e.profit_amount),
-      duration_days: num(e.duration_days)}))
-    .sort((a, b) => (num(a.sort_order) - num(b.sort_order)) || (num(a.id) - num(b.id)));
+    .filter(function(e){ return e.is_active !== 0 && e.is_active !== false; })
+    .map(function(e){
+      var o = Object.assign({}, e);
+      o.price = num(e.price);
+      o.profit_amount = num(e.profit_amount);
+      o.total_amount = num(e.total_amount) || num(e.price) + num(e.profit_amount);
+      o.duration_days = num(e.duration_days);
+      return o;
+    })
+    .sort(function(a, b){
+      return (num(a.sort_order) - num(b.sort_order)) || (num(a.id) - num(b.id));
+    });
 }
+
 async function loadPurchases(){
   if (!USER_UID) return [];
-  const raw = await fbGet('purchases');
+  var raw = await fbGet('purchases');
   return toList(raw)
-    .filter(p => String(p.user_telegram_id) === String(USER_UID))
-    .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+    .filter(function(p){ return String(p.user_telegram_id) === String(USER_UID); })
+    .sort(function(a, b){
+      return new Date(b.created_at||0) - new Date(a.created_at||0);
+    });
 }
+
 async function loadPayouts(){
   if (!USER_UID) return [];
-  const raw = await fbGet('payouts');
+  var raw = await fbGet('payouts');
   return toList(raw)
-    .filter(p => String(p.user_telegram_id) === String(USER_UID))
-    .sort((a, b) => new Date(b.requested_at || 0) - new Date(a.requested_at || 0));
+    .filter(function(p){ return String(p.user_telegram_id) === String(USER_UID); })
+    .sort(function(a, b){
+      return new Date(b.requested_at||0) - new Date(a.requested_at||0);
+    });
 }
 
 async function loadMyReferrals(){
-  if (!USER_UID) { ALL_REFERRALS = []; ALL_MY_REF_PURCHASES = []; return; }
-  const [usersRaw, purchasesRaw] = await Promise.all([
+  if (!USER_UID){ ALL_REFERRALS = []; ALL_MY_REF_PURCHASES = []; return; }
+  var res = await Promise.all([
     fbGet('users'),
     fbGet('purchases')
   ]);
-  const users = toList(usersRaw);
-  ALL_REFERRALS = users
-    .filter(x => String(x.referrer_uid || '') === String(USER_UID))
-    .sort((a, b) => new Date(b.registered_at || 0) - new Date(a.registered_at || 0));
+  var users = toList(res[0]);
+  ALL_REFERRALS = users.filter(function(x){
+    return String(x.referrer_uid || '') === String(USER_UID);
+  }).sort(function(a, b){
+    return new Date(b.registered_at||0) - new Date(a.registered_at||0);
+  });
 
-  const myRefIds = new Set(ALL_REFERRALS.map(r => String(r.telegram_id)));
-  ALL_MY_REF_PURCHASES = toList(purchasesRaw)
-    .filter(p => myRefIds.has(String(p.user_telegram_id)))
-    .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
-}
-
-function calcReferralBalances(){
-  let pending = 0, approved = 0, paid = 0;
-  for (const p of ALL_MY_REF_PURCHASES){
-    const bonus = num(p.referral_bonus) || Math.round(num(p.purchase_price) * REFERRAL_PERCENT / 100);
-    const st = p.referral_status || 'pending';
-    if (p.status === 'rejected' || p.status === 'cancelled' || st === 'rejected') continue;
-    if (st === 'paid') paid += bonus;
-    else if (st === 'approved') approved += bonus;
-    else pending += bonus;
-  }
-  return { pending, approved, paid, total: pending + approved + paid };
+  var ids = {};
+  ALL_REFERRALS.forEach(function(r){ ids[String(r.telegram_id)] = 1; });
+  ALL_MY_REF_PURCHASES = toList(res[1])
+    .filter(function(p){ return ids[String(p.user_telegram_id)]; })
+    .sort(function(a, b){
+      return new Date(b.created_at||0) - new Date(a.created_at||0);
+    });
 }
 
 // ═══════════════════════════════════════════════════════════
-// ДЕЙСТВИЯ
+// 💰 РЕФ. БАЛАНС
+// ═══════════════════════════════════════════════════════════
+function calcRefBalance(){
+  var accrued = 0;     // начислено (approved + paid)
+  var paid = 0;        // выплачено
+  var pending = 0;     // ожидает подтверждения
+  var lastPaidAt = null;
+  var lastPaidAmount = 0;
+
+  for (var i = 0; i < ALL_MY_REF_PURCHASES.length; i++){
+    var p = ALL_MY_REF_PURCHASES[i];
+    if (['rejected','cancelled'].indexOf(p.status) >= 0) continue;
+    var bonus = num(p.referral_bonus) ||
+      Math.round(num(p.purchase_price) * REFERRAL_PERCENT / 100);
+    var st = p.referral_status || 'pending';
+    if (st === 'rejected') continue;
+
+    if (st === 'paid'){
+      accrued += bonus;
+      paid += bonus;
+      if (p.referral_paid_at && (!lastPaidAt || p.referral_paid_at > lastPaidAt)){
+        lastPaidAt = p.referral_paid_at;
+        lastPaidAmount = bonus;
+      }
+    } else if (st === 'approved'){
+      accrued += bonus;
+    } else {
+      pending += bonus;
+    }
+  }
+
+  var owed = Math.max(0, accrued - paid);
+
+  return {
+    accrued: accrued,
+    paid: paid,
+    pending: pending,
+    owed: owed,
+    lastPaidAt: lastPaidAt,
+    lastPaidAmount: lastPaidAmount
+  };
+}
+
+function renderRefHero(){
+  var b = calcRefBalance();
+  var isFullyPaid = b.owed <= 0 && b.paid > 0;
+  var hasNothing = b.owed <= 0 && b.paid === 0 && b.pending === 0;
+
+  if (hasNothing){
+    return '<div class="ref-hero">' +
+      '<div class="title"><span class="emo">💰</span> Реферальный баланс' +
+        '<span class="percent-badge">' + REFERRAL_PERCENT + '%</span></div>' +
+      '<div class="last-paid" style="text-align:center">' +
+        'Приглашайте друзей — получайте ' + REFERRAL_PERCENT + '% с каждой их покупки' +
+      '</div>' +
+    '</div>';
+  }
+
+  var heroCls = isFullyPaid ? 'ref-hero paid' : 'ref-hero';
+  var mainTitle = isFullyPaid ? '✅ Все бонусы выплачены' : '💰 Реферальный баланс';
+
+  var lastLine = '';
+  if (b.lastPaidAt){
+    lastLine = '<div class="last-paid">' +
+      'Последняя выплата: <b>' + fmt(b.lastPaidAmount) + '</b> · ' +
+      fmtDT(b.lastPaidAt) + ' <span style="opacity:.6">(Ташкент)</span>' +
+    '</div>';
+  }
+
+  return '<div class="' + heroCls + '">' +
+    '<div class="title">' +
+      '<span class="emo">' + (isFullyPaid ? '✅' : '💰') + '</span> ' + mainTitle +
+      '<span class="percent-badge">' + REFERRAL_PERCENT + '%</span>' +
+    '</div>' +
+
+    '<div class="ref-balances">' +
+      '<div class="ref-bal">' +
+        '<div class="l">К выводу</div>' +
+        '<div class="v ' + (b.owed > 0 ? 'pending' : 'zero') + '">' + fmt(b.owed) + '</div>' +
+      '</div>' +
+      '<div class="ref-bal">' +
+        '<div class="l">Начислено</div>' +
+        '<div class="v approved">' + fmt(b.accrued) + '</div>' +
+      '</div>' +
+      '<div class="ref-bal">' +
+        '<div class="l">Выплачено</div>' +
+        '<div class="v paid">' + fmt(b.paid) + '</div>' +
+      '</div>' +
+    '</div>' +
+
+    (b.pending > 0
+      ? '<div style="text-align:center;font-size:11.5px;color:var(--warn);margin-bottom:10px">' +
+          '⏳ На проверке: ' + fmt(b.pending) +
+        '</div>'
+      : '') +
+
+    lastLine +
+
+    '<div style="display:flex;gap:8px;margin-top:12px">' +
+      (b.owed >= 100
+        ? '<button class="btn ok sm" style="flex:1" onclick="requestRefPayout()">' +
+            '💸 Вывести ' + fmt(b.owed) + '</button>'
+        : b.owed > 0
+          ? '<button class="btn ghost sm" style="flex:1" disabled>' +
+              'Минимум 100 ₽</button>'
+          : '') +
+      '<button class="btn secondary sm" style="flex:1" onclick="openMyRefs()">' +
+        '👥 Рефералы (' + ALL_REFERRALS.length + ')</button>' +
+    '</div>' +
+  '</div>';
+}
+
+// ═══════════════════════════════════════════════════════════
+// ЗАЯВКА НА ВЫВОД РЕФ. БОНУСА
+// ═══════════════════════════════════════════════════════════
+window.requestRefPayout = function(){
+  return once('refPayout', async function(){
+    var b = calcRefBalance();
+    if (b.owed < 100) return toast('Минимум 100 ₽ для вывода', 'err');
+
+    // Проверяем активные заявки
+    var requests = await fbGet('ref_payout_requests') || {};
+    var mine = toList(requests).filter(function(r){
+      return String(r.user_telegram_id) === String(USER_UID);
+    });
+    var active = mine.filter(function(r){
+      return r.status === 'pending' || r.status === 'processing';
+    })[0];
+    if (active) return toast('У вас уже есть заявка #' + active.id, 'err');
+
+    if (!await ask('Подать заявку на вывод ' + fmt(b.owed) + '?')) return;
+
+    var cur = await fbGet('counters/ref_payout') || 0;
+    var rid = Number(cur) + 1;
+    await fbPut('counters/ref_payout', rid);
+
+    var now = new Date().toISOString();
+    await fbPost('ref_payout_requests', {
+      id: rid,
+      user_telegram_id: USER_UID,
+      user_username: ME.username || '',
+      user_first_name: ME.first_name || '',
+      amount: b.owed,
+      balance_before: b.owed,
+      status: 'pending',
+      requested_at: now
+    });
+
+    toast('✅ Заявка #' + rid + ' создана. Ждите админа.', 'ok', 4500);
+    haptic();
+    await reload();
+    render();
+  });
+};
+
+// ═══════════════════════════════════════════════════════════
+// РЕНДЕР ДЕЙСТВИЙ
 // ═══════════════════════════════════════════════════════════
 window.setTab = function(tab){
   CURRENT_TAB = tab;
-  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('#nav button').forEach(function(b){
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
   render();
 };
 
-window.buyEra = id => once('buy' + id, async () => {
-  const era = ERAS.find(e => String(e.id) === String(id));
-  if (!era) return;
-  if (!await ask(`Создать заявку на покупку?\n\n${era.title} — ${fmt(era.price)}`)) return;
-  const u = tgUser() || {};
-  const now = new Date().toISOString();
-  const nextId = await getNextId('purchase');
+window.buyEra = function(id){
+  return once('buy' + id, async function(){
+    var era = ERAS.filter(function(e){ return String(e.id) === String(id); })[0];
+    if (!era) return;
+    if (!await ask('Создать заявку на покупку?\n\n' + era.title + ' — ' + fmt(era.price))) return;
 
-  const meData = await fbGet(`users/${u.id}`).catch(() => null);
-  const referrerUid = meData && meData.referrer_uid ? String(meData.referrer_uid) : null;
+    var u = tgUser() || {};
+    var now = new Date().toISOString();
+    var nextId = await getNextId('purchase');
 
-  const referralBonus = referrerUid
-    ? Math.round(num(era.price) * REFERRAL_PERCENT / 100)
-    : 0;
+    var meData = await fbGet('users/' + u.id).catch(function(){ return null; });
+    var referrerUid = meData && meData.referrer_uid ? String(meData.referrer_uid) : null;
+    var refBonus = referrerUid
+      ? Math.round(num(era.price) * REFERRAL_PERCENT / 100)
+      : 0;
 
-  await fbPost('purchases', {
-    id: nextId,
-    user_telegram_id: u.id,
-    user_username: u.username || '',
-    user_first_name: u.first_name || '',
-    era_id: era.id,
-    era_title: era.title,
-    purchase_price: era.price,
-    profit_amount: era.profit_amount,
-    total_amount: era.total_amount,
-    duration_days: era.duration_days,
-    days: era.duration_days,
-    status: 'created',
-    created_at: now,
-    status_changed_at: now,
+    await fbPost('purchases', {
+      id: nextId,
+      user_telegram_id: u.id,
+      user_username: u.username || '',
+      user_first_name: u.first_name || '',
+      era_id: era.id,
+      era_title: era.title,
+      purchase_price: era.price,
+      profit_amount: era.profit_amount,
+      total_amount: era.total_amount,
+      duration_days: era.duration_days,
+      days: era.duration_days,
+      status: 'created',
+      created_at: now,
+      status_changed_at: now,
+      referrer_uid: referrerUid,
+      referral_percent: REFERRAL_PERCENT,
+      referral_bonus: refBonus,
+      referral_status: referrerUid ? 'pending' : null,
+      referral_paid_at: null
+    });
 
-    referrer_uid: referrerUid,
-    referral_percent: REFERRAL_PERCENT,
-    referral_bonus: referralBonus,
-    referral_status: referrerUid ? 'pending' : null,
-    referral_paid_at: null,
+    toast('✅ Заявка #' + nextId + ' создана', 'ok', 4500);
+    haptic();
+    await reload();
+    window.setTab('purchases');
   });
+};
 
-  toast(`✅ Заявка #${nextId} создана. Ждите связи админа.`, 'ok', 4500);
-  haptic();
-  await reload();
-  window.setTab('purchases');
-});
-
-window.requestPayout = pid => once('po' + pid, async () => {
-  if (!await ask('Подать заявку на вывод?')) return;
-  const p = PURCHASES.find(x => String(x.id) === String(pid));
-  if (!p) return;
-  const u = tgUser() || {};
-  const nextId = await getNextId('payout');
-  await fbPost('payouts', {
-    id: nextId,
-    purchase_id: p.id,
-    user_telegram_id: u.id,
-    user_username: u.username || '',
-    user_first_name: u.first_name || '',
-    era_title: p.era_title,
-    purchase_price: p.purchase_price,
-    amount: p.total_amount,
-    status: 'pending',
-    requested_at: new Date().toISOString(),
+window.requestPayout = function(pid){
+  return once('po' + pid, async function(){
+    if (!await ask('Подать заявку на вывод?')) return;
+    var p = PURCHASES.filter(function(x){ return String(x.id) === String(pid); })[0];
+    if (!p) return;
+    var u = tgUser() || {};
+    var nextId = await getNextId('payout');
+    await fbPost('payouts', {
+      id: nextId,
+      purchase_id: p.id,
+      user_telegram_id: u.id,
+      user_username: u.username || '',
+      user_first_name: u.first_name || '',
+      era_title: p.era_title,
+      purchase_price: p.purchase_price,
+      amount: p.total_amount,
+      status: 'pending',
+      requested_at: new Date().toISOString()
+    });
+    toast('✅ Заявка на вывод #' + nextId, 'ok', 4000);
+    haptic();
+    await reload();
+    render();
   });
-  toast(`✅ Заявка на вывод #${nextId} создана`, 'ok', 4000);
-  haptic();
-  await reload();
-  render();
-});
+};
 
 async function getNextId(counter){
-  const cur = await fbGet(`counters/${counter}`);
-  const nxt = (Number(cur) || 0) + 1;
-  await fbPut(`counters/${counter}`, nxt);
+  var cur = await fbGet('counters/' + counter);
+  var nxt = (Number(cur) || 0) + 1;
+  await fbPut('counters/' + counter, nxt);
   return nxt;
 }
 
 window.copyRef = function(){
   if (!ME) return;
-  const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${ME.telegram_id}`;
-  const ok = () => { toast('📋 Скопировано', 'ok'); haptic(); };
-  if (navigator.clipboard && navigator.clipboard.writeText)
-    navigator.clipboard.writeText(refLink).then(ok).catch(() => fallbackCopy(refLink, ok));
-  else fallbackCopy(refLink, ok);
+  var refLink = 'https://t.me/' + BOT_USERNAME + '?start=ref_' + ME.telegram_id;
+  var ok = function(){ toast('📋 Скопировано', 'ok'); haptic(); };
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(refLink).then(ok).catch(function(){ fallbackCopy(refLink, ok); });
+  } else {
+    fallbackCopy(refLink, ok);
+  }
 };
 function fallbackCopy(text, ok){
-  const ta = document.createElement('textarea');
-  ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
-  document.body.appendChild(ta); ta.select();
-  try { document.execCommand('copy'); ok(); } catch(e){ toast('Не удалось', 'err'); }
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;opacity:0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); ok(); }
+  catch(e){ toast('Не удалось', 'err'); }
   ta.remove();
 }
 
-window.closeModal = function(){ $('modal-root').innerHTML = ''; };
+window.closeModal = function(){
+  $('modal-root').innerHTML = '';
+  if (window._amtRes){ window._amtRes(null); window._amtRes = null; }
+};
 function showModal(html){
-  $('modal-root').innerHTML = `<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`;
+  $('modal-root').innerHTML = '<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="modal">' + html + '</div></div>';
 }
 
 window.openEraDetail = function(id){
-  const e = ERAS.find(x => String(x.id) === String(id));
+  var e = ERAS.filter(function(x){ return String(x.id) === String(id); })[0];
   if (!e) return;
-  const roi = e.price > 0 ? Math.round((e.profit_amount / e.price) * 100) : 0;
-  showModal(`
-    <div class="modal-head"><div><div class="muted-sm">ЭРА</div><h2>${esc(e.title)}</h2></div>
-      <button class="close-x" onclick="closeModal()">✕</button></div>
-    <div class="modal-body">
-      <p class="muted" style="margin-bottom:16px;line-height:1.6">${esc(e.description || '')}</p>
-      <div class="grid2" style="margin-bottom:14px">
-        <div class="stat"><div class="label">Стоимость</div><div class="value sm">${fmt(e.price)}</div></div>
-        <div class="stat"><div class="label">Начисление</div><div class="value sm ok">+${fmt(e.profit_amount)}</div></div>
-        <div class="stat"><div class="label">Итого</div><div class="value sm accent">${fmt(e.total_amount)}</div></div>
-        <div class="stat"><div class="label">ROI</div><div class="value sm ok">+${roi}%</div></div>
-      </div>
-      <div class="card2" style="margin-bottom:16px">
-        <div class="row"><span class="muted">Срок</span><b>${e.duration_days} дней</b></div>
-      </div>
-      <button class="btn" onclick="closeModal();buyEra(${q(e.id)})">🛒 Подать заявку</button>
-    </div>`);
+  var roi = e.price > 0 ? Math.round(e.profit_amount / e.price * 100) : 0;
+  showModal(
+    '<div class="modal-head"><div><div class="muted-sm">ЭРА</div><h2>' + esc(e.title) + '</h2></div>' +
+      '<button class="close-x" onclick="closeModal()">✕</button></div>' +
+    '<div class="modal-body">' +
+      '<p class="muted" style="margin-bottom:16px;line-height:1.6">' + esc(e.description || '') + '</p>' +
+      '<div class="grid2" style="margin-bottom:14px">' +
+        '<div class="stat"><div class="label">Стоимость</div><div class="value sm">' + fmt(e.price) + '</div></div>' +
+        '<div class="stat"><div class="label">Начисление</div><div class="value sm ok">+' + fmt(e.profit_amount) + '</div></div>' +
+        '<div class="stat"><div class="label">Итого</div><div class="value sm accent">' + fmt(e.total_amount) + '</div></div>' +
+        '<div class="stat"><div class="label">ROI</div><div class="value sm ok">+' + roi + '%</div></div>' +
+      '</div>' +
+      '<button class="btn" onclick="closeModal();buyEra(' + JSON.stringify(e.id) + ')">🛒 Подать заявку</button>' +
+    '</div>');
 };
 
 window.openContact = function(){
-  showModal(`
-    <div class="modal-head"><h2>💬 Связь</h2><button class="close-x" onclick="closeModal()">✕</button></div>
-    <div class="modal-body">
-      <a class="contact-btn" href="https://t.me/${esc(ADMIN_USERNAME)}" target="_blank">
-        <div class="emo">👨‍💼</div><div class="info"><div class="t">Администратор</div><div class="s">@${esc(ADMIN_USERNAME)}</div></div>
-        <div style="color:var(--muted)">→</div></a>
-      <a class="contact-btn" href="https://t.me/${esc(BOT_USERNAME)}" target="_blank">
-        <div class="emo">🤖</div><div class="info"><div class="t">Бот проекта</div><div class="s">@${esc(BOT_USERNAME)}</div></div>
-        <div style="color:var(--muted)">→</div></a>
-    </div>`);
+  showModal(
+    '<div class="modal-head"><h2>💬 Связь</h2><button class="close-x" onclick="closeModal()">✕</button></div>' +
+    '<div class="modal-body">' +
+      '<a class="menu-item" href="https://t.me/' + esc(ADMIN_USERNAME) + '" target="_blank" style="text-decoration:none;color:inherit">' +
+        '<div class="left"><div class="emo">👨‍💼</div><div><div style="font-weight:600">Администратор</div><div class="muted-sm">@' + esc(ADMIN_USERNAME) + '</div></div></div>' +
+        '<div style="color:var(--muted)">→</div></a>' +
+      '<a class="menu-item" href="https://t.me/' + esc(BOT_USERNAME) + '" target="_blank" style="text-decoration:none;color:inherit">' +
+        '<div class="left"><div class="emo">🤖</div><div><div style="font-weight:600">Бот проекта</div><div class="muted-sm">@' + esc(BOT_USERNAME) + '</div></div></div>' +
+        '<div style="color:var(--muted)">→</div></a>' +
+    '</div>');
 };
 
-// 🏆 Топ пользователей — заглушка
-window.openTopUsers = function(){
-  closeModal();
-  showModal(`
-    <div class="modal-head"><h2>🏆 Топ пользователей</h2>
-      <button class="close-x" onclick="closeModal()">✕</button></div>
-    <div class="modal-body">
-      <div class="soon">
-        <div class="emo">🚧</div>
-        <h2>Секция в разработке</h2>
-        <p>Совсем скоро здесь появится рейтинг лучших пользователей. <span class="spark">Скоро заработает!</span></p>
-      </div>
-    </div>`);
-  haptic('warning');
-};
+window.openMyRefs = function(){
+  var refLink = 'https://t.me/' + BOT_USERNAME + '?start=ref_' + ME.telegram_id;
+  var purchasesByRef = {};
+  ALL_MY_REF_PURCHASES.forEach(function(p){
+    var rid = String(p.user_telegram_id);
+    if (!purchasesByRef[rid]) purchasesByRef[rid] = [];
+    purchasesByRef[rid].push(p);
+  });
 
-window.openMyRefs = async function(){
-  try {
-    await loadMyReferrals();
-    const mine = ALL_REFERRALS;
-    const balances = calcReferralBalances();
-    const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${ME.telegram_id}`;
-
-    const purchasesByRef = {};
-    for (const p of ALL_MY_REF_PURCHASES){
-      const rid = String(p.user_telegram_id);
-      if (!purchasesByRef[rid]) purchasesByRef[rid] = [];
-      purchasesByRef[rid].push(p);
+  var items = ALL_REFERRALS.length ? ALL_REFERRALS.map(function(r){
+    var rp = purchasesByRef[String(r.telegram_id)] || [];
+    var totalSum = 0, totalBonus = 0, paid = 0, pending = 0, approved = 0;
+    rp.forEach(function(p){
+      if (['rejected','cancelled'].indexOf(p.status) >= 0) return;
+      var price = num(p.purchase_price);
+      var b = num(p.referral_bonus) || Math.round(price * REFERRAL_PERCENT / 100);
+      var st = p.referral_status || 'pending';
+      if (st === 'rejected') return;
+      totalSum += price;
+      totalBonus += b;
+      if (st === 'paid') paid += b;
+      else if (st === 'approved') approved += b;
+      else pending += b;
+    });
+    var chips = [];
+    if (rp.length === 0) chips.push('<span class="ref-chip info">🕓 Пока без покупок</span>');
+    else {
+      if (pending > 0)  chips.push('<span class="ref-chip warn">⏳ ' + fmt(pending) + '</span>');
+      if (approved > 0) chips.push('<span class="ref-chip ok">✅ ' + fmt(approved) + '</span>');
+      if (paid > 0)     chips.push('<span class="ref-chip purple">💸 ' + fmt(paid) + '</span>');
     }
+    return '<div class="ref-item">' +
+      '<div class="head">' +
+        '<div class="name">' + esc(r.first_name || 'Пользователь') + '</div>' +
+        '<div class="date">' + fmtDate(r.registered_at) + '</div>' +
+      '</div>' +
+      '<div class="meta">@' + esc(r.username || '—') + ' · ID ' + esc(r.telegram_id) + '</div>' +
+      (rp.length ? '<div class="meta">🛒 Покупок: <b>' + rp.length + '</b> · на ' + fmt(totalSum) + '</div>' : '') +
+      '<div class="stat-row">' + chips.join('') + '</div>' +
+    '</div>';
+  }).join('') : '<div class="empty"><div class="icon">👥</div><p>Пока никого нет</p></div>';
 
-    const refItemsHtml = mine.length ? mine.map(r => {
-      const myPurchases = purchasesByRef[String(r.telegram_id)] || [];
-      let totalPurchase = 0, totalBonus = 0, approvedBonus = 0, paidBonus = 0, pendingBonus = 0;
-      for (const p of myPurchases){
-        if (p.status === 'rejected' || p.status === 'cancelled') continue;
-        const price = num(p.purchase_price);
-        const bonus = num(p.referral_bonus) || Math.round(price * REFERRAL_PERCENT / 100);
-        const st = p.referral_status || 'pending';
-        if (st === 'rejected') continue;
-        totalPurchase += price;
-        totalBonus += bonus;
-        if (st === 'paid') paidBonus += bonus;
-        else if (st === 'approved') approvedBonus += bonus;
-        else pendingBonus += bonus;
-      }
+  var b = calcRefBalance();
 
-      const chips = [];
-      if (myPurchases.length === 0){
-        chips.push(`<span class="ref-chip info">🕓 Пока без покупок</span>`);
-      } else {
-        if (pendingBonus > 0)  chips.push(`<span class="ref-chip warn">⏳ Ожидает ${fmt(pendingBonus)}</span>`);
-        if (approvedBonus > 0) chips.push(`<span class="ref-chip ok">✅ Начислено ${fmt(approvedBonus)}</span>`);
-        if (paidBonus > 0)     chips.push(`<span class="ref-chip info">💸 Выплачено ${fmt(paidBonus)}</span>`);
-      }
+  showModal(
+    '<div class="modal-head"><h2>👥 Рефералы (' + ALL_REFERRALS.length + ')</h2>' +
+      '<button class="close-x" onclick="closeModal()">✕</button></div>' +
+    '<div class="modal-body">' +
 
-      return `
-        <div class="ref-item">
-          <div class="head">
-            <div class="name">${esc(r.first_name || 'Пользователь')}</div>
-            <div class="date">${fmtDate(r.registered_at)}</div>
-          </div>
-          <div class="meta">@${esc(r.username || '—')} · ID ${esc(r.telegram_id)}</div>
-          ${myPurchases.length ? `<div class="meta" style="margin-bottom:6px">🛒 Покупок: <b>${myPurchases.length}</b> · на сумму <b>${fmt(totalPurchase)}</b></div>` : ''}
-          <div class="stat-row">${chips.join('')}</div>
-        </div>
-      `;
-    }).join('') : '<div class="empty"><div class="icon">👥</div><p>Пока никого нет</p></div>';
+      '<div class="ref-hero">' +
+        '<div class="title"><span class="emo">💰</span> Ваш баланс' +
+          '<span class="percent-badge">' + REFERRAL_PERCENT + '%</span></div>' +
+        '<div class="ref-balances">' +
+          '<div class="ref-bal"><div class="l">К выводу</div>' +
+            '<div class="v ' + (b.owed > 0 ? 'pending' : 'zero') + '">' + fmt(b.owed) + '</div></div>' +
+          '<div class="ref-bal"><div class="l">Начислено</div>' +
+            '<div class="v approved">' + fmt(b.accrued) + '</div></div>' +
+          '<div class="ref-bal"><div class="l">Выплачено</div>' +
+            '<div class="v paid">' + fmt(b.paid) + '</div></div>' +
+        '</div>' +
+      '</div>' +
 
-    showModal(`
-      <div class="modal-head"><h2>👥 Мои рефералы (${mine.length})</h2>
-        <button class="close-x" onclick="closeModal()">✕</button></div>
-      <div class="modal-body">
+      '<div class="card2" style="margin-bottom:14px">' +
+        '<div class="muted-sm" style="margin-bottom:6px">Ваша реферальная ссылка:</div>' +
+        '<div class="ref-box">' + esc(refLink) + '</div>' +
+        '<button class="btn secondary sm" style="margin-top:10px;width:100%" onclick="copyRef()">📋 Скопировать</button>' +
+      '</div>' +
 
-        <div class="ref-hero">
-          <div class="title">
-            <span class="emo">💰</span> Реферальный баланс
-            <span class="percent-badge">${REFERRAL_PERCENT}% с покупок</span>
-          </div>
-          <div class="ref-balances">
-            <div class="ref-bal">
-              <div class="l">Ожидает</div>
-              <div class="v pending">${fmt(balances.pending)}</div>
-            </div>
-            <div class="ref-bal">
-              <div class="l">Начислено</div>
-              <div class="v approved">${fmt(balances.approved)}</div>
-            </div>
-            <div class="ref-bal">
-              <div class="l">Выплачено</div>
-              <div class="v paid">${fmt(balances.paid)}</div>
-            </div>
-          </div>
-          <div class="card2" style="background:rgba(0,0,0,.25)">
-            <div class="muted-sm" style="margin-bottom:6px">Реферальная ссылка:</div>
-            <div class="ref-box" style="background:rgba(0,0,0,.35)">${esc(refLink)}</div>
-            <button class="btn secondary sm" style="margin-top:10px;width:100%" onclick="copyRef()">📋 Скопировать</button>
-          </div>
-        </div>
-
-        <div class="muted-sm" style="margin-bottom:8px;text-align:center">
-          <i>Вы получаете ${REFERRAL_PERCENT}% от суммы покупки каждого реферала</i>
-        </div>
-
-        ${refItemsHtml}
-      </div>`);
-  } catch(e){ toast(e.message, 'err'); }
+      items +
+    '</div>');
 };
 
 // ═══════════════════════════════════════════════════════════
-// РЕНДЕР
+// РЕНДЕР ЭКРАНОВ
 // ═══════════════════════════════════════════════════════════
 function skeleton(){
-  return '<div class="skel" style="height:56px"></div><div class="skel" style="height:110px"></div>' +
+  return '<div class="skel" style="height:56px"></div>' +
+    '<div class="skel" style="height:110px"></div>' +
     '<div class="skel" style="height:150px"></div>';
 }
 function setApp(html){
   $('app').innerHTML = html;
   $('nav').classList.remove('hidden');
 }
+
 function screenNoTg(){
   $('nav').classList.add('hidden');
-  $('app').innerHTML = `
-    <div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div></div>
-    <div class="hero center" style="padding:36px 20px">
-      <div style="font-size:56px;margin-bottom:8px">✨</div>
-      <h1 style="font-size:26px;margin-bottom:6px">Проект «Эры»</h1>
-      <div class="muted">Откройте через Telegram-бота</div>
-    </div>
-    <div class="card center">
-      <p class="muted">Нажмите кнопку в боте @${esc(BOT_USERNAME)}</p>
-      <a class="btn" href="https://t.me/${esc(BOT_USERNAME)}" style="margin-top:12px">🚀 Открыть бота</a>
-    </div>`;
+  $('app').innerHTML =
+    '<div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div></div>' +
+    '<div class="hero center" style="padding:36px 20px">' +
+      '<div style="font-size:56px;margin-bottom:8px">✨</div>' +
+      '<h1 style="font-size:26px;margin-bottom:6px">Проект «Эры»</h1>' +
+      '<div class="muted">Откройте через Telegram-бота</div>' +
+    '</div>' +
+    '<div class="card center">' +
+      '<p class="muted">Нажмите кнопку в боте @' + esc(BOT_USERNAME) + '</p>' +
+      '<a class="btn" href="https://t.me/' + esc(BOT_USERNAME) + '" style="margin-top:12px">🚀 Открыть бота</a>' +
+    '</div>';
 }
 
 function drawHome(){
-  const me = ME || {}, P = PURCHASES, u = tgUser() || {};
-  const active = P.filter(p => ['created','in_progress','approved'].includes(p.status));
-  const completed = P.filter(p => p.status === 'completed');
-  const invested = P.filter(p => p.status !== 'cancelled').reduce((s, p) => s + num(p.purchase_price), 0);
-  const available = completed.reduce((s, p) => s + num(p.total_amount), 0);
-  const name = me.first_name || u.first_name || me.username || 'друг';
-  const photo = me.photo_url || u.photo_url || '';
-  const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${me.telegram_id || ''}`;
+  var me = ME || {}, P = PURCHASES, u = tgUser() || {};
+  var active = P.filter(function(p){ return ['created','in_progress','approved'].indexOf(p.status) >= 0; });
+  var completed = P.filter(function(p){ return p.status === 'completed'; });
+  var invested = P.filter(function(p){ return p.status !== 'cancelled'; })
+    .reduce(function(s,p){ return s + num(p.purchase_price); }, 0);
+  var available = completed.reduce(function(s,p){ return s + num(p.total_amount); }, 0);
+  var name = me.first_name || u.first_name || me.username || 'друг';
+  var photo = me.photo_url || u.photo_url || '';
+  var refLink = 'https://t.me/' + BOT_USERNAME + '?start=ref_' + (me.telegram_id || '');
 
-  const balances = calcReferralBalances();
-  const refCount = ALL_REFERRALS.length;
+  setApp(
+    '<div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div>' +
+      '<div style="display:flex;gap:8px">' +
+        '<button class="icon-btn" onclick="refresh()">🔄</button>' +
+      '</div></div>' +
 
-  setApp(`
-    <div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div>
-      <div class="actions"><button class="icon-btn" onclick="refresh()">🔄</button></div></div>
-    <div class="hero"><div class="row">
-      <div class="user">
-        <div class="avatar">${photo ? `<img src="${esc(photo)}" alt="">` : esc((name[0] || '?').toUpperCase())}</div>
-        <div class="info"><div class="muted-sm">Привет 👋</div><h1>${esc(name)}</h1>
-          ${me.username ? `<div class="sub">@${esc(me.username)}</div>` : ''}</div>
-      </div>
-    </div></div>
-    <div class="stats">
-      <div class="stat"><div class="label">Инвестировано</div><div class="value sm accent">${fmt(invested)}</div></div>
-      <div class="stat"><div class="label">Активных</div><div class="value">${active.length}</div></div>
-      <div class="stat"><div class="label">Завершено</div><div class="value">${completed.length}</div></div>
-      <div class="stat"><div class="label">К выводу</div><div class="value sm ${available > 0 ? 'ok' : ''}">${fmt(available)}</div></div>
-    </div>
+    '<div class="hero"><div class="row">' +
+      '<div class="user">' +
+        '<div class="avatar">' + (photo ? '<img src="' + esc(photo) + '" alt="">' : esc((name[0] || '?').toUpperCase())) + '</div>' +
+        '<div class="info"><div class="muted-sm">Привет 👋</div><h1>' + esc(name) + '</h1>' +
+          (me.username ? '<div class="sub">@' + esc(me.username) + '</div>' : '') +
+        '</div>' +
+      '</div>' +
+    '</div></div>' +
 
-    <div class="ref-hero">
-      <div class="title">
-        <span class="emo">💰</span> Рефералы
-        <span class="percent-badge">${REFERRAL_PERCENT}%</span>
-      </div>
-      <div class="ref-balances">
-        <div class="ref-bal">
-          <div class="l">Рефералов</div>
-          <div class="v">${refCount}</div>
-        </div>
-        <div class="ref-bal">
-          <div class="l">Ожидает</div>
-          <div class="v pending">${fmt(balances.pending)}</div>
-        </div>
-        <div class="ref-bal">
-          <div class="l">Начислено</div>
-          <div class="v approved">${fmt(balances.approved)}</div>
-        </div>
-      </div>
-      <div class="card2" style="background:rgba(0,0,0,.25);margin-bottom:10px">
-        <div class="muted-sm" style="margin-bottom:6px">Ваша ссылка:</div>
-        <div class="ref-box" style="background:rgba(0,0,0,.35);font-size:12px">${esc(refLink)}</div>
-      </div>
-      <div style="display:flex;gap:8px">
-        <button class="btn secondary sm" style="flex:1" onclick="copyRef()">📋 Копировать</button>
-        <button class="btn sm" style="flex:1" onclick="openMyRefs()">👥 Мои рефералы</button>
-      </div>
-    </div>
+    '<div class="stats">' +
+      '<div class="stat"><div class="label">Инвестировано</div><div class="value sm accent">' + fmt(invested) + '</div></div>' +
+      '<div class="stat"><div class="label">Активных</div><div class="value">' + active.length + '</div></div>' +
+      '<div class="stat"><div class="label">Завершено</div><div class="value">' + completed.length + '</div></div>' +
+      '<div class="stat"><div class="label">К выводу</div><div class="value sm ' + (available > 0 ? 'ok' : '') + '">' + fmt(available) + '</div></div>' +
+    '</div>' +
 
-    <div class="section-title"><h2>Мои заявки</h2>
-      ${P.length ? `<button class="btn ghost xs" onclick="setTab('purchases')">Все →</button>` : ''}</div>
-    ${P.length ? P.slice(0, 3).map(eraCardPurchase).join('') : `
-      <div class="card empty"><div class="icon">🌱</div><h3>Пока нет заявок</h3>
-        <p class="muted" style="margin-bottom:16px">Выберите эру и начните</p>
-        <button class="btn" style="max-width:240px;margin:0 auto" onclick="setTab('buy')">🛒 Открыть каталог</button></div>`}
-  `);
+    renderRefHero() +
+
+    '<div class="section-title"><h2>Мои заявки</h2>' +
+      (P.length ? '<button class="btn ghost xs" onclick="setTab(\'purchases\')">Все →</button>' : '') +
+    '</div>' +
+
+    (P.length ? P.slice(0, 3).map(eraCardPurchase).join('')
+      : '<div class="card empty"><div class="icon">🌱</div><h3>Пока нет заявок</h3>' +
+        '<p class="muted" style="margin-bottom:16px">Выберите эру и начните</p>' +
+        '<button class="btn" style="max-width:240px;margin:0 auto" onclick="setTab(\'buy\')">🛒 Открыть каталог</button></div>')
+  );
 }
 
 function eraCardPurchase(p){
-  const cls = dayCls(p);
-  const prog = progressOf(p);
-  const showProgress = p.status === 'approved';
-  const canW = canWithdraw(p);
-
-  const ms = msLeft(p);
-  const timerId = `timer-${p.id}`;
-  const timerHtml = (p.status === 'approved' && ms != null && ms > 0)
-    ? `<div class="timer-live ${cls}" id="${timerId}" data-expires="${esc(p.expires_at)}">${fmtCountdown(ms)}</div>`
+  var cls = dayCls(p);
+  var prog = progressOf(p);
+  var showProgress = p.status === 'approved';
+  var canW = canWithdraw(p);
+  var ms = msLeft(p);
+  var timerId = 'timer-' + p.id;
+  var timerHtml = (p.status === 'approved' && ms != null && ms > 0)
+    ? '<div class="timer-live ' + cls + '" id="' + timerId + '" data-expires="' + esc(p.expires_at) + '">' + fmtCountdown(ms) + '</div>'
     : '';
 
-  return `
-    <div class="era-card" data-pid="${esc(p.id)}">
-      <div class="head">
-        <div class="order-num">📩 Заявка #${esc(p.id)}</div>
-        <div class="row">
-          <div class="title-wrap"><div class="icon">🌿</div>
-            <div style="min-width:0"><div class="name">${esc(p.era_title)}</div>
-              <div class="tier">${num(p.duration_days)} дней</div></div></div>
-          <span class="badge ${esc(p.status)}">${esc(statusLabel(p.status))}</span>
-        </div>
-      </div>
-      <div class="body">
-        <div class="metrics">
-          <div class="metric"><div class="l">Вложено</div><div class="v">${fmt(p.purchase_price)}</div></div>
-          <div class="metric"><div class="l">Начисл.</div><div class="v profit">+${fmt(p.profit_amount)}</div></div>
-          <div class="metric"><div class="l">Итого</div><div class="v total">${fmt(p.total_amount)}</div></div>
-        </div>
-
-        ${timerHtml}
-
-        <div style="text-align:center;margin-top:10px">
-          <span class="days-left ${cls}" id="label-${esc(p.id)}">${esc(dayLabel(p))}</span>
-        </div>
-
-        ${showProgress ? `<div class="progress" style="margin-top:12px">
-          <div class="fill ${cls}" id="prog-${esc(p.id)}" style="width:${prog}%"></div>
-        </div>` : ''}
-
-        <div class="muted-sm" style="margin-top:12px;line-height:1.8">
-          🕐 <b>Куплено:</b> ${fmtDT(p.created_at)} <span style="opacity:.6">(Ташкент)</span>
-          ${p.approved_at ? `<br>✅ <b>Одобрено:</b> ${fmtDT(p.approved_at)}` : ''}
-          ${p.start_date ? `<br>📅 <b>Начало:</b> ${fmtDate(p.start_date)}` : ''}
-          ${p.last_day ? ` · 🏁 <b>Последний:</b> ${fmtDate(p.last_day)}` : ''}
-          ${p.expires_at ? `<br>⏰ <b>Истекает:</b> ${fmtDT(p.expires_at)}` : ''}
-          ${p.completed_at ? `<br>🏁 <b>Завершено:</b> ${fmtDT(p.completed_at)}` : ''}
-        </div>
-      </div>
-      ${canW ? `<div class="actions">
-        <button class="btn success" onclick="requestPayout(${q(p.id)})">💸 Подать заявку на вывод</button>
-      </div>` : ''}
-    </div>`;
+  return '<div class="era-card" data-pid="' + esc(p.id) + '">' +
+    '<div class="head">' +
+      '<div class="order-num">📩 Заявка #' + esc(p.id) + '</div>' +
+      '<div class="row">' +
+        '<div class="title-wrap"><div class="icon">🌿</div>' +
+          '<div style="min-width:0"><div class="name">' + esc(p.era_title) + '</div>' +
+            '<div class="tier">' + num(p.duration_days) + ' дней</div></div></div>' +
+        '<span class="badge ' + esc(p.status) + '">' + esc(statusLabel(p.status)) + '</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="body">' +
+      '<div class="metrics">' +
+        '<div class="metric"><div class="l">Вложено</div><div class="v">' + fmt(p.purchase_price) + '</div></div>' +
+        '<div class="metric"><div class="l">Начисл.</div><div class="v profit">+' + fmt(p.profit_amount) + '</div></div>' +
+        '<div class="metric"><div class="l">Итого</div><div class="v total">' + fmt(p.total_amount) + '</div></div>' +
+      '</div>' +
+      timerHtml +
+      '<div style="text-align:center;margin-top:10px">' +
+        '<span class="days-left ' + cls + '" id="label-' + esc(p.id) + '">' + esc(dayLabel(p)) + '</span>' +
+      '</div>' +
+      (showProgress
+        ? '<div class="progress" style="margin-top:12px">' +
+            '<div class="fill ' + cls + '" id="prog-' + esc(p.id) + '" style="width:' + prog + '%"></div>' +
+          '</div>'
+        : '') +
+      '<div class="muted-sm" style="margin-top:12px;line-height:1.8">' +
+        '🕐 <b>Куплено:</b> ' + fmtDT(p.created_at) + ' <span style="opacity:.6">(Ташкент)</span>' +
+        (p.approved_at ? '<br>✅ <b>Одобрено:</b> ' + fmtDT(p.approved_at) : '') +
+        (p.start_date ? '<br>📅 <b>Начало:</b> ' + fmtDate(p.start_date) : '') +
+        (p.last_day ? ' · 🏁 <b>Последний:</b> ' + fmtDate(p.last_day) : '') +
+        (p.expires_at ? '<br>⏰ <b>Истекает:</b> ' + fmtDT(p.expires_at) : '') +
+        (p.completed_at ? '<br>🏁 <b>Завершено:</b> ' + fmtDT(p.completed_at) : '') +
+      '</div>' +
+    '</div>' +
+    (canW
+      ? '<div class="actions">' +
+          '<button class="btn ok" onclick="requestPayout(' + JSON.stringify(p.id) + ')">💸 Вывести ' + fmt(p.total_amount) + '</button>' +
+        '</div>'
+      : '') +
+  '</div>';
 }
 
 function drawBuy(){
-  const chips = [['all','Все'],['starter','⚡ Старт'],['middle','🚀 Бизнес'],['premium','💎 Premium']];
-  setApp(`
-    <div class="topbar"><div class="brand"><div class="logo">🛒</div>Каталог</div>
-      <div class="actions"><span class="muted-sm">${ERAS.length} эр</span></div></div>
-    <div class="searchbar"><input class="search-input" placeholder="🔍 Поиск…" value="${esc(shopSearch)}"
-      oninput="shopSearch=this.value;fillShop()"></div>
-    <div class="filters">${chips.map(([k, l]) =>
-      `<button class="chip ${shopFilter === k ? 'active' : ''}" onclick="shopFilter='${k}';drawBuy()">${l}</button>`).join('')}</div>
-    <div id="shopList"></div>`);
+  var chips = [['all','Все'],['starter','⚡ Старт'],['middle','🚀 Бизнес'],['premium','💎 Premium']];
+  setApp(
+    '<div class="topbar"><div class="brand"><div class="logo">🛒</div>Каталог</div>' +
+      '<div><span class="muted-sm">' + ERAS.length + ' эр</span></div></div>' +
+    '<div class="searchbar"><input class="search-input" placeholder="🔍 Поиск…" value="' + esc(shopSearch) + '" oninput="shopSearch=this.value;fillShop()"></div>' +
+    '<div class="filters">' + chips.map(function(c){
+      return '<button class="chip ' + (shopFilter === c[0] ? 'active' : '') + '" onclick="shopFilter=\'' + c[0] + '\';drawBuy()">' + c[1] + '</button>';
+    }).join('') + '</div>' +
+    '<div id="shopList"></div>');
   fillShop();
 }
-window.drawBuy = drawBuy;
 
 function fillShop(){
-  const box = $('shopList'); if (!box) return;
-  let list = ERAS.slice();
-  const s = shopSearch.trim().toLowerCase();
-  if (s) list = list.filter(e => String(e.title || '').toLowerCase().includes(s) || String(e.description || '').toLowerCase().includes(s));
-  if (shopFilter === 'starter') list = list.filter(e => e.price < 5000);
-  if (shopFilter === 'middle') list = list.filter(e => e.price >= 5000 && e.price < 15000);
-  if (shopFilter === 'premium') list = list.filter(e => e.price >= 15000);
-  box.innerHTML = list.length ? list.map(eraCardShop).join('') :
-    `<div class="card empty"><div class="icon">📦</div><h3>${ERAS.length ? 'Ничего не найдено' : 'Товаров пока нет'}</h3></div>`;
+  var box = $('shopList');
+  if (!box) return;
+  var list = ERAS.slice();
+  var s = shopSearch.trim().toLowerCase();
+  if (s) list = list.filter(function(e){
+    return String(e.title || '').toLowerCase().indexOf(s) >= 0 ||
+      String(e.description || '').toLowerCase().indexOf(s) >= 0;
+  });
+  if (shopFilter === 'starter') list = list.filter(function(e){ return e.price < 5000; });
+  if (shopFilter === 'middle') list = list.filter(function(e){ return e.price >= 5000 && e.price < 15000; });
+  if (shopFilter === 'premium') list = list.filter(function(e){ return e.price >= 15000; });
+  box.innerHTML = list.length ? list.map(eraCardShop).join('')
+    : '<div class="card empty"><div class="icon">📦</div><h3>' +
+      (ERAS.length ? 'Ничего не найдено' : 'Товаров пока нет') + '</h3></div>';
 }
 
 function eraCardShop(e){
-  const roi = e.price > 0 ? Math.round((e.profit_amount / e.price) * 100) : 0;
-  return `
-    <div class="era-card">
-      <div class="head"><div class="title-wrap"><div class="icon">⚡</div>
-        <div style="min-width:0"><div class="name">${esc(e.title)}</div>
-          <div class="tier">Срок ${e.duration_days} дней · +${roi}% ROI</div></div></div></div>
-      <div class="body">
-        ${e.description ? `<div class="desc">${esc(e.description)}</div>` : ''}
-        <div class="metrics">
-          <div class="metric"><div class="l">Стоимость</div><div class="v">${fmt(e.price)}</div></div>
-          <div class="metric"><div class="l">Начисление</div><div class="v profit">+${fmt(e.profit_amount)}</div></div>
-          <div class="metric"><div class="l">Итого</div><div class="v total">${fmt(e.total_amount)}</div></div>
-        </div>
-      </div>
-      <div class="actions">
-        <button class="btn secondary" onclick="openEraDetail(${q(e.id)})">Подробнее</button>
-        <button class="btn" onclick="buyEra(${q(e.id)})">Купить</button>
-      </div>
-    </div>`;
+  var roi = e.price > 0 ? Math.round(e.profit_amount / e.price * 100) : 0;
+  return '<div class="era-card">' +
+    '<div class="head"><div class="title-wrap"><div class="icon">⚡</div>' +
+      '<div style="min-width:0"><div class="name">' + esc(e.title) + '</div>' +
+        '<div class="tier">Срок ' + e.duration_days + ' дней · +' + roi + '% ROI</div></div></div></div>' +
+    '<div class="body">' +
+      (e.description ? '<div class="desc">' + esc(e.description) + '</div>' : '') +
+      '<div class="metrics">' +
+        '<div class="metric"><div class="l">Стоимость</div><div class="v">' + fmt(e.price) + '</div></div>' +
+        '<div class="metric"><div class="l">Начисл.</div><div class="v profit">+' + fmt(e.profit_amount) + '</div></div>' +
+        '<div class="metric"><div class="l">Итого</div><div class="v total">' + fmt(e.total_amount) + '</div></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="actions">' +
+      '<button class="btn secondary" onclick="openEraDetail(' + JSON.stringify(e.id) + ')">Подробнее</button>' +
+      '<button class="btn" onclick="buyEra(' + JSON.stringify(e.id) + ')">Купить</button>' +
+    '</div>' +
+  '</div>';
 }
 
 function drawPurchases(){
-  setApp(`
-    <div class="topbar"><div class="brand"><div class="logo">📦</div>Мои покупки</div>
-      <div class="actions"><button class="icon-btn" onclick="refresh()">🔄</button></div></div>
-    ${PURCHASES.length ? PURCHASES.map(eraCardPurchase).join('') : `
-      <div class="card empty"><div class="icon">📦</div><h3>Покупок пока нет</h3>
-        <button class="btn" style="max-width:240px;margin:16px auto 0" onclick="setTab('buy')">🛒 В Каталог </button></div>`}
-    ${PAYOUTS.length ? `
-      <div class="section-title"><h2>Заявки на вывод</h2></div>
-      ${PAYOUTS.map(payoutCard).join('')}` : ''}
-  `);
+  setApp(
+    '<div class="topbar"><div class="brand"><div class="logo">📦</div>Мои покупки</div>' +
+      '<div><button class="icon-btn" onclick="refresh()">🔄</button></div></div>' +
+    (PURCHASES.length ? PURCHASES.map(eraCardPurchase).join('')
+      : '<div class="card empty"><div class="icon">📦</div><h3>Покупок пока нет</h3>' +
+        '<button class="btn" style="max-width:240px;margin:16px auto 0" onclick="setTab(\'buy\')">🛒 В Каталог</button></div>') +
+    (PAYOUTS.length
+      ? '<div class="section-title"><h2>Заявки на вывод</h2></div>' +
+        PAYOUTS.map(payoutCard).join('')
+      : '')
+  );
 }
 
 function payoutCard(po){
-  return `
-    <div class="era-card">
-      <div class="head">
-        <div class="order-num">📤 Вывод #${esc(po.id)}</div>
-        <div class="row">
-          <div class="title-wrap"><div class="icon">💸</div>
-            <div><div class="name">${esc(po.era_title || '—')}</div>
-              <div class="tier">от заявки #${esc(po.purchase_id)}</div></div></div>
-          <span class="badge ${esc(po.status)}">${esc(statusLabel(po.status))}</span>
-        </div>
-      </div>
-      <div class="body">
-        <div class="row"><span class="muted">Сумма</span><b style="color:var(--ok)">${fmt(po.amount)}</b></div>
-        <div class="muted-sm" style="margin-top:8px">
-          🕐 ${fmtDT(po.requested_at)}${po.paid_at ? ' · ✅ ' + fmtDT(po.paid_at) : ''}
-          <span style="opacity:.6">(Ташкент)</span>
-        </div>
-      </div>
-    </div>`;
+  return '<div class="era-card">' +
+    '<div class="head">' +
+      '<div class="order-num">📤 Вывод #' + esc(po.id) + '</div>' +
+      '<div class="row">' +
+        '<div class="title-wrap"><div class="icon">💸</div>' +
+          '<div><div class="name">' + esc(po.era_title || '—') + '</div>' +
+            '<div class="tier">от заявки #' + esc(po.purchase_id) + '</div></div></div>' +
+        '<span class="badge ' + esc(po.status) + '">' + esc(statusLabel(po.status)) + '</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="body">' +
+      '<div class="row"><span class="muted">Сумма</span>' +
+        '<b style="color:var(--ok)">' + fmt(po.amount) + '</b></div>' +
+      '<div class="muted-sm" style="margin-top:8px">' +
+        '🕐 ' + fmtDT(po.requested_at) +
+        (po.paid_at ? ' · ✅ ' + fmtDT(po.paid_at) : '') +
+        ' <span style="opacity:.6">(Ташкент)</span>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
 }
 
 function drawProfile(){
-  const me = ME || {}, u = tgUser() || {};
-  const name = me.first_name || u.first_name || me.username || 'Пользователь';
-  const photo = me.photo_url || u.photo_url || '';
-  const item = (emo, label, fn) => `<div class="menu-item" onclick="${fn}"><div class="left"><div class="emo">${emo}</div><div>${label}</div></div><div style="color:var(--muted)">→</div></div>`;
+  var me = ME || {}, u = tgUser() || {};
+  var name = me.first_name || u.first_name || me.username || 'Пользователь';
+  var photo = me.photo_url || u.photo_url || '';
+  var item = function(emo, label, fn){
+    return '<div class="menu-item" onclick="' + fn + '">' +
+      '<div class="left"><div class="emo">' + emo + '</div><div>' + label + '</div></div>' +
+      '<div style="color:var(--muted)">→</div></div>';
+  };
 
-  const balances = calcReferralBalances();
+  setApp(
+    '<div class="topbar"><div class="brand"><div class="logo">👤</div>Профиль</div></div>' +
+    '<div class="hero center" style="padding:24px 20px">' +
+      '<div class="avatar lg" style="margin:0 auto 12px">' +
+        (photo ? '<img src="' + esc(photo) + '" alt="">' : esc((name[0] || '?').toUpperCase())) + '</div>' +
+      '<h2 style="margin-bottom:4px">' + esc(name) + '</h2>' +
+      (me.username ? '<div class="muted">@' + esc(me.username) + '</div>' : '') +
+    '</div>' +
 
-  setApp(`
-    <div class="topbar"><div class="brand"><div class="logo">👤</div>Профиль</div></div>
-    <div class="hero center" style="padding:24px 20px">
-      <div class="avatar lg" style="margin:0 auto 12px">${photo ? `<img src="${esc(photo)}" alt="">` : esc((name[0] || '?').toUpperCase())}</div>
-      <h2 style="margin-bottom:4px">${esc(name)}</h2>
-      ${me.username ? `<div class="muted">@${esc(me.username)}</div>` : ''}
-    </div>
+    renderRefHero() +
 
-    <div class="ref-hero">
-      <div class="title">
-        <span class="emo">💰</span> Реферальный баланс
-        <span class="percent-badge">${REFERRAL_PERCENT}%</span>
-      </div>
-      <div class="ref-balances">
-        <div class="ref-bal">
-          <div class="l">Ожидает</div>
-          <div class="v pending">${fmt(balances.pending)}</div>
-        </div>
-        <div class="ref-bal">
-          <div class="l">Начислено</div>
-          <div class="v approved">${fmt(balances.approved)}</div>
-        </div>
-        <div class="ref-bal">
-          <div class="l">Выплачено</div>
-          <div class="v paid">${fmt(balances.paid)}</div>
-        </div>
-      </div>
-    </div>
+    '<div class="section-title"><h2>Мой аккаунт</h2></div>' +
+    '<div class="card" style="padding:0 16px">' +
+      item('👥', 'Мои рефералы', 'openMyRefs()') +
+      item('💬', 'Связь с админом', 'openContact()') +
+    '</div>' +
 
-    <div class="section-title"><h2>Мой аккаунт</h2></div>
-    <div class="card" style="padding:0 16px">
-      ${item('👥', 'Мои рефералы', 'openMyRefs()')}
-      ${item('🏆', 'Топ пользователей', 'openTopUsers()')}
-      ${item('💬', 'Связь с админом', 'openContact()')}
-    </div>
-    <div class="section-title"><h2>Данные</h2></div>
-    <div class="card" style="padding:0 16px">
-      <div class="list-item"><span class="muted">Telegram ID</span><b>${esc(me.telegram_id || u.id || '—')}</b></div>
-      <div class="list-item"><span class="muted">Username</span><b>@${esc(me.username || u.username || '—')}</b></div>
-      <div class="list-item"><span class="muted">Рефералов</span><b id="refcount">${ALL_REFERRALS.length}</b></div>
-      <div class="list-item"><span class="muted">Регистрация</span><b>${fmtDT(me.registered_at)}</b></div>
-    </div>`);
+    '<div class="section-title"><h2>Данные</h2></div>' +
+    '<div class="card" style="padding:0 16px">' +
+      '<div class="list-item"><span class="muted">Telegram ID</span><b>' + esc(me.telegram_id || u.id || '—') + '</b></div>' +
+      '<div class="list-item"><span class="muted">Username</span><b>@' + esc(me.username || u.username || '—') + '</b></div>' +
+      '<div class="list-item"><span class="muted">Рефералов</span><b>' + ALL_REFERRALS.length + '</b></div>' +
+      '<div class="list-item"><span class="muted">Регистрация</span><b>' + fmtDT(me.registered_at) + '</b></div>' +
+    '</div>'
+  );
 }
 
-const SCREENS = { home: drawHome, buy: drawBuy, purchases: drawPurchases, profile: drawProfile };
+var SCREENS = { home: drawHome, buy: drawBuy, purchases: drawPurchases, profile: drawProfile };
 
 async function reload(){
-  [ERAS, PURCHASES, PAYOUTS] = await Promise.all([loadEras(), loadPurchases(), loadPayouts()]);
+  var res = await Promise.all([loadEras(), loadPurchases(), loadPayouts()]);
+  ERAS = res[0]; PURCHASES = res[1]; PAYOUTS = res[2];
   await loadMyReferrals();
-  HAVE = { eras: true, purchases: true, payouts: true, refs: true };
+  HAVE = { eras: 1, purchases: 1, payouts: 1, refs: 1 };
 }
 
-let RENDER_LOCK = false;
+var RENDER_LOCK = false;
 async function render(force){
   if (RENDER_LOCK) return;
   RENDER_LOCK = true;
@@ -1088,62 +1183,56 @@ async function render(force){
     if (!HAVE.eras || force){
       await reload();
     }
-    const y = window.scrollY;
+    var y = window.scrollY;
     (SCREENS[CURRENT_TAB] || drawHome)();
     window.scrollTo(0, y);
   } catch(e){
     console.error(e);
-    $('app').innerHTML = `<div class="topbar"><div class="brand"><div class="logo">⚠️</div>Ошибка</div></div>
-      <div class="card"><p style="margin-bottom:12px">${esc(e.message)}</p>
-        <button class="btn" onclick="refresh()">🔄 Повторить</button></div>`;
+    $('app').innerHTML =
+      '<div class="topbar"><div class="brand"><div class="logo">⚠️</div>Ошибка</div></div>' +
+      '<div class="card"><p style="margin-bottom:12px">' + esc(e.message) + '</p>' +
+        '<button class="btn" onclick="refresh()">🔄 Повторить</button></div>';
   } finally {
     RENDER_LOCK = false;
   }
 }
 
 window.refresh = function(){ HAVE = {}; render(true); };
+window.drawBuy = drawBuy;
 
 // ═══════════════════════════════════════════════════════════
 // ЖИВОЙ ТАЙМЕР
 // ═══════════════════════════════════════════════════════════
 function tickTimers(){
-  document.querySelectorAll('.timer-live').forEach(el => {
-    const exp = el.dataset.expires;
+  document.querySelectorAll('.timer-live').forEach(function(el){
+    var exp = el.dataset.expires;
     if (!exp) return;
-    const ms = new Date(exp).getTime() - Date.now();
+    var ms = new Date(exp).getTime() - Date.now();
     if (ms <= 0){
       el.textContent = '🏁 Завершено';
-      el.classList.remove('ok','warn');
+      el.classList.remove('ok', 'warn');
       el.classList.add('err');
       return;
     }
     el.textContent = fmtCountdown(ms);
-    const h = ms / 3600000;
+    var h = ms / 3600000;
     el.classList.remove('ok', 'warn', 'err');
     if (h <= 1) el.classList.add('err');
     else if (h <= 24) el.classList.add('warn');
     else el.classList.add('ok');
   });
-
-  document.querySelectorAll('.era-card').forEach(card => {
-    const pid = card.dataset.pid;
+  document.querySelectorAll('.era-card').forEach(function(card){
+    var pid = card.dataset.pid;
     if (!pid) return;
-    const p = PURCHASES.find(x => String(x.id) === pid);
+    var p = PURCHASES.filter(function(x){ return String(x.id) === pid; })[0];
     if (!p || p.status !== 'approved') return;
-
-    const labelEl = document.getElementById('label-' + pid);
+    var labelEl = document.getElementById('label-' + pid);
     if (labelEl){
-      const newLabel = dayLabel(p);
-      if (labelEl.textContent !== newLabel) labelEl.textContent = newLabel;
-      const newCls = dayCls(p);
-      labelEl.className = 'days-left ' + newCls;
+      labelEl.textContent = dayLabel(p);
+      labelEl.className = 'days-left ' + dayCls(p);
     }
-
-    const progEl = document.getElementById('prog-' + pid);
-    if (progEl){
-      const newProg = progressOf(p);
-      progEl.style.width = newProg + '%';
-    }
+    var progEl = document.getElementById('prog-' + pid);
+    if (progEl) progEl.style.width = progressOf(p) + '%';
   });
 }
 
@@ -1159,24 +1248,19 @@ function tickTimers(){
     }
   } catch(e){}
 
-  document.querySelectorAll('#nav button').forEach(b =>
-    b.classList.toggle('active', b.dataset.tab === CURRENT_TAB)
-  );
+  document.querySelectorAll('#nav button').forEach(function(b){
+    b.classList.toggle('active', b.dataset.tab === CURRENT_TAB);
+  });
 
-  $('nav').addEventListener('click', e => {
-    const b = e.target.closest('button');
+  $('nav').addEventListener('click', function(e){
+    var b = e.target.closest('button');
     if (b && b.dataset.tab) window.setTab(b.dataset.tab);
   });
 
   render();
-
-  setInterval(() => {
-    if (!document.hidden && tgUser()) render(true);
-  }, POLL_MS);
-
+  setInterval(function(){ if (!document.hidden && tgUser()) render(true); }, POLL_MS);
   setInterval(tickTimers, 1000);
-
-  document.addEventListener('visibilitychange', () => {
+  document.addEventListener('visibilitychange', function(){
     if (!document.hidden && tgUser()) render(true);
   });
 })();

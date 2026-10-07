@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -170,6 +169,48 @@
   .skel{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);background-size:200% 100%;
     animation:sh 1.2s infinite;border-radius:14px;border:1px solid var(--border);margin-bottom:12px}
   @keyframes sh{to{background-position:-200% 0}}
+
+  /* ════════ РЕФЕРАЛЬНЫЙ БЛОК ════════ */
+  .ref-hero{
+    background:linear-gradient(135deg, #1b2a4a 0%, #16233f 100%);
+    border:1px solid #2c3d63;border-radius:16px;padding:18px;margin-bottom:12px;
+    position:relative;overflow:hidden;
+  }
+  .ref-hero::after{
+    content:'';position:absolute;top:-30%;right:-20%;width:200px;height:200px;
+    background:radial-gradient(circle, rgba(79,140,255,.18) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .ref-hero .title{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;margin-bottom:14px}
+  .ref-hero .title .emo{font-size:20px}
+  .ref-hero .percent-badge{
+    margin-left:auto;background:rgba(57,217,138,.18);color:var(--ok);
+    padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:.5px;
+  }
+  .ref-balances{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+  .ref-bal{background:rgba(0,0,0,.25);border-radius:10px;padding:10px 8px;text-align:center;border:1px solid rgba(255,255,255,.06)}
+  .ref-bal .l{color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:700;margin-bottom:4px;letter-spacing:.5px}
+  .ref-bal .v{font-size:15px;font-weight:800}
+  .ref-bal .v.pending{color:var(--warn)}
+  .ref-bal .v.approved{color:var(--ok)}
+  .ref-bal .v.paid{color:var(--accent)}
+
+  .ref-item{
+    background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;
+  }
+  .ref-item .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px}
+  .ref-item .name{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ref-item .date{color:var(--muted);font-size:11px;white-space:nowrap}
+  .ref-item .meta{color:var(--muted);font-size:12px;margin-bottom:8px}
+  .ref-item .stat-row{display:flex;gap:8px;flex-wrap:wrap}
+  .ref-chip{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:4px 9px;border-radius:8px;font-size:11px;font-weight:700;
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
+  }
+  .ref-chip.ok{background:rgba(57,217,138,.12);color:var(--ok);border-color:rgba(57,217,138,.25)}
+  .ref-chip.warn{background:rgba(245,181,71,.12);color:var(--warn);border-color:rgba(245,181,71,.25)}
+  .ref-chip.info{background:rgba(99,169,255,.12);color:var(--info);border-color:rgba(99,169,255,.25)}
 </style>
 </head>
 <body>
@@ -197,10 +238,15 @@ const ADMIN_USERNAME = 'Dma12r';
 const POLL_MS = 25000;
 const TZ_TASHKENT = 'Asia/Tashkent';
 
+// 💰 Реферальный процент
+const REFERRAL_PERCENT = 5;
+
 const tg = window.Telegram && window.Telegram.WebApp;
 const $ = id => document.getElementById(id);
 let CURRENT_TAB = 'home';
 let ME = null, PURCHASES = [], PAYOUTS = [], ERAS = [], USER_UID = '';
+let ALL_REFERRALS = [];   // мои рефералы (users, где referrer_uid = мой ID)
+let ALL_MY_REF_PURCHASES = []; // покупки моих рефералов (для расчёта бонусов)
 let HAVE = {};
 const BUSY = new Set();
 let shopFilter = 'all', shopSearch = '';
@@ -238,7 +284,6 @@ function fmtDT(s){
     });
 }
 
-// ⏱ «2д 5ч 30м» / «5ч 12м 3с» / «12м 3с» / «3с»
 function fmtCountdown(ms){
   if (ms <= 0) return '0с';
   const s = Math.floor(ms / 1000);
@@ -266,12 +311,6 @@ function hoursLeft(p){
   const ms = msLeft(p);
   if (ms == null || ms <= 0) return 0;
   return ms / 3600000;
-}
-
-function daysLeft(p){
-  const ms = msLeft(p);
-  if (ms == null || ms <= 0) return 0;
-  return Math.ceil(ms / 86400000);
 }
 
 function progressOf(p){
@@ -376,6 +415,11 @@ async function fbPut(path, data){
   if (!r.ok) throw new Error('Firebase ' + r.status);
   return r.json();
 }
+async function fbPatch(path, data){
+  const r = await fetch(`${FIREBASE}/${path}.json`, {method:'PATCH', body: JSON.stringify(data)});
+  if (!r.ok) throw new Error('Firebase ' + r.status);
+  return r.json();
+}
 function toList(raw){
   if (Array.isArray(raw)) return raw.filter(x => x && typeof x === 'object').map((v, i) => ({...v, _key: String(i)}));
   if (raw && typeof raw === 'object')
@@ -449,6 +493,39 @@ async function loadPayouts(){
     .sort((a, b) => new Date(b.requested_at || 0) - new Date(a.requested_at || 0));
 }
 
+// 💰 Мои рефералы + их покупки (для бонуса 5%)
+async function loadMyReferrals(){
+  if (!USER_UID) { ALL_REFERRALS = []; ALL_MY_REF_PURCHASES = []; return; }
+  const [usersRaw, purchasesRaw] = await Promise.all([
+    fbGet('users'),
+    fbGet('purchases')
+  ]);
+  const users = toList(usersRaw);
+  ALL_REFERRALS = users
+    .filter(x => String(x.referrer_uid || '') === String(USER_UID))
+    .sort((a, b) => new Date(b.registered_at || 0) - new Date(a.registered_at || 0));
+
+  const myRefIds = new Set(ALL_REFERRALS.map(r => String(r.telegram_id)));
+  ALL_MY_REF_PURCHASES = toList(purchasesRaw)
+    .filter(p => myRefIds.has(String(p.user_telegram_id)))
+    .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+}
+
+// 💰 Считаем балансы: pending / approved / paid
+function calcReferralBalances(){
+  let pending = 0, approved = 0, paid = 0;
+  for (const p of ALL_MY_REF_PURCHASES){
+    // если в записи уже есть referral_bonus — берём его, иначе считаем 5%
+    const bonus = num(p.referral_bonus) || Math.round(num(p.purchase_price) * REFERRAL_PERCENT / 100);
+    const st = p.referral_status || 'pending';
+    if (p.status === 'rejected' || p.status === 'cancelled' || st === 'rejected') continue;
+    if (st === 'paid') paid += bonus;
+    else if (st === 'approved') approved += bonus;
+    else pending += bonus;
+  }
+  return { pending, approved, paid, total: pending + approved + paid };
+}
+
 // ═══════════════════════════════════════════════════════════
 // ДЕЙСТВИЯ
 // ═══════════════════════════════════════════════════════════
@@ -465,6 +542,17 @@ window.buyEra = id => once('buy' + id, async () => {
   const u = tgUser() || {};
   const now = new Date().toISOString();
   const nextId = await getNextId('purchase');
+
+  // ═══════════════ 💰 РЕФЕРАЛЬНАЯ ЛОГИКА ═══════════════
+  // 1. Узнаём, кто пригласил текущего покупателя
+  const meData = await fbGet(`users/${u.id}`).catch(() => null);
+  const referrerUid = meData && meData.referrer_uid ? String(meData.referrer_uid) : null;
+
+  // 2. Считаем бонус (5% от цены покупки)
+  const referralBonus = referrerUid
+    ? Math.round(num(era.price) * REFERRAL_PERCENT / 100)
+    : 0;
+
   await fbPost('purchases', {
     id: nextId,
     user_telegram_id: u.id,
@@ -480,7 +568,16 @@ window.buyEra = id => once('buy' + id, async () => {
     status: 'created',
     created_at: now,
     status_changed_at: now,
+
+    // 💰 реферальные поля
+    referrer_uid: referrerUid,           // кому начислять бонус
+    referral_percent: REFERRAL_PERCENT,  // 5
+    referral_bonus: referralBonus,       // посчитанная сумма
+    referral_status: referrerUid ? 'pending' : null,
+    referral_paid_at: null,
   });
+  // ═══════════════════════════════════════════════════════
+
   toast(`✅ Заявка #${nextId} создана. Ждите связи админа.`, 'ok', 4500);
   haptic();
   await reload();
@@ -574,30 +671,99 @@ window.openContact = function(){
     </div>`);
 };
 
+// ═══════════════════════════════════════════════════════════
+// 👥 МОИ РЕФЕРАЛЫ — с покупками и бонусами
+// ═══════════════════════════════════════════════════════════
 window.openMyRefs = async function(){
   try {
-    const users = toList(await fbGet('users'));
-    const mine = users.filter(x => String(x.referrer_uid || '') === String(ME.telegram_id))
-      .sort((a,b) => new Date(b.registered_at || 0) - new Date(a.registered_at || 0));
+    await loadMyReferrals();
+    const mine = ALL_REFERRALS;
+    const balances = calcReferralBalances();
     const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${ME.telegram_id}`;
+
+    // группируем покупки по referrer_uid
+    const purchasesByRef = {};
+    for (const p of ALL_MY_REF_PURCHASES){
+      const rid = String(p.user_telegram_id);
+      if (!purchasesByRef[rid]) purchasesByRef[rid] = [];
+      purchasesByRef[rid].push(p);
+    }
+
+    const refItemsHtml = mine.length ? mine.map(r => {
+      const myPurchases = purchasesByRef[String(r.telegram_id)] || [];
+      // считаем суммы
+      let totalPurchase = 0, totalBonus = 0, approvedBonus = 0, paidBonus = 0, pendingBonus = 0;
+      for (const p of myPurchases){
+        if (p.status === 'rejected' || p.status === 'cancelled') continue;
+        const price = num(p.purchase_price);
+        const bonus = num(p.referral_bonus) || Math.round(price * REFERRAL_PERCENT / 100);
+        const st = p.referral_status || 'pending';
+        if (st === 'rejected') continue;
+        totalPurchase += price;
+        totalBonus += bonus;
+        if (st === 'paid') paidBonus += bonus;
+        else if (st === 'approved') approvedBonus += bonus;
+        else pendingBonus += bonus;
+      }
+
+      const chips = [];
+      if (myPurchases.length === 0){
+        chips.push(`<span class="ref-chip info">🕓 Пока без покупок</span>`);
+      } else {
+        if (pendingBonus > 0)  chips.push(`<span class="ref-chip warn">⏳ Ожидает ${fmt(pendingBonus)}</span>`);
+        if (approvedBonus > 0) chips.push(`<span class="ref-chip ok">✅ Начислено ${fmt(approvedBonus)}</span>`);
+        if (paidBonus > 0)     chips.push(`<span class="ref-chip info">💸 Выплачено ${fmt(paidBonus)}</span>`);
+      }
+
+      return `
+        <div class="ref-item">
+          <div class="head">
+            <div class="name">${esc(r.first_name || 'Пользователь')}</div>
+            <div class="date">${fmtDate(r.registered_at)}</div>
+          </div>
+          <div class="meta">@${esc(r.username || '—')} · ID ${esc(r.telegram_id)}</div>
+          ${myPurchases.length ? `<div class="meta" style="margin-bottom:6px">🛒 Покупок: <b>${myPurchases.length}</b> · на сумму <b>${fmt(totalPurchase)}</b></div>` : ''}
+          <div class="stat-row">${chips.join('')}</div>
+        </div>
+      `;
+    }).join('') : '<div class="empty"><div class="icon">👥</div><p>Пока никого нет</p></div>';
+
     showModal(`
       <div class="modal-head"><h2>👥 Мои рефералы (${mine.length})</h2>
         <button class="close-x" onclick="closeModal()">✕</button></div>
       <div class="modal-body">
-        <div class="card2" style="margin-bottom:14px">
-          <div class="muted-sm" style="margin-bottom:6px">Реферальная ссылка:</div>
-          <div class="ref-box">${esc(refLink)}</div>
-          <button class="btn secondary sm" style="margin-top:10px;width:100%" onclick="copyRef()">📋 Скопировать</button>
-        </div>
-        ${mine.length ? mine.map(r => `
-          <div class="card2" style="margin-bottom:8px">
-            <div class="row" style="margin-bottom:4px">
-              <b>${esc(r.first_name || 'Пользователь')}</b>
-              <span class="muted-sm">${fmtDate(r.registered_at)}</span>
-            </div>
-            <div class="muted-sm">@${esc(r.username || '—')} · ID ${esc(r.telegram_id)}</div>
+
+        <div class="ref-hero">
+          <div class="title">
+            <span class="emo">💰</span> Реферальный баланс
+            <span class="percent-badge">${REFERRAL_PERCENT}% с покупок</span>
           </div>
-        `).join('') : '<div class="empty"><div class="icon">👥</div><p>Пока никого нет</p></div>'}
+          <div class="ref-balances">
+            <div class="ref-bal">
+              <div class="l">Ожидает</div>
+              <div class="v pending">${fmt(balances.pending)}</div>
+            </div>
+            <div class="ref-bal">
+              <div class="l">Начислено</div>
+              <div class="v approved">${fmt(balances.approved)}</div>
+            </div>
+            <div class="ref-bal">
+              <div class="l">Выплачено</div>
+              <div class="v paid">${fmt(balances.paid)}</div>
+            </div>
+          </div>
+          <div class="card2" style="background:rgba(0,0,0,.25)">
+            <div class="muted-sm" style="margin-bottom:6px">Реферальная ссылка:</div>
+            <div class="ref-box" style="background:rgba(0,0,0,.35)">${esc(refLink)}</div>
+            <button class="btn secondary sm" style="margin-top:10px;width:100%" onclick="copyRef()">📋 Скопировать</button>
+          </div>
+        </div>
+
+        <div class="muted-sm" style="margin-bottom:8px;text-align:center">
+          <i>Вы получаете ${REFERRAL_PERCENT}% от суммы покупки каждого реферала</i>
+        </div>
+
+        ${refItemsHtml}
       </div>`);
   } catch(e){ toast(e.message, 'err'); }
 };
@@ -638,6 +804,10 @@ function drawHome(){
   const photo = me.photo_url || u.photo_url || '';
   const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${me.telegram_id || ''}`;
 
+  // 💰 реф-баланс для карточки на главной
+  const balances = calcReferralBalances();
+  const refCount = ALL_REFERRALS.length;
+
   setApp(`
     <div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div>
       <div class="actions"><button class="icon-btn" onclick="refresh()">🔄</button></div></div>
@@ -654,14 +824,37 @@ function drawHome(){
       <div class="stat"><div class="label">Завершено</div><div class="value">${completed.length}</div></div>
       <div class="stat"><div class="label">К выводу</div><div class="value sm ${available > 0 ? 'ok' : ''}">${fmt(available)}</div></div>
     </div>
-    <div class="card">
-      <div class="row" style="margin-bottom:10px">
-        <h3>🔗 Реферальная ссылка</h3>
-        <button class="btn ghost xs" onclick="openMyRefs()">Мои рефералы →</button>
+
+    <!-- 💰 РЕФЕРАЛЬНАЯ КАРТОЧКА -->
+    <div class="ref-hero">
+      <div class="title">
+        <span class="emo">💰</span> Рефералы
+        <span class="percent-badge">${REFERRAL_PERCENT}%</span>
       </div>
-      <div class="ref-box">${esc(refLink)}</div>
-      <button class="btn secondary sm" style="margin-top:10px;width:100%" onclick="copyRef()">📋 Скопировать</button>
+      <div class="ref-balances">
+        <div class="ref-bal">
+          <div class="l">Рефералов</div>
+          <div class="v">${refCount}</div>
+        </div>
+        <div class="ref-bal">
+          <div class="l">Ожидает</div>
+          <div class="v pending">${fmt(balances.pending)}</div>
+        </div>
+        <div class="ref-bal">
+          <div class="l">Начислено</div>
+          <div class="v approved">${fmt(balances.approved)}</div>
+        </div>
+      </div>
+      <div class="card2" style="background:rgba(0,0,0,.25);margin-bottom:10px">
+        <div class="muted-sm" style="margin-bottom:6px">Ваша ссылка:</div>
+        <div class="ref-box" style="background:rgba(0,0,0,.35);font-size:12px">${esc(refLink)}</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn secondary sm" style="flex:1" onclick="copyRef()">📋 Копировать</button>
+        <button class="btn sm" style="flex:1" onclick="openMyRefs()">👥 Мои рефералы</button>
+      </div>
     </div>
+
     <div class="section-title"><h2>Мои заявки</h2>
       ${P.length ? `<button class="btn ghost xs" onclick="setTab('purchases')">Все →</button>` : ''}</div>
     ${P.length ? P.slice(0, 3).map(eraCardPurchase).join('') : `
@@ -814,6 +1007,9 @@ function drawProfile(){
   const name = me.first_name || u.first_name || me.username || 'Пользователь';
   const photo = me.photo_url || u.photo_url || '';
   const item = (emo, label, fn) => `<div class="menu-item" onclick="${fn}"><div class="left"><div class="emo">${emo}</div><div>${label}</div></div><div style="color:var(--muted)">→</div></div>`;
+
+  const balances = calcReferralBalances();
+
   setApp(`
     <div class="topbar"><div class="brand"><div class="logo">👤</div>Профиль</div></div>
     <div class="hero center" style="padding:24px 20px">
@@ -821,6 +1017,29 @@ function drawProfile(){
       <h2 style="margin-bottom:4px">${esc(name)}</h2>
       ${me.username ? `<div class="muted">@${esc(me.username)}</div>` : ''}
     </div>
+
+    <!-- 💰 РЕФЕРАЛЬНЫЙ БАЛАНС -->
+    <div class="ref-hero">
+      <div class="title">
+        <span class="emo">💰</span> Реферальный баланс
+        <span class="percent-badge">${REFERRAL_PERCENT}%</span>
+      </div>
+      <div class="ref-balances">
+        <div class="ref-bal">
+          <div class="l">Ожидает</div>
+          <div class="v pending">${fmt(balances.pending)}</div>
+        </div>
+        <div class="ref-bal">
+          <div class="l">Начислено</div>
+          <div class="v approved">${fmt(balances.approved)}</div>
+        </div>
+        <div class="ref-bal">
+          <div class="l">Выплачено</div>
+          <div class="v paid">${fmt(balances.paid)}</div>
+        </div>
+      </div>
+    </div>
+
     <div class="section-title"><h2>Мой аккаунт</h2></div>
     <div class="card" style="padding:0 16px">
       ${item('👥', 'Мои рефералы', 'openMyRefs()')}
@@ -830,23 +1049,17 @@ function drawProfile(){
     <div class="card" style="padding:0 16px">
       <div class="list-item"><span class="muted">Telegram ID</span><b>${esc(me.telegram_id || u.id || '—')}</b></div>
       <div class="list-item"><span class="muted">Username</span><b>@${esc(me.username || u.username || '—')}</b></div>
-      <div class="list-item"><span class="muted">Рефералов</span><b id="refcount">—</b></div>
+      <div class="list-item"><span class="muted">Рефералов</span><b id="refcount">${ALL_REFERRALS.length}</b></div>
       <div class="list-item"><span class="muted">Регистрация</span><b>${fmtDT(me.registered_at)}</b></div>
     </div>`);
-  (async () => {
-    try {
-      const users = toList(await fbGet('users'));
-      const c = users.filter(x => String(x.referrer_uid || '') === String(ME.telegram_id)).length;
-      const el = $('refcount'); if (el) el.textContent = c;
-    } catch(e){}
-  })();
 }
 
 const SCREENS = { home: drawHome, buy: drawBuy, purchases: drawPurchases, profile: drawProfile };
 
 async function reload(){
   [ERAS, PURCHASES, PAYOUTS] = await Promise.all([loadEras(), loadPurchases(), loadPayouts()]);
-  HAVE = { eras: true, purchases: true, payouts: true };
+  await loadMyReferrals();  // 💰 подгружаем рефералов и их покупки
+  HAVE = { eras: true, purchases: true, payouts: true, refs: true };
 }
 
 let RENDER_LOCK = false;
@@ -879,10 +1092,9 @@ async function render(force){
 window.refresh = function(){ HAVE = {}; render(true); };
 
 // ═══════════════════════════════════════════════════════════
-// ЖИВОЙ ТАЙМЕР — обновляет каждую секунду
+// ЖИВОЙ ТАЙМЕР
 // ═══════════════════════════════════════════════════════════
 function tickTimers(){
-  // Обновляем цифры таймера
   document.querySelectorAll('.timer-live').forEach(el => {
     const exp = el.dataset.expires;
     if (!exp) return;
@@ -901,7 +1113,6 @@ function tickTimers(){
     else el.classList.add('ok');
   });
 
-  // Обновляем плашку «Осталось X» и прогресс-бар
   document.querySelectorAll('.era-card').forEach(card => {
     const pid = card.dataset.pid;
     if (!pid) return;
@@ -912,7 +1123,6 @@ function tickTimers(){
     if (labelEl){
       const newLabel = dayLabel(p);
       if (labelEl.textContent !== newLabel) labelEl.textContent = newLabel;
-      // обновляем класс
       const newCls = dayCls(p);
       labelEl.className = 'days-left ' + newCls;
     }
@@ -948,15 +1158,12 @@ function tickTimers(){
 
   render();
 
-  // Обновление данных каждые 25 сек
   setInterval(() => {
     if (!document.hidden && tgUser()) render(true);
   }, POLL_MS);
 
-  // ⏱ Живой таймер — каждую секунду
   setInterval(tickTimers, 1000);
 
-  // Обновление при возврате на вкладку
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden && tgUser()) render(true);
   });

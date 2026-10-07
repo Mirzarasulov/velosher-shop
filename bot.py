@@ -237,7 +237,7 @@ def get_referral_bonus(p):
 
 
 # ═══════════════════════════════════════════════════════════
-# 🆕 ПРОВЕРКА АКТИВНОСТИ РЕФЕРЕРА
+# ПРОВЕРКА АКТИВНОСТИ РЕФЕРЕРА
 # ═══════════════════════════════════════════════════════════
 def ref_has_active_era(ref_uid):
     """
@@ -269,7 +269,6 @@ def activate_pending_bonuses(ref_uid):
     """
     Активирует все отложенные бонусы (pending_active) реферера → approved.
     Возвращает (кол-во покупок, сумма).
-    Вызывать когда реферер САМ купил эру.
     """
     ref_uid = str(ref_uid)
     users = fb_get("users") or {}
@@ -935,7 +934,7 @@ def poll():
     try:
         r = requests.post(f"{API}/getUpdates",
                           json={"offset": offset["v"], "timeout": 10},
-                          timeout=15)
+                          timeout=25)
         data = r.json()
         if not data.get("ok"):
             return
@@ -948,12 +947,19 @@ def poll():
                     handle_callback(upd["callback_query"])
             except Exception as e:
                 log("UPD", f"ошибка: {e}")
+    except requests.exceptions.ReadTimeout:
+        # нормально при long polling
+        pass
+    except requests.exceptions.ConnectionError as e:
+        log("POLL", f"сеть: {e}")
+        time.sleep(2)
     except Exception as e:
         log("POLL", f"{e}")
+        time.sleep(1)
 
 
 # ============================================================
-# АДМИН-ДЕЙСТВИЯ — с проверкой активности реферера
+# АДМИН-ДЕЙСТВИЯ
 # ============================================================
 def admin_set_purchase(pid, status):
     log("ADM", f"purchase #{pid} → {status}")
@@ -1003,7 +1009,6 @@ def admin_set_purchase(pid, status):
         if p.get("referrer_uid"):
             patch["referral_status"] = "rejected"
 
-    # Убираем мета-поля перед записью
     activated_count = patch.pop("_activated_pending_count", 0)
     activated_total = patch.pop("_activated_pending_total", 0)
 
@@ -1014,7 +1019,6 @@ def admin_set_purchase(pid, status):
         updated = {**p, **patch}
         notify_purchase_status(k, updated, old_status, status)
 
-        # 🎉 Уведомление покупателю: у него активировались отложенные бонусы
         if activated_count > 0:
             bal = calc_user_ref_balance(buyer_uid)
             tg_send(int(buyer_uid),
@@ -1064,7 +1068,6 @@ def admin_set_ref_payout(rid, status):
                 if isinstance(u, dict) and str(u.get("referrer_uid", "")) == uid:
                     my_ids.add(str(u.get("telegram_id")))
 
-        # Только заявки, привязанные к ЭТОЙ заявке (frozen)
         if isinstance(purchases, dict):
             for pk, p in purchases.items():
                 if not isinstance(p, dict):
@@ -1100,7 +1103,6 @@ def admin_set_ref_payout(rid, status):
         })
 
     elif status == "rejected":
-        # Разморозить покупки
         purchases = fb_get("purchases") or {}
         if isinstance(purchases, dict):
             for pk, p in purchases.items():
@@ -1255,7 +1257,6 @@ def notify_purchase_status(k, p, old_status, new_status):
                 f"⏰ Истекает: {exp}\n"
                 f"📅 Длительность: <b>{days} дн.</b>")
 
-        # Уведомление рефереру
         buyer = fb_get(f"users/{uid}") or {}
         ref_uid = buyer.get("referrer_uid") or p.get("referrer_uid")
         if ref_uid:
@@ -1402,7 +1403,7 @@ def check_new():
 
 
 # ============================================================
-# НАПОМИНАНИЯ
+# НАПОМИНАНИЯ (короткие)
 # ============================================================
 def check_expired():
     P = fb_get("purchases") or {}
@@ -1420,22 +1421,43 @@ def check_expired():
             continue
 
         hours = (exp - now).total_seconds() / 3600
+
         uid = p.get("user_telegram_id")
         pid = p.get("id")
+        era = p.get("era_title", "—")
         total = fmt_money(p.get("total_amount", 0))
+        last_d = fmt_date(p.get("last_day"))
+        exp_d = fmt_dt(p.get("expires_at"))
 
+        # ⏰ 3 дня
         if 48 < hours <= 72 and not p.get("notified_3d"):
-            tg_send(uid, f"⏰ <b>Осталось 3 дня!</b>\n\n📩 #{pid}\n💰 {total}")
+            tg_send(uid,
+                    f"⏰ <b>Осталось 3 дня до окончания эры «{era}»</b>\n\n"
+                    f"📩 Заявка #{pid}\n"
+                    f"⏰ Истекает: {exp_d}\n"
+                    f"🏆 К выплате: <b>{total}</b>")
             fb_patch(f"purchases/{k}", {"notified_3d": 1})
 
+        # ⏰ 1 день
         elif 3 < hours <= 24 and not p.get("notified_1d"):
-            tg_send(uid, f"⏰ <b>Остался 1 день!</b>\n\n📩 #{pid}\n💰 {total}")
+            tg_send(uid,
+                    f"⏰ <b>Остался 1 день до окончания эры «{era}»</b>\n\n"
+                    f"📩 Заявка #{pid}\n"
+                    f"🏁 Последний день: {last_d}\n"
+                    f"⏰ Истекает: {exp_d}\n"
+                    f"🏆 К выплате: <b>{total}</b>")
             fb_patch(f"purchases/{k}", {"notified_1d": 1})
 
+        # ⏰ 3 часа
         elif 0 < hours <= 3 and not p.get("notified_3h"):
-            tg_send(uid, f"⏰ <b>Осталось 3 часа!</b>\n\n📩 #{pid}\n💰 {total}")
+            tg_send(uid,
+                    f"⏰ <b>Осталось 3 часа до окончания эры «{era}»</b>\n\n"
+                    f"📩 Заявка #{pid}\n"
+                    f"⏰ Истекает: {exp_d}\n"
+                    f"🏆 К выплате: <b>{total}</b>")
             fb_patch(f"purchases/{k}", {"notified_3h": 1})
 
+        # 🏁 Завершение
         if now >= exp and not p.get("completed_notified"):
             fb_patch(f"purchases/{k}", {
                 "status": "completed",

@@ -259,7 +259,7 @@
   .ref-row .v.ok{color:var(--ok)} .ref-row .v.warn{color:var(--warn)}
   .ref-row .v.muted{color:var(--muted)}
 
-  /* ═══════ BROADCAST ═══════ */
+  /* BROADCAST */
   .bc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .bc-preview{
     background:#0e1116;border:1px solid var(--border2);border-radius:12px;
@@ -311,6 +311,9 @@
     font-size:12.5px;font-weight:600;cursor:pointer;
   }
   .bc-audience .chip.active{background:var(--purple);color:#12002e;border-color:var(--purple)}
+
+  /* ✅ ФИКС: класс hidden должен быть определён */
+  .hidden{display:none !important}
 
   @media(max-width:900px){
     .bc-grid{grid-template-columns:1fr}
@@ -370,7 +373,7 @@
 <body>
 
 <div id="app"></div>
-<div id="toast" class="toast hidden" style="display:none"></div>
+<div id="toast" class="toast hidden"></div>
 <div id="modal-root"></div>
 
 <script>
@@ -381,9 +384,8 @@ const FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebaseda
 const ADMIN_PASSWORD = 'admin123';
 const LOG_CHANNEL_URL = 'https://t.me/c/4305451466';
 const REFERRAL_PERCENT = 5;
-
-// ⚠️ ТОКЕН БОТА — нужен для рассылки
 const BOT_TOKEN = '8880107122:AAFa0r2WsfEeDmKIqRZI_YvvwRdXLz7y2kQ';
+const ADMIN_IDS = ['6040186314', '6972338698'];
 
 let AUTHED = sessionStorage.getItem('admin_auth') === '1';
 let TAB = 'dashboard';
@@ -419,9 +421,8 @@ function toast(msg, type){
   const t = $('toast');
   t.textContent = msg;
   t.className = 'toast ' + (type || '');
-  t.style.display = 'block';
   clearTimeout(t._t);
-  t._t = setTimeout(() => { t.style.display = 'none'; }, 2600);
+  t._t = setTimeout(() => { t.classList.add('hidden'); }, 2600);
 }
 function toList(raw){
   if (Array.isArray(raw)) return raw.filter(x => x && typeof x === 'object').map((v, i) => ({...v, _key: String(i)}));
@@ -600,9 +601,9 @@ function layout(content){
 function setTab(t){ TAB = t; render(); }
 window.setTab = setTab;
 
-// ═══════════════════════════════════════════════════════════
-// 📜 ЛОГ
-// ═══════════════════════════════════════════════════════════
+// ============================================================
+// ЛОГ
+// ============================================================
 function openLog(){
   $('modal-root').innerHTML = `
     <div class="modal-bg" onclick="if(event.target===this)closeModal()">
@@ -627,7 +628,7 @@ function openLog(){
 window.openLog = openLog;
 
 // ============================================================
-// 📊 DASHBOARD
+// DASHBOARD
 // ============================================================
 async function renderDashboard(){
   layout('<div class="empty">Загрузка…</div>');
@@ -767,7 +768,7 @@ async function renderDashboard(){
 window.renderDashboard = renderDashboard;
 
 // ============================================================
-// 📩 PURCHASES
+// PURCHASES
 // ============================================================
 let purchaseFilter = 'created';
 async function renderPurchases(){
@@ -1093,7 +1094,7 @@ function editReferralBonus(key){
 window.editReferralBonus = editReferralBonus;
 
 // ============================================================
-// 💸 PAYOUTS
+// PAYOUTS
 // ============================================================
 let payoutFilter = 'pending';
 async function renderPayouts(){
@@ -1230,7 +1231,7 @@ async function admRejectPayout(k){
 window.admRejectPayout = admRejectPayout;
 
 // ============================================================
-// 👥 USERS
+// USERS
 // ============================================================
 async function renderUsers(){
   layout('<div class="empty">Загрузка…</div>');
@@ -1390,7 +1391,7 @@ function showTree(uid){
 window.showTree = showTree;
 
 // ============================================================
-// 🧩 ERAS
+// ERAS
 // ============================================================
 async function renderEras(){
   layout('<div class="empty">Загрузка…</div>');
@@ -1595,7 +1596,7 @@ async function testBuy(eraKey){
 window.testBuy = testBuy;
 
 // ============================================================
-// 🌳 REFS
+// REFS
 // ============================================================
 async function renderRefs(){
   layout('<div class="empty">Загрузка…</div>');
@@ -1708,33 +1709,25 @@ async function renderRefs(){
 window.renderRefs = renderRefs;
 
 // ============================================================
-// 📢 BROADCAST — Рассылка всем пользователям
+// BROADCAST
 // ============================================================
-let BC_AUDIENCE = 'all';       // all / agreed / buyers / refs
-let BC_IMAGE_URL = '';
+let BC_AUDIENCE = 'all';
 let BC_SENDING = false;
 let BC_STOP = false;
-let BC_STATS = { sent: 0, failed: 0, total: 0, errors: [] };
+let BC_STATS = { sent: 0, failed: 0, total: 0 };
 
 async function renderBroadcast(){
   layout('<div class="empty">Загрузка…</div>');
   try {
-    const [users] = await Promise.all([
+    const [users, purchases] = await Promise.all([
       fbGet('users').then(toList).catch(() => []),
+      fbGet('purchases').then(toList).catch(() => []),
     ]);
     DATA.users = users;
 
-    // статистика аудитории
     const totalUsers = users.length;
     const agreedUsers = users.filter(u => u.agreed_terms).length;
     const refsUsers = users.filter(u => u.referrer_uid).length;
-    const buyersUsers = users.filter(u => {
-      // примитивно: если telegram_id есть в purchases
-      return true; // посчитаем ниже
-    }).length;
-
-    // правильный подсчёт покупателей — по уникальным tg из purchases
-    const purchases = await fbGet('purchases').then(toList).catch(() => []);
     const buyerIds = new Set(purchases.map(p => String(p.user_telegram_id)));
     const buyersCount = users.filter(u => buyerIds.has(String(u.telegram_id))).length;
 
@@ -1761,8 +1754,6 @@ async function renderBroadcast(){
 
       <div class="card">
         <div class="bc-grid">
-
-          <!-- ЛЕВАЯ КОЛОНКА: форма -->
           <div>
             <div class="form-row">
               <label>Кому отправлять</label>
@@ -1775,8 +1766,8 @@ async function renderBroadcast(){
             </div>
 
             <div class="form-row">
-              <label>Текст сообщения (поддержка HTML: &lt;b&gt;, &lt;i&gt;, &lt;a href=""&gt;, &lt;code&gt;)</label>
-              <textarea class="input" id="bc_text" rows="6" placeholder="🎉 Скидка 20% на все эры!&#10;&#10;Только сегодня — успей купить эру со скидкой."
+              <label>Текст (HTML: &lt;b&gt; &lt;i&gt; &lt;a href=""&gt; &lt;code&gt;)</label>
+              <textarea class="input" id="bc_text" rows="6" placeholder="🎉 Скидка 20% только сегодня!&#10;&#10;Успей купить эру со скидкой."
                 oninput="bcPreview()"></textarea>
             </div>
 
@@ -1784,13 +1775,10 @@ async function renderBroadcast(){
               <label>Ссылка на картинку (опционально)</label>
               <input class="input" id="bc_image" placeholder="https://example.com/image.jpg"
                 oninput="bcPreview()">
-              <div class="muted" style="margin-top:6px;font-size:11.5px">
-                Прямая ссылка на .jpg / .png. Telegram скачает и покажет фото.
-              </div>
             </div>
 
             <div class="form-row">
-              <label>Кнопка — текст (опционально)</label>
+              <label>Кнопка — текст</label>
               <input class="input" id="bc_btn_text" placeholder="🚀 Открыть приложение"
                 oninput="bcPreview()">
             </div>
@@ -1802,12 +1790,11 @@ async function renderBroadcast(){
             </div>
 
             <div class="flex" style="margin-top:16px">
-              <button class="btn ghost" onclick="bcSendTest()">🧪 Тест мне</button>
+              <button class="btn ghost" onclick="bcSendTest()">🧪 Тест админам</button>
               <button class="btn" onclick="bcSend()">🚀 Отправить</button>
             </div>
           </div>
 
-          <!-- ПРАВАЯ КОЛОНКА: предпросмотр -->
           <div>
             <div class="form-row">
               <label>Предпросмотр</label>
@@ -1817,7 +1804,6 @@ async function renderBroadcast(){
               </div>
             </div>
           </div>
-
         </div>
 
         <div id="bc_progress_box" class="hidden" style="margin-top:20px">
@@ -1854,16 +1840,11 @@ function bcSetAudience(a){
 }
 window.bcSetAudience = bcSetAudience;
 
-// Простой безопасный предпросмотр HTML для Telegram
 function tgParseHtml(text){
-  // Экранируем всё
   let s = esc(text);
-  // Разрешаем <b>, <strong>, <i>, <em>, <u>, <s>, <code>, <pre>
   s = s.replace(/&lt;(\/?)(b|strong|i|em|u|s|code|pre)&gt;/gi, '<$1$2>');
-  // Разрешаем <a href="...">...</a>
   s = s.replace(/&lt;a\s+href=&quot;([^&]+)&quot;&gt;(.*?)&lt;\/a&gt;/gi,
     '<a href="$1" target="_blank">$2</a>');
-  // Переносы строк
   s = s.replace(/\n/g, '<br>');
   return s;
 }
@@ -1890,9 +1871,6 @@ function bcPreview(){
 }
 window.bcPreview = bcPreview;
 
-// ═══════════════════════════════════════════════════════════
-// АУДИТОРИЯ
-// ═══════════════════════════════════════════════════════════
 async function bcGetRecipients(){
   const users = await fbGet('users').then(toList).catch(() => []);
   const purchases = await fbGet('purchases').then(toList).catch(() => []);
@@ -1910,9 +1888,6 @@ async function bcGetRecipients(){
   })).filter(r => r.tg_id);
 }
 
-// ═══════════════════════════════════════════════════════════
-// ОТПРАВКА
-// ═══════════════════════════════════════════════════════════
 async function bcSendTest(){
   const text = $('bc_text')?.value.trim();
   if (!text){ toast('Введите текст', 'err'); return; }
@@ -1921,17 +1896,18 @@ async function bcSendTest(){
   const btnText = $('bc_btn_text')?.value.trim();
   const btnUrl = $('bc_btn_url')?.value.trim();
 
-  // Отправляем только админам
-  const myTgId = prompt('Введите ваш Telegram ID для теста:');
-  if (!myTgId) return;
-
-  try {
-    toast('🧪 Отправляю тест…', 'ok');
-    await bcSendOne(myTgId, text, img, btnText, btnUrl);
-    toast('✅ Тест отправлен! Проверьте чат.', 'ok');
-  } catch(e){
-    toast('❌ ' + e.message, 'err');
+  let ok = 0, fail = 0;
+  for (const aid of ADMIN_IDS){
+    try {
+      await bcSendOne(aid, text, img, btnText, btnUrl);
+      ok++;
+    } catch(e){
+      fail++;
+      console.warn('test fail', aid, e.message);
+    }
   }
+  if (ok) toast(`✅ Тест отправлен ${ok} админ(ам)`, 'ok');
+  else toast(`❌ Не удалось (${fail})`, 'err');
 }
 window.bcSendTest = bcSendTest;
 
@@ -1947,21 +1923,20 @@ async function bcSend(){
   const recipients = await bcGetRecipients();
   if (!recipients.length){ toast('Нет получателей', 'err'); return; }
 
-  if (!confirm(`Отправить сообщение ${recipients.length} получателям?\n\nЭто может занять несколько минут.`)) return;
+  if (!confirm(`Отправить сообщение ${recipients.length} получателям?`)) return;
 
-  // Сбрасываем статистику
   BC_SENDING = true;
   BC_STOP = false;
-  BC_STATS = { sent: 0, failed: 0, total: recipients.length, errors: [] };
+  BC_STATS = { sent: 0, failed: 0, total: recipients.length };
 
-  // Показываем прогресс
   const box = $('bc_progress_box');
   if (box) box.classList.remove('hidden');
-  bcUpdateProgress(0, recipients.length);
+  const logBox = $('bc_log');
+  if (logBox){ logBox.classList.remove('hidden'); logBox.innerHTML = ''; }
 
+  bcUpdateProgress(0, recipients.length);
   pushLog('📢 Запустил рассылку', `Получателей: ${recipients.length}`);
 
-  // Отправляем с задержкой 50 мс между сообщениями
   for (let i = 0; i < recipients.length; i++){
     if (BC_STOP){
       pushLog('⏹ Рассылка остановлена', `Отправлено: ${BC_STATS.sent}`);
@@ -1974,12 +1949,10 @@ async function bcSend(){
       BC_STATS.sent++;
     } catch(e){
       BC_STATS.failed++;
-      BC_STATS.errors.push(`#${r.tg_id} ${r.name}: ${e.message}`);
+      bcLog(`#${r.tg_id} ${r.name}: ${e.message}`, 'err');
     }
 
     bcUpdateProgress(i + 1, recipients.length);
-
-    // Задержка для соблюдения лимитов Telegram
     await new Promise(res => setTimeout(res, 50));
   }
 
@@ -1997,6 +1970,17 @@ function bcStop(){
   toast('⏹ Останавливаю…', 'warn');
 }
 window.bcStop = bcStop;
+
+function bcLog(text, cls){
+  const box = $('bc_log');
+  if (!box) return;
+  const div = document.createElement('div');
+  if (cls) div.className = cls;
+  div.textContent = `[${new Date().toLocaleTimeString('ru-RU')}] ${text}`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+window.bcLog = bcLog;
 
 function bcUpdateProgress(done, total){
   const sent = $('bc_sent');
@@ -2016,35 +2000,39 @@ function bcUpdateProgress(done, total){
 }
 window.bcUpdateProgress = bcUpdateProgress;
 
-// Отправка одного сообщения через Telegram Bot API
 async function bcSendOne(chatId, text, imgUrl, btnText, btnUrl){
-  const method = imgUrl ? 'sendPhoto' : 'sendMessage';
-  const url = `https://api.telegram.org/bot${BOT_TOKEN}/${method}`;
-
-  let body;
   if (imgUrl){
-    body = {
-      chat_id: chatId,
-      photo: imgUrl,
-      caption: text,
-      parse_mode: 'HTML',
-    };
-  } else {
-    body = {
-      chat_id: chatId,
-      text: text,
-      parse_mode: 'HTML',
-      disable_web_page_preview: true,
-    };
+    try {
+      return await bcApiCall('sendPhoto', {
+        chat_id: chatId,
+        photo: imgUrl,
+        caption: text,
+        parse_mode: 'HTML',
+        ...(btnText && btnUrl ? {
+          reply_markup: { inline_keyboard: [[{ text: btnText, url: btnUrl }]] }
+        } : {})
+      });
+    } catch(e){
+      if (!/photo|wrong file|failed to get HTTP URL|IMAGE_PROCESS_FAILED/i.test(e.message)){
+        throw e;
+      }
+    }
   }
 
-  // Инлайн-кнопка
-  if (btnText && btnUrl){
-    body.reply_markup = {
-      inline_keyboard: [[{ text: btnText, url: btnUrl }]]
-    };
-  }
+  return await bcApiCall('sendMessage', {
+    chat_id: chatId,
+    text: text,
+    parse_mode: 'HTML',
+    disable_web_page_preview: true,
+    ...(btnText && btnUrl ? {
+      reply_markup: { inline_keyboard: [[{ text: btnText, url: btnUrl }]] }
+    } : {})
+  });
+}
+window.bcSendOne = bcSendOne;
 
+async function bcApiCall(method, body, attempt = 1){
+  const url = `https://api.telegram.org/bot${BOT_TOKEN}/${method}`;
   const r = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -2052,21 +2040,29 @@ async function bcSendOne(chatId, text, imgUrl, btnText, btnUrl){
   });
 
   const data = await r.json();
-  if (!data.ok){
-    // Обработка типовых ошибок Telegram
-    const desc = data.description || 'unknown';
-    if (desc.includes('chat not found') || desc.includes('bot was blocked') ||
-        desc.includes('user is deactivated') || desc.includes('bot can\'t initiate')){
-      throw new Error('юзер не нажал /start или заблокировал');
-    }
-    throw new Error(desc);
+  if (data.ok) return data.result;
+
+  const desc = data.description || 'unknown';
+
+  if (data.error_code === 429 && attempt <= 3){
+    const wait = (data.parameters?.retry_after || 2) * 1000;
+    await new Promise(res => setTimeout(res, wait));
+    return bcApiCall(method, body, attempt + 1);
   }
-  return data.result;
+
+  if (desc.includes('chat not found') ||
+      desc.includes('bot was blocked') ||
+      desc.includes('user is deactivated') ||
+      desc.includes("bot can't initiate")){
+    throw new Error('юзер не нажал /start или заблокировал');
+  }
+
+  throw new Error(desc);
 }
-window.bcSendOne = bcSendOne;
+window.bcApiCall = bcApiCall;
 
 // ============================================================
-// 🕐 ЖИВЫЕ ТАЙМЕРЫ
+// ЖИВЫЕ ТАЙМЕРЫ
 // ============================================================
 setInterval(() => {
   document.querySelectorAll('[data-timer]').forEach(el => {
@@ -2078,7 +2074,7 @@ setInterval(() => {
 }, 1000);
 
 // ============================================================
-// 🚀 MAIN
+// MAIN
 // ============================================================
 async function render(){
   if (!AUTHED){ renderLogin(); return; }

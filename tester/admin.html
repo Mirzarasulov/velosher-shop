@@ -6,26 +6,21 @@
 <meta name="theme-color" content="#0d1117">
 <title>Era Admin</title>
 
-<!-- ═══════ ЗАЩИТА ОТ ЧЁРНОГО ФОНА ═══════ -->
+<!-- Защита от чёрного фона -->
 <script>
 window.addEventListener('error', function(e){
   var app = document.getElementById('app');
   if (!app) return;
-  if (app.innerHTML && app.innerHTML.trim().length > 0) return; // уже что-то нарисовано
-  app.innerHTML = ''
-    + '<div style="max-width:640px;margin:60px auto;padding:24px;'
-    + 'background:#1c2330;border:1px solid #ff5c5c;border-radius:12px;'
-    + 'color:#e6edf3;font-family:monospace;font-size:13px;line-height:1.7">'
-    + '<div style="font-size:18px;color:#ff5c5c;font-weight:700;margin-bottom:12px">'
-    + '⚠️ Ошибка загрузки админки</div>'
-    + '<div style="margin-bottom:10px"><b>Сообщение:</b> ' + (e.message || '—') + '</div>'
-    + '<div style="margin-bottom:10px"><b>Файл:</b> ' + (e.filename || '—') + '</div>'
-    + '<div style="margin-bottom:10px"><b>Строка:</b> ' + (e.lineno || '—') + ':' + (e.colno || '—') + '</div>'
-    + '<div style="color:#8b949e;margin-bottom:16px">Скопируй это и отправь разработчику.</div>'
-    + '<button onclick="location.reload()" '
-    + 'style="padding:10px 16px;background:#4f8cff;color:#fff;border:0;'
-    + 'border-radius:8px;cursor:pointer;font-weight:600">🔄 Перезагрузить</button>'
-    + '</div>';
+  if (app.innerHTML && app.innerHTML.trim().length > 100) return;
+  app.innerHTML = '<div style="max-width:640px;margin:60px auto;padding:24px;' +
+    'background:#1c2330;border:1px solid #ff5c5c;border-radius:12px;' +
+    'color:#e6edf3;font-family:monospace;font-size:13px;line-height:1.7">' +
+    '<div style="font-size:18px;color:#ff5c5c;font-weight:700;margin-bottom:12px">⚠️ Ошибка</div>' +
+    '<div style="margin-bottom:10px"><b>Сообщение:</b> ' + (e.message || '—') + '</div>' +
+    '<div style="margin-bottom:10px"><b>Строка:</b> ' + (e.lineno || '—') + ':' + (e.colno || '—') + '</div>' +
+    '<button onclick="location.reload()" style="padding:10px 16px;background:#4f8cff;' +
+    'color:#fff;border:0;border-radius:8px;cursor:pointer;font-weight:600">🔄 Перезагрузить</button>' +
+    '</div>';
 });
 </script>
 
@@ -33,8 +28,9 @@ window.addEventListener('error', function(e){
 :root{
   --bg:#0d1117; --card:#161b22; --card2:#1c2330; --card3:#232b38;
   --border:#252e3a; --border2:#2f3a48;
-  --text:#e6edf3; --muted:#8b949e; --accent:#4f8cff;
-  --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c; --purple:#a78bfa;
+  --text:#e6edf3; --text2:#c4ccd6; --muted:#8b949e;
+  --accent:#4f8cff; --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c;
+  --info:#63a9ff; --purple:#a78bfa;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);color:var(--text);
@@ -43,7 +39,6 @@ html,body{background:var(--bg);color:var(--text);
 button,input,textarea,select{font-family:inherit;font-size:inherit}
 .hidden{display:none !important}
 
-/* LAYOUT */
 .layout{display:flex;min-height:100vh}
 .side{width:230px;background:var(--card);border-right:1px solid var(--border);
   padding:16px 10px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
@@ -67,11 +62,9 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .h1{font-size:22px;font-weight:700;margin-bottom:4px}
 .sub{font-size:12px;color:var(--muted);margin-bottom:20px}
 
-/* STATS */
 .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
   gap:10px;margin-bottom:20px}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;
-  padding:14px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
 .stat .ic{font-size:22px;margin-bottom:6px}
 .stat .l{font-size:10px;color:var(--muted);text-transform:uppercase;
   font-weight:600;margin-bottom:4px}
@@ -79,11 +72,9 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .stat .v.ok{color:var(--ok)} .stat .v.warn{color:var(--warn)}
 .stat .v.accent{color:var(--accent)} .stat .v.purple{color:var(--purple)}
 
-/* CARD */
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
   padding:16px;margin-bottom:14px}
 
-/* BUTTONS */
 .btn{padding:10px 16px;border-radius:9px;border:0;background:var(--accent);
   color:#fff;font-size:13px;font-weight:600;cursor:pointer;
   display:inline-flex;align-items:center;gap:6px;text-decoration:none;
@@ -96,7 +87,6 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .btn.purple{background:var(--purple);color:#12002e}
 .btn.sm{padding:7px 12px;font-size:12px;min-height:34px}
 
-/* BADGE */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;
   border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase}
 .badge.created{background:rgba(99,169,255,.15);color:#63a9ff}
@@ -105,7 +95,6 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .badge.cancelled,.badge.rejected{background:rgba(255,92,92,.15);color:var(--err)}
 .badge.purple{background:rgba(167,139,250,.15);color:var(--purple)}
 
-/* GRID CELLS */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
   gap:8px;margin:10px 0}
 .cell{background:var(--card2);border-radius:9px;padding:10px 12px}
@@ -113,20 +102,18 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
   margin-bottom:3px;font-weight:600}
 .cell span{font-size:14px;font-weight:600}
 .cell span.ok{color:var(--ok)} .cell span.accent{color:var(--accent)}
+.cell span.warn{color:var(--warn)}
 
 .row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .flex{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 
-/* FORM */
 .frow{margin-bottom:12px}
 .frow label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px;
   text-transform:uppercase;font-weight:600}
 .input{width:100%;padding:12px 14px;border-radius:9px;border:1px solid var(--border);
   background:var(--card2);color:var(--text);font-size:15px;outline:none;min-height:44px}
 .input:focus{border-color:var(--accent)}
-textarea.input{min-height:120px;resize:vertical;line-height:1.5}
 
-/* TABS */
 .tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:6px;
   scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
@@ -135,7 +122,6 @@ textarea.input{min-height:120px;resize:vertical;line-height:1.5}
   cursor:pointer;white-space:nowrap}
 .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 
-/* TOAST */
 .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);
   background:var(--card2);border:1px solid var(--border2);padding:14px 20px;
   border-radius:12px;z-index:9999;font-size:14px;font-weight:500;
@@ -143,7 +129,6 @@ textarea.input{min-height:120px;resize:vertical;line-height:1.5}
 .toast.ok{border-color:var(--ok);color:#a8f0cc}
 .toast.err{border-color:var(--err);color:#ffb3b3}
 
-/* LOGIN */
 .login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 .login-box{background:var(--card);border:1px solid var(--border2);
   border-radius:14px;padding:28px;width:100%;max-width:400px}
@@ -153,7 +138,6 @@ textarea.input{min-height:120px;resize:vertical;line-height:1.5}
 .empty .ic{font-size:48px;margin-bottom:12px;opacity:.5}
 .muted{color:var(--muted);font-size:12.5px}
 
-/* MODAL */
 .mbg{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999;
   display:flex;align-items:center;justify-content:center;padding:16px}
 .modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;
@@ -168,13 +152,11 @@ textarea.input{min-height:120px;resize:vertical;line-height:1.5}
 .x{width:36px;height:36px;border-radius:50%;background:var(--card2);
   border:1px solid var(--border2);color:#c4ccd6;font-size:18px;cursor:pointer}
 
-/* SEARCH */
 .search{position:relative;margin-bottom:14px}
 .search input{padding-left:38px}
 .search::before{content:'🔍';position:absolute;left:14px;top:50%;
   transform:translateY(-50%);opacity:.6;pointer-events:none}
 
-/* REF */
 .ref{background:var(--card3);border-radius:10px;padding:12px 14px;margin-top:12px;
   border-left:3px solid var(--purple)}
 .ref .lbl{font-size:10.5px;text-transform:uppercase;color:var(--muted);
@@ -184,7 +166,6 @@ textarea.input{min-height:120px;resize:vertical;line-height:1.5}
 .ri+.ri{border-top:1px solid var(--border)}
 .ri a{color:var(--accent);text-decoration:none}
 
-/* DATE */
 .date{background:var(--card3);border-radius:10px;padding:12px 14px;margin-top:12px;
   border-left:3px solid var(--accent)}
 .date .lbl{font-size:10.5px;text-transform:uppercase;color:var(--muted);
@@ -202,7 +183,6 @@ textarea.input{min-height:120px;resize:vertical;line-height:1.5}
 .dleft.err{background:rgba(255,92,92,.15);color:var(--err)}
 .dleft.muted{background:rgba(139,148,158,.12);color:var(--muted)}
 
-/* BROADCAST */
 .bc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .bc-prev{background:#0e1116;border:1px solid var(--border2);border-radius:12px;
   padding:14px;min-height:180px}
@@ -231,7 +211,6 @@ textarea.input{min-height:120px;resize:vertical;line-height:1.5}
   border:1px solid var(--border);color:#c4ccd6;font-size:12.5px;font-weight:600;cursor:pointer}
 .bc-aud .chip.active{background:var(--purple);color:#12002e;border-color:var(--purple)}
 
-/* MOBILE */
 @media(max-width:900px){
   .bc-grid{grid-template-columns:1fr}
 }
@@ -267,21 +246,17 @@ textarea.input{min-height:120px;resize:vertical;line-height:1.5}
 <script>
 'use strict';
 
-// ═══════════════════════════════════════════════════════════
-// КОНФИГ
-// ═══════════════════════════════════════════════════════════
 var FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app';
 var ADMIN_PASSWORD = 'admin123';
 var BOT_TOKEN = '8880107122:AAFa0r2WsfEeDmKIqRZI_YvvwRdXLz7y2kQ';
 var ADMIN_IDS = ['6040186314', '6972338698'];
 var REF_PERCENT = 5;
+var TZ_TASHKENT = 'Asia/Tashkent';
 
-// ═══════════════════════════════════════════════════════════
-// СОСТОЯНИЕ
-// ═══════════════════════════════════════════════════════════
 var AUTH = sessionStorage.getItem('admin_auth') === '1';
 var TAB = 'dashboard';
-var DATA = { purchases: [], payouts: [], users: [], eras: [] };
+var DATA = { purchases: [], payouts: [], users: [], eras: [],
+  refPayouts: [], refPayoutsLog: [] };
 var SEARCH = '';
 var LOG = [];
 var $ = function(id){ return document.getElementById(id); };
@@ -299,21 +274,22 @@ function fmtDate(s){
   if (!s) return '—';
   try {
     return new Date(s).toLocaleString('ru-RU',
-      {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+      {day:'2-digit',month:'2-digit',year:'numeric',
+       hour:'2-digit',minute:'2-digit',timeZone:TZ_TASHKENT});
   } catch(e){ return s; }
 }
 function fmtD(s){
   if (!s) return '—';
   try {
     return new Date(s).toLocaleDateString('ru-RU',
-      {day:'2-digit',month:'2-digit',year:'numeric'});
+      {day:'2-digit',month:'2-digit',year:'numeric',timeZone:TZ_TASHKENT});
   } catch(e){ return s; }
 }
 function statusLabel(s){
   return {
     created:'Ожидает', in_progress:'В процессе', approved:'Активен',
     completed:'Завершён', paid:'Выплачен', cancelled:'Отменён',
-    pending:'Ожидает', rejected:'Отклонён'
+    pending:'Ожидает', rejected:'Отклонён', processing:'Обработка'
   }[s] || s;
 }
 function toast(msg, type){
@@ -351,6 +327,11 @@ async function fbPatch(path, data){
     {method:'PATCH', body: JSON.stringify(data)});
   return r.ok;
 }
+async function fbPost(path, data){
+  var r = await fetch(FIREBASE + '/' + path + '.json',
+    {method:'POST', body: JSON.stringify(data)});
+  return r.ok ? r.json() : null;
+}
 async function fbDelete(path){
   var r = await fetch(FIREBASE + '/' + path + '.json', {method:'DELETE'});
   return r.ok;
@@ -369,16 +350,6 @@ function findUser(users, tgId){
     if (String(users[i].telegram_id) === String(tgId)) return users[i];
   }
   return null;
-}
-function getReferrer(users, u){
-  if (!u || !u.referrer_uid) return null;
-  return findUser(users, u.referrer_uid);
-}
-function getRefs(users, u){
-  if (!u || !u.telegram_id) return [];
-  return users.filter(function(x){
-    return String(x.referrer_uid || '') === String(u.telegram_id);
-  });
 }
 function userName(u){
   if (!u) return '—';
@@ -399,6 +370,50 @@ function fmtLeft(ms){
   if (h > 0) return h + 'ч ' + m + 'м ' + sec + 'с';
   if (m > 0) return m + 'м ' + sec + 'с';
   return sec + 'с';
+}
+
+// Расчёт баланса реф. бонусов конкретного юзера
+function calcUserRefBalance(uid){
+  var accrued = 0, paid = 0, pending = 0;
+  var lastPaidAt = null, lastPaidAmount = 0;
+
+  // Юзер — реферер
+  var myRefIds = {};
+  DATA.users.forEach(function(u){
+    if (String(u.referrer_uid || '') === String(uid)){
+      myRefIds[String(u.telegram_id)] = 1;
+    }
+  });
+
+  DATA.purchases.forEach(function(p){
+    if (!myRefIds[String(p.user_telegram_id)]) return;
+    if (['rejected','cancelled'].indexOf(p.status) >= 0) return;
+    var b = Number(p.referral_bonus || 0)
+      || Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
+    var st = p.referral_status || 'pending';
+    if (st === 'rejected') return;
+    if (st === 'paid'){
+      accrued += b;
+      paid += b;
+      if (p.referral_paid_at && (!lastPaidAt || p.referral_paid_at > lastPaidAt)){
+        lastPaidAt = p.referral_paid_at;
+        lastPaidAmount = b;
+      }
+    } else if (st === 'approved'){
+      accrued += b;
+    } else {
+      pending += b;
+    }
+  });
+
+  return {
+    accrued: accrued,
+    paid: paid,
+    pending: pending,
+    owed: Math.max(0, accrued - paid),
+    lastPaidAt: lastPaidAt,
+    lastPaidAmount: lastPaidAmount
+  };
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -436,6 +451,7 @@ function logout(){
 function layout(content){
   var newCnt = DATA.purchases.filter(function(p){ return p.status === 'created'; }).length;
   var payCnt = DATA.payouts.filter(function(p){ return p.status === 'pending'; }).length;
+  var refPayCnt = (DATA.refPayouts || []).filter(function(r){ return r.status === 'pending'; }).length;
   var userCnt = DATA.users.length;
   var eraCnt = DATA.eras.length;
 
@@ -458,6 +474,7 @@ function layout(content){
         '<div class="sect">Операции</div>' +
         nav('purchases', '📩', 'Заявки', newCnt) +
         nav('payouts', '💸', 'Выплаты', payCnt) +
+        nav('refPayouts', '💰', 'Реф. выплаты', refPayCnt) +
         '<div class="sect">Управление</div>' +
         nav('users', '👥', 'Юзеры', userCnt) +
         nav('eras', '🧩', 'Товары', eraCnt) +
@@ -507,10 +524,12 @@ async function renderDashboard(){
       fbGet('purchases').then(toList).catch(function(){ return []; }),
       fbGet('payouts').then(toList).catch(function(){ return []; }),
       fbGet('users').then(toList).catch(function(){ return []; }),
-      fbGet('eras').then(toList).catch(function(){ return []; })
+      fbGet('eras').then(toList).catch(function(){ return []; }),
+      fbGet('ref_payout_requests').then(toList).catch(function(){ return []; })
     ]);
     DATA.purchases = res[0]; DATA.payouts = res[1];
     DATA.users = res[2]; DATA.eras = res[3];
+    DATA.refPayouts = res[4];
 
     var active = DATA.purchases.filter(function(p){ return p.status === 'approved'; }).length;
     var done = DATA.purchases.filter(function(p){ return p.status === 'completed'; }).length;
@@ -520,12 +539,16 @@ async function renderDashboard(){
 
     var totalBuy = 0, totalProfit = 0, totalPaid = 0;
     var refPend = 0, refAppr = 0, refPaid = 0;
+    var refPayPending = 0;   // заявки на вывод реф, ждут
 
     DATA.purchases.forEach(function(p){
       if (p.status !== 'cancelled') totalBuy += Number(p.purchase_price || 0);
-      if (['approved','completed','paid'].indexOf(p.status) >= 0) totalProfit += Number(p.profit_amount || 0);
+      if (['approved','completed','paid'].indexOf(p.status) >= 0){
+        totalProfit += Number(p.profit_amount || 0);
+      }
       if (p.referrer_uid && ['rejected','cancelled'].indexOf(p.status) < 0){
-        var b = Number(p.referral_bonus || 0) || Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
+        var b = Number(p.referral_bonus || 0)
+          || Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
         var st = p.referral_status || 'pending';
         if (st === 'paid') refPaid += b;
         else if (st === 'approved') refAppr += b;
@@ -534,6 +557,11 @@ async function renderDashboard(){
     });
     DATA.payouts.forEach(function(p){
       if (p.status === 'paid') totalPaid += Number(p.amount || 0);
+    });
+    DATA.refPayouts.forEach(function(r){
+      if (r.status === 'pending'){
+        refPayPending += Number(r.amount || 0);
+      }
     });
 
     var stat = function(ic, label, val, cls){
@@ -553,9 +581,10 @@ async function renderDashboard(){
         stat('💵', 'Куплено', fmt(totalBuy), 'accent') +
         stat('📈', 'Начислено', fmt(totalProfit), 'ok') +
         stat('💰', 'Выплачено', fmt(totalPaid)) +
-        stat('🎁', 'Реф. ожидает', fmt(refPend), 'warn') +
-        stat('✅', 'Реф. начислено', fmt(refAppr), 'ok') +
+        stat('🎁', 'Реф. ждёт подтв.', fmt(refPend), 'warn') +
+        stat('✅', 'Реф. к выводу', fmt(refAppr), 'ok') +
         stat('💸', 'Реф. выплачено', fmt(refPaid), 'accent') +
+        stat('📤', 'Реф. заявок', DATA.refPayouts.filter(function(r){ return r.status === 'pending'; }).length, 'purple') +
       '</div>' +
       '<button class="btn ghost" onclick="renderDashboard()">🔄 Обновить</button>'
     );
@@ -594,8 +623,7 @@ async function renderPurchases(){
       completed: filtered.filter(function(p){ return p.status === 'completed'; }).length,
       all: filtered.length
     };
-    var shown = purchaseFilter === 'all'
-      ? filtered
+    var shown = purchaseFilter === 'all' ? filtered
       : filtered.filter(function(p){ return p.status === purchaseFilter; });
 
     layout(
@@ -618,7 +646,7 @@ async function renderPurchases(){
 function orderCard(p){
   var k = p._key;
   var buyer = findUser(DATA.users, p.user_telegram_id);
-  var referrer = buyer ? getReferrer(DATA.users, buyer) : null;
+  var referrer = buyer && buyer.referrer_uid ? findUser(DATA.users, buyer.referrer_uid) : null;
 
   var canConfirm = ['created','in_progress'].indexOf(p.status) >= 0;
   var canCancel = canConfirm;
@@ -668,10 +696,10 @@ function orderCard(p){
 
   var refBlock = '';
   if (p.referrer_uid){
-    var bonus = Number(p.referral_bonus || 0) ||
-      Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
+    var bonus = Number(p.referral_bonus || 0)
+      || Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
     var st = p.referral_status || 'pending';
-    var stLabel = { pending:'⏳ Ожидает', approved:'✅ Начислено', paid:'💸 Выплачено', rejected:'❌ Отклонено' }[st] || st;
+    var stLabel = {pending:'⏳ Ожидает', approved:'✅ К выплате', paid:'💸 Выплачено', rejected:'❌ Отклонено'}[st] || st;
     var refU = findUser(DATA.users, p.referrer_uid);
     var refName = refU ? userName(refU) : ('ID ' + p.referrer_uid);
     refBlock =
@@ -680,12 +708,7 @@ function orderCard(p){
         '<div class="ri"><div>Кому: <b>' + esc(refName) + '</b></div>' +
           '<div class="muted">' + REF_PERCENT + '% от покупки</div></div>' +
         '<div class="ri"><div>Сумма: <b style="color:var(--ok)">' + fmt(bonus) + '</b></div>' +
-          '<span class="badge ' + st + '">' + stLabel + '</span></div>' +
-        '<div class="flex" style="margin-top:8px">' +
-          (st !== 'paid' && st !== 'rejected'
-            ? '<button class="btn ok sm" onclick="payRef(\'' + esc(k) + '\')">💸 Выплатить</button>' : '') +
-          '<button class="btn ghost sm" onclick="editRefBonus(\'' + esc(k) + '\')">✏️ Изменить</button>' +
-        '</div>' +
+          '<span class="badge ' + (st === 'approved' ? 'pending' : st) + '">' + stLabel + '</span></div>' +
       '</div>';
   }
 
@@ -742,12 +765,16 @@ async function admConfirm(k){
       status_changed_at: now.toISOString(),
       notified_3d: 0, notified_1d: 0, notified_3h: 0, completed_notified: 0
     };
+
+    // 💰 Бонус активируется сразу при подтверждении
     if (p.referrer_uid){
       patch.referral_status = 'approved';
+      patch.referral_activated_at = now.toISOString();
       if (!p.referral_bonus){
         patch.referral_bonus = Math.round(Number(p.purchase_price||0) * REF_PERCENT / 100);
       }
     }
+
     await fbPatch('purchases/' + k, patch);
     pushLog('✅ Подтвердил заявку', '#' + p.id);
     toast('✅ Подтверждено', 'ok');
@@ -778,35 +805,8 @@ async function admContact(uid){
   } catch(e){ toast(e.message, 'err'); }
 }
 
-async function payRef(key){
-  if (!confirm('Отметить бонус выплаченным?')) return;
-  try {
-    await fbPatch('purchases/' + key, {
-      referral_status: 'paid',
-      referral_paid_at: new Date().toISOString()
-    });
-    pushLog('💸 Выплатил бонус', key);
-    toast('💸 Отмечено', 'ok');
-    renderPurchases();
-  } catch(e){ toast(e.message, 'err'); }
-}
-
-function editRefBonus(key){
-  var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
-  if (!p) return;
-  var cur = Number(p.referral_bonus || 0) || Math.round(Number(p.purchase_price||0) * REF_PERCENT / 100);
-  var v = prompt('Сумма бонуса, ₽:', cur);
-  if (v == null) return;
-  var val = Number(v);
-  if (!isFinite(val) || val < 0) return toast('Неверная сумма', 'err');
-  fbPatch('purchases/' + key, { referral_bonus: val }).then(function(){
-    toast('💾 Сохранено', 'ok');
-    renderPurchases();
-  });
-}
-
 // ═══════════════════════════════════════════════════════════
-// PAYOUTS
+// PAYOUTS (обычные)
 // ═══════════════════════════════════════════════════════════
 var payoutFilter = 'pending';
 
@@ -827,8 +827,7 @@ async function renderPayouts(){
       rejected: DATA.payouts.filter(function(p){ return p.status === 'rejected'; }).length,
       all: DATA.payouts.length
     };
-    var shown = payoutFilter === 'all'
-      ? DATA.payouts
+    var shown = payoutFilter === 'all' ? DATA.payouts
       : DATA.payouts.filter(function(p){ return p.status === payoutFilter; });
 
     layout(
@@ -839,7 +838,7 @@ async function renderPayouts(){
         '<button class="tab ' + (payoutFilter==='all'?'active':'') + '" onclick="payoutFilter=\'all\';renderPayouts()">📋 Все (' + counts.all + ')</button>' +
       '</div>' +
       (shown.length ? shown.map(payoutCard).join('')
-        : '<div class="empty"><div class="ic">📭</div><p>Нет заявок на вывод</p></div>')
+        : '<div class="empty"><div class="ic">📭</div><p>Нет заявок</p></div>')
     );
   } catch(e){
     layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
@@ -849,7 +848,6 @@ async function renderPayouts(){
 function payoutCard(po){
   var k = po._key;
   var buyer = findUser(DATA.users, po.user_telegram_id);
-  var referrer = buyer ? getReferrer(DATA.users, buyer) : null;
   var purchase = DATA.purchases.filter(function(x){ return String(x.id) === String(po.purchase_id); })[0];
   var isPending = po.status === 'pending';
 
@@ -883,10 +881,6 @@ function payoutCard(po){
       '<div class="cell"><b>💰 Сумма</b><span class="ok">' + fmt(po.amount) + '</span></div>' +
       '<div class="cell"><b>📄 Покупка</b><span>#' + esc(po.purchase_id||'—') + '</span></div>' +
     '</div>' +
-    (referrer
-      ? '<div class="ref"><div class="lbl">🎁 Реферер</div>' +
-          '<div class="ri"><div><b>' + esc(userName(referrer)) + '</b> · ' + userLink(referrer) + '</div></div></div>'
-      : '') +
     dateBlock +
     '<div class="muted" style="margin:12px 0">🕐 ' + fmtDate(po.requested_at) + '</div>' +
     '<div class="flex">' +
@@ -921,6 +915,195 @@ async function admPayoutReject(k){
     toast('❌ Отклонено');
     renderPayouts();
   } catch(e){ toast(e.message, 'err'); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// 💰 РЕФ. ВЫПЛАТЫ (новый раздел)
+// ═══════════════════════════════════════════════════════════
+var refPayoutFilter = 'pending';
+
+async function renderRefPayouts(){
+  layout('<div class="empty">Загрузка…</div>');
+  try {
+    var res = await Promise.all([
+      fbGet('ref_payout_requests').then(toList).catch(function(){ return []; }),
+      fbGet('users').then(toList).catch(function(){ return []; }),
+      fbGet('purchases').then(toList).catch(function(){ return []; }),
+      fbGet('ref_payouts_log').then(toList).catch(function(){ return []; })
+    ]);
+    DATA.refPayouts = res[0];
+    DATA.users = res[1];
+    DATA.purchases = res[2];
+    DATA.refPayoutsLog = res[3];
+
+    DATA.refPayouts.sort(function(a,b){ return Number(b.id||0) - Number(a.id||0); });
+
+    var counts = {
+      pending: DATA.refPayouts.filter(function(r){ return r.status === 'pending'; }).length,
+      paid: DATA.refPayouts.filter(function(r){ return r.status === 'paid'; }).length,
+      rejected: DATA.refPayouts.filter(function(r){ return r.status === 'rejected'; }).length,
+      all: DATA.refPayouts.length
+    };
+    var shown = refPayoutFilter === 'all' ? DATA.refPayouts
+      : DATA.refPayouts.filter(function(r){ return r.status === refPayoutFilter; });
+
+    layout(
+      '<h2 style="font-size:17px;margin-bottom:14px">💰 Заявки на вывод реф. бонусов</h2>' +
+      '<div class="tabs">' +
+        '<button class="tab ' + (refPayoutFilter==='pending'?'active':'') + '" onclick="refPayoutFilter=\'pending\';renderRefPayouts()">⏳ Ждут (' + counts.pending + ')</button>' +
+        '<button class="tab ' + (refPayoutFilter==='paid'?'active':'') + '" onclick="refPayoutFilter=\'paid\';renderRefPayouts()">✅ Выплачено (' + counts.paid + ')</button>' +
+        '<button class="tab ' + (refPayoutFilter==='rejected'?'active':'') + '" onclick="refPayoutFilter=\'rejected\';renderRefPayouts()">❌ Отклонено (' + counts.rejected + ')</button>' +
+        '<button class="tab ' + (refPayoutFilter==='all'?'active':'') + '" onclick="refPayoutFilter=\'all\';renderRefPayouts()">📋 Все (' + counts.all + ')</button>' +
+      '</div>' +
+      (shown.length ? shown.map(refRequestCard).join('')
+        : '<div class="empty"><div class="ic">💰</div><p>Нет заявок</p></div>')
+    );
+  } catch(e){
+    layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
+  }
+}
+
+function refRequestCard(r){
+  var k = r._key;
+  var u = findUser(DATA.users, r.user_telegram_id);
+  var isPending = r.status === 'pending';
+  var bal = calcUserRefBalance(r.user_telegram_id);
+
+  return '<div class="card">' +
+    '<div class="row" style="margin-bottom:12px">' +
+      '<b style="color:#4f8cff;font-size:16px">💰 Заявка #' + esc(r.id) + '</b>' +
+      '<span class="badge ' + esc(r.status) + '">' + statusLabel(r.status) + '</span>' +
+    '</div>' +
+    '<div class="grid">' +
+      '<div class="cell"><b>👤 Юзер</b><span>' + esc(r.user_first_name || (u && userName(u)) || '—') + '</span></div>' +
+      '<div class="cell"><b>🔗 Ник</b><span>@' + esc(r.user_username || (u && u.username) || '—') + '</span></div>' +
+      '<div class="cell"><b>🆔 TG ID</b><span>' + esc(r.user_telegram_id) + '</span></div>' +
+      '<div class="cell"><b>💰 Запрошено</b><span class="accent">' + fmt(r.amount) + '</span></div>' +
+      '<div class="cell"><b>💎 К выводу сейчас</b><span class="warn">' + fmt(bal.owed) + '</span></div>' +
+      '<div class="cell"><b>📈 Начислено</b><span class="ok">' + fmt(bal.accrued) + '</span></div>' +
+    '</div>' +
+    (bal.lastPaidAt
+      ? '<div class="ref"><div class="lbl">💸 Последняя выплата</div>' +
+          '<div class="ri"><div>' + fmt(bal.lastPaidAmount) + ' · ' + fmtDate(bal.lastPaidAt) + '</div></div></div>'
+      : '') +
+    '<div class="muted" style="margin:12px 0">🕐 Заявка создана: ' + fmtDate(r.requested_at) + '</div>' +
+    '<div class="flex">' +
+      (isPending ? '<button class="btn ok" onclick="refPayoutPaid(\'' + esc(k) + '\')">✅ Выплачено</button>' : '') +
+      (isPending ? '<button class="btn danger" onclick="refPayoutReject(\'' + esc(k) + '\')">❌ Отклонить</button>' : '') +
+      '<button class="btn ghost" onclick="admContact(\'' + esc(r.user_telegram_id) + '\')">💬 Написать</button>' +
+    '</div>' +
+  '</div>';
+}
+
+// Отметить заявку на вывод РЕФ как выплаченную
+async function refPayoutPaid(key){
+  if (!confirm('Подтвердить выплату?')) return;
+  try {
+    var r = DATA.refPayouts.filter(function(x){ return x._key === key; })[0];
+    if (!r) return;
+    var amount = Number(r.amount || 0);
+    var uid = String(r.user_telegram_id);
+    var now = new Date().toISOString();
+
+    // ═══ Помечаем покупки юзера (referral_status = paid) ═══
+    var myRefIds = {};
+    DATA.users.forEach(function(u){
+      if (String(u.referrer_uid || '') === uid){
+        myRefIds[String(u.telegram_id)] = 1;
+      }
+    });
+
+    // Сортируем по дате покупки (сначала старые)
+    var queue = DATA.purchases.filter(function(p){
+      if (!myRefIds[String(p.user_telegram_id)]) return false;
+      if (['rejected','cancelled'].indexOf(p.status) >= 0) return false;
+      var st = p.referral_status || 'pending';
+      return st === 'approved';
+    });
+    queue.sort(function(a,b){
+      return new Date(a.created_at||0) - new Date(b.created_at||0);
+    });
+
+    var left = amount;
+    for (var i = 0; i < queue.length && left > 0; i++){
+      var p = queue[i];
+      var b = Number(p.referral_bonus || 0)
+        || Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
+      if (b <= 0) continue;
+      var payNow = Math.min(b, left);
+      // Помечаем как paid (пока без частичной — упрощённо)
+      await fbPatch('purchases/' + p._key, {
+        referral_status: 'paid',
+        referral_paid_at: now,
+        referral_paid_amount: payNow
+      });
+      left -= payNow;
+    }
+
+    // ═══ Обновляем заявку ═══
+    await fbPatch('ref_payout_requests/' + key, {
+      status: 'paid',
+      paid_at: now,
+      paid_by: ADMIN_IDS[0]
+    });
+
+    // ═══ Пишем в журнал ═══
+    await fbPost('ref_payouts_log', {
+      user_telegram_id: uid,
+      amount: amount,
+      request_id: r.id,
+      paid_at: now,
+      paid_by: ADMIN_IDS[0]
+    });
+
+    pushLog('💸 Реф. выплата', '#' + r.id + ' · ' + fmt(amount));
+    toast('✅ Выплачено ' + fmt(amount), 'ok');
+
+    // Уведомляем юзера
+    try {
+      await notifyUserAboutRefPayout(uid, amount, calcUserRefBalance(uid).owed);
+    } catch(e){ console.warn('notify failed', e); }
+
+    renderRefPayouts();
+  } catch(e){ toast(e.message, 'err'); }
+}
+
+async function refPayoutReject(key){
+  if (!confirm('Отклонить заявку на вывод?')) return;
+  try {
+    var r = DATA.refPayouts.filter(function(x){ return x._key === key; })[0];
+    await fbPatch('ref_payout_requests/' + key, {
+      status: 'rejected',
+      rejected_at: new Date().toISOString(),
+      rejected_by: ADMIN_IDS[0]
+    });
+    pushLog('❌ Отклонена реф. заявка', '#' + (r ? r.id : key));
+    toast('❌ Отклонено');
+    renderRefPayouts();
+  } catch(e){ toast(e.message, 'err'); }
+}
+
+// Уведомление юзеру о выплате через Telegram Bot API
+async function notifyUserAboutRefPayout(uid, amount, remain){
+  var remainText = remain > 0
+    ? '🎁 Осталось к выводу: <b>' + fmt(remain) + '</b>'
+    : '✅ <b>Все бонусы выплачены!</b>';
+  var text =
+    '💸 <b>Вам выплачен реферальный бонус!</b>\n\n' +
+    '💰 Сумма: <b>' + fmt(amount) + '</b>\n' +
+    '🕐 ' + fmtDate(new Date().toISOString()) + ' (Ташкент)\n\n' +
+    remainText;
+  try {
+    await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        chat_id: uid,
+        text: text,
+        parse_mode: 'HTML'
+      })
+    });
+  } catch(e){ console.warn('sendMessage failed', e); }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -967,23 +1150,12 @@ function userCard(u){
     if (['completed','paid'].indexOf(p.status) >= 0) earned += Number(p.total_amount||0);
   });
 
-  var referrer = getReferrer(DATA.users, u);
-  var refs = getRefs(DATA.users, u);
-
-  var myIds = {};
-  refs.forEach(function(r){ myIds[String(r.telegram_id)] = 1; });
-  var rPend = 0, rAppr = 0, rPaid = 0;
-  DATA.purchases.forEach(function(p){
-    if (!myIds[String(p.user_telegram_id)]) return;
-    if (['rejected','cancelled'].indexOf(p.status) >= 0) return;
-    var b = Number(p.referral_bonus||0) || Math.round(Number(p.purchase_price||0) * REF_PERCENT / 100);
-    var st = p.referral_status || 'pending';
-    if (st === 'rejected') return;
-    if (st === 'paid') rPaid += b;
-    else if (st === 'approved') rAppr += b;
-    else rPend += b;
+  var referrer = u.referrer_uid ? findUser(DATA.users, u.referrer_uid) : null;
+  var refs = DATA.users.filter(function(x){
+    return String(x.referrer_uid || '') === String(u.telegram_id);
   });
-  var rTotal = rPend + rAppr + rPaid;
+
+  var bal = calcUserRefBalance(u.telegram_id);
 
   return '<div class="card">' +
     '<div class="row" style="margin-bottom:12px">' +
@@ -999,18 +1171,49 @@ function userCard(u){
       '<div class="cell"><b>Заявок</b><span>' + myP.length + '</span></div>' +
       '<div class="cell"><b>Пригласил</b><span style="color:var(--purple)">' + refs.length + '</span></div>' +
     '</div>' +
-    (rTotal > 0
+
+    // 💰 РЕФ. БАЛАНС
+    (bal.accrued > 0 || bal.pending > 0
       ? '<div class="ref" style="border-left-color:var(--ok)">' +
-          '<div class="lbl">💰 Реф. баланс</div>' +
-          '<div class="ri"><div>⏳ Ожидает</div><div><b style="color:var(--warn)">' + fmt(rPend) + '</b></div></div>' +
-          '<div class="ri"><div>✅ Начислено</div><div><b style="color:var(--ok)">' + fmt(rAppr) + '</b></div></div>' +
-          '<div class="ri"><div>💸 Выплачено</div><div><b style="color:var(--accent)">' + fmt(rPaid) + '</b></div></div>' +
+          '<div class="lbl">💰 Реферальный баланс</div>' +
+
+          '<div class="ri" style="font-size:15px">' +
+            '<div>💎 <b>К выводу</b></div>' +
+            '<div><b style="color:' + (bal.owed > 0 ? 'var(--warn)' : 'var(--ok)') + ';font-size:16px">' +
+              fmt(bal.owed) + '</b></div>' +
+          '</div>' +
+
+          '<div class="ri"><div>📈 Начислено (подтв.)</div>' +
+            '<div><b style="color:var(--ok)">' + fmt(bal.accrued) + '</b></div></div>' +
+
+          (bal.pending > 0
+            ? '<div class="ri"><div>⏳ Ожидает подтв.</div>' +
+              '<div><b style="color:var(--warn)">' + fmt(bal.pending) + '</b></div></div>'
+            : '') +
+
+          '<div class="ri"><div>💸 Выплачено</div>' +
+            '<div><b style="color:var(--accent)">' + fmt(bal.paid) + '</b></div></div>' +
+
+          (bal.lastPaidAt
+            ? '<div class="muted" style="font-size:11px;margin-top:6px">' +
+              'Последняя выплата: <b>' + fmt(bal.lastPaidAmount) + '</b> · ' +
+              fmtDate(bal.lastPaidAt) + '</div>'
+            : '') +
+
+          '<div class="flex" style="margin-top:10px">' +
+            (bal.owed > 0
+              ? '<button class="btn ok sm" onclick="openRefPay(\'' + esc(u.telegram_id) + '\',' + bal.owed + ')">' +
+                '💸 Выплатить ' + fmt(bal.owed) + '</button>'
+              : '<button class="btn ghost sm" disabled>✅ Всё выплачено</button>') +
+          '</div>' +
         '</div>'
       : '') +
+
     (referrer
       ? '<div class="ref"><div class="lbl">🎁 Кто пригласил</div>' +
           '<div class="ri"><div><b>' + esc(userName(referrer)) + '</b> · ' + userLink(referrer) + '</div></div></div>'
       : '') +
+
     (refs.length
       ? '<div class="ref"><div class="lbl">👥 Пригласил (' + refs.length + ')</div>' +
           refs.map(function(r){
@@ -1018,43 +1221,163 @@ function userCard(u){
               '<div class="muted">' + fmtDate(r.registered_at) + '</div></div>';
           }).join('') + '</div>'
       : '') +
+
     '<div class="row" style="margin-top:12px">' +
       '<div class="muted">📅 ' + fmtDate(u.registered_at) + '</div>' +
       '<div class="flex">' +
-        (refs.length ? '<button class="btn purple sm" onclick="showTree(\'' + esc(u.telegram_id) + '\')">🌳</button>' : '') +
         '<button class="btn ghost sm" onclick="admContact(\'' + esc(u.telegram_id||'') + '\')">💬</button>' +
       '</div>' +
     '</div>' +
   '</div>';
 }
 
-function showTree(uid){
-  var root = findUser(DATA.users, uid);
-  if (!root) return;
-
-  function sub(u){
-    var kids = getRefs(DATA.users, u);
-    if (!kids.length) return '';
-    return '<div style="padding-left:16px;border-left:1px dashed var(--border2);margin-left:8px">' +
-      kids.map(function(k){
-        return '<div style="padding:8px 0"><div>' + esc(userName(k)) + ' · ' + userLink(k) + '</div>' +
-          '<div class="muted" style="font-size:11px">📅 ' + fmtDate(k.registered_at) + '</div>' +
-          sub(k) + '</div>';
-      }).join('') + '</div>';
-  }
+// ═══════════════════════════════════════════════════════════
+// 💸 МОДАЛКА ВЫПЛАТЫ РЕФ. БОНУСА
+// ═══════════════════════════════════════════════════════════
+function openRefPay(uid, maxAmount){
+  maxAmount = Number(maxAmount) || 0;
+  if (maxAmount <= 0) return toast('Нечего выплачивать', 'err');
 
   $('modal-root').innerHTML =
     '<div class="mbg" onclick="if(event.target===this)closeModal()"><div class="modal">' +
-      '<div class="mh"><h2>🌳 Дерево рефералов</h2>' +
+      '<div class="mh"><h2>💸 Выплата реф. бонуса</h2>' +
         '<button class="x" onclick="closeModal()">✕</button></div>' +
       '<div class="mb">' +
-        '<div style="padding:12px 0;border-bottom:1px solid var(--border)">' +
-          '<b style="color:var(--purple);font-size:15px">' + esc(userName(root)) + '</b>' +
-          '<div class="muted">@' + esc(root.username||'—') + ' · ID ' + esc(root.telegram_id) + '</div>' +
+
+        '<div class="frow"><label>К выплате всего</label>' +
+          '<div style="font-size:24px;font-weight:800;color:var(--ok)">' + fmt(maxAmount) + '</div></div>' +
+
+        '<div class="frow">' +
+          '<label>Сумма выплаты (₽)</label>' +
+          '<input class="input" id="rp_amount" type="number" min="1" max="' + maxAmount + '" ' +
+            'value="' + maxAmount + '" oninput="rpUpdate(' + maxAmount + ')">' +
+          '<div class="flex" style="margin-top:8px">' +
+            '<button class="btn ghost sm" onclick="rpSet(' + maxAmount + ')">Всё ' + fmt(maxAmount) + '</button>' +
+            '<button class="btn ghost sm" onclick="rpSet(' + Math.round(maxAmount/2) + ')">Половина</button>' +
+            '<button class="btn ghost sm" onclick="rpSet(100)">100 ₽</button>' +
+          '</div>' +
         '</div>' +
-        (sub(root) || '<div class="empty" style="padding:20px 0"><p>Нет рефералов</p></div>') +
+
+        '<div class="frow">' +
+          '<label>Комментарий (опционально)</label>' +
+          '<input class="input" id="rp_comment" placeholder="Например: перевод на карту">' +
+        '</div>' +
+
+        '<div class="ref" style="border-left-color:var(--accent)">' +
+          '<div class="ri"><div>Остаток после выплаты</div>' +
+            '<div><b id="rp_remain" style="color:var(--warn)">' + fmt(0) + '</b></div></div>' +
+        '</div>' +
+
+      '</div>' +
+      '<div class="mf">' +
+        '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
+        '<button class="btn ok" onclick="doRefPay(\'' + esc(uid) + '\')">💸 Выплатить</button>' +
       '</div>' +
     '</div></div>';
+  rpUpdate(maxAmount);
+}
+
+function rpSet(v){
+  var el = $('rp_amount');
+  if (el) el.value = v;
+  var maxEl = el ? Number(el.getAttribute('max')) : 0;
+  rpUpdate(maxEl);
+}
+
+function rpUpdate(maxAmount){
+  var v = Number($('rp_amount').value) || 0;
+  if (v < 0) v = 0;
+  if (v > maxAmount) v = maxAmount;
+  var remain = maxAmount - v;
+  var el = $('rp_remain');
+  if (el){
+    el.textContent = fmt(remain);
+    el.style.color = remain > 0 ? 'var(--warn)' : 'var(--ok)';
+  }
+}
+
+async function doRefPay(uid){
+  var v = Number($('rp_amount').value) || 0;
+  var comment = ($('rp_comment').value || '').trim();
+  if (v <= 0) return toast('Введите сумму', 'err');
+
+  try {
+    var bal = calcUserRefBalance(uid);
+    if (v > bal.owed + 1) return toast('Сумма больше долга', 'err');
+
+    var now = new Date().toISOString();
+
+    // ═══ Помечаем покупки как paid (по очереди, от старых) ═══
+    var myRefIds = {};
+    DATA.users.forEach(function(u){
+      if (String(u.referrer_uid || '') === String(uid)){
+        myRefIds[String(u.telegram_id)] = 1;
+      }
+    });
+
+    var queue = DATA.purchases.filter(function(p){
+      if (!myRefIds[String(p.user_telegram_id)]) return false;
+      if (['rejected','cancelled'].indexOf(p.status) >= 0) return false;
+      var st = p.referral_status || 'pending';
+      return st === 'approved';
+    }).sort(function(a, b){
+      return new Date(a.created_at||0) - new Date(b.created_at||0);
+    });
+
+    var left = v;
+    for (var i = 0; i < queue.length && left > 0; i++){
+      var p = queue[i];
+      var b = Number(p.referral_bonus || 0)
+        || Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
+      if (b <= 0) continue;
+
+      if (b <= left){
+        // Закрываем полностью
+        await fbPatch('purchases/' + p._key, {
+          referral_status: 'paid',
+          referral_paid_at: now,
+          referral_paid_amount: b
+        });
+        left -= b;
+      } else {
+        // Частично (не должны попадать сюда при точных суммах, но на всякий)
+        await fbPatch('purchases/' + p._key, {
+          referral_status: 'paid',
+          referral_paid_at: now,
+          referral_paid_amount: left
+        });
+        left = 0;
+      }
+    }
+
+    // ═══ Журнал ═══
+    await fbPost('ref_payouts_log', {
+      user_telegram_id: uid,
+      amount: v,
+      comment: comment,
+      paid_at: now,
+      paid_by: ADMIN_IDS[0]
+    });
+
+    pushLog('💸 Выплата реф. бонуса', userName(findUser(DATA.users, uid)) + ': ' + fmt(v));
+
+    // ═══ Уведомление юзеру ═══
+    var newBal = calcUserRefBalance(uid);
+    // пересчёт "после" — все ещё approved минус что мы списали
+    var afterOwed = Math.max(0, bal.owed - v);
+    try {
+      await notifyUserAboutRefPayout(uid, v, afterOwed);
+    } catch(e){ console.warn('notify failed', e); }
+
+    toast('✅ Выплачено ' + fmt(v), 'ok');
+    closeModal();
+
+    // Перерисовываем активную вкладку
+    if (TAB === 'users') renderUsers();
+    else if (TAB === 'refPayouts') renderRefPayouts();
+    else if (TAB === 'refs') renderRefs();
+    else if (TAB === 'dashboard') renderDashboard();
+  } catch(e){ toast(e.message, 'err'); }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1216,29 +1539,14 @@ async function renderRefs(){
 
     var stat = {};
     inviters.forEach(function(inv){
-      var myRefs = getRefs(DATA.users, inv);
-      var myIds = {};
-      myRefs.forEach(function(r){ myIds[String(r.telegram_id)] = 1; });
-      var bonus = 0, appr = 0, paid = 0, cnt = 0, sum = 0;
-      DATA.purchases.forEach(function(p){
-        if (!myIds[String(p.user_telegram_id)]) return;
-        if (['rejected','cancelled'].indexOf(p.status) >= 0) return;
-        cnt++;
-        sum += Number(p.purchase_price||0);
-        var b = Number(p.referral_bonus||0) || Math.round(Number(p.purchase_price||0) * REF_PERCENT / 100);
-        var st = p.referral_status || 'pending';
-        if (st === 'rejected') return;
-        bonus += b;
-        if (st === 'paid') paid += b;
-        else if (st === 'approved') appr += b;
-      });
-      stat[inv.telegram_id] = { bonus: bonus, appr: appr, paid: paid, cnt: cnt, sum: sum };
+      var bal = calcUserRefBalance(inv.telegram_id);
+      stat[inv.telegram_id] = bal;
     });
 
     var totPend = 0, totAppr = 0, totPaid = 0;
     Object.keys(stat).forEach(function(k){
-      totPend += stat[k].bonus - stat[k].appr - stat[k].paid;
-      totAppr += stat[k].appr;
+      totPend += stat[k].pending;
+      totAppr += stat[k].owed;
       totPaid += stat[k].paid;
     });
 
@@ -1247,13 +1555,15 @@ async function renderRefs(){
       '<div class="stats" style="margin-bottom:16px">' +
         '<div class="stat"><div class="ic">🌳</div><div class="l">Рефералов</div><div class="v purple">' + refs.length + '</div></div>' +
         '<div class="stat"><div class="ic">🎁</div><div class="l">Пригласивших</div><div class="v ok">' + inviters.length + '</div></div>' +
-        '<div class="stat"><div class="ic">⏳</div><div class="l">Ожидает</div><div class="v warn">' + fmt(totPend) + '</div></div>' +
-        '<div class="stat"><div class="ic">✅</div><div class="l">Начислено</div><div class="v ok">' + fmt(totAppr) + '</div></div>' +
-        '<div class="stat"><div class="ic">💸</div><div class="l">Выплачено</div><div class="v accent">' + fmt(totPaid) + '</div></div>' +
+        '<div class="stat"><div class="ic">⏳</div><div class="l">Ждёт подтв.</div><div class="v warn">' + fmt(totPend) + '</div></div>' +
+        '<div class="stat"><div class="ic">💎</div><div class="l">К выводу всего</div><div class="v accent">' + fmt(totAppr) + '</div></div>' +
+        '<div class="stat"><div class="ic">💸</div><div class="l">Выплачено всего</div><div class="v accent">' + fmt(totPaid) + '</div></div>' +
       '</div>' +
       (inviters.length
         ? inviters.map(function(inv){
-            var rl = getRefs(DATA.users, inv);
+            var rl = DATA.users.filter(function(x){
+              return String(x.referrer_uid || '') === String(inv.telegram_id);
+            });
             var s = stat[inv.telegram_id] || {};
             return '<div class="card">' +
               '<div class="row" style="margin-bottom:12px">' +
@@ -1261,13 +1571,25 @@ async function renderRefs(){
                   '<div class="muted">' + userLink(inv) + ' · ID ' + esc(inv.telegram_id) + '</div></div>' +
                 '<div class="flex">' +
                   '<span class="badge purple">' + rl.length + ' реф.</span>' +
-                  '<span class="badge approved">' + fmt(s.bonus||0) + '</span>' +
+                  '<span class="badge ' + (s.owed > 0 ? 'pending' : 'approved') + '">' +
+                    (s.owed > 0 ? '💎 ' + fmt(s.owed) : '✅ 0 ₽') + '</span>' +
                 '</div>' +
               '</div>' +
-              rl.map(function(r){
+              '<div class="grid">' +
+                '<div class="cell"><b>К выводу</b><span class="warn">' + fmt(s.owed) + '</span></div>' +
+                '<div class="cell"><b>Начислено</b><span class="ok">' + fmt(s.accrued) + '</span></div>' +
+                '<div class="cell"><b>Выплачено</b><span class="accent">' + fmt(s.paid) + '</span></div>' +
+              '</div>' +
+              (rl.map(function(r){
                 return '<div class="ri"><div><b>' + esc(userName(r)) + '</b> · ' + userLink(r) + '</div>' +
                   '<div class="muted">' + fmtDate(r.registered_at) + '</div></div>';
-              }).join('') +
+              }).join('')) +
+              (s.owed > 0
+                ? '<div class="flex" style="margin-top:12px">' +
+                    '<button class="btn ok sm" onclick="openRefPay(\'' + esc(inv.telegram_id) + '\',' + s.owed + ')">' +
+                      '💸 Выплатить ' + fmt(s.owed) + '</button>' +
+                  '</div>'
+                : '') +
             '</div>';
           }).join('')
         : '<div class="empty"><div class="ic">🌳</div><p>Пока нет рефералов</p></div>')
@@ -1546,6 +1868,7 @@ async function render(){
     dashboard: renderDashboard,
     purchases: renderPurchases,
     payouts: renderPayouts,
+    refPayouts: renderRefPayouts,
     users: renderUsers,
     eras: renderEras,
     refs: renderRefs,
@@ -1554,13 +1877,14 @@ async function render(){
   try {
     await (tabs[TAB] || renderDashboard)();
   } catch(e){
-    $('app').innerHTML = '<div style="max-width:600px;margin:60px auto;padding:24px;' +
+    $('app').innerHTML =
+      '<div style="max-width:600px;margin:60px auto;padding:24px;' +
       'background:#1c2330;border:1px solid #ff5c5c;border-radius:12px;color:#e6edf3">' +
       '<b style="color:#ff5c5c">Ошибка:</b> ' + esc(e.message) + '</div>';
   }
 }
 
-// Экспорт в window, чтобы onclick работали
+// Экспорт в window
 window.doLogin = doLogin;
 window.logout = logout;
 window.setTab = setTab;
@@ -1569,6 +1893,7 @@ window.closeModal = closeModal;
 window.renderDashboard = renderDashboard;
 window.renderPurchases = renderPurchases;
 window.renderPayouts = renderPayouts;
+window.renderRefPayouts = renderRefPayouts;
 window.renderUsers = renderUsers;
 window.renderEras = renderEras;
 window.renderRefs = renderRefs;
@@ -1576,11 +1901,14 @@ window.renderBroadcast = renderBroadcast;
 window.admConfirm = admConfirm;
 window.admCancel = admCancel;
 window.admContact = admContact;
-window.payRef = payRef;
-window.editRefBonus = editRefBonus;
 window.admPaid = admPaid;
 window.admPayoutReject = admPayoutReject;
-window.showTree = showTree;
+window.refPayoutPaid = refPayoutPaid;
+window.refPayoutReject = refPayoutReject;
+window.openRefPay = openRefPay;
+window.rpSet = rpSet;
+window.rpUpdate = rpUpdate;
+window.doRefPay = doRefPay;
 window.createEra = createEra;
 window.editEra = editEra;
 window.saveEra = saveEra;

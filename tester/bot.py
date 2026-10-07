@@ -1,807 +1,1533 @@
 """
-Эры-проект: Backend + Telegram Bot
-Запуск: python bot.py
-Требуется: pip install fastapi uvicorn aiogram apscheduler aiosqlite python-jose passlib python-multipart
+Бот @ROSTERAbot — полная версия: 3 админа, отложенные бонусы, реф-выплаты
 """
-
-import os
-import hmac
-import hashlib
-import json
-import secrets
-import sqlite3
-import asyncio
+import time
+import threading
+import requests
 from datetime import datetime, timedelta, timezone
-from typing import Optional, List, Dict, Any
-
-from fastapi import FastAPI, HTTPException, Depends, Header, Request, UploadFile, File
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
-from jose import jwt, JWTError
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-
-from aiogram import Bot, Dispatcher, F
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
-from aiogram.filters import Command
-from aiogram.client.default import DefaultBotProperties
+from pathlib import Path
 
 # ============================================================
 # КОНФИГ
 # ============================================================
-BOT_TOKEN = os.getenv("BOT_TOKEN", "8673170042:AAE8cDClKSdADlXZ-TQAk8YhDZ3qdgzgEA4")
-ADMIN_IDS = [int(x) for x in os.getenv("ADMIN_IDS", "123456789").split(",") if x.strip()]
-ADMIN_LOGIN = os.getenv("ADMIN_LOGIN", "admin")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
-JWT_SECRET = os.getenv("JWT_SECRET", secrets.token_urlsafe(48))
-JWT_ALG = "HS256"
-JWT_TTL_HOURS = 24 * 7
+BOT_TOKEN = "8880107122:AAFa0r2WsfEeDmKIqRZI_YvvwRdXLz7y2kQ"
+ADMIN_IDS = [6040186314, 6972338698, 6544017826]
+ADMIN_ID = ADMIN_IDS[0]
 
-WEB_URL = os.getenv("WEB_URL", "http://localhost:8000/web.html")
-ADMIN_URL = os.getenv("ADMIN_URL", "http://localhost:8000/admin.html")
-DB_PATH = os.getenv("DB_PATH", "era.db")
-UPLOAD_DIR = os.getenv("UPLOAD_DIR", "uploads")
-os.makedirs(UPLOAD_DIR, exist_ok=True)
+CHANNEL_ID = -1004305451466
+FIREBASE = "https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app"
+WEB_URL = "https://mirzarasulov.github.io/velosher-shop/tester/web.html"
+ADMIN_URL = "https://mirzarasulov.github.io/velosher-shop/tester/admin.html"
+
+PDF_FILENAME = "РОСТЭРА.pdf"
+PDF_PATH = Path(PDF_FILENAME)
+AGREE_TEXT = "📄 Подтвердите ознакомление с условиями:"
+WELCOME_AFTER = "👋 <b>Добро пожаловать в проект «РОСТЭРА»!</b>\n\nОткройте приложение:"
+AGREE_CALLBACK = "user_agree_terms"
+
+DEFAULT_DAYS = 30
+TZ = timezone(timedelta(hours=5))
+API = f"https://api.telegram.org/bot{BOT_TOKEN}"
+REFERRAL_PERCENT = 5
 
 # ============================================================
-# БАЗА ДАННЫХ
+# ГЛОБАЛЬНОЕ СОСТОЯНИЕ
 # ============================================================
-def db():
-    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
-    conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA foreign_keys = ON")
-    return conn
+offset = {"v": 0}
+last_seen_purchase_id = 0
+last_seen_payout_id = 0
+last_seen_ref_request_id = 0
+AGREE_MESSAGES = {}
+PURCHASE_STATUS_CACHE = {}
+PAYOUT_STATUS_CACHE = {}
+REF_REQUEST_STATUS_CACHE = {}
+BOT_USERNAME = "ROSTERAbot"
 
-def init_db():
-    conn = db()
-    c = conn.cursor()
-    c.executescript("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        telegram_id INTEGER UNIQUE,
-        telegram_username TEXT,
-        first_name TEXT,
-        last_name TEXT,
-        photo_url TEXT,
-        referral_code TEXT UNIQUE,
-        referrer_id INTEGER,
-        status TEXT DEFAULT 'active',
-        agreed_terms INTEGER DEFAULT 0,
-        agreed_at TEXT,
-        registered_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (referrer_id) REFERENCES users(id)
-    );
+SESSION = requests.Session()
+SESSION.headers.update({"Connection": "keep-alive"})
 
-    CREATE TABLE IF NOT EXISTS eras (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT NOT NULL,
-        price REAL NOT NULL,
-        duration_days INTEGER NOT NULL,
-        profit_amount REAL NOT NULL,
-        total_amount REAL NOT NULL,
-        description TEXT,
-        is_active INTEGER DEFAULT 1,
-        sort_order INTEGER DEFAULT 0
-    );
 
-    CREATE TABLE IF NOT EXISTS purchases (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        era_id INTEGER NOT NULL,
-        era_title TEXT,
-        purchase_price REAL NOT NULL,
-        duration_days INTEGER NOT NULL,
-        profit_amount REAL NOT NULL,
-        total_amount REAL NOT NULL,
-        status TEXT DEFAULT 'awaiting_payment',
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        activated_at TEXT,
-        expires_at TEXT,
-        completed_at TEXT,
-        payout_requested_at TEXT,
-        paid_at TEXT,
-        FOREIGN KEY (user_id) REFERENCES users(id),
-        FOREIGN KEY (era_id) REFERENCES eras(id)
-    );
+# ============================================================
+# FIREBASE
+# ============================================================
+def fb_get(path):
+    try:
+        r = SESSION.get(f"{FIREBASE}/{path}.json", timeout=5)
+        return r.json()
+    except Exception as e:
+        log("FB", f"GET {path} ошибка: {e}")
+        return None
 
-    CREATE TABLE IF NOT EXISTS payouts (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        purchase_id INTEGER UNIQUE NOT NULL,
-        user_id INTEGER NOT NULL,
-        amount REAL NOT NULL,
-        status TEXT DEFAULT 'pending',
-        requested_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        paid_at TEXT,
-        FOREIGN KEY (purchase_id) REFERENCES purchases(id),
-        FOREIGN KEY (user_id) REFERENCES users(id)
-    );
 
-    CREATE TABLE IF NOT EXISTS content (
-        key TEXT PRIMARY KEY,
-        value TEXT
-    );
+def fb_patch(path, data):
+    try:
+        r = SESSION.patch(f"{FIREBASE}/{path}.json", json=data, timeout=5)
+        return r.ok
+    except Exception as e:
+        log("FB", f"PATCH {path} ошибка: {e}")
+        return False
 
-    CREATE TABLE IF NOT EXISTS notifications (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        type TEXT,
-        text TEXT,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        read INTEGER DEFAULT 0
-    );
 
-    CREATE TABLE IF NOT EXISTS admin_actions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        admin TEXT,
-        action TEXT,
-        details TEXT,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    """)
+def fb_put(path, data):
+    try:
+        r = SESSION.put(f"{FIREBASE}/{path}.json", json=data, timeout=5)
+        return r.ok
+    except Exception as e:
+        log("FB", f"PUT {path} ошибка: {e}")
+        return False
 
-    # Эры по умолчанию (7 штук)
-    c.execute("SELECT COUNT(*) FROM eras")
-    if c.fetchone()[0] == 0:
-        defaults = [
-            (1, "Эра №1", 1500, 20, 1000, 2500, "Базовый вход в проект. Оптимальный старт.", 1, 1),
-            (2, "Эра №2", 3000, 25, 2200, 5200, "Ускоренный рост с повышенным начислением.", 1, 2),
-            (3, "Эра №3", 5000, 30, 4000, 9000, "Сбалансированный вариант для уверенного дохода.", 1, 3),
-            (4, "Эра №4", 10000, 35, 8500, 18500, "Для участников, готовых к серьёзному результату.", 1, 4),
-            (5, "Эра №5", 25000, 40, 22000, 47000, "Премиальная эра с максимальной отдачей.", 1, 5),
-            (6, "Эра №6", 50000, 45, 45000, 95000, "VIP-уровень. Индивидуальный подход.", 1, 6),
-            (7, "Эра №7", 100000, 60, 100000, 200000, "Максимальная эра проекта. Для лидеров.", 1, 7),
-        ]
-        c.executemany("""INSERT INTO eras
-            (id,title,price,duration_days,profit_amount,total_amount,description,is_active,sort_order)
-            VALUES (?,?,?,?,?,?,?,?,?)""", defaults)
 
-    # Контент по умолчанию
-    defaults_content = {
-        "marketing_image": "",
-        "rules_text": "Правила проекта:\n\n1. Участник обязан соблюдать условия.\n2. Запрещено создавать множественные аккаунты.\n3. Администрация вправе отказать в участии без объяснения причин.\n4. Все спорные ситуации решаются в чате поддержки.",
-        "terms_text": "Условия участия:\n\n1. Участник подтверждает, что ознакомлен с правилами.\n2. Участник понимает, что начисление ≠ фактическая выплата.\n3. Выплата производится администратором вручную после завершения эры.\n4. Проект не является финансовым инструментом и не гарантирует доход.\n5. Участие добровольное.",
-        "notif_registration": "Добро пожаловать в проект!",
-        "notif_purchase_created": "Ваша заявка на покупку создана. Ожидайте связи администратора.",
-        "notif_purchase_activated": "Ваша заявка принята. Продукт активирован.",
-        "notif_era_completed": "Ваша эра завершена. Вы можете подать заявку на вывод.",
-        "notif_payout_requested": "Заявка на вывод создана. Ожидайте выплату.",
-        "notif_payout_paid": "Ваша заявка на вывод выполнена. Выплата отправлена.",
+def fb_post(path, data):
+    try:
+        r = SESSION.post(f"{FIREBASE}/{path}.json", json=data, timeout=5)
+        return r.json() if r.ok else None
+    except Exception as e:
+        log("FB", f"POST {path} ошибка: {e}")
+        return None
+
+
+# ============================================================
+# ЛОГ
+# ============================================================
+def log(tag, msg):
+    print(f"[{datetime.now(TZ).strftime('%H:%M:%S')}] [{tag}] {msg}", flush=True)
+
+
+# ============================================================
+# TELEGRAM CORE
+# ============================================================
+def tg(method, **kwargs):
+    try:
+        r = SESSION.post(f"{API}/{method}", json=kwargs, timeout=10)
+        data = r.json()
+        if not data.get("ok"):
+            log("TG", f"{method} FAIL: {data.get('description')}")
+        return data
+    except Exception as e:
+        log("TG", f"{method} EXC: {e}")
+        return None
+
+
+def tg_send(chat_id, text, kb=None, parse_mode="HTML"):
+    if not chat_id:
+        return False
+    payload = {
+        "chat_id": chat_id,
+        "text": text,
+        "parse_mode": parse_mode,
+        "disable_web_page_preview": True,
     }
-    for k, v in defaults_content.items():
-        c.execute("INSERT OR IGNORE INTO content (key, value) VALUES (?, ?)", (k, v))
+    if kb is not None:
+        payload["reply_markup"] = kb
+    res = tg("sendMessage", **payload)
+    return bool(res and res.get("ok"))
 
-    conn.commit()
-    conn.close()
+
+def tg_edit(chat_id, msg_id, text, kb=None):
+    payload = {
+        "chat_id": chat_id,
+        "message_id": msg_id,
+        "text": text,
+        "parse_mode": "HTML",
+    }
+    if kb is not None:
+        payload["reply_markup"] = kb
+    return tg("editMessageText", **payload)
+
+
+def tg_delete(chat_id, msg_id):
+    if not chat_id or not msg_id:
+        return
+    return tg("deleteMessage", chat_id=chat_id, message_id=msg_id)
+
+
+def tg_answer(cb_id, text="", alert=False):
+    return tg("answerCallbackQuery", callback_query_id=cb_id, text=text, show_alert=alert)
+
+
+def is_admin(uid):
+    try:
+        return int(uid) in ADMIN_IDS
+    except:
+        return False
+
+
+def notify_admins(text, kb=None):
+    for aid in ADMIN_IDS:
+        tg_send(aid, text, kb=kb)
+
+
+# ============================================================
+# УТИЛИТЫ
+# ============================================================
+def fmt_money(v):
+    try:
+        return f"{int(float(v)):,}".replace(",", " ") + " ₽"
+    except:
+        return f"{v} ₽"
+
 
 def now_iso():
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(TZ).isoformat()
 
-def get_content(key: str, default: str = "") -> str:
-    conn = db()
-    row = conn.execute("SELECT value FROM content WHERE key=?", (key,)).fetchone()
-    conn.close()
-    return row["value"] if row else default
 
-def set_content(key: str, value: str):
-    conn = db()
-    conn.execute("INSERT INTO content (key,value) VALUES (?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
-                 (key, value))
-    conn.commit()
-    conn.close()
-
-def log_admin(admin: str, action: str, details: str = ""):
-    conn = db()
-    conn.execute("INSERT INTO admin_actions (admin,action,details) VALUES (?,?,?)", (admin, action, details))
-    conn.commit()
-    conn.close()
-
-def add_notification(user_id: int, type_: str, text: str):
-    conn = db()
-    conn.execute("INSERT INTO notifications (user_id,type,text) VALUES (?,?,?)", (user_id, type_, text))
-    conn.commit()
-    conn.close()
-
-# ============================================================
-# JWT
-# ============================================================
-def make_token(user_id: int, is_admin: bool = False) -> str:
-    payload = {
-        "sub": str(user_id),
-        "adm": is_admin,
-        "exp": datetime.now(timezone.utc) + timedelta(hours=JWT_TTL_HOURS)
-    }
-    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALG)
-
-def decode_token(token: str) -> dict:
+def parse_dt(s):
+    if not s:
+        return None
     try:
-        return jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALG])
-    except JWTError:
-        raise HTTPException(401, "Invalid token")
+        dt = datetime.fromisoformat(str(s).replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=TZ)
+        return dt.astimezone(TZ)
+    except:
+        return None
 
-async def current_user(authorization: Optional[str] = Header(None)) -> dict:
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(401, "No token")
-    data = decode_token(authorization.split(" ", 1)[1])
-    conn = db()
-    row = conn.execute("SELECT * FROM users WHERE id=?", (int(data["sub"]),)).fetchone()
-    conn.close()
-    if not row:
-        raise HTTPException(401, "User not found")
-    return dict(row)
 
-async def current_admin(authorization: Optional[str] = Header(None)) -> dict:
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(401, "No token")
-    data = decode_token(authorization.split(" ", 1)[1])
-    if not data.get("adm"):
-        raise HTTPException(403, "Not admin")
-    return {"admin": True}
+def fmt_date(dt):
+    if isinstance(dt, str):
+        dt = parse_dt(dt)
+    if not dt:
+        return "—"
+    months = ["янв","фев","мар","апр","мая","июн",
+              "июл","авг","сен","окт","ноя","дек"]
+    return f"{dt.day} {months[dt.month-1]} {dt.year}"
 
-# ============================================================
-# TELEGRAM
-# ============================================================
-bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode="HTML"))
-dp = Dispatcher()
 
-async def notify_admins(text: str, kb: Optional[InlineKeyboardMarkup] = None):
-    for aid in ADMIN_IDS:
-        try:
-            await bot.send_message(aid, text, reply_markup=kb)
-        except Exception as e:
-            print(f"[notify_admins] {aid}: {e}")
+def fmt_dt(s):
+    dt = parse_dt(s)
+    return dt.strftime("%d.%m.%Y %H:%M") if dt else "—"
 
-async def notify_user(user_id: int, text: str):
-    conn = db()
-    row = conn.execute("SELECT telegram_id FROM users WHERE id=?", (user_id,)).fetchone()
-    conn.close()
-    if not row or not row["telegram_id"]:
-        return
-    try:
-        await bot.send_message(row["telegram_id"], text)
-    except Exception as e:
-        print(f"[notify_user] {user_id}: {e}")
 
-@dp.message(Command("start"))
-async def cmd_start(message: Message):
-    args = message.text.split(maxsplit=1)
-    ref = ""
-    if len(args) > 1 and args[1].startswith("ref"):
-        ref = args[1][3:]
-
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🚀 Открыть приложение", web_app=WebAppInfo(url=WEB_URL))]
-    ])
-    await message.answer(
-        "Добро пожаловать в проект «Эры»!\n\n"
-        "Нажмите кнопку ниже, чтобы открыть личный кабинет.",
-        reply_markup=kb
-    )
-
-# ============================================================
-# FASTAPI
-# ============================================================
-app = FastAPI(title="Era Project API")
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
-
-# ---------- Pydantic ----------
-class TelegramAuth(BaseModel):
-    id: int
-    first_name: Optional[str] = ""
-    last_name: Optional[str] = ""
-    username: Optional[str] = ""
-    photo_url: Optional[str] = ""
-    auth_date: Optional[int] = 0
-    hash: Optional[str] = ""
-    ref: Optional[str] = ""
-
-class AdminLogin(BaseModel):
-    login: str
-    password: str
-
-class EraIn(BaseModel):
-    title: str
-    price: float
-    duration_days: int
-    profit_amount: float
-    description: str = ""
-    is_active: int = 1
-    sort_order: int = 0
-
-class ContentIn(BaseModel):
-    key: str
-    value: str
-
-# ---------- AUTH ----------
-def verify_telegram_auth(data: dict) -> bool:
-    """Проверка hash от Telegram Login Widget."""
-    check_hash = data.get("hash", "")
-    if not check_hash:
-        return False
-    data_check = {k: v for k, v in data.items() if k != "hash" and v is not None and v != ""}
-    data_check = {k: str(v) for k, v in data_check.items()}
-    data_check_str = "\n".join(f"{k}={data_check[k]}" for k in sorted(data_check))
-    secret = hashlib.sha256(BOT_TOKEN.encode()).digest()
-    calc = hmac.new(secret, data_check_str.encode(), hashlib.sha256).hexdigest()
-    return hmac.compare_digest(calc, check_hash)
-
-def gen_ref_code() -> str:
-    return "USER" + secrets.token_hex(4).upper()
-
-@app.post("/api/auth/telegram")
-async def auth_telegram(payload: TelegramAuth):
-    data = payload.model_dump()
-    # В dev-режиме разрешаем без hash (для локального теста)
-    is_valid = verify_telegram_auth(data) or os.getenv("DEV_MODE", "1") == "1"
-    if not is_valid:
-        raise HTTPException(401, "Invalid Telegram auth")
-
-    conn = db()
-    row = conn.execute("SELECT * FROM users WHERE telegram_id=?", (payload.id,)).fetchone()
-
-    if not row:
-        # Регистрация
-        ref_code = gen_ref_code()
-        referrer_id = None
-        if payload.ref:
-            r = conn.execute("SELECT id FROM users WHERE referral_code=?", (payload.ref,)).fetchone()
-            if r:
-                referrer_id = r["id"]
-
-        cur = conn.execute("""INSERT INTO users
-            (telegram_id, telegram_username, first_name, last_name, photo_url, referral_code, referrer_id)
-            VALUES (?,?,?,?,?,?,?)""",
-            (payload.id, payload.username, payload.first_name, payload.last_name,
-             payload.photo_url, ref_code, referrer_id))
-        user_id = cur.lastrowid
-        conn.commit()
-
-        # Уведомления
-        add_notification(user_id, "registration", get_content("notif_registration"))
-        await notify_user(user_id, get_content("notif_registration"))
-        await notify_admins(
-            f"🆕 Новый пользователь\n"
-            f"Имя: {payload.first_name}\n"
-            f"@{payload.username or '—'}\n"
-            f"ID: {payload.id}\n"
-            f"Реферер: {'да' if referrer_id else 'нет'}"
-        )
-        if referrer_id:
-            await notify_user(referrer_id, f"🎉 У вас новый реферал: {payload.first_name} (@{payload.username or '—'})")
-    else:
-        user_id = row["id"]
-
-    conn.close()
-    token = make_token(user_id, is_admin=False)
-    return {"token": token, "is_admin": False}
-
-@app.post("/api/admin/login")
-async def admin_login(payload: AdminLogin):
-    if payload.login != ADMIN_LOGIN or payload.password != ADMIN_PASSWORD:
-        raise HTTPException(401, "Invalid credentials")
-    token = make_token(0, is_admin=True)
-    return {"token": token, "is_admin": True}
-
-@app.get("/api/me")
-async def me(user: dict = Depends(current_user)):
-    conn = db()
-    ref = None
-    if user.get("referrer_id"):
-        r = conn.execute("SELECT * FROM users WHERE id=?", (user["referrer_id"],)).fetchone()
-        if r:
-            ref = {"username": r["telegram_username"], "first_name": r["first_name"]}
-    purchases = conn.execute("SELECT COUNT(*) c FROM purchases WHERE user_id=?", (user["id"],)).fetchone()["c"]
-    invited = conn.execute("SELECT COUNT(*) c FROM users WHERE referrer_id=?", (user["id"],)).fetchone()["c"]
-    conn.close()
+def calc_dates(activated_at, days):
+    d0 = activated_at.date() if isinstance(activated_at, datetime) else parse_dt(activated_at).date()
+    first = d0 + timedelta(days=1)
+    last = first + timedelta(days=days - 1)
+    expires = last + timedelta(days=1)
     return {
-        "id": user["id"],
-        "telegram_id": user["telegram_id"],
-        "telegram_username": user["telegram_username"],
-        "first_name": user["first_name"],
-        "last_name": user["last_name"],
-        "photo_url": user["photo_url"],
-        "referral_code": user["referral_code"],
-        "referrer": ref,
-        "status": user["status"],
-        "agreed_terms": bool(user["agreed_terms"]),
-        "agreed_at": user["agreed_at"],
-        "registered_at": user["registered_at"],
-        "purchases_count": purchases,
-        "invited_count": invited
+        "start_date": datetime(first.year, first.month, first.day, tzinfo=TZ).isoformat(),
+        "last_day": datetime(last.year, last.month, last.day, tzinfo=TZ).isoformat(),
+        "expires_at": datetime(expires.year, expires.month, expires.day, tzinfo=TZ).isoformat(),
     }
 
-@app.post("/api/agree")
-async def agree(user: dict = Depends(current_user)):
-    conn = db()
-    conn.execute("UPDATE users SET agreed_terms=1, agreed_at=? WHERE id=?",
-                 (now_iso(), user["id"]))
-    conn.commit()
-    conn.close()
-    add_notification(user["id"], "terms", "Вы подтвердили условия участия.")
-    return {"ok": True}
 
-# ---------- CONTENT ----------
-@app.get("/api/content/{key}")
-async def get_content_api(key: str):
-    return {"key": key, "value": get_content(key)}
+def find_record(collection, target_id):
+    all_ = fb_get(collection) or {}
+    if not isinstance(all_, dict):
+        return None, None
+    if str(target_id) in all_:
+        v = all_[str(target_id)]
+        if isinstance(v, dict):
+            return str(target_id), v
+    for k, v in all_.items():
+        if isinstance(v, dict) and str(v.get("id")) == str(target_id):
+            return k, v
+    return None, None
 
-# ---------- ERAS ----------
-@app.get("/api/eras")
-async def list_eras():
-    conn = db()
-    rows = conn.execute("SELECT * FROM eras WHERE is_active=1 ORDER BY sort_order, id").fetchall()
-    conn.close()
-    return [dict(r) for r in rows]
 
-# ---------- PURCHASES ----------
-@app.post("/api/purchases/create/{era_id}")
-async def create_purchase(era_id: int, user: dict = Depends(current_user)):
-    if not user["agreed_terms"]:
-        raise HTTPException(403, "Сначала подтвердите условия участия")
-
-    conn = db()
-    era = conn.execute("SELECT * FROM eras WHERE id=? AND is_active=1", (era_id,)).fetchone()
-    if not era:
-        conn.close()
-        raise HTTPException(404, "Эра не найдена или недоступна")
-
-    # Защита от дубля: активная или ожидающая заявка на эту эру
-    dup = conn.execute("""SELECT id FROM purchases
-        WHERE user_id=? AND era_id=? AND status IN ('awaiting_payment','active','completed','awaiting_payout')""",
-        (user["id"], era_id)).fetchone()
-    if dup:
-        conn.close()
-        raise HTTPException(409, "У вас уже есть активная заявка на эту эру")
-
-    cur = conn.execute("""INSERT INTO purchases
-        (user_id, era_id, era_title, purchase_price, duration_days, profit_amount, total_amount, status)
-        VALUES (?,?,?,?,?,?,?,'awaiting_payment')""",
-        (user["id"], era["id"], era["title"], era["price"], era["duration_days"],
-         era["profit_amount"], era["total_amount"]))
-    pid = cur.lastrowid
-    conn.commit()
-    conn.close()
-
-    add_notification(user["id"], "purchase", get_content("notif_purchase_created"))
-    await notify_user(user["id"], get_content("notif_purchase_created"))
-    await notify_admins(
-        f"🛒 Новая заявка на покупку #{pid}\n"
-        f"Пользователь: {user['first_name']} @{user['telegram_username'] or '—'}\n"
-        f"Telegram ID: {user['telegram_id']}\n"
-        f"Эра: {era['title']}\n"
-        f"Стоимость: {era['price']} ₽\n"
-        f"Срок: {era['duration_days']} дн.\n"
-        f"Начисление: {era['profit_amount']} ₽\n"
-        f"Итого: {era['total_amount']} ₽\n"
-        f"Дата: {now_iso()}"
-    )
-    return {"ok": True, "purchase_id": pid}
-
-@app.get("/api/purchases/my")
-async def my_purchases(user: dict = Depends(current_user)):
-    conn = db()
-    rows = conn.execute("SELECT * FROM purchases WHERE user_id=? ORDER BY id DESC", (user["id"],)).fetchall()
-    conn.close()
-    result = []
-    now = datetime.now(timezone.utc)
-    for r in rows:
-        d = dict(r)
-        d["days_left"] = calc_days_left(d)
-        result.append(d)
-    return result
-
-def calc_days_left(p: dict) -> int:
-    if p["status"] != "active" or not p.get("expires_at"):
-        return 0
+def get_referral_bonus(p):
+    if p.get("referral_bonus") not in (None, ""):
+        try:
+            return int(float(p.get("referral_bonus")))
+        except:
+            pass
     try:
-        exp = datetime.fromisoformat(p["expires_at"].replace("Z", "+00:00"))
-        if exp.tzinfo is None:
-            exp = exp.replace(tzinfo=timezone.utc)
-        left = (exp - datetime.now(timezone.utc)).days
-        return max(0, left)
-    except Exception:
+        return int(float(p.get("purchase_price", 0)) * REFERRAL_PERCENT / 100)
+    except:
         return 0
 
-# ---------- PAYOUTS ----------
-@app.post("/api/payouts/request/{purchase_id}")
-async def request_payout(purchase_id: int, user: dict = Depends(current_user)):
-    conn = db()
-    p = conn.execute("SELECT * FROM purchases WHERE id=? AND user_id=?", (purchase_id, user["id"])).fetchone()
-    if not p:
-        conn.close()
-        raise HTTPException(404, "Покупка не найдена")
-    if p["status"] not in ("completed",):
-        conn.close()
-        raise HTTPException(400, "Заявку можно подать только по завершённой эре")
-    # Защита от дубля
-    existing = conn.execute("SELECT id FROM payouts WHERE purchase_id=?", (purchase_id,)).fetchone()
-    if existing:
-        conn.close()
-        raise HTTPException(409, "Заявка на вывод уже создана")
 
-    conn.execute("""INSERT INTO payouts (purchase_id, user_id, amount, status)
-        VALUES (?,?,?, 'pending')""", (purchase_id, user["id"], p["total_amount"]))
-    conn.execute("UPDATE purchases SET status='awaiting_payout', payout_requested_at=? WHERE id=?",
-                 (now_iso(), purchase_id))
-    conn.commit()
-    conn.close()
+# ═══════════════════════════════════════════════════════════
+# 🆕 ПРОВЕРКА АКТИВНОСТИ РЕФЕРЕРА
+# ═══════════════════════════════════════════════════════════
+def ref_has_active_era(ref_uid):
+    """
+    Есть ли у юзера хотя бы одна АКТИВНАЯ эра:
+    status=approved И expires_at > сейчас.
+    """
+    ref_uid = str(ref_uid)
+    purchases = fb_get("purchases") or {}
+    now = datetime.now(TZ)
 
-    add_notification(user["id"], "payout", get_content("notif_payout_requested"))
-    await notify_user(user["id"], get_content("notif_payout_requested"))
-    await notify_admins(
-        f"💸 Новая заявка на вывод\n"
-        f"Пользователь: {user['first_name']} @{user['telegram_username'] or '—'}\n"
-        f"Telegram ID: {user['telegram_id']}\n"
-        f"Покупка #{purchase_id}: {p['era_title']}\n"
-        f"Сумма к выплате: {p['total_amount']} ₽"
-    )
-    return {"ok": True}
+    if not isinstance(purchases, dict):
+        return False
 
-# ---------- NOTIFICATIONS ----------
-@app.get("/api/notifications")
-async def notifications(user: dict = Depends(current_user)):
-    conn = db()
-    rows = conn.execute("SELECT * FROM notifications WHERE user_id=? ORDER BY id DESC LIMIT 50",
-                        (user["id"],)).fetchall()
-    conn.close()
-    return [dict(r) for r in rows]
+    for p in purchases.values():
+        if not isinstance(p, dict):
+            continue
+        if str(p.get("user_telegram_id")) != ref_uid:
+            continue
+        if p.get("status") != "approved":
+            continue
+        exp = parse_dt(p.get("expires_at"))
+        if exp and exp > now:
+            return True
 
-# ---------- REFERRALS ----------
-@app.get("/api/referrals")
-async def referrals(user: dict = Depends(current_user)):
-    conn = db()
-    rows = conn.execute("""SELECT id, telegram_username, first_name, registered_at, status,
-        (SELECT COUNT(*) FROM purchases WHERE user_id=users.id) AS purchases_count
-        FROM users WHERE referrer_id=? ORDER BY id DESC""", (user["id"],)).fetchall()
-    conn.close()
-    return [dict(r) for r in rows]
+    return False
 
-# ============================================================
-# АДМИН API
-# ============================================================
-@app.get("/api/admin/dashboard")
-async def admin_dashboard(_: dict = Depends(current_admin)):
-    conn = db()
-    def scalar(q, *a):
-        return conn.execute(q, a).fetchone()[0]
-    data = {
-        "users": scalar("SELECT COUNT(*) FROM users"),
-        "active_eras": scalar("SELECT COUNT(*) FROM purchases WHERE status='active'"),
-        "completed_eras": scalar("SELECT COUNT(*) FROM purchases WHERE status IN ('completed','awaiting_payout','paid')"),
-        "purchase_requests": scalar("SELECT COUNT(*) FROM purchases WHERE status='awaiting_payment'"),
-        "payout_requests": scalar("SELECT COUNT(*) FROM payouts WHERE status='pending'"),
-        "total_purchases_sum": scalar("SELECT COALESCE(SUM(purchase_price),0) FROM purchases WHERE status NOT IN ('awaiting_payment')"),
-        "total_profit_sum": scalar("SELECT COALESCE(SUM(profit_amount),0) FROM purchases WHERE status IN ('active','completed','awaiting_payout','paid')"),
-        "total_paid_sum": scalar("SELECT COALESCE(SUM(amount),0) FROM payouts WHERE status='paid'"),
+
+def activate_pending_bonuses(ref_uid):
+    """
+    Активирует все отложенные бонусы (pending_active) реферера → approved.
+    Возвращает (кол-во покупок, сумма).
+    Вызывать когда реферер САМ купил эру.
+    """
+    ref_uid = str(ref_uid)
+    users = fb_get("users") or {}
+    purchases = fb_get("purchases") or {}
+
+    my_ids = set()
+    if isinstance(users, dict):
+        for u in users.values():
+            if isinstance(u, dict) and str(u.get("referrer_uid", "")) == ref_uid:
+                my_ids.add(str(u.get("telegram_id")))
+
+    activated = 0
+    total = 0
+    now = now_iso()
+
+    if isinstance(purchases, dict):
+        for pk, p in purchases.items():
+            if not isinstance(p, dict):
+                continue
+            if str(p.get("user_telegram_id")) not in my_ids:
+                continue
+            if p.get("status") in ("rejected", "cancelled"):
+                continue
+            if (p.get("referral_status") or "") != "pending_active":
+                continue
+
+            bonus = get_referral_bonus(p)
+            if bonus <= 0:
+                continue
+
+            fb_patch(f"purchases/{pk}", {
+                "referral_status": "approved",
+                "referral_activated_at": now,
+                "referral_activated_reason": "ref_active_after_purchase",
+            })
+            activated += 1
+            total += bonus
+
+    return activated, total
+
+
+def calc_user_ref_balance(uid):
+    """
+    Баланс реф. бонусов юзера.
+    Учитывает: approved, frozen, paid, pending, pending_active.
+    """
+    uid = str(uid)
+    users = fb_get("users") or {}
+    purchases = fb_get("purchases") or {}
+
+    my_ids = set()
+    if isinstance(users, dict):
+        for u in users.values():
+            if isinstance(u, dict) and str(u.get("referrer_uid", "")) == uid:
+                my_ids.add(str(u.get("telegram_id")))
+
+    accrued = 0
+    paid = 0
+    pending = 0
+    frozen = 0
+    pending_active = 0
+    last_at = None
+    last_amount = 0
+
+    if isinstance(purchases, dict):
+        for p in purchases.values():
+            if not isinstance(p, dict):
+                continue
+            if str(p.get("user_telegram_id")) not in my_ids:
+                continue
+            if p.get("status") in ("rejected", "cancelled"):
+                continue
+            b = get_referral_bonus(p)
+            st = p.get("referral_status") or "pending"
+            if st == "rejected":
+                continue
+
+            frozen_amt = 0
+            try:
+                frozen_amt = int(float(p.get("referral_frozen_amount") or 0))
+            except:
+                frozen_amt = 0
+
+            if st == "paid":
+                accrued += b
+                paid += b
+                if p.get("referral_paid_at"):
+                    if not last_at or p.get("referral_paid_at") > last_at:
+                        last_at = p.get("referral_paid_at")
+                        try:
+                            last_amount = int(float(p.get("referral_paid_amount") or b))
+                        except:
+                            last_amount = b
+            elif st == "frozen":
+                accrued += b
+                frozen += frozen_amt or b
+            elif st == "approved":
+                accrued += b
+            elif st == "pending_active":
+                pending_active += b
+            else:
+                pending += b
+
+    return {
+        "accrued": accrued,
+        "paid": paid,
+        "pending": pending,
+        "frozen": frozen,
+        "pending_active": pending_active,
+        "owed": max(0, accrued - paid - frozen),
+        "last_at": last_at,
+        "last_amount": last_amount,
     }
-    conn.close()
+
+
+# ============================================================
+# КЛАВИАТУРЫ
+# ============================================================
+def kb_agree():
+    return {"inline_keyboard": [[
+        {"text": "✅ Я СОГЛАСЕН/А", "callback_data": AGREE_CALLBACK}
+    ]]}
+
+
+def kb_start():
+    return {"inline_keyboard": [
+        [{"text": "🚀 Открыть приложение", "web_app": {"url": WEB_URL}}],
+        [{"text": "💸 Подать заявку на вывод", "callback_data": "withdraw_start"}],
+        [{"text": "👥 Мои рефералы", "callback_data": "my_refs"}]
+    ]}
+
+
+def kb_admin_purchase(pid, uid):
+    return {"inline_keyboard": [
+        [
+            {"text": "✅ Подтвердить", "callback_data": f"adm_approve:{pid}"},
+            {"text": "❌ Отклонить",   "callback_data": f"adm_reject:{pid}"}
+        ],
+        [{"text": "💬 Написать", "url": f"tg://user?id={uid}"}],
+        [{"text": "🌐 Открыть админку", "web_app": {"url": ADMIN_URL}}]
+    ]}
+
+
+def kb_admin_payout(poid, uid):
+    return {"inline_keyboard": [
+        [
+            {"text": "💸 Выплачено", "callback_data": f"adm_paid:{poid}"},
+            {"text": "❌ Отклонить", "callback_data": f"adm_preject:{poid}"}
+        ],
+        [{"text": "💬 Написать", "url": f"tg://user?id={uid}"}]
+    ]}
+
+
+def kb_admin_ref_payout(rid, uid):
+    return {"inline_keyboard": [
+        [
+            {"text": "✅ Выплачено", "callback_data": f"adm_refpaid:{rid}"},
+            {"text": "❌ Отклонить", "callback_data": f"adm_refreject:{rid}"}
+        ],
+        [{"text": "💬 Написать", "url": f"tg://user?id={uid}"}],
+        [{"text": "🌐 Открыть админку", "web_app": {"url": ADMIN_URL}}]
+    ]}
+
+
+def kb_withdraw():
+    return {"inline_keyboard": [[
+        {"text": "💸 Подать заявку на вывод", "callback_data": "withdraw_start"}
+    ]]}
+
+
+def kb_refs():
+    return {"inline_keyboard": [
+        [{"text": "🚀 Открыть приложение", "web_app": {"url": WEB_URL}}],
+        [{"text": "🔄 Обновить", "callback_data": "my_refs"}]
+    ]}
+
+
+def kb_unknown():
+    return {"inline_keyboard": [
+        [{"text": "🚀 Открыть приложение", "web_app": {"url": WEB_URL}}],
+        [{"text": "💬 Написать админу", "url": f"tg://user?id={ADMIN_ID}"}]
+    ]}
+
+
+# ============================================================
+# PDF + СОГЛАСИЕ
+# ============================================================
+def send_pdf_and_button(chat_id):
+    def _run():
+        pdf_id = None
+        if PDF_PATH.exists():
+            try:
+                with open(PDF_PATH, "rb") as f:
+                    files = {"document": (PDF_FILENAME, f)}
+                    data = {"chat_id": chat_id}
+                    r = requests.post(f"{API}/sendDocument", data=data, files=files, timeout=60)
+                    if r.ok:
+                        pdf_id = r.json().get("result", {}).get("message_id")
+            except Exception as e:
+                log("PDF", f"❌ {e}")
+        time.sleep(0.2)
+        tg_send(chat_id, AGREE_TEXT, kb=kb_agree())
+        AGREE_MESSAGES[str(chat_id)] = {"pdf": pdf_id}
+    threading.Thread(target=_run, daemon=True).start()
+
+
+# ============================================================
+# РЕГИСТРАЦИЯ
+# ============================================================
+def register_user(user, start_text):
+    uid = str(user["id"])
+    existing = fb_get(f"users/{uid}") or {}
+    if existing.get("registered_at"):
+        return existing
+
+    parts = start_text.split(maxsplit=1)
+    ref_code = ""
+    if len(parts) > 1 and parts[1].startswith("ref_"):
+        ref_code = parts[1][4:].strip()
+
+    data = {
+        "telegram_id": user["id"],
+        "username": user.get("username") or "",
+        "first_name": user.get("first_name") or "",
+        "last_name": user.get("last_name") or "",
+        "registered_at": now_iso(),
+    }
+
+    if ref_code and str(ref_code) != uid:
+        ref_user = fb_get(f"users/{ref_code}")
+        if ref_user and ref_user.get("telegram_id"):
+            data["referrer_uid"] = str(ref_code)
+            new_name = user.get("first_name") or "Пользователь"
+            new_un = f"@{user.get('username')}" if user.get("username") else ""
+            tg_send(int(ref_code),
+                    f"🎉 <b>Новый реферал!</b>\n\n"
+                    f"👤 {new_name} {new_un}\n"
+                    f"🆔 <code>{uid}</code>\n\n"
+                    f"💰 <i>Вы получите {REFERRAL_PERCENT}% с каждой его покупки.</i>")
+            log("REF", f"новый реферал у {ref_code}: {uid}")
+
+    fb_put(f"users/{uid}", data)
     return data
 
-@app.get("/api/admin/users")
-async def admin_users(_: dict = Depends(current_admin)):
-    conn = db()
-    rows = conn.execute("""SELECT u.*,
-        (SELECT telegram_username FROM users WHERE id=u.referrer_id) AS referrer_username,
-        (SELECT COUNT(*) FROM purchases WHERE user_id=u.id) AS purchases_count
-        FROM users u ORDER BY u.id DESC""").fetchall()
-    conn.close()
-    return [dict(r) for r in rows]
-
-@app.get("/api/admin/purchases")
-async def admin_purchases(_: dict = Depends(current_admin)):
-    conn = db()
-    rows = conn.execute("""SELECT p.*, u.telegram_username, u.first_name, u.telegram_id
-        FROM purchases p JOIN users u ON u.id=p.user_id ORDER BY p.id DESC""").fetchall()
-    conn.close()
-    result = []
-    for r in rows:
-        d = dict(r)
-        d["days_left"] = calc_days_left(d)
-        result.append(d)
-    return result
-
-@app.post("/api/admin/purchases/{pid}/confirm")
-async def admin_confirm_purchase(pid: int, _: dict = Depends(current_admin)):
-    conn = db()
-    p = conn.execute("SELECT * FROM purchases WHERE id=?", (pid,)).fetchone()
-    if not p:
-        conn.close()
-        raise HTTPException(404, "Не найдено")
-    if p["status"] != "awaiting_payment":
-        conn.close()
-        raise HTTPException(400, "Неверный статус")
-
-    activated = datetime.now(timezone.utc)
-    expires = activated + timedelta(days=p["duration_days"])
-    conn.execute("""UPDATE purchases SET status='active', activated_at=?, expires_at=?
-        WHERE id=?""", (activated.isoformat(), expires.isoformat(), pid))
-    conn.commit()
-    conn.close()
-
-    log_admin("admin", "confirm_purchase", f"purchase #{pid}")
-    add_notification(p["user_id"], "activated", get_content("notif_purchase_activated"))
-    await notify_user(p["user_id"], get_content("notif_purchase_activated"))
-    return {"ok": True, "activated_at": activated.isoformat(), "expires_at": expires.isoformat()}
-
-@app.post("/api/admin/purchases/{pid}/cancel")
-async def admin_cancel_purchase(pid: int, _: dict = Depends(current_admin)):
-    conn = db()
-    conn.execute("UPDATE purchases SET status='cancelled' WHERE id=? AND status='awaiting_payment'", (pid,))
-    conn.commit()
-    conn.close()
-    log_admin("admin", "cancel_purchase", f"purchase #{pid}")
-    return {"ok": True}
-
-@app.get("/api/admin/payouts")
-async def admin_payouts(_: dict = Depends(current_admin)):
-    conn = db()
-    rows = conn.execute("""SELECT po.*, u.telegram_username, u.first_name, u.telegram_id,
-        p.era_title, p.purchase_price, p.profit_amount, p.total_amount
-        FROM payouts po
-        JOIN users u ON u.id=po.user_id
-        JOIN purchases p ON p.id=po.purchase_id
-        ORDER BY po.id DESC""").fetchall()
-    conn.close()
-    return [dict(r) for r in rows]
-
-@app.post("/api/admin/payouts/{pid}/mark_paid")
-async def admin_mark_paid(pid: int, _: dict = Depends(current_admin)):
-    conn = db()
-    po = conn.execute("SELECT * FROM payouts WHERE id=?", (pid,)).fetchone()
-    if not po:
-        conn.close()
-        raise HTTPException(404, "Не найдено")
-    if po["status"] == "paid":
-        conn.close()
-        raise HTTPException(400, "Уже выплачено")
-
-    paid_at = now_iso()
-    conn.execute("UPDATE payouts SET status='paid', paid_at=? WHERE id=?", (paid_at, pid))
-    conn.execute("UPDATE purchases SET status='paid', paid_at=? WHERE id=?", (paid_at, po["purchase_id"]))
-    conn.commit()
-    conn.close()
-
-    log_admin("admin", "mark_paid", f"payout #{pid}")
-    add_notification(po["user_id"], "paid", get_content("notif_payout_paid"))
-    await notify_user(po["user_id"], get_content("notif_payout_paid"))
-    return {"ok": True}
-
-@app.post("/api/admin/payouts/{pid}/cancel")
-async def admin_cancel_payout(pid: int, _: dict = Depends(current_admin)):
-    conn = db()
-    po = conn.execute("SELECT * FROM payouts WHERE id=?", (pid,)).fetchone()
-    if not po:
-        conn.close()
-        raise HTTPException(404, "Не найдено")
-    conn.execute("DELETE FROM payouts WHERE id=?", (pid,))
-    conn.execute("UPDATE purchases SET status='completed', payout_requested_at=NULL WHERE id=?",
-                 (po["purchase_id"],))
-    conn.commit()
-    conn.close()
-    log_admin("admin", "cancel_payout", f"payout #{pid}")
-    return {"ok": True}
-
-@app.get("/api/admin/eras")
-async def admin_eras(_: dict = Depends(current_admin)):
-    conn = db()
-    rows = conn.execute("SELECT * FROM eras ORDER BY sort_order, id").fetchall()
-    conn.close()
-    return [dict(r) for r in rows]
-
-@app.put("/api/admin/eras/{eid}")
-async def admin_update_era(eid: int, payload: EraIn, _: dict = Depends(current_admin)):
-    conn = db()
-    conn.execute("""UPDATE eras SET title=?, price=?, duration_days=?, profit_amount=?,
-        total_amount=?, description=?, is_active=?, sort_order=? WHERE id=?""",
-        (payload.title, payload.price, payload.duration_days, payload.profit_amount,
-         payload.price + payload.profit_amount, payload.description, payload.is_active,
-         payload.sort_order, eid))
-    conn.commit()
-    conn.close()
-    log_admin("admin", "update_era", f"era #{eid}")
-    return {"ok": True}
-
-@app.post("/api/admin/eras")
-async def admin_create_era(payload: EraIn, _: dict = Depends(current_admin)):
-    conn = db()
-    cur = conn.execute("""INSERT INTO eras (title,price,duration_days,profit_amount,
-        total_amount,description,is_active,sort_order) VALUES (?,?,?,?,?,?,?,?)""",
-        (payload.title, payload.price, payload.duration_days, payload.profit_amount,
-         payload.price + payload.profit_amount, payload.description, payload.is_active, payload.sort_order))
-    eid = cur.lastrowid
-    conn.commit()
-    conn.close()
-    log_admin("admin", "create_era", f"era #{eid}")
-    return {"ok": True, "id": eid}
-
-@app.post("/api/admin/content")
-async def admin_set_content(payload: ContentIn, _: dict = Depends(current_admin)):
-    set_content(payload.key, payload.value)
-    log_admin("admin", "set_content", payload.key)
-    return {"ok": True}
-
-@app.post("/api/admin/upload/marketing")
-async def admin_upload_marketing(file: UploadFile = File(...), _: dict = Depends(current_admin)):
-    ext = os.path.splitext(file.filename or "img.png")[1] or ".png"
-    name = f"marketing_{secrets.token_hex(4)}{ext}"
-    path = os.path.join(UPLOAD_DIR, name)
-    with open(path, "wb") as f:
-        f.write(await file.read())
-    url = f"/uploads/{name}"
-    set_content("marketing_image", url)
-    log_admin("admin", "upload_marketing", url)
-    return {"ok": True, "url": url}
-
-@app.get("/api/admin/actions")
-async def admin_actions(_: dict = Depends(current_admin)):
-    conn = db()
-    rows = conn.execute("SELECT * FROM admin_actions ORDER BY id DESC LIMIT 200").fetchall()
-    conn.close()
-    return [dict(r) for r in rows]
-
-@app.get("/api/admin/referral_tree/{user_id}")
-async def admin_ref_tree(user_id: int, _: dict = Depends(current_admin)):
-    conn = db()
-    def children(uid):
-        rows = conn.execute("SELECT id, telegram_username, first_name FROM users WHERE referrer_id=?", (uid,)).fetchall()
-        return [{"id": r["id"], "username": r["telegram_username"], "name": r["first_name"],
-                 "children": children(r["id"])} for r in rows]
-    tree = children(user_id)
-    conn.close()
-    return {"user_id": user_id, "children": tree}
 
 # ============================================================
-# АВТОМАТИЗАЦИЯ: проверка сроков
+# КОМАНДЫ
 # ============================================================
-async def check_expired_eras():
-    conn = db()
+def cmd_start(chat_id, user, text):
+    u = register_user(user, text)
+    if u.get("agreed_terms"):
+        tg_send(chat_id, WELCOME_AFTER, kb=kb_start())
+        return
+    send_pdf_and_button(chat_id)
+
+
+def cmd_admin(chat_id):
+    tg_send(chat_id,
+            "🛠 <b>Админ-панель</b>\n\n"
+            "Все действия — заявки, выплаты, статистика, товары, рефералы — "
+            "доступны в веб-панели.\n\n"
+            "<b>Доступные команды:</b>\n"
+            "/test — самодиагностика\n"
+            "/test_era — создать тестовую эру на 1 день\n"
+            "/reset_era — удалить все тестовые эры",
+            kb={"inline_keyboard": [[
+                {"text": "🌐 Открыть админ-панель", "web_app": {"url": ADMIN_URL}}
+            ]]})
+
+def cmd_test(chat_id, user_tg):
+    if not is_admin(user_tg):
+        return
+    me = tg("getMe")
+    admins_str = ", ".join(f"<code>{a}</code>" for a in ADMIN_IDS)
+    tg_send(chat_id,
+            f"🧪 <b>Самодиагностика</b>\n\n"
+            f"🤖 Бот: @{me['result']['username']}\n"
+            f"👤 Ваш ID: <code>{user_tg}</code>\n"
+            f"👑 Админы: {admins_str}\n"
+            f"💰 Реф. процент: <b>{REFERRAL_PERCENT}%</b>\n\n"
+            f"<i>Если это сообщение пришло — бот может вам писать.</i>")
+
+
+def cmd_test_era(chat_id, user_tg):
+    if not is_admin(user_tg):
+        tg_send(chat_id, "⛔️ Только для админа"); return
+
+    cur = fb_get("counters/purchase") or 0
+    pid = int(cur) + 1
+    fb_put("counters/purchase", pid)
+
+    u = fb_get(f"users/{user_tg}") or {}
     now = now_iso()
-    rows = conn.execute("""SELECT * FROM purchases
-        WHERE status='active' AND expires_at IS NOT NULL AND expires_at <= ?""", (now,)).fetchall()
-    for p in rows:
-        conn.execute("UPDATE purchases SET status='completed', completed_at=? WHERE id=?",
-                     (now, p["id"]))
-        add_notification(p["user_id"], "completed", get_content("notif_era_completed"))
-        await notify_user(p["user_id"], get_content("notif_era_completed"))
-    conn.commit()
-    conn.close()
-    if rows:
-        print(f"[scheduler] completed {len(rows)} purchases")
+    test_purchase = {
+        "id": pid,
+        "user_telegram_id": user_tg,
+        "user_username": u.get("username", ""),
+        "user_first_name": u.get("first_name", "Тест"),
+        "era_title": "🧪 ТЕСТ ЭРА (1 день)",
+        "purchase_price": 1000,
+        "total_amount": 1500,
+        "days": 1,
+        "status": "created",
+        "created_at": now,
+        "is_test": 1,
+        "referrer_uid": u.get("referrer_uid"),
+        "referral_percent": REFERRAL_PERCENT,
+        "referral_bonus": 50,
+        "referral_status": "pending" if u.get("referrer_uid") else None,
+    }
+    fb_post("purchases", test_purchase)
 
-scheduler = AsyncIOScheduler()
+    tg_send(chat_id,
+            f"🧪 <b>Тестовая эра создана</b>\n\n"
+            f"📩 Заявка #{pid}\n"
+            f"💳 ТЕСТ ЭРА (1 день)\n"
+            f"💰 1 500 ₽")
 
-@app.on_event("startup")
-async def on_startup():
-    init_db()
-    scheduler.add_job(check_expired_eras, "interval", minutes=5, next_run_time=datetime.now(timezone.utc))
-    scheduler.start()
-    # Запуск бота в фоне
-    asyncio.create_task(dp.start_polling(bot))
+    notify_new_purchase(test_purchase, pid)
 
-@app.on_event("shutdown")
-async def on_shutdown():
-    scheduler.shutdown(wait=False)
-    await bot.session.close()
 
-# ---------- Отдача страниц ----------
-@app.get("/")
-async def root():
-    return HTMLResponse('<meta http-equiv="refresh" content="0; url=/web.html">')
+def cmd_reset_era(chat_id, user_tg):
+    if not is_admin(user_tg):
+        tg_send(chat_id, "⛔️ Только для админа"); return
 
-@app.get("/web.html")
-async def serve_web():
-    return FileResponse("web.html")
+    P = fb_get("purchases") or {}
+    removed = 0
+    if isinstance(P, dict):
+        for k, p in P.items():
+            if isinstance(p, dict) and p.get("is_test"):
+                fb_put(f"purchases/{k}", None)
+                PURCHASE_STATUS_CACHE.pop(k, None)
+                removed += 1
 
-@app.get("/admin.html")
-async def serve_admin():
-    return FileResponse("admin.html")
+    tg_send(chat_id, f"🧹 Удалено тестовых эр: <b>{removed}</b>")
+
+
+# ═══════════════════════════════════════════════════════════
+# /myrefs
+# ═══════════════════════════════════════════════════════════
+def build_myrefs_text(uid):
+    uid = str(uid)
+    users = fb_get("users") or {}
+    purchases = fb_get("purchases") or {}
+
+    my_refs = []
+    if isinstance(users, dict):
+        for u in users.values():
+            if isinstance(u, dict) and str(u.get("referrer_uid", "")) == uid:
+                my_refs.append(u)
+    my_refs.sort(key=lambda r: r.get("registered_at", ""), reverse=True)
+
+    bal = calc_user_ref_balance(uid)
+
+    if not my_refs:
+        return (
+            "👥 <b>Мои рефералы</b>\n\n"
+            "Пока никого нет.\n\n"
+            f"<i>Приглашайте друзей — вы получаете {REFERRAL_PERCENT}% "
+            f"с каждой их покупки.</i>"
+        )
+
+    lines = [
+        f"👥 <b>Мои рефералы ({len(my_refs)})</b>",
+        "",
+        "━━━━━━━━━━━━━━━",
+        "💰 <b>БАЛАНС</b>",
+        f"💎 К выводу: <b>{fmt_money(bal['owed'])}</b>",
+        f"📈 Начислено: {fmt_money(bal['accrued'])}",
+        f"💸 Выплачено: {fmt_money(bal['paid'])}",
+    ]
+    if bal["pending"]:
+        lines.append(f"⏳ Ожидает: {fmt_money(bal['pending'])}")
+    if bal["pending_active"]:
+        lines.append(f"⏸ Отложено: {fmt_money(bal['pending_active'])}")
+        lines.append("   <i>(нужно купить эру — активируются)</i>")
+    if bal["last_at"]:
+        lines.append(
+            f"\n<i>Последняя выплата: {fmt_money(bal['last_amount'])} · "
+            f"{fmt_dt(bal['last_at'])} (Ташкент)</i>"
+        )
+    lines.append("━━━━━━━━━━━━━━━")
+    lines.append("")
+
+    my_ids = {str(r.get("telegram_id")) for r in my_refs}
+    purchases_by_ref = {}
+    if isinstance(purchases, dict):
+        for p in purchases.values():
+            if not isinstance(p, dict):
+                continue
+            buyer = str(p.get("user_telegram_id"))
+            if buyer not in my_ids:
+                continue
+            if p.get("status") in ("rejected", "cancelled"):
+                continue
+            purchases_by_ref.setdefault(buyer, []).append(p)
+
+    for r in my_refs[:15]:
+        rid = str(r.get("telegram_id"))
+        name = r.get("first_name") or "Пользователь"
+        un = f"@{r.get('username')}" if r.get("username") else "—"
+        rp = purchases_by_ref.get(rid, [])
+        bsum = sum(get_referral_bonus(p) for p in rp)
+        if rp:
+            lines.append(
+                f"👤 <b>{name}</b> ({un})\n"
+                f"   🛒 {len(rp)} покупок · 🎁 {fmt_money(bsum)}"
+            )
+        else:
+            lines.append(f"👤 <b>{name}</b> ({un})\n   <i>Пока без покупок</i>")
+
+    if len(my_refs) > 15:
+        lines.append(f"\n<i>…и ещё {len(my_refs) - 15}</i>")
+
+    return "\n\n".join(lines)
+
+
+def cmd_myrefs(chat_id, user_tg):
+    text = build_myrefs_text(user_tg)
+    ref_link = f"https://t.me/{BOT_USERNAME}?start=ref_{user_tg}"
+    text += f"\n\n🔗 <b>Ваша ссылка:</b>\n<code>{ref_link}</code>"
+    tg_send(chat_id, text, kb=kb_refs())
+
+
+# ============================================================
+# CALLBACK HANDLER
+# ============================================================
+def handle_callback(cb):
+    data = cb.get("data", "")
+    user_tg = cb["from"]["id"]
+    msg = cb.get("message", {})
+    chat_id = msg.get("chat", {}).get("id")
+    msg_id = msg.get("message_id")
+    cb_id = cb.get("id")
+
+    log("CB", f"data={data} user={user_tg}")
+
+    if data == AGREE_CALLBACK:
+        tg_answer(cb_id, "✅")
+        uid = str(user_tg)
+        stored = AGREE_MESSAGES.get(str(chat_id)) or {}
+        if msg_id:
+            tg_delete(chat_id, msg_id)
+        if stored.get("pdf"):
+            tg_delete(chat_id, stored["pdf"])
+        AGREE_MESSAGES.pop(str(chat_id), None)
+
+        u = fb_get(f"users/{uid}") or {}
+        if u.get("telegram_id"):
+            fb_patch(f"users/{uid}", {"agreed_terms": 1, "agreed_at": now_iso()})
+
+        tg_send(chat_id, WELCOME_AFTER, kb=kb_start())
+        return
+
+    if data == "withdraw_start":
+        ui_withdraw(chat_id, user_tg, cb_id, msg_id); return
+    if data.startswith("wd_sel:"):
+        ui_wd_sel(chat_id, user_tg, data[7:], msg_id, cb_id); return
+    if data.startswith("wd_confirm:"):
+        ui_wd_confirm(chat_id, user_tg, data[11:], msg_id, cb_id); return
+
+    if data == "my_refs":
+        tg_answer(cb_id, "👥")
+        text = build_myrefs_text(user_tg)
+        ref_link = f"https://t.me/{BOT_USERNAME}?start=ref_{user_tg}"
+        text += f"\n\n🔗 <b>Ваша ссылка:</b>\n<code>{ref_link}</code>"
+        if msg_id:
+            tg_edit(chat_id, msg_id, text, kb=kb_refs())
+        else:
+            tg_send(chat_id, text, kb=kb_refs())
+        return
+
+    if data.startswith("adm_approve:"):
+        if not is_admin(user_tg):
+            tg_answer(cb_id, "⛔️", True); return
+        pid = data.split(":", 1)[1]
+        tg_answer(cb_id, "✅ Подтверждено")
+        tg_edit(chat_id, msg_id, f"✅ <b>Заявка #{pid} подтверждена</b>\n<i>Админ: <code>{user_tg}</code></i>")
+        admin_set_purchase(pid, "approved"); return
+
+    if data.startswith("adm_reject:"):
+        if not is_admin(user_tg):
+            tg_answer(cb_id, "⛔️", True); return
+        pid = data.split(":", 1)[1]
+        tg_answer(cb_id, "❌ Отклонено")
+        tg_edit(chat_id, msg_id, f"❌ <b>Заявка #{pid} отклонена</b>\n<i>Админ: <code>{user_tg}</code></i>")
+        admin_set_purchase(pid, "rejected"); return
+
+    if data.startswith("adm_paid:"):
+        if not is_admin(user_tg):
+            tg_answer(cb_id, "⛔️", True); return
+        poid = data.split(":", 1)[1]
+        tg_answer(cb_id, "💸")
+        tg_edit(chat_id, msg_id, f"💸 <b>Вывод #{poid} выплачен</b>\n<i>Админ: <code>{user_tg}</code></i>")
+        admin_set_payout(poid, "paid"); return
+
+    if data.startswith("adm_preject:"):
+        if not is_admin(user_tg):
+            tg_answer(cb_id, "⛔️", True); return
+        poid = data.split(":", 1)[1]
+        tg_answer(cb_id, "❌")
+        tg_edit(chat_id, msg_id, f"❌ <b>Вывод #{poid} отклонён</b>\n<i>Админ: <code>{user_tg}</code></i>")
+        admin_set_payout(poid, "rejected"); return
+
+    if data.startswith("adm_refpaid:"):
+        if not is_admin(user_tg):
+            tg_answer(cb_id, "⛔️", True); return
+        rid = data.split(":", 1)[1]
+        tg_answer(cb_id, "💸")
+        tg_edit(chat_id, msg_id, f"💸 <b>Реф. заявка #{rid} выплачена</b>\n<i>Админ: <code>{user_tg}</code></i>")
+        admin_set_ref_payout(rid, "paid"); return
+
+    if data.startswith("adm_refreject:"):
+        if not is_admin(user_tg):
+            tg_answer(cb_id, "⛔️", True); return
+        rid = data.split(":", 1)[1]
+        tg_answer(cb_id, "❌")
+        tg_edit(chat_id, msg_id, f"❌ <b>Реф. заявка #{rid} отклонена</b>\n<i>Админ: <code>{user_tg}</code></i>")
+        admin_set_ref_payout(rid, "rejected"); return
+
+    tg_answer(cb_id, "")
+
+
+# ============================================================
+# UI ВЫВОДА (обычные выплаты)
+# ============================================================
+def ui_withdraw(chat_id, user_tg, cb_id=None, msg_id=None):
+    all_p = fb_get("purchases") or {}
+    all_po = fb_get("payouts") or {}
+
+    blocked = set()
+    if isinstance(all_po, dict):
+        for po in all_po.values():
+            if isinstance(po, dict) and po.get("status") in ("pending", "paid", "processing"):
+                blocked.add(str(po.get("purchase_id")))
+
+    available = []
+    if isinstance(all_p, dict):
+        for k, p in all_p.items():
+            if not isinstance(p, dict):
+                continue
+            if str(p.get("user_telegram_id")) != str(user_tg):
+                continue
+            if p.get("status") != "completed":
+                continue
+            if str(p.get("id")) in blocked:
+                continue
+            available.append((k, p))
+
+    if cb_id:
+        tg_answer(cb_id)
+
+    if not available:
+        text = "📭 Нет эр для вывода"
+        kb = {"inline_keyboard": [[{"text": "🚀 Приложение", "web_app": {"url": WEB_URL}}]]}
+        if msg_id:
+            tg_edit(chat_id, msg_id, text, kb=kb)
+        else:
+            tg_send(chat_id, text, kb=kb)
+        return
+
+    buttons = [[{
+        "text": f"📄 #{p.get('id')} · {fmt_money(p.get('total_amount', 0))}",
+        "callback_data": f"wd_sel:{k}"
+    }] for k, p in available]
+
+    if msg_id:
+        tg_edit(chat_id, msg_id, "📋 <b>Выберите покупку:</b>", kb={"inline_keyboard": buttons})
+    else:
+        tg_send(chat_id, "📋 <b>Выберите покупку:</b>", kb={"inline_keyboard": buttons})
+
+
+def ui_wd_sel(chat_id, user_tg, key, msg_id, cb_id):
+    tg_answer(cb_id)
+    p = fb_get(f"purchases/{key}")
+    if not p:
+        tg_send(chat_id, "❌ Не найдено"); return
+    text = (f"📄 <b>#{p.get('id')}</b>\n"
+            f"💳 {p.get('era_title', '—')}\n"
+            f"💰 {fmt_money(p.get('total_amount', 0))}")
+    kb = {"inline_keyboard": [[{"text": "🔘 Подать заявку", "callback_data": f"wd_confirm:{key}"}]]}
+    tg_edit(chat_id, msg_id, text, kb=kb)
+
+
+def ui_wd_confirm(chat_id, user_tg, key, msg_id, cb_id):
+    tg_answer(cb_id, "✅ Создаю…")
+    p = fb_get(f"purchases/{key}")
+    if not p:
+        tg_send(chat_id, "❌ Не найдено"); return
+
+    cur = fb_get("counters/payout") or 0
+    poid = int(cur) + 1
+    fb_put("counters/payout", poid)
+
+    u = fb_get(f"users/{user_tg}") or {}
+    now = now_iso()
+    po = {
+        "id": poid,
+        "purchase_id": p.get("id"),
+        "user_telegram_id": user_tg,
+        "user_username": u.get("username", ""),
+        "user_first_name": u.get("first_name", ""),
+        "era_title": p.get("era_title", ""),
+        "purchase_price": p.get("purchase_price", 0),
+        "amount": p.get("total_amount", 0),
+        "status": "pending",
+        "requested_at": now,
+        "paid_at": None,
+    }
+    fb_post("payouts", po)
+
+    tg_edit(chat_id, msg_id,
+            f"✅ <b>Заявка #{poid} создана</b>\n"
+            f"💰 {fmt_money(po['amount'])}\n\n"
+            f"⏳ Ожидайте — администратор свяжется с вами.")
+
+    PAYOUT_STATUS_CACHE[str(poid)] = "pending"
+    notify_new_payout(po)
+
+
+# ============================================================
+# СООБЩЕНИЯ
+# ============================================================
+def handle_message(msg):
+    text = (msg.get("text") or "").strip()
+    chat = msg.get("chat", {})
+    chat_id = chat.get("id")
+    user = msg.get("from", {})
+    user_tg = user.get("id")
+
+    if chat.get("type") != "private":
+        return
+
+    log("MSG", f"{user_tg}: {text[:60] if text else '[no text]'}")
+
+    if text.startswith("/start"):
+        cmd_start(chat_id, user, text); return
+    if text.startswith("/admin"):
+        if not is_admin(user_tg):
+            tg_send(chat_id, "⛔️ Доступ запрещён"); return
+        cmd_admin(chat_id); return
+    if text.startswith("/myrefs") or text.startswith("/refs"):
+        cmd_myrefs(chat_id, user_tg); return
+    if text.startswith("/test_era"):
+        cmd_test_era(chat_id, user_tg); return
+    if text.startswith("/reset_era"):
+        cmd_reset_era(chat_id, user_tg); return
+    if text.startswith("/test"):
+        cmd_test(chat_id, user_tg); return
+
+    tg_send(chat_id,
+            "🤔 <b>Такой команды нет</b>\n\n"
+            "Доступные действия:\n"
+            "• 🚀 Открыть приложение\n"
+            "• 💬 Связаться с админом",
+            kb=kb_unknown())
+
+
+# ============================================================
+# ПОЛЛИНГ
+# ============================================================
+def poll():
+    try:
+        r = requests.post(f"{API}/getUpdates",
+                          json={"offset": offset["v"], "timeout": 10},
+                          timeout=15)
+        data = r.json()
+        if not data.get("ok"):
+            return
+        for upd in data.get("result", []):
+            offset["v"] = upd["update_id"] + 1
+            try:
+                if "message" in upd:
+                    handle_message(upd["message"])
+                elif "callback_query" in upd:
+                    handle_callback(upd["callback_query"])
+            except Exception as e:
+                log("UPD", f"ошибка: {e}")
+    except Exception as e:
+        log("POLL", f"{e}")
+
+
+# ============================================================
+# АДМИН-ДЕЙСТВИЯ — с проверкой активности реферера
+# ============================================================
+def admin_set_purchase(pid, status):
+    log("ADM", f"purchase #{pid} → {status}")
+    k, p = find_record("purchases", pid)
+    if not p:
+        notify_admins(f"⚠️ Заявка #{pid} не найдена в Firebase.")
+        return
+
+    old_status = p.get("status", "")
+    patch = {"status": status, "status_changed_at": now_iso()}
+
+    if status == "approved":
+        try:
+            days = int(p.get("days") or DEFAULT_DAYS)
+        except:
+            days = DEFAULT_DAYS
+        patch.update(calc_dates(now_iso(), days))
+        patch["approved_at"] = now_iso()
+        patch["days"] = days
+
+        # 💰 Реф. бонус + проверка активности реферера
+        if p.get("referrer_uid"):
+            ref_uid = str(p["referrer_uid"])
+            bonus = get_referral_bonus(p)
+
+            if ref_has_active_era(ref_uid):
+                patch["referral_status"] = "approved"
+                patch["referral_activated_at"] = now_iso()
+                if p.get("referral_bonus") in (None, ""):
+                    patch["referral_bonus"] = bonus
+                log("REF", f"бонус {bonus}₽ → approved (реферер {ref_uid} активен)")
+            else:
+                patch["referral_status"] = "pending_active"
+                patch["referral_pending_reason"] = "У реферера нет активной эры"
+                if p.get("referral_bonus") in (None, ""):
+                    patch["referral_bonus"] = bonus
+                log("REF", f"бонус {bonus}₽ → pending_active (реферер {ref_uid} не активен)")
+
+        # 🎉 Если это покупка РЕФЕРЕРА — активируем его отложенные бонусы
+        buyer_uid = str(p.get("user_telegram_id"))
+        pending_activated, pending_total = activate_pending_bonuses(buyer_uid)
+        if pending_activated > 0:
+            patch["_activated_pending_count"] = pending_activated
+            patch["_activated_pending_total"] = pending_total
+
+    if status in ("rejected", "cancelled"):
+        if p.get("referrer_uid"):
+            patch["referral_status"] = "rejected"
+
+    # Убираем мета-поля перед записью
+    activated_count = patch.pop("_activated_pending_count", 0)
+    activated_total = patch.pop("_activated_pending_total", 0)
+
+    fb_patch(f"purchases/{k}", patch)
+    PURCHASE_STATUS_CACHE[k] = status
+
+    if old_status != status:
+        updated = {**p, **patch}
+        notify_purchase_status(k, updated, old_status, status)
+
+        # 🎉 Уведомление покупателю: у него активировались отложенные бонусы
+        if activated_count > 0:
+            bal = calc_user_ref_balance(buyer_uid)
+            tg_send(int(buyer_uid),
+                    f"🎉 <b>Отложенные бонусы активированы!</b>\n\n"
+                    f"💰 Зачислено: <b>+{fmt_money(activated_total)}</b>\n"
+                    f"📦 От {activated_count} покупк{'и' if activated_count == 1 else 'ок'} рефералов\n\n"
+                    f"💎 К выводу: <b>{fmt_money(bal['owed'])}</b>",
+                    kb=kb_refs())
+
+
+def admin_set_payout(poid, status):
+    log("ADM", f"payout #{poid} → {status}")
+    k, po = find_record("payouts", poid)
+    if not po:
+        notify_admins(f"⚠️ Вывод #{poid} не найден.")
+        return
+
+    old_status = po.get("status", "")
+    patch = {"status": status, "status_changed_at": now_iso()}
+    if status == "paid":
+        patch["paid_at"] = now_iso()
+
+    fb_patch(f"payouts/{k}", patch)
+    PAYOUT_STATUS_CACHE[k] = status
+
+    if old_status != status:
+        notify_payout_status(k, {**po, **patch}, old_status, status)
+
+
+def admin_set_ref_payout(rid, status):
+    log("ADM", f"ref_payout #{rid} → {status}")
+    k, r = find_record("ref_payout_requests", rid)
+    if not r:
+        notify_admins(f"⚠️ Реф. заявка #{rid} не найдена.")
+        return
+
+    uid = str(r.get("user_telegram_id"))
+    amount = int(float(r.get("amount", 0)))
+    now = now_iso()
+
+    if status == "paid":
+        users = fb_get("users") or {}
+        purchases = fb_get("purchases") or {}
+        my_ids = set()
+        if isinstance(users, dict):
+            for u in users.values():
+                if isinstance(u, dict) and str(u.get("referrer_uid", "")) == uid:
+                    my_ids.add(str(u.get("telegram_id")))
+
+        # Только заявки, привязанные к ЭТОЙ заявке (frozen)
+        if isinstance(purchases, dict):
+            for pk, p in purchases.items():
+                if not isinstance(p, dict):
+                    continue
+                if str(p.get("user_telegram_id")) not in my_ids:
+                    continue
+                if (p.get("referral_status") or "") != "frozen":
+                    continue
+                if str(p.get("referral_request_id") or "") != str(r.get("id")):
+                    continue
+                fz = 0
+                try:
+                    fz = int(float(p.get("referral_frozen_amount") or 0))
+                except:
+                    fz = 0
+                if fz <= 0:
+                    fz = get_referral_bonus(p)
+                fb_patch(f"purchases/{pk}", {
+                    "referral_status": "paid",
+                    "referral_paid_at": now,
+                    "referral_paid_amount": fz,
+                    "referral_frozen_amount": 0,
+                    "referral_frozen_at": None,
+                    "referral_request_id": None,
+                })
+
+        fb_post("ref_payouts_log", {
+            "user_telegram_id": uid,
+            "amount": amount,
+            "request_id": r.get("id"),
+            "paid_at": now,
+            "paid_by": ADMIN_ID,
+        })
+
+    elif status == "rejected":
+        # Разморозить покупки
+        purchases = fb_get("purchases") or {}
+        if isinstance(purchases, dict):
+            for pk, p in purchases.items():
+                if not isinstance(p, dict):
+                    continue
+                if (p.get("referral_status") or "") != "frozen":
+                    continue
+                if str(p.get("referral_request_id") or "") != str(r.get("id")):
+                    continue
+                fb_patch(f"purchases/{pk}", {
+                    "referral_status": "approved",
+                    "referral_frozen_amount": 0,
+                    "referral_frozen_at": None,
+                    "referral_request_id": None,
+                })
+
+    fb_patch(f"ref_payout_requests/{k}", {
+        "status": status,
+        "status_changed_at": now,
+    })
+
+    if status == "paid":
+        bal = calc_user_ref_balance(uid)
+        remain_text = (
+            f"🎁 Осталось к выводу: <b>{fmt_money(bal['owed'])}</b>"
+            if bal["owed"] > 0 else
+            "✅ <b>Все бонусы выплачены!</b>"
+        )
+        tg_send(int(uid),
+                f"💸 <b>Вам выплачен реферальный бонус!</b>\n\n"
+                f"💰 Сумма: <b>{fmt_money(amount)}</b>\n"
+                f"🕐 {fmt_dt(now)} (Ташкент)\n\n"
+                f"{remain_text}",
+                kb=kb_refs())
+
+    elif status == "rejected":
+        bal = calc_user_ref_balance(uid)
+        tg_send(int(uid),
+                f"❌ <b>Заявка на вывод бонуса отклонена</b>\n\n"
+                f"💰 {fmt_money(amount)}\n\n"
+                f"💎 Вернулось к выводу: <b>{fmt_money(bal['owed'])}</b>\n\n"
+                f"Если это ошибка — напишите администратору.",
+                kb=kb_refs())
+
+    notify_admins(
+        f"🔄 <b>Реф. заявка #{r.get('id')}</b>: {status}\n"
+        f"👤 {r.get('user_first_name', '—')}\n"
+        f"💰 {fmt_money(amount)}"
+    )
+
+
+# ============================================================
+# УВЕДОМЛЕНИЯ
+# ============================================================
+def notify_new_purchase(p, pid):
+    uid = p.get("user_telegram_id")
+    log("NOTIFY", f"новая заявка #{pid} от uid={uid}")
+
+    tg_send(uid,
+            f"📩 <b>Заявка #{pid} создана</b>\n\n"
+            f"💳 {p.get('era_title', '—')}\n"
+            f"💵 {fmt_money(p.get('purchase_price', 0))}\n"
+            f"🏆 {fmt_money(p.get('total_amount', 0))}\n\n"
+            f"⏳ Ожидайте подтверждения.")
+
+    notify_admins(
+        f"📩 <b>НОВАЯ ЗАЯВКА #{pid}</b>\n\n"
+        f"👤 {p.get('user_first_name', '—')} @{p.get('user_username') or '—'}\n"
+        f"🆔 <code>{uid}</code>\n"
+        f"💳 {p.get('era_title', '—')}\n"
+        f"💵 {fmt_money(p.get('purchase_price', 0))} → <b>{fmt_money(p.get('total_amount', 0))}</b>\n\n"
+        f"👇 Подтвердите или отклоните:",
+        kb=kb_admin_purchase(pid, uid)
+    )
+
+    buyer = fb_get(f"users/{uid}") or {}
+    ref_uid = buyer.get("referrer_uid") or p.get("referrer_uid")
+    if ref_uid:
+        bonus = get_referral_bonus(p)
+        tg_send(int(ref_uid),
+                f"💰 <b>Ваш реферал сделал покупку!</b>\n\n"
+                f"👤 {p.get('user_first_name', '—')}\n"
+                f"💳 {p.get('era_title', '—')}\n"
+                f"💵 Номинал: {fmt_money(p.get('purchase_price', 0))}\n\n"
+                f"🎁 <b>Ваш бонус ({REFERRAL_PERCENT}%): {fmt_money(bonus)}</b>\n"
+                f"⏳ Ожидает подтверждения админом.",
+                kb=kb_refs())
+
+
+def notify_new_payout(po):
+    uid = po.get("user_telegram_id")
+    poid = po.get("id")
+
+    tg_send(uid,
+            f"📤 <b>Заявка на вывод #{poid} создана</b>\n\n"
+            f"💰 {fmt_money(po.get('amount', 0))}\n\n"
+            f"⏳ Ожидайте.")
+
+    notify_admins(
+        f"📤 <b>ЗАЯВКА НА ВЫВОД #{poid}</b>\n\n"
+        f"👤 {po.get('user_first_name', '—')} @{po.get('user_username') or '—'}\n"
+        f"🆔 <code>{uid}</code>\n"
+        f"💰 <b>{fmt_money(po.get('amount', 0))}</b>",
+        kb=kb_admin_payout(poid, uid)
+    )
+
+
+def notify_new_ref_request(r):
+    rid = r.get("id")
+    uid = r.get("user_telegram_id")
+    amount = fmt_money(r.get("amount", 0))
+
+    tg_send(int(uid),
+            f"✅ <b>Заявка на вывод бонуса #{rid}</b>\n\n"
+            f"💰 Сумма: <b>{amount}</b>\n\n"
+            f"⏳ Ожидайте подтверждения админом.",
+            kb=kb_refs())
+
+    notify_admins(
+        f"💰 <b>НОВАЯ ЗАЯВКА НА ВЫВОД БОНУСА #{rid}</b>\n\n"
+        f"👤 {r.get('user_first_name', '—')} @{r.get('user_username') or '—'}\n"
+        f"🆔 <code>{uid}</code>\n"
+        f"💰 Сумма: <b>{amount}</b>\n\n"
+        f"👇 Подтвердите или отклоните:",
+        kb=kb_admin_ref_payout(rid, uid)
+    )
+
+
+def notify_purchase_status(k, p, old_status, new_status):
+    uid = p.get("user_telegram_id")
+    pid = p.get("id")
+    era = p.get("era_title", "—")
+    price = fmt_money(p.get("purchase_price", 0))
+    total = fmt_money(p.get("total_amount", 0))
+
+    log("NOTIFY", f"purchase #{pid} {old_status}→{new_status}")
+
+    if new_status == "approved":
+        start = fmt_date(p.get("start_date"))
+        last = fmt_date(p.get("last_day"))
+        exp = fmt_date(p.get("expires_at"))
+        days = p.get("days", DEFAULT_DAYS)
+
+        tg_send(uid,
+                f"✅ <b>Заявка #{pid} подтверждена!</b>\n\n"
+                f"💳 Эра: <b>{era}</b>\n"
+                f"💵 Номинал: {price}\n"
+                f"🏆 К выплате: <b>{total}</b>\n\n"
+                f"🟢 <b>Эра активна:</b>\n"
+                f"▶️ С {start}\n"
+                f"⏹ По {last}\n"
+                f"⏰ Истекает: {exp}\n"
+                f"📅 Длительность: <b>{days} дн.</b>")
+
+        # Уведомление рефереру
+        buyer = fb_get(f"users/{uid}") or {}
+        ref_uid = buyer.get("referrer_uid") or p.get("referrer_uid")
+        if ref_uid:
+            bonus = get_referral_bonus(p)
+            ref_status = p.get("referral_status") or "approved"
+
+            if ref_status == "approved":
+                bal = calc_user_ref_balance(ref_uid)
+                tg_send(int(ref_uid),
+                        f"✅ <b>Бонус активирован!</b>\n\n"
+                        f"👤 {p.get('user_first_name', '—')}\n"
+                        f"💳 {era}\n"
+                        f"🎁 <b>+{fmt_money(bonus)}</b>\n\n"
+                        f"💰 К выводу: <b>{fmt_money(bal['owed'])}</b>",
+                        kb=kb_refs())
+            elif ref_status == "pending_active":
+                bal = calc_user_ref_balance(ref_uid)
+                tg_send(int(ref_uid),
+                        f"⏸ <b>Бонус отложен</b>\n\n"
+                        f"👤 Ваш реферал {p.get('user_first_name', '—')} купил эру.\n"
+                        f"🎁 Бонус: {fmt_money(bonus)}\n\n"
+                        f"❌ <b>Причина:</b> у вас нет активной эры.\n\n"
+                        f"🎯 <i>Купите любую эру — и отложенные бонусы "
+                        f"(<b>{fmt_money(bal['pending_active'])}</b>) активируются автоматически.</i>",
+                        kb=kb_refs())
+
+    elif new_status in ("rejected", "cancelled"):
+        emoji = "❌" if new_status == "rejected" else "🚫"
+        tg_send(uid,
+                f"{emoji} <b>Заявка #{pid} отклонена</b>\n\n"
+                f"💳 {era}\n"
+                f"💵 {price}")
+
+        buyer = fb_get(f"users/{uid}") or {}
+        ref_uid = buyer.get("referrer_uid") or p.get("referrer_uid")
+        if ref_uid:
+            tg_send(int(ref_uid),
+                    f"⚠️ <b>Заявка вашего реферала отклонена</b>\n\n"
+                    f"👤 {p.get('user_first_name', '—')}\n"
+                    f"💳 {era}\n\n"
+                    f"<i>Бонус не начислен.</i>")
+
+    elif new_status == "completed":
+        start = fmt_date(p.get("start_date"))
+        last = fmt_date(p.get("last_day"))
+
+        tg_send(uid,
+                f"🏁 <b>Период по заявке #{pid} завершён!</b>\n\n"
+                f"💳 Эра: <b>{era}</b>\n"
+                f"🟢 Была активна: с {start} по {last}\n"
+                f"🏆 К выплате: <b>{total}</b>\n\n"
+                f"Подайте заявку на вывод 👇",
+                kb=kb_withdraw())
+
+
+def notify_payout_status(k, po, old_status, new_status):
+    uid = po.get("user_telegram_id")
+    poid = po.get("id")
+    amount = fmt_money(po.get("amount", 0))
+
+    if new_status == "paid":
+        tg_send(uid,
+                f"💸 <b>Выплата #{poid} произведена!</b>\n\n"
+                f"💰 Сумма: <b>{amount}</b>\n"
+                f"🕐 {fmt_dt(po.get('paid_at'))} (Ташкент)")
+    elif new_status in ("rejected", "cancelled"):
+        tg_send(uid,
+                f"❌ <b>Заявка на вывод #{poid} отклонена</b>\n\n"
+                f"💰 {amount}")
+
+    notify_admins(
+        f"🔄 <b>Вывод #{poid}</b>: {old_status} → <b>{new_status}</b>\n"
+        f"👤 {po.get('user_first_name', '—')}\n"
+        f"💰 {amount}"
+    )
+
+
+# ============================================================
+# ФОНОВЫЙ МОНИТОРИНГ
+# ============================================================
+def check_new():
+    global last_seen_purchase_id, last_seen_payout_id, last_seen_ref_request_id
+
+    P = fb_get("purchases") or {}
+    if isinstance(P, dict):
+        for k, p in P.items():
+            if not isinstance(p, dict):
+                continue
+            try:
+                pid = int(p.get("id", 0))
+            except:
+                continue
+            cur_status = p.get("status", "")
+            old_status = PURCHASE_STATUS_CACHE.get(k)
+
+            if pid > last_seen_purchase_id:
+                last_seen_purchase_id = pid
+                if cur_status == "created":
+                    notify_new_purchase(p, pid)
+            elif old_status and old_status != cur_status:
+                notify_purchase_status(k, p, old_status, cur_status)
+
+            PURCHASE_STATUS_CACHE[k] = cur_status
+
+    PO = fb_get("payouts") or {}
+    if isinstance(PO, dict):
+        for k, po in PO.items():
+            if not isinstance(po, dict):
+                continue
+            try:
+                poid = int(po.get("id", 0))
+            except:
+                continue
+            cur_status = po.get("status", "")
+            old_status = PAYOUT_STATUS_CACHE.get(k)
+
+            if poid > last_seen_payout_id:
+                last_seen_payout_id = poid
+                if cur_status == "pending":
+                    notify_new_payout(po)
+            elif old_status and old_status != cur_status:
+                notify_payout_status(k, po, old_status, cur_status)
+
+            PAYOUT_STATUS_CACHE[k] = cur_status
+
+    RQ = fb_get("ref_payout_requests") or {}
+    if isinstance(RQ, dict):
+        for k, r in RQ.items():
+            if not isinstance(r, dict):
+                continue
+            try:
+                rid = int(r.get("id", 0))
+            except:
+                continue
+            cur_status = r.get("status", "")
+            old_status = REF_REQUEST_STATUS_CACHE.get(k)
+
+            if rid > last_seen_ref_request_id:
+                last_seen_ref_request_id = rid
+                if cur_status == "pending":
+                    notify_new_ref_request(r)
+
+            REF_REQUEST_STATUS_CACHE[k] = cur_status
+
+
+# ============================================================
+# НАПОМИНАНИЯ
+# ============================================================
+def check_expired():
+    P = fb_get("purchases") or {}
+    if not isinstance(P, dict):
+        return
+    now = datetime.now(TZ)
+
+    for k, p in P.items():
+        if not isinstance(p, dict):
+            continue
+        if p.get("status") != "approved":
+            continue
+        exp = parse_dt(p.get("expires_at"))
+        if not exp:
+            continue
+
+        hours = (exp - now).total_seconds() / 3600
+        uid = p.get("user_telegram_id")
+        pid = p.get("id")
+        total = fmt_money(p.get("total_amount", 0))
+
+        if 48 < hours <= 72 and not p.get("notified_3d"):
+            tg_send(uid, f"⏰ <b>Осталось 3 дня!</b>\n\n📩 #{pid}\n💰 {total}")
+            fb_patch(f"purchases/{k}", {"notified_3d": 1})
+
+        elif 3 < hours <= 24 and not p.get("notified_1d"):
+            tg_send(uid, f"⏰ <b>Остался 1 день!</b>\n\n📩 #{pid}\n💰 {total}")
+            fb_patch(f"purchases/{k}", {"notified_1d": 1})
+
+        elif 0 < hours <= 3 and not p.get("notified_3h"):
+            tg_send(uid, f"⏰ <b>Осталось 3 часа!</b>\n\n📩 #{pid}\n💰 {total}")
+            fb_patch(f"purchases/{k}", {"notified_3h": 1})
+
+        if now >= exp and not p.get("completed_notified"):
+            fb_patch(f"purchases/{k}", {
+                "status": "completed",
+                "completed_at": now.isoformat(),
+                "status_changed_at": now.isoformat(),
+                "completed_notified": 1,
+            })
+            old_status = p.get("status", "approved")
+            notify_purchase_status(k, {**p, "status": "completed"}, old_status, "completed")
+            PURCHASE_STATUS_CACHE[k] = "completed"
+
+
+# ============================================================
+# MAIN
+# ============================================================
+def main():
+    global last_seen_purchase_id, last_seen_payout_id, last_seen_ref_request_id, BOT_USERNAME
+
+    print("=" * 60)
+    print("🤖 Бот @ROSTERAbot")
+    print(f"👑 Админы: {ADMIN_IDS}")
+    print(f"💰 Реф. процент: {REFERRAL_PERCENT}%")
+    print("=" * 60)
+
+    me = tg("getMe")
+    if not me or not me.get("ok"):
+        print("❌ Токен невалидный."); return
+    info = me.get("result", {})
+    BOT_USERNAME = info.get("username", "ROSTERAbot")
+    print(f"✅ @{BOT_USERNAME}")
+
+    tg("deleteWebhook", drop_pending_updates=True)
+    print("✅ Webhook удалён")
+
+    P = fb_get("purchases") or {}
+    max_pid = 0
+    if isinstance(P, dict):
+        for k, v in P.items():
+            if isinstance(v, dict):
+                try:
+                    max_pid = max(max_pid, int(v.get("id", 0)))
+                except:
+                    pass
+                PURCHASE_STATUS_CACHE[k] = v.get("status", "")
+    last_seen_purchase_id = max_pid
+
+    PO = fb_get("payouts") or {}
+    max_poid = 0
+    if isinstance(PO, dict):
+        for k, v in PO.items():
+            if isinstance(v, dict):
+                try:
+                    max_poid = max(max_poid, int(v.get("id", 0)))
+                except:
+                    pass
+                PAYOUT_STATUS_CACHE[k] = v.get("status", "")
+    last_seen_payout_id = max_poid
+
+    RQ = fb_get("ref_payout_requests") or {}
+    max_rid = 0
+    if isinstance(RQ, dict):
+        for k, v in RQ.items():
+            if isinstance(v, dict):
+                try:
+                    max_rid = max(max_rid, int(v.get("id", 0)))
+                except:
+                    pass
+                REF_REQUEST_STATUS_CACHE[k] = v.get("status", "")
+    last_seen_ref_request_id = max_rid
+
+    print(f"✅ Кэш: purchases={len(PURCHASE_STATUS_CACHE)}, "
+          f"payouts={len(PAYOUT_STATUS_CACHE)}, "
+          f"ref_requests={len(REF_REQUEST_STATUS_CACHE)}")
+    print("▶️ Готов.\n")
+
+    last_new = 0
+    last_exp = 0
+
+    while True:
+        try:
+            poll()
+            now = time.time()
+            if now - last_new > 2:
+                check_new()
+                last_new = now
+            if now - last_exp > 30:
+                check_expired()
+                last_exp = now
+        except Exception as e:
+            log("MAIN", f"{e}")
+        time.sleep(0.1)
+
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    main()

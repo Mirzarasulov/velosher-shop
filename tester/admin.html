@@ -2,7 +2,8 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
 <title>Era Admin</title>
 <style>
   :root{
@@ -12,36 +13,73 @@
     --accent:#4f8cff; --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c; --info:#63a9ff;
     --purple:#a78bfa;
   }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{background:var(--bg);color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:14px;line-height:1.5}
-  button,input,textarea,select{font-family:inherit}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{
+    background:var(--bg);color:var(--text);
+    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  button,input,textarea,select{font-family:inherit;font-size:inherit}
   .layout{display:flex;min-height:100vh}
-  .side{width:210px;background:var(--card);border-right:1px solid var(--border);padding:16px 10px;
-    flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
-  .side .logo{display:flex;align-items:center;gap:10px;padding:0 8px 16px;border-bottom:1px solid var(--border);margin-bottom:12px}
-  .side .logo .ic{width:34px;height:34px;border-radius:9px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff}
-  .side .logo .t{font-weight:700;font-size:14px}
-  .side .nav-item{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:none;border:0;color:var(--text2);
-    padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;margin-bottom:1px;font-weight:500}
+
+  /* SIDEBAR — на мобиле сверху скролл-таб */
+  .side{
+    width:230px;background:var(--card);
+    border-right:1px solid var(--border);
+    padding:16px 10px;flex-shrink:0;
+    position:sticky;top:0;height:100vh;overflow-y:auto;
+  }
+  .side .logo{display:flex;align-items:center;gap:10px;padding:0 8px 16px;
+    border-bottom:1px solid var(--border);margin-bottom:12px}
+  .side .logo .ic{width:36px;height:36px;border-radius:10px;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff}
+  .side .logo .t{font-weight:700;font-size:15px}
+  .side .logo .s{font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:600}
+  .side .nav-item{
+    display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+    background:none;border:0;color:var(--text2);
+    padding:11px 12px;border-radius:9px;cursor:pointer;font-size:13.5px;
+    margin-bottom:2px;font-weight:500;transition:background .15s
+  }
   .side .nav-item:hover{background:var(--card2)}
   .side .nav-item.active{background:var(--accent);color:#fff}
-  .side .nav-item .emo{font-size:15px;width:18px;text-align:center}
-  .side .nav-item .count{margin-left:auto;padding:1px 7px;border-radius:9px;background:rgba(255,255,255,.14);font-size:10px;font-weight:700;min-width:18px;text-align:center}
-  .side .section{font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;padding:12px 12px 4px}
-  .main{flex:1;min-width:0;padding:20px 24px}
-  .header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px;flex-wrap:wrap}
-  .header h1{font-size:22px;font-weight:700}
+  .side .nav-item .emo{font-size:16px;width:20px;text-align:center}
+  .side .nav-item .count{margin-left:auto;padding:2px 8px;border-radius:10px;
+    background:rgba(255,255,255,.16);font-size:11px;font-weight:700;min-width:20px;text-align:center}
+  .side .section{font-size:10px;color:var(--muted);text-transform:uppercase;
+    font-weight:700;padding:12px 12px 4px;letter-spacing:.06em}
+
+  .main{flex:1;min-width:0;padding:20px 24px;overflow-x:hidden}
+  .header{display:flex;justify-content:space-between;align-items:flex-start;
+    gap:16px;margin-bottom:20px;flex-wrap:wrap}
+  .header h1{font-size:22px;font-weight:700;margin-bottom:4px}
   .header .sub{font-size:12px;color:var(--muted)}
-  .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:20px}
-  .stat{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px}
+
+  /* STATS */
+  .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+    gap:10px;margin-bottom:20px}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
   .stat .ic{font-size:22px;margin-bottom:6px}
-  .stat .l{font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:600;margin-bottom:3px}
+  .stat .l{font-size:10px;color:var(--muted);text-transform:uppercase;
+    font-weight:600;margin-bottom:4px;letter-spacing:.04em}
   .stat .v{font-size:20px;font-weight:700}
-  .stat .v.ok{color:var(--ok)} .stat .v.warn{color:var(--warn)} .stat .v.info{color:var(--info)} .stat .v.accent{color:var(--accent)}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
-  .btn{padding:8px 14px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-size:12.5px;font-weight:600;
-    cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+  .stat .v.ok{color:var(--ok)} .stat .v.warn{color:var(--warn)}
+  .stat .v.info{color:var(--info)} .stat .v.accent{color:var(--accent)}
+  .stat .v.purple{color:var(--purple)}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+    padding:16px;margin-bottom:14px}
+
+  /* BUTTONS — крупные для тача */
+  .btn{
+    padding:10px 16px;border-radius:9px;border:0;
+    background:var(--accent);color:#fff;font-size:13px;font-weight:600;
+    cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+    text-decoration:none;transition:opacity .15s;
+    min-height:40px;justify-content:center;
+  }
+  .btn:active{opacity:.85}
   .btn:disabled{opacity:.5;cursor:not-allowed}
   .btn.secondary{background:var(--card2);border:1px solid var(--border2);color:var(--text)}
   .btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
@@ -49,64 +87,185 @@
   .btn.ok{background:var(--ok);color:#04241a}
   .btn.warn{background:var(--warn);color:#2a1a00}
   .btn.purple{background:var(--purple);color:#12002e}
-  .btn.sm{padding:5px 10px;font-size:11.5px}
-  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10.5px;
-    font-weight:700;text-transform:uppercase;white-space:nowrap}
-  .badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+  .btn.sm{padding:7px 12px;font-size:12px;min-height:34px}
+  .btn.lg{padding:14px 20px;font-size:15px;min-height:48px;width:100%}
+
+  /* BADGE */
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;
+    border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;
+    white-space:nowrap}
+  .badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
   .badge.created{background:rgba(99,169,255,.15);color:var(--info)}
-  .badge.in_progress{background:rgba(245,181,71,.15);color:var(--warn)}
+  .badge.in_progress,.badge.pending{background:rgba(245,181,71,.15);color:var(--warn)}
   .badge.approved,.badge.completed,.badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
   .badge.cancelled,.badge.rejected{background:rgba(255,92,92,.15);color:var(--err)}
-  .badge.pending{background:rgba(245,181,71,.15);color:var(--warn)}
   .badge.purple{background:rgba(167,139,250,.15);color:var(--purple)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:10px 0}
-  .cell{background:var(--card2);border-radius:8px;padding:8px 10px}
-  .cell b{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;margin-bottom:2px;font-weight:600}
-  .cell span{font-size:13px;font-weight:600;color:var(--text)}
+
+  /* GRID CELL */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+    gap:8px;margin:10px 0}
+  .cell{background:var(--card2);border-radius:9px;padding:10px 12px}
+  .cell b{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;
+    margin-bottom:3px;font-weight:600;letter-spacing:.04em}
+  .cell span{font-size:14px;font-weight:600;color:var(--text)}
   .cell span.ok{color:var(--ok)} .cell span.accent{color:var(--accent)}
+
   .row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-  .form-row{margin-bottom:11px}
-  .form-row label{display:block;font-size:10.5px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;font-weight:600}
-  .input{width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);
-    color:var(--text);font-size:13px;outline:none}
+  .flex{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+  /* FORM */
+  .form-row{margin-bottom:12px}
+  .form-row label{display:block;font-size:11px;color:var(--muted);
+    margin-bottom:6px;text-transform:uppercase;font-weight:600;letter-spacing:.04em}
+  .input{
+    width:100%;padding:12px 14px;border-radius:9px;
+    border:1px solid var(--border);background:var(--card2);
+    color:var(--text);font-size:15px;outline:none;
+    min-height:44px;
+  }
   .input:focus{border-color:var(--accent)}
-  .tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
-  .tab{padding:7px 13px;border-radius:18px;background:var(--card2);border:1px solid var(--border);color:var(--text2);
-    font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+
+  /* TABS */
+  .tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;
+    padding-bottom:6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    padding:9px 15px;border-radius:20px;background:var(--card2);
+    border:1px solid var(--border);color:var(--text2);
+    font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;
+  }
   .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-  .toast{position:fixed;top:16px;right:16px;background:var(--card2);border:1px solid var(--border2);padding:12px 18px;
-    border-radius:10px;z-index:9999;font-size:13px;font-weight:500;max-width:340px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
-  .toast.err{border-color:#ff5c5c;color:#ffb3b3}
-  .toast.ok{border-color:#39d98a;color:#a8f0cc}
-  .login-box{max-width:360px;margin:60px auto;background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:24px}
+
+  /* TOAST */
+  .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);
+    background:var(--card2);border:1px solid var(--border2);
+    padding:14px 20px;border-radius:12px;z-index:9999;font-size:14px;
+    font-weight:500;max-width:90%;text-align:center;
+    box-shadow:0 8px 24px rgba(0,0,0,.5)}
+  .toast.err{border-color:var(--err);color:#ffb3b3}
+  .toast.ok{border-color:var(--ok);color:#a8f0cc}
+
+  /* LOGIN */
+  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .login-box{background:var(--card);border:1px solid var(--border2);
+    border-radius:14px;padding:28px;width:100%;max-width:400px}
+  .login-box h1{font-size:22px;text-align:center;margin-bottom:24px}
+
   .empty{padding:50px 20px;text-align:center;color:var(--muted)}
-  .empty .ic{font-size:44px;margin-bottom:10px;opacity:.5}
-  .muted{color:var(--muted);font-size:12px}
-  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
-  .modal{background:var(--card);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:560px;
-    max-height:90vh;overflow-y:auto;padding:0}
-  .modal-h{padding:18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+  .empty .ic{font-size:48px;margin-bottom:12px;opacity:.5}
+  .muted{color:var(--muted);font-size:12.5px}
+
+  /* MODAL — полноэкранный на мобиле */
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.8);
+    z-index:999;display:flex;align-items:center;justify-content:center;padding:16px}
+  .modal{background:var(--card);border:1px solid var(--border2);
+    border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
+  .modal-h{padding:18px;border-bottom:1px solid var(--border);
+    display:flex;justify-content:space-between;align-items:center;
+    position:sticky;top:0;background:var(--card);z-index:1}
+  .modal-h h2{font-size:17px;font-weight:700}
   .modal-b{padding:18px}
-  .modal-f{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
-  .close-x{width:32px;height:32px;border-radius:50%;background:var(--card2);border:1px solid var(--border2);color:var(--text2);
-    font-size:16px;cursor:pointer}
+  .modal-f{padding:14px 18px;border-top:1px solid var(--border);
+    display:flex;gap:10px;position:sticky;bottom:0;background:var(--card)}
+  .modal-f .btn{flex:1}
+  .close-x{width:36px;height:36px;border-radius:50%;background:var(--card2);
+    border:1px solid var(--border2);color:var(--text2);font-size:18px;cursor:pointer}
+
+  /* SEARCH */
   .search-bar{position:relative;margin-bottom:14px}
-  .search-bar input{padding-left:34px}
-  .search-bar::before{content:'🔍';position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.6}
-  /* Реферальные связи */
-  .ref-block{background:var(--card3);border-radius:10px;padding:10px 12px;margin-top:10px;border-left:3px solid var(--purple)}
-  .ref-block .label{font-size:10px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px;letter-spacing:.05em}
-  .ref-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:12.5px}
+  .search-bar input{padding-left:38px;font-size:15px}
+  .search-bar::before{content:'🔍';position:absolute;left:14px;top:50%;
+    transform:translateY(-50%);font-size:14px;opacity:.6;pointer-events:none}
+
+  /* REF-BLOCK */
+  .ref-block{background:var(--card3);border-radius:10px;padding:12px 14px;
+    margin-top:12px;border-left:3px solid var(--purple)}
+  .ref-block .label{font-size:10.5px;text-transform:uppercase;color:var(--muted);
+    font-weight:700;margin-bottom:8px;letter-spacing:.05em}
+  .ref-item{display:flex;justify-content:space-between;align-items:center;
+    padding:8px 0;font-size:13.5px;gap:10px;flex-wrap:wrap}
   .ref-item + .ref-item{border-top:1px solid var(--border)}
   .ref-item a{color:var(--accent);text-decoration:none}
-  .ref-item a:hover{text-decoration:underline}
   .tree-node{padding-left:16px;border-left:1px dashed var(--border2);margin-left:8px}
+
+  /* ============================================================ */
+  /* МОБИЛЬНАЯ АДАПТАЦИЯ */
+  /* ============================================================ */
+  @media(max-width:768px){
+    .layout{flex-direction:column}
+
+    /* SIDEBAR → скролл-таб сверху */
+    .side{
+      width:100%;height:auto;position:sticky;top:0;z-index:50;
+      border-right:0;border-bottom:1px solid var(--border);
+      padding:10px 10px 8px;
+      display:flex;flex-wrap:nowrap;overflow-x:auto;
+      gap:6px;scrollbar-width:none;
+      background:rgba(22,27,34,.98);
+    }
+    .side::-webkit-scrollbar{display:none}
+    .side .logo{display:none}
+    .side .section{display:none}
+    .side .nav-item{
+      width:auto;flex-shrink:0;padding:9px 14px;
+      font-size:13px;margin-bottom:0;
+      border:1px solid var(--border);
+    }
+    .side .nav-item .emo{font-size:15px}
+    .side .nav-item .count{display:none}
+
+    .main{padding:14px 12px 80px}
+
+    .header{margin-bottom:14px}
+    .header h1{font-size:19px}
+    .header .sub{font-size:11px}
+
+    .stats{grid-template-columns:repeat(2,1fr);gap:8px}
+    .stat{padding:12px}
+    .stat .v{font-size:18px}
+    .stat .ic{font-size:20px}
+
+    .grid{grid-template-columns:1fr 1fr;gap:6px}
+    .cell{padding:9px 10px}
+    .cell span{font-size:13px}
+
+    .card{padding:14px}
+
+    .tabs{gap:5px;margin-bottom:12px;padding-bottom:4px}
+    .tab{padding:8px 13px;font-size:12.5px}
+
+    /* Кнопки делаем «пальцевыми» */
+    .btn{min-height:44px;padding:11px 16px;font-size:13.5px}
+    .btn.sm{min-height:38px;padding:8px 13px;font-size:12.5px}
+    .btn.lg{min-height:52px;font-size:15px}
+
+    /* Модалка снизу — как bottom sheet */
+    .modal-bg{padding:0;align-items:flex-end}
+    .modal{
+      max-width:100%;border-radius:20px 20px 0 0;
+      max-height:92vh;
+    }
+    .modal-f{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+
+    /* Реферальные блоки */
+    .ref-block{padding:10px 12px}
+    .ref-item{font-size:13px}
+
+    /* Скрыть эмодзи логотипа на мобиле в шапке */
+    .side .logo{display:none}
+  }
+
+  /* Очень маленькие экраны */
+  @media(max-width:380px){
+    .stats{grid-template-columns:1fr}
+    .grid{grid-template-columns:1fr}
+  }
 </style>
 </head>
 <body>
 
 <div id="app"></div>
-<div id="toast" class="toast hidden"></div>
+<div id="toast" class="toast hidden" style="display:none"></div>
 <div id="modal-root"></div>
 
 <script>
@@ -116,11 +275,15 @@ const LOG_CHANNEL_URL = 'https://t.me/c/4305451466';
 
 let AUTHED = sessionStorage.getItem('admin_auth') === '1';
 let TAB = 'dashboard';
-let DATA = { purchases: null, payouts: null, users: null, eras: null };
+let DATA = { purchases: [], payouts: [], users: [], eras: [] };
 let SEARCH = '';
 const $ = id => document.getElementById(id);
 
-function esc(s){ return String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+// ============================================================
+// UTILS
+// ============================================================
+function esc(s){ return String(s??'').replace(/[&<>"']/g,
+  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function fmt(n){ return Number(n||0).toLocaleString('ru-RU') + ' ₽'; }
 function fmtDate(s){
   if (!s) return '—';
@@ -137,8 +300,9 @@ function toast(msg, type){
   const t = $('toast');
   t.textContent = msg;
   t.className = 'toast ' + (type || '');
+  t.style.display = 'block';
   clearTimeout(t._t);
-  t._t = setTimeout(() => t.classList.add('hidden'), 2600);
+  t._t = setTimeout(() => { t.style.display = 'none'; }, 2600);
 }
 function toList(raw){
   if (Array.isArray(raw)) return raw.filter(x => x && typeof x === 'object').map((v, i) => ({...v, _key: String(i)}));
@@ -164,7 +328,9 @@ async function fbDelete(path){
   return r.ok;
 }
 
-// ---------- helpers: рефералы ----------
+// ============================================================
+// HELPERS: рефералы
+// ============================================================
 function findUserByTg(users, tgId){
   if (!tgId) return null;
   return users.find(u => String(u.telegram_id) === String(tgId)) || null;
@@ -187,25 +353,39 @@ function userLink(u){
   return `<a href="tg://user?id=${esc(u.telegram_id)}" target="_blank">ID ${esc(u.telegram_id)}</a>`;
 }
 
+// ============================================================
 // LOGIN
+// ============================================================
 function renderLogin(){
   $('app').innerHTML = `
-    <div class="login-box">
-      <h1 style="text-align:center;margin-bottom:20px">⚡ Era Admin</h1>
-      <div class="form-row"><label>Пароль</label>
-        <input class="input" id="pw" type="password" onkeydown="if(event.key==='Enter')doLogin()"></div>
-      <button class="btn" style="width:100%;justify-content:center;padding:11px" onclick="doLogin()">Войти</button>
-      <div class="muted" style="margin-top:12px;text-align:center;font-size:11px">Firebase: velosher-f82b5</div>
+    <div class="login-wrap">
+      <div class="login-box">
+        <h1>⚡ Era Admin</h1>
+        <div class="form-row">
+          <label>Пароль</label>
+          <input class="input" id="pw" type="password"
+            onkeydown="if(event.key==='Enter')doLogin()"
+            autofocus>
+        </div>
+        <button class="btn lg" onclick="doLogin()">🔓 Войти</button>
+        <div class="muted" style="margin-top:16px;text-align:center;font-size:11.5px">
+          Firebase: velosher-f82b5
+        </div>
+      </div>
     </div>`;
 }
 function doLogin(){
   if ($('pw').value === ADMIN_PASSWORD){
-    AUTHED = true; sessionStorage.setItem('admin_auth', '1'); render();
+    AUTHED = true;
+    sessionStorage.setItem('admin_auth', '1');
+    render();
   } else toast('Неверный пароль', 'err');
 }
 window.doLogin = doLogin;
 
+// ============================================================
 // LAYOUT
+// ============================================================
 function layout(content){
   const c = {
     new: (DATA.purchases || []).filter(p => p.status === 'created').length,
@@ -217,40 +397,70 @@ function layout(content){
   $('app').innerHTML = `
     <div class="layout">
       <aside class="side">
-        <div class="logo"><div class="ic">⚡</div><div class="t">Era Admin</div></div>
+        <div class="logo">
+          <div class="ic">⚡</div>
+          <div>
+            <div class="t">Era Admin</div>
+            <div class="s">velosher-f82b5</div>
+          </div>
+        </div>
         <div class="section">Обзор</div>
         <button class="nav-item ${TAB==='dashboard'?'active':''}" onclick="setTab('dashboard')">
-          <span class="emo">📊</span>Дашборд</button>
+          <span class="emo">📊</span>Дашборд
+        </button>
         <div class="section">Операции</div>
         <button class="nav-item ${TAB==='purchases'?'active':''}" onclick="setTab('purchases')">
-          <span class="emo">📩</span>Заявки ${c.new?`<span class="count">${c.new}</span>`:''}</button>
+          <span class="emo">📩</span>Заявки
+          ${c.new?`<span class="count">${c.new}</span>`:''}
+        </button>
         <button class="nav-item ${TAB==='payouts'?'active':''}" onclick="setTab('payouts')">
-          <span class="emo">💸</span>Выплаты ${c.payouts?`<span class="count">${c.payouts}</span>`:''}</button>
+          <span class="emo">💸</span>Выплаты
+          ${c.payouts?`<span class="count">${c.payouts}</span>`:''}
+        </button>
         <div class="section">Управление</div>
         <button class="nav-item ${TAB==='users'?'active':''}" onclick="setTab('users')">
-          <span class="emo">👥</span>Пользователи ${c.users?`<span class="count">${c.users}</span>`:''}</button>
+          <span class="emo">👥</span>Юзеры
+          ${c.users?`<span class="count">${c.users}</span>`:''}
+        </button>
         <button class="nav-item ${TAB==='eras'?'active':''}" onclick="setTab('eras')">
-          <span class="emo">🧩</span>Товары ${c.eras?`<span class="count">${c.eras}</span>`:''}</button>
+          <span class="emo">🧩</span>Товары
+          ${c.eras?`<span class="count">${c.eras}</span>`:''}
+        </button>
         <button class="nav-item ${TAB==='refs'?'active':''}" onclick="setTab('refs')">
-          <span class="emo">🌳</span>Рефералы ${c.refs?`<span class="count">${c.refs}</span>`:''}</button>
+          <span class="emo">🌳</span>Рефералы
+          ${c.refs?`<span class="count">${c.refs}</span>`:''}
+        </button>
         <div class="section">Система</div>
         <button class="nav-item" onclick="window.open('${LOG_CHANNEL_URL}','_blank')">
-          <span class="emo">📢</span>Канал</button>
+          <span class="emo">📢</span>Канал
+        </button>
         <button class="nav-item" onclick="logout()" style="color:var(--err)">
-          <span class="emo">🚪</span>Выйти</button>
+          <span class="emo">🚪</span>Выйти
+        </button>
       </aside>
       <main class="main">
-        <div class="header"><div><h1>⚡ Era Admin</h1><div class="sub">@VideoSaver12_Bot · velosher-f82b5</div></div></div>
+        <div class="header">
+          <div>
+            <h1>⚡ Era Admin</h1>
+            <div class="sub">@ROSTERAbot · velosher-f82b5</div>
+          </div>
+        </div>
         <div id="content">${content}</div>
       </main>
     </div>`;
 }
-function logout(){ sessionStorage.removeItem('admin_auth'); AUTHED = false; render(); }
+function logout(){
+  sessionStorage.removeItem('admin_auth');
+  AUTHED = false;
+  render();
+}
 window.logout = logout;
 function setTab(t){ TAB = t; render(); }
 window.setTab = setTab;
 
+// ============================================================
 // DASHBOARD
+// ============================================================
 async function renderDashboard(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -260,13 +470,18 @@ async function renderDashboard(){
       fbGet('users').then(toList).catch(() => []),
       fbGet('eras').then(toList).catch(() => []),
     ]);
-    DATA.purchases = purchases; DATA.payouts = payouts; DATA.users = users; DATA.eras = eras;
+    DATA.purchases = purchases;
+    DATA.payouts = payouts;
+    DATA.users = users;
+    DATA.eras = eras;
 
     const active = purchases.filter(p => p.status === 'approved').length;
     const completed = purchases.filter(p => p.status === 'completed').length;
     const created = purchases.filter(p => p.status === 'created').length;
     const pendingPO = payouts.filter(p => p.status === 'pending').length;
     const refsCount = users.filter(u => u.referrer_uid).length;
+    const agreedCount = users.filter(u => u.agreed_terms).length;
+
     const totalPurch = purchases.filter(p => p.status !== 'cancelled')
       .reduce((s, p) => s + Number(p.purchase_price || 0), 0);
     const totalProfit = purchases.filter(p => ['approved','completed','paid'].includes(p.status))
@@ -276,23 +491,38 @@ async function renderDashboard(){
 
     layout(`
       <div class="stats">
-        <div class="stat"><div class="ic">👥</div><div class="l">Пользователей</div><div class="v">${users.length}</div></div>
-        <div class="stat"><div class="ic">🌳</div><div class="l">Рефералов</div><div class="v" style="color:var(--purple)">${refsCount}</div></div>
-        <div class="stat"><div class="ic">🟢</div><div class="l">Активных</div><div class="v ok">${active}</div></div>
-        <div class="stat"><div class="ic">🏁</div><div class="l">Завершено</div><div class="v info">${completed}</div></div>
-        <div class="stat"><div class="ic">⏳</div><div class="l">Новых заявок</div><div class="v warn">${created}</div></div>
-        <div class="stat"><div class="ic">💸</div><div class="l">Выплат ждут</div><div class="v warn">${pendingPO}</div></div>
-        <div class="stat"><div class="ic">💵</div><div class="l">Куплено</div><div class="v accent">${fmt(totalPurch)}</div></div>
-        <div class="stat"><div class="ic">📈</div><div class="l">Начислено</div><div class="v ok">${fmt(totalProfit)}</div></div>
-        <div class="stat"><div class="ic">💰</div><div class="l">Выплачено</div><div class="v">${fmt(totalPaid)}</div></div>
+        <div class="stat"><div class="ic">👥</div><div class="l">Юзеров</div>
+          <div class="v">${users.length}</div></div>
+        <div class="stat"><div class="ic">✅</div><div class="l">Согласились</div>
+          <div class="v ok">${agreedCount}</div></div>
+        <div class="stat"><div class="ic">🌳</div><div class="l">Рефералов</div>
+          <div class="v purple">${refsCount}</div></div>
+        <div class="stat"><div class="ic">🟢</div><div class="l">Активных</div>
+          <div class="v ok">${active}</div></div>
+        <div class="stat"><div class="ic">🏁</div><div class="l">Завершено</div>
+          <div class="v info">${completed}</div></div>
+        <div class="stat"><div class="ic">⏳</div><div class="l">Новых заявок</div>
+          <div class="v warn">${created}</div></div>
+        <div class="stat"><div class="ic">💸</div><div class="l">Выплат ждут</div>
+          <div class="v warn">${pendingPO}</div></div>
+        <div class="stat"><div class="ic">💵</div><div class="l">Куплено</div>
+          <div class="v accent">${fmt(totalPurch)}</div></div>
+        <div class="stat"><div class="ic">📈</div><div class="l">Начислено</div>
+          <div class="v ok">${fmt(totalProfit)}</div></div>
+        <div class="stat"><div class="ic">💰</div><div class="l">Выплачено</div>
+          <div class="v">${fmt(totalPaid)}</div></div>
       </div>
       <button class="btn ghost" onclick="renderDashboard()">🔄 Обновить</button>
     `);
-  } catch(e){ layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`); }
+  } catch(e){
+    layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`);
+  }
 }
 window.renderDashboard = renderDashboard;
 
+// ============================================================
 // PURCHASES
+// ============================================================
 let purchaseFilter = 'created';
 async function renderPurchases(){
   layout('<div class="empty">Загрузка…</div>');
@@ -322,9 +552,12 @@ async function renderPurchases(){
         <button class="tab ${purchaseFilter==='completed'?'active':''}" onclick="purchaseFilter='completed';renderPurchases()">🏁 Завершено (${counts.completed})</button>
         <button class="tab ${purchaseFilter==='all'?'active':''}" onclick="purchaseFilter='all';renderPurchases()">📋 Все (${counts.all})</button>
       </div>
-      ${filtered.length ? filtered.map(orderCard).join('') : '<div class="empty"><div class="ic">📭</div><p>Нет заявок</p></div>'}
+      ${filtered.length ? filtered.map(orderCard).join('') :
+        '<div class="empty"><div class="ic">📭</div><p>Нет заявок</p></div>'}
     `);
-  } catch(e){ layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`); }
+  } catch(e){
+    layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`);
+  }
 }
 window.renderPurchases = renderPurchases;
 
@@ -333,15 +566,14 @@ function orderCard(p){
   const users = DATA.users || [];
   const buyer = findUserByTg(users, p.user_telegram_id);
   const referrer = buyer ? getReferrer(users, buyer) : null;
-  const inviterName = referrer ? userName(referrer) : (buyer && buyer.referrer_uid ? 'ID ' + buyer.referrer_uid : null);
 
   const canConfirm = ['created','in_progress'].includes(p.status);
   const canCancel = ['created','in_progress'].includes(p.status);
 
   return `
     <div class="card">
-      <div class="row" style="margin-bottom:10px">
-        <b style="color:#4f8cff;font-size:15px">📩 Заявка #${esc(p.id)}</b>
+      <div class="row" style="margin-bottom:12px">
+        <b style="color:#4f8cff;font-size:16px">📩 Заявка #${esc(p.id)}</b>
         <span class="badge ${esc(p.status)}">${esc(statusLabel(p.status))}</span>
       </div>
       <div class="grid">
@@ -355,34 +587,30 @@ function orderCard(p){
         <div class="cell"><b>📅 Срок</b><span>${Number(p.duration_days||0)} дн.</span></div>
       </div>
 
-      ${inviterName ? `
+      ${referrer ? `
         <div class="ref-block">
           <div class="label">🎁 Пригласил (реферер)</div>
           <div class="ref-item">
-            <div>
-              <b>${esc(userName(referrer))}</b>
-              ${referrer ? ' · ' + userLink(referrer) : ''}
-            </div>
-            <div class="muted">${referrer ? 'ID ' + esc(referrer.telegram_id) : ''}</div>
+            <div><b>${esc(userName(referrer))}</b> · ${userLink(referrer)}</div>
+            <div class="muted">ID ${esc(referrer.telegram_id)}</div>
           </div>
         </div>
       ` : `
         <div class="ref-block" style="border-left-color:var(--muted)">
           <div class="label">🎁 Пригласил</div>
-          <div class="ref-item"><span class="muted">Прямая регистрация (без реферера)</span></div>
+          <div class="ref-item"><span class="muted">Прямая регистрация</span></div>
         </div>
       `}
 
-      <div class="muted" style="margin:10px 0">
+      <div class="muted" style="margin:12px 0">
         🕐 ${fmtDate(p.created_at)}
         ${p.activated_at ? ' · ✅ ' + fmtDate(p.activated_at) : ''}
       </div>
-      <div class="row">
-        <div>
-          ${canConfirm ? `<button class="btn ok sm" onclick="admConfirm('${esc(k)}')">✅ Подтвердить</button>` : ''}
-          ${canCancel ? `<button class="btn danger sm" onclick="admCancel('${esc(k)}')">❌ Отменить</button>` : ''}
-          <button class="btn ghost sm" onclick="admContact('${esc(p.user_telegram_id||'')}')">💬 Написать</button>
-        </div>
+
+      <div class="flex">
+        ${canConfirm ? `<button class="btn ok" onclick="admConfirm('${esc(k)}')">✅ Подтвердить</button>` : ''}
+        ${canCancel ? `<button class="btn danger" onclick="admCancel('${esc(k)}')">❌ Отменить</button>` : ''}
+        <button class="btn ghost" onclick="admContact('${esc(p.user_telegram_id||'')}')">💬 Написать</button>
       </div>
     </div>`;
 }
@@ -405,7 +633,7 @@ async function admConfirm(k){
       last_day: last.toISOString(),
       expires_at: exp.toISOString(),
       status_changed_at: now.toISOString(),
-      notified_1d: 0, notified_2d: 0, completed_notified: 0,
+      notified_1d: 0, notified_2d: 0, notified_1h: 0, completed_notified: 0,
     });
     toast('✅ Заявка подтверждена', 'ok');
     renderPurchases();
@@ -434,7 +662,9 @@ async function admContact(uid){
 }
 window.admContact = admContact;
 
+// ============================================================
 // PAYOUTS
+// ============================================================
 async function renderPayouts(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -454,9 +684,12 @@ async function renderPayouts(){
         <button class="tab active">⏳ Ожидают (${pending.length})</button>
         <button class="tab">✅ Выплачено (${paid.length})</button>
       </div>
-      ${pending.length ? pending.map(payoutCard).join('') : '<div class="empty"><div class="ic">📭</div><p>Нет заявок на вывод</p></div>'}
+      ${pending.length ? pending.map(payoutCard).join('') :
+        '<div class="empty"><div class="ic">📭</div><p>Нет заявок на вывод</p></div>'}
     `);
-  } catch(e){ layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`); }
+  } catch(e){
+    layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`);
+  }
 }
 window.renderPayouts = renderPayouts;
 
@@ -468,8 +701,8 @@ function payoutCard(po){
 
   return `
     <div class="card">
-      <div class="row" style="margin-bottom:10px">
-        <b style="color:#4f8cff;font-size:15px">💸 Выплата #${esc(po.id)}</b>
+      <div class="row" style="margin-bottom:12px">
+        <b style="color:#4f8cff;font-size:16px">💸 Выплата #${esc(po.id)}</b>
         <span class="badge ${esc(po.status)}">${esc(statusLabel(po.status))}</span>
       </div>
       <div class="grid">
@@ -491,12 +724,11 @@ function payoutCard(po){
         </div>
       ` : ''}
 
-      <div class="muted" style="margin:10px 0">🕐 ${fmtDate(po.requested_at)}</div>
-      <div class="row">
-        <div>
-          <button class="btn ok sm" onclick="admMarkPaid('${esc(k)}')">✅ Выплачено</button>
-          <button class="btn ghost sm" onclick="admContact('${esc(po.user_telegram_id||'')}')">💬 Написать</button>
-        </div>
+      <div class="muted" style="margin:12px 0">🕐 ${fmtDate(po.requested_at)}</div>
+
+      <div class="flex">
+        <button class="btn ok" onclick="admMarkPaid('${esc(k)}')">✅ Выплачено</button>
+        <button class="btn ghost" onclick="admContact('${esc(po.user_telegram_id||'')}')">💬 Написать</button>
       </div>
     </div>`;
 }
@@ -517,7 +749,9 @@ async function admMarkPaid(k){
 }
 window.admMarkPaid = admMarkPaid;
 
+// ============================================================
 // USERS
+// ============================================================
 async function renderUsers(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -525,7 +759,8 @@ async function renderUsers(){
       fbGet('users').then(toList).catch(() => []),
       fbGet('purchases').then(toList).catch(() => []),
     ]);
-    DATA.users = users; DATA.purchases = purchases;
+    DATA.users = users;
+    DATA.purchases = purchases;
     users.sort((a, b) => new Date(b.registered_at || 0) - new Date(a.registered_at || 0));
 
     const q = SEARCH.toLowerCase().trim();
@@ -537,36 +772,39 @@ async function renderUsers(){
 
     layout(`
       <div class="search-bar">
-        <input class="input" id="usearch" placeholder="Поиск по имени, @username, ID…"
+        <input class="input" placeholder="Поиск: имя, @username, ID…"
           value="${esc(SEARCH)}" oninput="SEARCH=this.value;renderUsers()">
       </div>
-      ${filtered.length ? filtered.map(u => userCard(u, users, purchases)).join('')
-        : `<div class="empty"><div class="ic">👤</div><p>${users.length ? 'Ничего не найдено' : 'Нет пользователей'}</p></div>`}
+      ${filtered.length ? filtered.map(u => userCard(u, users, purchases)).join('') :
+        `<div class="empty"><div class="ic">👤</div>
+          <p>${users.length ? 'Ничего не найдено' : 'Нет пользователей'}</p></div>`}
     `);
-  } catch(e){ layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`); }
+  } catch(e){
+    layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`);
+  }
 }
 window.renderUsers = renderUsers;
 
 function userCard(u, allUsers, purchases){
   const myP = purchases.filter(p => String(p.user_telegram_id) === String(u.telegram_id));
-  const invested = myP.filter(p => p.status !== 'cancelled').reduce((s, p) => s + Number(p.purchase_price || 0), 0);
-  const earned = myP.filter(p => ['completed','paid'].includes(p.status)).reduce((s, p) => s + Number(p.total_amount || 0), 0);
+  const invested = myP.filter(p => p.status !== 'cancelled')
+    .reduce((s, p) => s + Number(p.purchase_price || 0), 0);
+  const earned = myP.filter(p => ['completed','paid'].includes(p.status))
+    .reduce((s, p) => s + Number(p.total_amount || 0), 0);
 
   const referrer = getReferrer(allUsers, u);
   const refs = getRefs(allUsers, u);
 
   return `
     <div class="card">
-      <div class="row" style="margin-bottom:10px">
+      <div class="row" style="margin-bottom:12px">
         <div>
-          <b>${esc(userName(u))}</b>
+          <b style="font-size:15px">${esc(userName(u))}</b>
           <div class="muted">@${esc(u.username||'—')} · ID ${esc(u.telegram_id)}</div>
         </div>
-        <div>
-          ${u.referrer_uid
-            ? `<span class="badge purple">🌳 реферал</span>`
-            : `<span class="badge created">⭐ прямой</span>`}
-        </div>
+        ${u.referrer_uid
+          ? `<span class="badge purple">🌳 реферал</span>`
+          : `<span class="badge created">⭐ прямой</span>`}
       </div>
 
       <div class="grid">
@@ -576,23 +814,19 @@ function userCard(u, allUsers, purchases){
         <div class="cell"><b>Пригласил</b><span style="color:var(--purple)">${refs.length}</span></div>
       </div>
 
-      ${referrer || u.referrer_uid ? `
+      ${referrer ? `
         <div class="ref-block">
-          <div class="label">🎁 Кто пригласил этого пользователя</div>
+          <div class="label">🎁 Кто пригласил</div>
           <div class="ref-item">
-            <div>
-              ${referrer
-                ? `<b>${esc(userName(referrer))}</b> · ${userLink(referrer)}`
-                : `<span class="muted">ID ${esc(u.referrer_uid)} (не найден)</span>`}
-            </div>
-            ${referrer ? `<div class="muted">ID ${esc(referrer.telegram_id)}</div>` : ''}
+            <div><b>${esc(userName(referrer))}</b> · ${userLink(referrer)}</div>
+            <div class="muted">ID ${esc(referrer.telegram_id)}</div>
           </div>
         </div>
       ` : ''}
 
       ${refs.length ? `
         <div class="ref-block">
-          <div class="label">👥 Кого пригласил этот пользователь (${refs.length})</div>
+          <div class="label">👥 Кого пригласил (${refs.length})</div>
           ${refs.map(r => `
             <div class="ref-item">
               <div><b>${esc(userName(r))}</b> · ${userLink(r)}</div>
@@ -600,42 +834,36 @@ function userCard(u, allUsers, purchases){
             </div>
           `).join('')}
         </div>
-      ` : `
-        <div class="ref-block" style="border-left-color:var(--muted)">
-          <div class="label">👥 Кого пригласил</div>
-          <div class="ref-item"><span class="muted">Никого не пригласил</span></div>
-        </div>
-      `}
+      ` : ''}
 
-      <div class="row" style="margin-top:10px">
+      <div class="row" style="margin-top:12px">
         <div class="muted">📅 ${fmtDate(u.registered_at)}</div>
-        <div>
-          ${refs.length ? `<button class="btn purple sm" onclick="showTree('${esc(u.telegram_id)}')">🌳 Дерево</button>` : ''}
-          <button class="btn ghost sm" onclick="admContact('${esc(u.telegram_id||'')}')">💬 Написать</button>
+        <div class="flex">
+          ${refs.length ? `<button class="btn purple sm" onclick="showTree('${esc(u.telegram_id)}')">🌳</button>` : ''}
+          <button class="btn ghost sm" onclick="admContact('${esc(u.telegram_id||'')}')">💬</button>
         </div>
       </div>
     </div>`;
 }
 
-// Дерево рефералов (модалка)
 function showTree(uid){
   const users = DATA.users || [];
   const root = users.find(u => String(u.telegram_id) === String(uid));
   if (!root) return;
 
-  function renderSub(u, depth){
+  function renderSub(u){
     const kids = getRefs(users, u);
     if (!kids.length) return '';
     return `<div class="tree-node">${kids.map(k => `
-      <div style="padding:6px 0">
-        <div>${'&nbsp;'.repeat(0)}${esc(userName(k))} · ${userLink(k)}</div>
+      <div style="padding:8px 0">
+        <div>${esc(userName(k))} · ${userLink(k)}</div>
         <div class="muted" style="font-size:11px">📅 ${fmtDate(k.registered_at)}</div>
-        ${renderSub(k, depth + 1)}
+        ${renderSub(k)}
       </div>
     `).join('')}</div>`;
   }
 
-  const subs = renderSub(root, 0);
+  const subs = renderSub(root);
   $('modal-root').innerHTML = `
     <div class="modal-bg" onclick="if(event.target===this)closeModal()">
       <div class="modal">
@@ -644,8 +872,8 @@ function showTree(uid){
           <button class="close-x" onclick="closeModal()">✕</button>
         </div>
         <div class="modal-b">
-          <div style="padding:10px 0;border-bottom:1px solid var(--border)">
-            <b style="color:var(--purple)">${esc(userName(root))}</b>
+          <div style="padding:12px 0;border-bottom:1px solid var(--border)">
+            <b style="color:var(--purple);font-size:15px">${esc(userName(root))}</b>
             <div class="muted">@${esc(root.username||'—')} · ID ${esc(root.telegram_id)}</div>
           </div>
           ${subs || '<div class="empty" style="padding:20px 0"><p>Нет рефералов</p></div>'}
@@ -655,7 +883,9 @@ function showTree(uid){
 }
 window.showTree = showTree;
 
+// ============================================================
 // ERAS
+// ============================================================
 async function renderEras(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -665,23 +895,30 @@ async function renderEras(){
 
     layout(`
       <div class="row" style="margin-bottom:14px">
-        <h2 style="font-size:16px">🧩 Товары (${eras.length})</h2>
-        <button class="btn" onclick="createEra()">➕ Создать эру</button>
+        <h2 style="font-size:17px">🧩 Товары (${eras.length})</h2>
+        <button class="btn" onclick="createEra()">➕ Создать</button>
       </div>
       ${eras.map(eraCard).join('')}
     `);
-  } catch(e){ layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`); }
+  } catch(e){
+    layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`);
+  }
 }
 window.renderEras = renderEras;
 
 function eraCard(e){
-  const roi = Number(e.price || 0) > 0 ? Math.round((Number(e.profit_amount) / Number(e.price)) * 100) : 0;
+  const roi = Number(e.price || 0) > 0
+    ? Math.round((Number(e.profit_amount) / Number(e.price)) * 100) : 0;
   return `
     <div class="card">
-      <div class="row" style="margin-bottom:10px">
-        <div><b style="color:#4f8cff">🧩 ${esc(e.title||'Без названия')}</b>
-          <div class="muted">ID #${esc(e.id||e._key)}</div></div>
-        <span class="badge ${e.is_active?'approved':'cancelled'}">${e.is_active?'🟢 Активна':'⚫ Отключена'}</span>
+      <div class="row" style="margin-bottom:12px">
+        <div>
+          <b style="color:#4f8cff;font-size:15px">🧩 ${esc(e.title||'Без названия')}</b>
+          <div class="muted">ID #${esc(e.id||e._key)}</div>
+        </div>
+        <span class="badge ${e.is_active?'approved':'cancelled'}">
+          ${e.is_active?'🟢 Активна':'⚫ Отключена'}
+        </span>
       </div>
       <div class="grid">
         <div class="cell"><b>💵 Стоимость</b><span class="accent">${fmt(e.price)}</span></div>
@@ -690,12 +927,12 @@ function eraCard(e){
         <div class="cell"><b>📅 Срок</b><span>${Number(e.duration_days||0)} дн.</span></div>
         <div class="cell"><b>📈 ROI</b><span class="ok">+${roi}%</span></div>
       </div>
-      <div class="row" style="margin-top:10px">
-        <div>
-          <button class="btn sm" onclick="editEra('${esc(e._key)}')">✏️ Изменить</button>
-          <button class="btn ${e.is_active?'warn':'ok'} sm" onclick="toggleEra('${esc(e._key)}',${e.is_active?0:1})">${e.is_active?'⚫ Отключить':'🟢 Включить'}</button>
-          <button class="btn danger sm" onclick="deleteEra('${esc(e._key)}')">🗑 Удалить</button>
-        </div>
+      <div class="flex" style="margin-top:12px">
+        <button class="btn" onclick="editEra('${esc(e._key)}')">✏️ Изменить</button>
+        <button class="btn ${e.is_active?'warn':'ok'}" onclick="toggleEra('${esc(e._key)}',${e.is_active?0:1})">
+          ${e.is_active?'⚫ Выкл':'🟢 Вкл'}
+        </button>
+        <button class="btn danger" onclick="deleteEra('${esc(e._key)}')">🗑</button>
       </div>
     </div>`;
 }
@@ -704,28 +941,44 @@ function eraForm(e){
   return `
     <div class="modal-bg" onclick="if(event.target===this)closeModal()">
       <div class="modal">
-        <div class="modal-h"><h2>${e?'✏️ Изменить':'➕ Создать'} эру</h2>
-          <button class="close-x" onclick="closeModal()">✕</button></div>
+        <div class="modal-h">
+          <h2>${e?'✏️ Изменить':'➕ Создать'} эру</h2>
+          <button class="close-x" onclick="closeModal()">✕</button>
+        </div>
         <div class="modal-b">
-          <div class="form-row"><label>Название</label>
-            <input class="input" id="f_title" value="${esc(e?.title||'Новая эра')}"></div>
-          <div class="form-row"><label>Стоимость (₽)</label>
-            <input class="input" id="f_price" type="number" value="${e?.price||1500}"></div>
-          <div class="form-row"><label>Начисление (₽)</label>
-            <input class="input" id="f_profit" type="number" value="${e?.profit_amount||1000}"></div>
-          <div class="form-row"><label>Срок (дней)</label>
-            <input class="input" id="f_days" type="number" value="${e?.duration_days||20}"></div>
-          <div class="form-row"><label>Описание</label>
-            <textarea class="input" id="f_desc" rows="2">${esc(e?.description||'')}</textarea></div>
-          <div class="form-row"><label>Активна</label>
+          <div class="form-row">
+            <label>Название</label>
+            <input class="input" id="f_title" value="${esc(e?.title||'Новая эра')}">
+          </div>
+          <div class="form-row">
+            <label>Стоимость (₽)</label>
+            <input class="input" id="f_price" type="number" value="${e?.price||1500}">
+          </div>
+          <div class="form-row">
+            <label>Начисление (₽)</label>
+            <input class="input" id="f_profit" type="number" value="${e?.profit_amount||1000}">
+          </div>
+          <div class="form-row">
+            <label>Срок (дней)</label>
+            <input class="input" id="f_days" type="number" value="${e?.duration_days||20}">
+          </div>
+          <div class="form-row">
+            <label>Описание</label>
+            <textarea class="input" id="f_desc" rows="3">${esc(e?.description||'')}</textarea>
+          </div>
+          <div class="form-row">
+            <label>Активна</label>
             <select class="input" id="f_active">
               <option value="1" ${(!e||e.is_active)?'selected':''}>Да</option>
               <option value="0" ${(e&&!e.is_active)?'selected':''}>Нет</option>
-            </select></div>
+            </select>
+          </div>
         </div>
         <div class="modal-f">
           <button class="btn ghost" onclick="closeModal()">Отмена</button>
-          <button class="btn" id="f_save" onclick="saveEra('${e?e._key:''}')">${e?'💾 Сохранить':'✅ Создать'}</button>
+          <button class="btn" id="f_save" onclick="saveEra('${e?e._key:''}')">
+            ${e?'💾 Сохранить':'✅ Создать'}
+          </button>
         </div>
       </div>
     </div>`;
@@ -755,7 +1008,8 @@ async function saveEra(key){
   if (!title){ toast('Введите название', 'err'); return; }
 
   const btn = $('f_save');
-  btn.disabled = true; btn.textContent = '⏳...';
+  btn.disabled = true;
+  btn.textContent = '⏳...';
 
   try {
     const data = {
@@ -806,7 +1060,9 @@ async function deleteEra(key){
 }
 window.deleteEra = deleteEra;
 
-// REFS — ГЛАВНЫЙ РАЗДЕЛ ПО РЕФЕРАЛАМ
+// ============================================================
+// REFS
+// ============================================================
 async function renderRefs(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -817,13 +1073,17 @@ async function renderRefs(){
     const inviters = users.filter(u => refs.some(r => String(r.referrer_uid) === String(u.telegram_id)));
 
     layout(`
-      <h2 style="font-size:16px;margin-bottom:12px">🌳 Реферальная система</h2>
+      <h2 style="font-size:17px;margin-bottom:14px">🌳 Реферальная система</h2>
 
       <div class="stats" style="margin-bottom:16px">
-        <div class="stat"><div class="ic">👥</div><div class="l">Всего юзеров</div><div class="v">${users.length}</div></div>
-        <div class="stat"><div class="ic">🌳</div><div class="l">С реферером</div><div class="v" style="color:var(--purple)">${refs.length}</div></div>
-        <div class="stat"><div class="ic">⭐</div><div class="l">Прямых</div><div class="v accent">${users.length - refs.length}</div></div>
-        <div class="stat"><div class="ic">🎁</div><div class="l">Пригласивших</div><div class="v ok">${inviters.length}</div></div>
+        <div class="stat"><div class="ic">👥</div><div class="l">Всего</div>
+          <div class="v">${users.length}</div></div>
+        <div class="stat"><div class="ic">🌳</div><div class="l">Рефералов</div>
+          <div class="v purple">${refs.length}</div></div>
+        <div class="stat"><div class="ic">⭐</div><div class="l">Прямых</div>
+          <div class="v accent">${users.length - refs.length}</div></div>
+        <div class="stat"><div class="ic">🎁</div><div class="l">Пригласивших</div>
+          <div class="v ok">${inviters.length}</div></div>
       </div>
 
       ${inviters.length ? inviters
@@ -831,14 +1091,14 @@ async function renderRefs(){
         .sort((a, b) => b.refs.length - a.refs.length)
         .map(({inv, refs}) => `
           <div class="card">
-            <div class="row" style="margin-bottom:10px">
+            <div class="row" style="margin-bottom:12px">
               <div>
-                <b style="color:var(--purple)">🎁 ${esc(userName(inv))}</b>
+                <b style="color:var(--purple);font-size:15px">🎁 ${esc(userName(inv))}</b>
                 <div class="muted">${userLink(inv)} · ID ${esc(inv.telegram_id)}</div>
               </div>
-              <div>
-                <span class="badge purple">${refs.length} реферал${refs.length === 1 ? '' : refs.length < 5 ? 'а' : 'ов'}</span>
-                <button class="btn purple sm" onclick="showTree('${esc(inv.telegram_id)}')">🌳 Дерево</button>
+              <div class="flex">
+                <span class="badge purple">${refs.length} реф.</span>
+                <button class="btn purple sm" onclick="showTree('${esc(inv.telegram_id)}')">🌳</button>
               </div>
             </div>
             ${refs.map(r => `
@@ -850,11 +1110,15 @@ async function renderRefs(){
           </div>
         `).join('') : '<div class="empty"><div class="ic">🌳</div><p>Пока нет рефералов</p></div>'}
     `);
-  } catch(e){ layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`); }
+  } catch(e){
+    layout(`<div class="empty"><div class="ic">⚠️</div><p>${esc(e.message)}</p></div>`);
+  }
 }
 window.renderRefs = renderRefs;
 
+// ============================================================
 // MAIN
+// ============================================================
 async function render(){
   if (!AUTHED){ renderLogin(); return; }
   const tabs = {

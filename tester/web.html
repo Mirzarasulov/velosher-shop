@@ -70,7 +70,6 @@ h3{font-size:15px;font-weight:600}
 .btn.sm{padding:10px 14px;font-size:13px;border-radius:10px;width:auto}
 .btn.xs{padding:7px 12px;font-size:12px;border-radius:8px;width:auto}
 
-/* ERA CARD */
 .era-card{background:var(--card);border:1px solid var(--border);border-radius:16px;
   padding:0;margin-bottom:14px;overflow:hidden}
 .era-card .head{padding:18px 18px 14px;background:var(--card2);border-bottom:1px solid var(--border)}
@@ -97,6 +96,7 @@ h3{font-size:15px;font-weight:600}
 .badge.approved,.badge.completed,.badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
 .badge.cancelled,.badge.rejected{background:rgba(255,92,92,.15);color:var(--err)}
 .badge.pending{background:rgba(245,181,71,.15);color:var(--warn)}
+.badge.frozen{background:rgba(245,181,71,.2);color:var(--warn)}
 .badge.purple{background:rgba(167,139,250,.15);color:var(--purple)}
 .searchbar{display:flex;gap:8px;margin-bottom:12px}
 .search-input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid var(--border);
@@ -176,7 +176,6 @@ a{color:var(--accent);text-decoration:none}
   border:1px solid var(--border);margin-bottom:12px}
 @keyframes sh{to{background-position:-200% 0}}
 
-/* ═══ REFERRAL BALANCE ═══ */
 .ref-hero{
   background:linear-gradient(135deg,#1b2a4a 0%,#16233f 100%);
   border:1px solid #2c3d63;border-radius:16px;padding:18px;margin-bottom:12px;
@@ -185,6 +184,10 @@ a{color:var(--accent);text-decoration:none}
 .ref-hero.paid{
   background:linear-gradient(135deg,#12351f 0%,#0f2a1a 100%);
   border-color:#1f6b41
+}
+.ref-hero.frozen{
+  background:linear-gradient(135deg,#3a2d12 0%,#2a1f0a 100%);
+  border-color:#6b501f
 }
 .ref-hero::after{
   content:'';position:absolute;top:-30%;right:-20%;width:200px;height:200px;
@@ -211,6 +214,11 @@ a{color:var(--accent);text-decoration:none}
 .ref-hero .last-paid{font-size:12px;color:var(--text2);text-align:center;
   padding:8px;background:rgba(0,0,0,.2);border-radius:8px;position:relative}
 .ref-hero .last-paid b{color:var(--ok)}
+.ref-hero .frozen-note{
+  font-size:12px;color:var(--warn);text-align:center;
+  padding:8px;background:rgba(245,181,71,.12);border-radius:8px;
+  margin-bottom:10px;position:relative
+}
 .ref-item{background:var(--card2);border:1px solid var(--border);border-radius:12px;
   padding:12px 14px;margin-bottom:8px}
 .ref-item .head{display:flex;justify-content:space-between;align-items:center;
@@ -364,7 +372,7 @@ function dayLabel(p){
 function statusLabel(s){
   return ({created:'Создан', in_progress:'В процессе', approved:'Одобрен',
     completed:'Завершён', paid:'Выплачен', cancelled:'Отменён',
-    pending:'Ожидает', rejected:'Отклонён'})[s] || s;
+    pending:'Ожидает', rejected:'Отклонён', frozen:'Заморожен'})[s] || s;
 }
 function haptic(k){ try { tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(k || 'success'); } catch(e){} }
 function toast(msg, type, ms){
@@ -376,7 +384,9 @@ function toast(msg, type, ms){
 }
 function ask(msg){
   return new Promise(function(res){
-    if (tg && tg.showConfirm){ try { tg.showConfirm(msg, function(ok){ res(!!ok); }); return; } catch(e){} }
+    if (tg && tg.showConfirm){
+      try { tg.showConfirm(msg, function(ok){ res(!!ok); }); return; } catch(e){}
+    }
     res(confirm(msg));
   });
 }
@@ -534,27 +544,34 @@ async function loadMyReferrals(){
 // 💰 РЕФ. БАЛАНС
 // ═══════════════════════════════════════════════════════════
 function calcRefBalance(){
-  var accrued = 0;     // начислено (approved + paid)
-  var paid = 0;        // выплачено
-  var pending = 0;     // ожидает подтверждения
+  var accrued = 0;      // начислено (approved + frozen + paid)
+  var paid = 0;         // выплачено
+  var pending = 0;      // ожидает подтверждения
+  var frozen = 0;       // в активной заявке
   var lastPaidAt = null;
   var lastPaidAmount = 0;
 
   for (var i = 0; i < ALL_MY_REF_PURCHASES.length; i++){
     var p = ALL_MY_REF_PURCHASES[i];
     if (['rejected','cancelled'].indexOf(p.status) >= 0) continue;
+
     var bonus = num(p.referral_bonus) ||
       Math.round(num(p.purchase_price) * REFERRAL_PERCENT / 100);
     var st = p.referral_status || 'pending';
     if (st === 'rejected') continue;
+
+    var frozenAmt = num(p.referral_frozen_amount) || 0;
 
     if (st === 'paid'){
       accrued += bonus;
       paid += bonus;
       if (p.referral_paid_at && (!lastPaidAt || p.referral_paid_at > lastPaidAt)){
         lastPaidAt = p.referral_paid_at;
-        lastPaidAmount = bonus;
+        lastPaidAmount = num(p.referral_paid_amount) || bonus;
       }
+    } else if (st === 'frozen'){
+      accrued += bonus;
+      frozen += frozenAmt || bonus;
     } else if (st === 'approved'){
       accrued += bonus;
     } else {
@@ -562,12 +579,13 @@ function calcRefBalance(){
     }
   }
 
-  var owed = Math.max(0, accrued - paid);
+  var owed = Math.max(0, accrued - paid - frozen);
 
   return {
     accrued: accrued,
     paid: paid,
     pending: pending,
+    frozen: frozen,
     owed: owed,
     lastPaidAt: lastPaidAt,
     lastPaidAmount: lastPaidAmount
@@ -576,8 +594,9 @@ function calcRefBalance(){
 
 function renderRefHero(){
   var b = calcRefBalance();
-  var isFullyPaid = b.owed <= 0 && b.paid > 0;
-  var hasNothing = b.owed <= 0 && b.paid === 0 && b.pending === 0;
+  var isFrozen = b.frozen > 0;
+  var isFullyPaid = b.owed <= 0 && b.paid > 0 && !isFrozen;
+  var hasNothing = b.owed <= 0 && b.paid === 0 && b.pending === 0 && !isFrozen;
 
   if (hasNothing){
     return '<div class="ref-hero">' +
@@ -589,8 +608,13 @@ function renderRefHero(){
     '</div>';
   }
 
-  var heroCls = isFullyPaid ? 'ref-hero paid' : 'ref-hero';
-  var mainTitle = isFullyPaid ? '✅ Все бонусы выплачены' : '💰 Реферальный баланс';
+  var heroCls = 'ref-hero';
+  if (isFullyPaid) heroCls += ' paid';
+  if (isFrozen) heroCls += ' frozen';
+
+  var mainTitle = isFullyPaid ? '✅ Все бонусы выплачены' :
+                  isFrozen ? '⏳ Заявка отправлена' :
+                  '💰 Реферальный баланс';
 
   var lastLine = '';
   if (b.lastPaidAt){
@@ -600,9 +624,33 @@ function renderRefHero(){
     '</div>';
   }
 
+  // Кнопка
+  var actionBtn = '';
+  if (isFrozen){
+    actionBtn = '<button class="btn warn sm" style="flex:1" disabled>' +
+      '⏳ Заявка на ' + fmt(b.frozen) + ' ждёт</button>';
+  } else if (b.owed >= 100){
+    actionBtn = '<button class="btn ok sm" style="flex:1" onclick="requestRefPayout()">' +
+      '💸 Вывести всё (' + fmt(b.owed) + ')</button>';
+  } else if (b.owed > 0){
+    actionBtn = '<button class="btn ghost sm" style="flex:1" disabled>' +
+      'Минимум 100 ₽ · у вас ' + fmt(b.owed) + '</button>';
+  }
+
+  var frozenNote = '';
+  if (isFrozen){
+    frozenNote = '<div class="frozen-note">' +
+      '⏳ Заявка на <b>' + fmt(b.frozen) + '</b> — ждёт подтверждения админа' +
+    '</div>';
+  } else if (b.pending > 0){
+    frozenNote = '<div style="text-align:center;font-size:11.5px;color:var(--warn);margin-bottom:10px">' +
+      '⏳ На проверке: ' + fmt(b.pending) +
+    '</div>';
+  }
+
   return '<div class="' + heroCls + '">' +
     '<div class="title">' +
-      '<span class="emo">' + (isFullyPaid ? '✅' : '💰') + '</span> ' + mainTitle +
+      '<span class="emo">' + (isFullyPaid ? '✅' : isFrozen ? '⏳' : '💰') + '</span> ' + mainTitle +
       '<span class="percent-badge">' + REFERRAL_PERCENT + '%</span>' +
     '</div>' +
 
@@ -621,22 +669,11 @@ function renderRefHero(){
       '</div>' +
     '</div>' +
 
-    (b.pending > 0
-      ? '<div style="text-align:center;font-size:11.5px;color:var(--warn);margin-bottom:10px">' +
-          '⏳ На проверке: ' + fmt(b.pending) +
-        '</div>'
-      : '') +
-
+    frozenNote +
     lastLine +
 
     '<div style="display:flex;gap:8px;margin-top:12px">' +
-      (b.owed >= 100
-        ? '<button class="btn ok sm" style="flex:1" onclick="requestRefPayout()">' +
-            '💸 Вывести ' + fmt(b.owed) + '</button>'
-        : b.owed > 0
-          ? '<button class="btn ghost sm" style="flex:1" disabled>' +
-              'Минимум 100 ₽</button>'
-          : '') +
+      actionBtn +
       '<button class="btn secondary sm" style="flex:1" onclick="openMyRefs()">' +
         '👥 Рефералы (' + ALL_REFERRALS.length + ')</button>' +
     '</div>' +
@@ -644,12 +681,21 @@ function renderRefHero(){
 }
 
 // ═══════════════════════════════════════════════════════════
-// ЗАЯВКА НА ВЫВОД РЕФ. БОНУСА
+// 💸 ЗАЯВКА НА ВЫВОД ВСЕЙ СУММЫ
 // ═══════════════════════════════════════════════════════════
 window.requestRefPayout = function(){
   return once('refPayout', async function(){
     var b = calcRefBalance();
-    if (b.owed < 100) return toast('Минимум 100 ₽ для вывода', 'err');
+
+    if (b.frozen > 0){
+      toast('⏳ Заявка уже отправлена, ждите админа', 'info', 4000);
+      return;
+    }
+
+    if (b.owed < 100){
+      toast('Минимум 100 ₽ для вывода', 'err');
+      return;
+    }
 
     // Проверяем активные заявки
     var requests = await fbGet('ref_payout_requests') || {};
@@ -659,35 +705,99 @@ window.requestRefPayout = function(){
     var active = mine.filter(function(r){
       return r.status === 'pending' || r.status === 'processing';
     })[0];
-    if (active) return toast('У вас уже есть заявка #' + active.id, 'err');
 
-    if (!await ask('Подать заявку на вывод ' + fmt(b.owed) + '?')) return;
+    if (active){
+      toast('⏳ У вас уже есть активная заявка #' + active.id, 'info', 4000);
+      return;
+    }
 
-    var cur = await fbGet('counters/ref_payout') || 0;
-    var rid = Number(cur) + 1;
-    await fbPut('counters/ref_payout', rid);
+    // ═══ ПОДТВЕРЖДЕНИЕ ═══
+    var ok = await ask(
+      'Вывести всю сумму бонусов?\n\n' +
+      '💰 Сумма: ' + fmt(b.owed) + '\n\n' +
+      'Заявка уйдёт администратору.'
+    );
+    if (!ok) return;
 
-    var now = new Date().toISOString();
-    await fbPost('ref_payout_requests', {
-      id: rid,
-      user_telegram_id: USER_UID,
-      user_username: ME.username || '',
-      user_first_name: ME.first_name || '',
-      amount: b.owed,
-      balance_before: b.owed,
-      status: 'pending',
-      requested_at: now
-    });
+    try {
+      var cur = await fbGet('counters/ref_payout') || 0;
+      var rid = Number(cur) + 1;
+      await fbPut('counters/ref_payout', rid);
 
-    toast('✅ Заявка #' + rid + ' создана. Ждите админа.', 'ok', 4500);
-    haptic();
-    await reload();
-    render();
+      var now = new Date().toISOString();
+      var amount = b.owed;
+
+      await fbPost('ref_payout_requests', {
+        id: rid,
+        user_telegram_id: USER_UID,
+        user_username: ME.username || '',
+        user_first_name: ME.first_name || '',
+        amount: amount,
+        balance_before: amount,
+        status: 'pending',
+        requested_at: now
+      });
+
+      // ═══ Замораживаем суммы в покупках ═══
+      await freezeRefBonuses(USER_UID, amount, rid);
+
+      toast('✅ Заявка #' + rid + ' на ' + fmt(amount) + ' отправлена', 'ok', 5000);
+      haptic();
+      await reload();
+      render();
+    } catch(e){
+      toast('❌ ' + e.message, 'err');
+    }
   });
 };
 
+// Замораживание бонусов — пометить все approved покупки как frozen
+async function freezeRefBonuses(uid, amount, requestId){
+  var users = await fbGet('users') || {};
+  var purchases = await fbGet('purchases') || {};
+
+  var myIds = {};
+  toList(users).forEach(function(u){
+    if (String(u.referrer_uid || '') === String(uid)){
+      myIds[String(u.telegram_id)] = 1;
+    }
+  });
+
+  var queue = [];
+  Object.keys(purchases).forEach(function(k){
+    var p = purchases[k];
+    if (!p || typeof p !== 'object') return;
+    if (!myIds[String(p.user_telegram_id)]) return;
+    if (['rejected','cancelled'].indexOf(p.status) >= 0) return;
+    if ((p.referral_status || '') !== 'approved') return;
+    queue.push({ key: k, p: p });
+  });
+
+  queue.sort(function(a,b){
+    return new Date(a.p.created_at||0) - new Date(b.p.created_at||0);
+  });
+
+  var left = amount;
+  var now = new Date().toISOString();
+  for (var i = 0; i < queue.length && left > 0; i++){
+    var item = queue[i];
+    var b = Number(item.p.referral_bonus || 0)
+      || Math.round(Number(item.p.purchase_price || 0) * REFERRAL_PERCENT / 100);
+    if (b <= 0) continue;
+
+    var freezeNow = Math.min(b, left);
+    await fbPatch('purchases/' + item.key, {
+      referral_status: 'frozen',
+      referral_frozen_at: now,
+      referral_frozen_amount: freezeNow,
+      referral_request_id: requestId
+    });
+    left -= freezeNow;
+  }
+}
+
 // ═══════════════════════════════════════════════════════════
-// РЕНДЕР ДЕЙСТВИЙ
+// ДЕЙСТВИЯ
 // ═══════════════════════════════════════════════════════════
 window.setTab = function(tab){
   CURRENT_TAB = tab;
@@ -796,10 +906,7 @@ function fallbackCopy(text, ok){
   ta.remove();
 }
 
-window.closeModal = function(){
-  $('modal-root').innerHTML = '';
-  if (window._amtRes){ window._amtRes(null); window._amtRes = null; }
-};
+window.closeModal = function(){ $('modal-root').innerHTML = ''; };
 function showModal(html){
   $('modal-root').innerHTML = '<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="modal">' + html + '</div></div>';
 }
@@ -847,7 +954,7 @@ window.openMyRefs = function(){
 
   var items = ALL_REFERRALS.length ? ALL_REFERRALS.map(function(r){
     var rp = purchasesByRef[String(r.telegram_id)] || [];
-    var totalSum = 0, totalBonus = 0, paid = 0, pending = 0, approved = 0;
+    var totalSum = 0, paid = 0, pending = 0, approved = 0, frozen = 0;
     rp.forEach(function(p){
       if (['rejected','cancelled'].indexOf(p.status) >= 0) return;
       var price = num(p.purchase_price);
@@ -855,8 +962,8 @@ window.openMyRefs = function(){
       var st = p.referral_status || 'pending';
       if (st === 'rejected') return;
       totalSum += price;
-      totalBonus += b;
       if (st === 'paid') paid += b;
+      else if (st === 'frozen') frozen += num(p.referral_frozen_amount) || b;
       else if (st === 'approved') approved += b;
       else pending += b;
     });
@@ -865,6 +972,7 @@ window.openMyRefs = function(){
     else {
       if (pending > 0)  chips.push('<span class="ref-chip warn">⏳ ' + fmt(pending) + '</span>');
       if (approved > 0) chips.push('<span class="ref-chip ok">✅ ' + fmt(approved) + '</span>');
+      if (frozen > 0)   chips.push('<span class="ref-chip warn">⏳ В заявке ' + fmt(frozen) + '</span>');
       if (paid > 0)     chips.push('<span class="ref-chip purple">💸 ' + fmt(paid) + '</span>');
     }
     return '<div class="ref-item">' +
@@ -945,7 +1053,6 @@ function drawHome(){
   var available = completed.reduce(function(s,p){ return s + num(p.total_amount); }, 0);
   var name = me.first_name || u.first_name || me.username || 'друг';
   var photo = me.photo_url || u.photo_url || '';
-  var refLink = 'https://t.me/' + BOT_USERNAME + '?start=ref_' + (me.telegram_id || '');
 
   setApp(
     '<div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div>' +

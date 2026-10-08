@@ -165,7 +165,6 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .dleft.err{background:rgba(255,92,92,.15);color:var(--err)}
 .dleft.muted{background:rgba(139,148,158,.12);color:var(--muted)}
 
-/* ═══════ КАТАЛОГ ═══════ */
 .catalog-hero{
   position:relative;border-radius:20px;overflow:hidden;padding:24px 16px 16px;
   background:
@@ -248,14 +247,6 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 }
 .era-admin-card.loading{opacity:.5;pointer-events:none}
 .era-admin-card.mismatch{border-color:var(--warn);background:rgba(245,181,71,.04)}
-
-/* ❄️ ФРОЗЕН БЛОК */
-.frozen-badge{
-  display:inline-flex;align-items:center;gap:5px;padding:4px 10px;
-  background:rgba(245,181,71,.15);color:var(--warn);
-  border:1px solid rgba(245,181,71,.35);border-radius:8px;
-  font-size:11px;font-weight:700;margin-left:6px;
-}
 
 @media(max-width:768px){
   .layout{flex-direction:column}
@@ -507,9 +498,6 @@ function openLog(){
 }
 function closeModal(){ $('modal-root').innerHTML = ''; }
 
-// ═══════════════════════════════════════════════════════════
-// DASHBOARD
-// ═══════════════════════════════════════════════════════════
 async function renderDashboard(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -582,9 +570,6 @@ async function renderDashboard(){
   }
 }
 
-// ═══════════════════════════════════════════════════════════
-// PURCHASES
-// ═══════════════════════════════════════════════════════════
 var purchaseFilter = 'created';
 async function renderPurchases(){
   layout('<div class="empty">Загрузка…</div>');
@@ -704,8 +689,7 @@ function orderCard(p){
       refNote = '<div class="muted" style="margin-top:6px;font-size:11.5px;color:var(--warn)">' +
         '❄️ У реферера нет активной эры. Бонус заморожен.<br>' +
         'Разморозится автоматически, когда реферер купит эру.</div>' +
-        '<div style="margin-top:8px"><button class="btn warn sm" onclick="admForceActivate(\'' + esc(p.referrer_uid) + '\')">' +
-          '🔓 Разморозить принудительно</button></div>';
+        '<div style="margin-top:8px"><button class="btn warn sm" onclick="admForceActivate(\'' + esc(p.referrer_uid) + '\')">🔓 Разморозить принудительно</button></div>';
     } else if (st === 'rejected'){
       refNote = '<div class="muted" style="margin-top:6px;font-size:11.5px;color:var(--err)">' +
         '❌ Бонус не начислен</div>';
@@ -752,9 +736,6 @@ function orderCard(p){
     '</div></div>';
 }
 
-// ═══════════════════════════════════════════════════════════
-// ✅ CONFIRM — с проверкой активности реферера + разморозкой
-// ═══════════════════════════════════════════════════════════
 async function admConfirm(k){
   if (!confirm('Подтвердить заявку?')) return;
   await once('confirm_' + k, async function(){
@@ -777,14 +758,12 @@ async function admConfirm(k){
       notified_3d: 0, notified_1d: 0, notified_3h: 0, completed_notified: 0
     };
 
-    // ❄️ Проверяем активность реферера
     var refUid = null;
     if (p.referrer_uid){
       refUid = String(p.referrer_uid);
       var refBonus = Number(p.referral_bonus || 0)
         || Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
 
-      // Есть ли у реферера активная (не истёкшая) эра?
       var refHasActive = DATA.purchases.some(function(x){
         return String(x.user_telegram_id) === refUid
           && x.status === 'approved'
@@ -797,7 +776,6 @@ async function admConfirm(k){
         patch.referral_activated_at = now.toISOString();
         patch.referral_activated_reason = 'ref_active';
       } else {
-        // ❄️ ЗАМОРАЖИВАЕМ
         patch.referral_status = 'pending_active';
         patch.referral_pending_reason = 'У реферера нет активной эры';
         patch.referral_frozen_at = now.toISOString();
@@ -805,7 +783,6 @@ async function admConfirm(k){
       if (!p.referral_bonus) patch.referral_bonus = refBonus;
     }
 
-    // 🎉 Активируем ОТЛОЖЕННЫЕ бонусы покупателя (если он сам купил эру)
     var buyerUid = String(p.user_telegram_id);
     var pendingToActivate = DATA.purchases.filter(function(x){
       return String(x.user_telegram_id) !== buyerUid
@@ -814,10 +791,8 @@ async function admConfirm(k){
         && x.status === 'approved';
     });
 
-    // Сохраняем основную заявку
     await fbPatch('purchases/' + k, patch);
 
-    // Размораживаем отложенные бонусы покупателя
     var activatedTotal = 0;
     var activatedCount = 0;
     for (var i = 0; i < pendingToActivate.length; i++){
@@ -835,7 +810,6 @@ async function admConfirm(k){
 
     pushLog('✅ Подтвердил заявку', '#' + p.id);
 
-    // Сообщение админу с деталями
     if (patch.referral_status === 'pending_active'){
       toast('✅ Подтверждено. Бонус #' + p.id + ' ЗАМОРОЖЕН (у реферера нет эры)', 'ok', 5000);
     } else if (activatedTotal > 0){
@@ -847,7 +821,6 @@ async function admConfirm(k){
   });
 }
 
-// ❄️ Принудительная разморозка всех бонусов юзера
 async function admForceActivate(refUid){
   if (!confirm('Разморозить ВСЕ отложенные бонусы этого юзера?\n\nUID: ' + refUid)) return;
   await once('force_act_' + refUid, async function(){
@@ -875,7 +848,6 @@ async function admForceActivate(refUid){
     pushLog('❄️→✅ Разморозил бонусы', 'UID ' + refUid + ' · ' + Math.round(total) + ' ₽');
     toast('✅ Разморожено ' + Math.round(total) + ' ₽ (' + pendingList.length + ' шт)', 'ok', 5000);
 
-    // Пытаемся уведомить юзера через бота
     try {
       await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -908,9 +880,6 @@ async function admCancel(k){
   });
 }
 
-// ═══════════════════════════════════════════════════════════
-// 🗑 УДАЛИТЬ ЗАЯВКУ
-// ═══════════════════════════════════════════════════════════
 function openDeletePurchase(key){
   var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
   if (!p) return;
@@ -1079,9 +1048,6 @@ async function admContact(uid){
   } catch(e){ toast(e.message, 'err'); }
 }
 
-// ═══════════════════════════════════════════════════════════
-// PAYOUTS
-// ═══════════════════════════════════════════════════════════
 var payoutFilter = 'pending';
 async function renderPayouts(){
   layout('<div class="empty">Загрузка…</div>');
@@ -1153,9 +1119,6 @@ async function admPayoutReject(k){
   });
 }
 
-// ═══════════════════════════════════════════════════════════
-// REF PAYOUTS
-// ═══════════════════════════════════════════════════════════
 var refPayoutFilter = 'pending';
 async function renderRefPayouts(){
   layout('<div class="empty">Загрузка…</div>');
@@ -1298,13 +1261,14 @@ async function refPayoutReject(key){
   });
 }
 
-// ═══════════════════════════════════════════════════════════
-// 🚫 БЛОКИРОВКА / РАЗБЛОКИРОВКА ЮЗЕРА
-// ═══════════════════════════════════════════════════════════
 function openBlockUser(uid){
   var u = findUser(DATA.users, uid);
   if (!u) return;
   var isBlocked = !!u.blocked;
+
+  var descText = isBlocked
+    ? 'Юзер <b>' + esc(userName(u)) + '</b> снова сможет пользоваться ботом.'
+    : 'Юзер <b>' + esc(userName(u)) + '</b> не сможет создавать заявки и подавать на вывод. Все существующие заявки остаются в силе.';
 
   $('modal-root').innerHTML =
     '<div class="mbg" onclick="if(event.target===this)closeModal()"><div class="modal">' +
@@ -1315,12 +1279,7 @@ function openBlockUser(uid){
           '<div style="font-weight:700;color:' + (isBlocked ? 'var(--ok)' : 'var(--err)') + ';margin-bottom:8px">' +
             (isBlocked ? '🔓 Разблокировка' : '🚫 Блокировка') +
           '</div>' +
-          '<div class="muted" style="line-height:1.6">' +
-            (isBlocked
-              ? 'Юзер <b>' + esc(userName(u)) + '</b> снова сможет пользоваться ботом.'
-              : 'Юзер <b>' + esc(userName(u)) + '</b> не сможет создавать заявки и подавать на вывод.' +
-            ) +
-          '</div>' +
+          '<div class="muted" style="line-height:1.6">' + descText + '</div>' +
         '</div>' +
         '<div class="frow">' +
           '<label>Пароль для подтверждения</label>' +
@@ -1400,9 +1359,6 @@ async function doToggleBlock(uid, block){
   });
 }
 
-// ═══════════════════════════════════════════════════════════
-// USERS — с кнопкой разморозки
-// ═══════════════════════════════════════════════════════════
 async function renderUsers(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -1458,8 +1414,7 @@ function userCard(u){
             '<div>❄️ <b>Заморожено</b></div>' +
             '<div><b style="color:var(--warn);font-size:16px">' + fmt(bal.pendingActive) + '</b></div></div>' +
             '<div class="ri"><div></div>' +
-            '<div><button class="btn warn sm" onclick="admForceActivate(\'' + esc(u.telegram_id) + '\')">' +
-            '🔓 Разморозить всё</button></div></div>' : '') +
+            '<div><button class="btn warn sm" onclick="admForceActivate(\'' + esc(u.telegram_id) + '\')">🔓 Разморозить всё</button></div></div>' : '') +
         (bal.frozen > 0
           ? '<div class="ri"><div>🧊 В заявке на вывод</div>' +
             '<div><b style="color:var(--warn)">' + fmt(bal.frozen) + '</b></div></div>' : '') +
@@ -1505,9 +1460,6 @@ function userCard(u){
       '</div></div></div>';
 }
 
-// ═══════════════════════════════════════════════════════════
-// ERAS — с починкой ключей + seed 8 эр
-// ═══════════════════════════════════════════════════════════
 async function renderEras(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -1713,11 +1665,8 @@ async function deleteEra(id){
   });
 }
 
-// 📥 SEED — 8 эр одним кликом
 async function seedDefaultEras(){
-  if (!confirm('Загрузить 8 стандартных эр из РОСТЭРА?\n\nНовые ID начнутся с ' +
-    (DATA.eras.length ? (Math.max.apply(null, DATA.eras.map(function(e){ return Number(e.id)||0; })) + 1) : 1) +
-    ' и дальше.')) return;
+  if (!confirm('Загрузить 8 стандартных эр из РОСТЭРА?')) return;
   await once('seed_eras', async function(){
     var seed = [
       { title: 'Эра 1 — Старт', price: 1500, profit: 1000, days: 20,
@@ -1795,9 +1744,6 @@ async function fixEraKeys(){
   });
 }
 
-// ═══════════════════════════════════════════════════════════
-// КАТАЛОГ
-// ═══════════════════════════════════════════════════════════
 async function renderCatalog(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -1854,9 +1800,6 @@ async function renderCatalog(){
   }
 }
 
-// ═══════════════════════════════════════════════════════════
-// REFS
-// ═══════════════════════════════════════════════════════════
 async function renderRefs(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -1915,8 +1858,7 @@ async function renderRefs(){
                 '<div class="cell"><b>Выплачено</b><span class="accent">' + fmt(s.paid) + '</span></div>' +
               '</div>' +
               (s.pendingActive > 0
-                ? '<button class="btn warn sm" style="margin:10px 0" onclick="admForceActivate(\'' + esc(inv.telegram_id) + '\')">' +
-                  '🔓 Разморозить ' + fmt(s.pendingActive) + '</button>' : '') +
+                ? '<button class="btn warn sm" style="margin:10px 0" onclick="admForceActivate(\'' + esc(inv.telegram_id) + '\')">🔓 Разморозить ' + fmt(s.pendingActive) + '</button>' : '') +
               (rl.map(function(r){
                 return '<div class="ri"><div><b>' + esc(userName(r)) + '</b> · ' + userLink(r) + '</div>' +
                   '<div class="muted">' + fmtDate(r.registered_at) + '</div></div>';
@@ -1949,7 +1891,6 @@ async function render(){
   }
 }
 
-// Экспорт
 window.doLogin = doLogin;
 window.logout = logout;
 window.setTab = setTab;

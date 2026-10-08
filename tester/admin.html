@@ -28,6 +28,7 @@ window.addEventListener('error', function(e){
   --text:#e6edf3; --text2:#c4ccd6; --muted:#8b949e;
   --accent:#4f8cff; --ok:#39d98a; --warn:#f5b547; --err:#ff5c5c;
   --info:#63a9ff; --purple:#a78bfa;
+  --gold:#e0b84a; --gold2:#b8862d;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);color:var(--text);
@@ -72,8 +73,8 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .btn{padding:10px 16px;border-radius:9px;border:0;background:var(--accent);
   color:#fff;font-size:13px;font-weight:600;cursor:pointer;
   display:inline-flex;align-items:center;gap:6px;text-decoration:none;
-  min-height:40px;justify-content:center}
-.btn:active{opacity:.85}
+  min-height:40px;justify-content:center;transition:opacity .15s,transform .1s}
+.btn:active:not(:disabled){transform:scale(.97)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .btn.ghost{background:transparent;border:1px solid var(--border2);color:#c4ccd6}
 .btn.danger{background:var(--err)}
@@ -86,7 +87,7 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .badge.created{background:rgba(99,169,255,.15);color:#63a9ff}
 .badge.pending,.badge.frozen,.badge.pending_active{background:rgba(245,181,71,.15);color:var(--warn)}
 .badge.approved,.badge.completed,.badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
-.badge.cancelled,.badge.rejected{background:rgba(255,92,92,.15);color:var(--err)}
+.badge.cancelled,.badge.rejected,.badge.blocked{background:rgba(255,92,92,.15);color:var(--err)}
 .badge.purple{background:rgba(167,139,250,.15);color:var(--purple)}
 .badge.early{background:rgba(245,181,71,.2);color:var(--warn);margin-left:6px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
@@ -162,6 +163,89 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .dleft.warn{background:rgba(245,181,71,.12);color:var(--warn)}
 .dleft.err{background:rgba(255,92,92,.15);color:var(--err)}
 .dleft.muted{background:rgba(139,148,158,.12);color:var(--muted)}
+
+/* ═══════ КАТАЛОГ ═══════ */
+.catalog-hero{
+  position:relative;border-radius:20px;overflow:hidden;padding:24px 16px 16px;
+  background:
+    radial-gradient(ellipse at top, rgba(224,184,74,.15), transparent 60%),
+    radial-gradient(ellipse at bottom, rgba(224,184,74,.08), transparent 70%),
+    linear-gradient(135deg,#0f1a10 0%,#1a2a1a 50%,#0f1a10 100%);
+  border:1px solid rgba(224,184,74,.3);
+  box-shadow:inset 0 0 60px rgba(224,184,74,.05),0 8px 32px rgba(0,0,0,.4);
+  margin-bottom:20px;
+}
+.catalog-logo{text-align:center;margin-bottom:20px;position:relative}
+.catalog-logo .emblem{
+  width:64px;height:64px;border-radius:50%;margin:0 auto 12px;
+  background:radial-gradient(circle,#1f3a1f 0%,#0d1f0d 100%);
+  border:2px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;font-size:28px;
+  box-shadow:0 0 24px rgba(224,184,74,.3),inset 0 0 12px rgba(224,184,74,.15);
+}
+.catalog-logo .title{
+  font-size:32px;font-weight:900;letter-spacing:.06em;
+  background:linear-gradient(180deg,#f5d97a 0%,#e0b84a 40%,#b8862d 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 2px 12px rgba(224,184,74,.4);
+  margin-bottom:6px;
+}
+.catalog-logo .sub{
+  font-size:11px;color:var(--gold);letter-spacing:.4em;
+  text-transform:uppercase;font-weight:700;
+}
+.catalog-table{
+  background:rgba(0,0,0,.35);border-radius:14px;
+  border:1px solid rgba(224,184,74,.25);overflow:hidden;
+  margin-bottom:16px;
+}
+.catalog-row{
+  display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;
+  padding:12px 14px;font-size:13px;align-items:center;
+  border-bottom:1px solid rgba(224,184,74,.12);
+  gap:6px;
+}
+.catalog-row:last-child{border-bottom:0}
+.catalog-row.header{
+  background:rgba(224,184,74,.12);
+  color:var(--gold);font-size:10.5px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.05em;
+  padding:10px 14px;
+}
+.catalog-row.header > div{text-align:center}
+.catalog-row > div{text-align:center;font-weight:600}
+.catalog-row .v-price{color:#f5d97a;font-weight:800}
+.catalog-row .v-days{color:var(--text2)}
+.catalog-row .v-total{color:#f5d97a;font-weight:800}
+.catalog-row .v-profit{color:var(--gold)}
+.catalog-row .v-pct{
+  display:inline-block;padding:3px 8px;border-radius:6px;
+  background:rgba(224,184,74,.15);color:var(--gold);
+  font-size:11px;font-weight:800;
+}
+.catalog-row:hover{background:rgba(224,184,74,.04)}
+.catalog-slogan{
+  text-align:center;padding:14px 0 6px;
+  font-size:14px;font-weight:800;letter-spacing:.15em;
+  background:linear-gradient(180deg,#f5d97a 0%,#b8862d 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-transform:uppercase;
+}
+@media(max-width:640px){
+  .catalog-logo .title{font-size:24px;letter-spacing:.04em}
+  .catalog-row{font-size:11px;padding:10px 8px;gap:4px}
+  .catalog-row.header{font-size:9px;padding:8px 6px}
+  .catalog-row .v-pct{font-size:10px;padding:2px 5px}
+  .catalog-logo .emblem{width:52px;height:52px;font-size:22px}
+}
+
+.era-admin-card{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:16px;margin-bottom:12px;transition:opacity .2s
+}
+.era-admin-card.loading{opacity:.5;pointer-events:none}
 @media(max-width:768px){
   .layout{flex-direction:column}
   .side{width:100%;height:auto;position:sticky;top:0;z-index:50;border-right:0;
@@ -196,6 +280,7 @@ var TAB = 'dashboard';
 var DATA = { purchases: [], payouts: [], users: [], eras: [], refPayouts: [] };
 var SEARCH = '';
 var LOG = [];
+var BUSY = {};
 var $ = function(id){ return document.getElementById(id); };
 
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){
@@ -216,7 +301,8 @@ function fmtD(s){
 function statusLabel(s){
   return {created:'Ожидает', approved:'Активен', completed:'Завершён',
     paid:'Выплачен', cancelled:'Отменён', pending:'Ожидает',
-    rejected:'Отклонён', frozen:'Заморожен', pending_active:'Ждёт активности'
+    rejected:'Отклонён', frozen:'Заморожен', pending_active:'Ждёт активности',
+    blocked:'Заблокирован'
   }[s] || s;
 }
 function toast(msg, type){
@@ -235,26 +321,47 @@ function toList(raw){
     .map(function(k){ var o = Object.assign({}, raw[k]); o._key = k; return o; });
   return [];
 }
+function cacheBust(){ return '?ts=' + Date.now(); }
 async function fbGet(path){
-  var r = await fetch(FIREBASE + '/' + path + '.json');
+  var r = await fetch(FIREBASE + '/' + path + '.json' + cacheBust(), {cache:'no-store'});
   if (!r.ok) throw new Error('Firebase ' + r.status);
   return r.json();
 }
 async function fbPut(path, data){
-  var r = await fetch(FIREBASE + '/' + path + '.json', {method:'PUT', body: JSON.stringify(data)});
-  return r.ok;
+  var r = await fetch(FIREBASE + '/' + path + '.json', {
+    method:'PUT', body: JSON.stringify(data), headers: {'Content-Type':'application/json'}
+  });
+  if (!r.ok) throw new Error('PUT ' + path + ': ' + r.status);
+  return r.json();
 }
 async function fbPatch(path, data){
-  var r = await fetch(FIREBASE + '/' + path + '.json', {method:'PATCH', body: JSON.stringify(data)});
-  return r.ok;
+  var r = await fetch(FIREBASE + '/' + path + '.json', {
+    method:'PATCH', body: JSON.stringify(data), headers: {'Content-Type':'application/json'}
+  });
+  if (!r.ok) throw new Error('PATCH ' + path + ': ' + r.status);
+  return r.json();
 }
 async function fbPost(path, data){
-  var r = await fetch(FIREBASE + '/' + path + '.json', {method:'POST', body: JSON.stringify(data)});
-  return r.ok ? r.json() : null;
+  var r = await fetch(FIREBASE + '/' + path + '.json', {
+    method:'POST', body: JSON.stringify(data), headers: {'Content-Type':'application/json'}
+  });
+  if (!r.ok) throw new Error('POST ' + path + ': ' + r.status);
+  return r.json();
 }
 async function fbDelete(path){
   var r = await fetch(FIREBASE + '/' + path + '.json', {method:'DELETE'});
-  return r.ok;
+  if (!r.ok) throw new Error('DELETE ' + path + ': ' + r.status);
+  return true;
+}
+async function once(key, fn){
+  if (BUSY[key]) return null;
+  BUSY[key] = 1;
+  try { return await fn(); }
+  catch(e){
+    console.error(e);
+    toast('❌ ' + (e.message || 'Ошибка'), 'err');
+    return null;
+  } finally { delete BUSY[key]; }
 }
 function pushLog(action, info){
   LOG.unshift({ ts: new Date().toISOString(), action: action, info: info });
@@ -363,6 +470,7 @@ function layout(content){
       '<div class="sect">Управление</div>' +
       nav('users','👥','Юзеры', userCnt) +
       nav('eras','🧩','Товары', eraCnt) +
+      nav('catalog','✨','Каталог') +
       nav('refs','🌳','Рефералы') +
       '<div class="sect">Система</div>' +
       '<button class="nav" onclick="openLog()"><span class="emo">📜</span>Лог</button>' +
@@ -388,6 +496,9 @@ function openLog(){
 }
 function closeModal(){ $('modal-root').innerHTML = ''; }
 
+// ═══════════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════════
 async function renderDashboard(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -406,6 +517,7 @@ async function renderDashboard(){
     var created = DATA.purchases.filter(function(p){ return p.status === 'created'; }).length;
     var pendingPO = DATA.payouts.filter(function(p){ return p.status === 'pending'; }).length;
     var refsCnt = DATA.users.filter(function(u){ return u.referrer_uid; }).length;
+    var blockedCnt = DATA.users.filter(function(u){ return u.blocked; }).length;
 
     var totalBuy=0, totalProfit=0, totalPaid=0;
     var refPend=0, refAppr=0, refFrozen=0, refPaid=0, refPendingActive=0;
@@ -437,6 +549,7 @@ async function renderDashboard(){
     layout(
       '<div class="stats">' +
         stat('👥','Юзеров', DATA.users.length) +
+        stat('🚫','Заблокировано', blockedCnt, 'warn') +
         stat('🌳','Рефералов', refsCnt, 'purple') +
         stat('🟢','Активных', active, 'ok') +
         stat('🏁','Завершено', done) +
@@ -458,6 +571,9 @@ async function renderDashboard(){
   }
 }
 
+// ═══════════════════════════════════════════════════════════
+// PURCHASES
+// ═══════════════════════════════════════════════════════════
 var purchaseFilter = 'created';
 async function renderPurchases(){
   layout('<div class="empty">Загрузка…</div>');
@@ -590,7 +706,7 @@ function orderCard(p){
       refNote + '</div>';
   }
 
-  return '<div class="card">' +
+  return '<div class="card" data-k="' + esc(k) + '">' +
     '<div class="row" style="margin-bottom:12px">' +
       '<div>' +
         '<b style="color:#4f8cff;font-size:16px">📩 Заявка #' + esc(p.id) + ' ' + fast + '</b>' +
@@ -618,12 +734,13 @@ function orderCard(p){
       (canCancel ? '<button class="btn danger" onclick="admCancel(\'' + esc(k) + '\')">❌ Отменить</button>' : '') +
       (isActive ? '<button class="btn warn" onclick="openEarlyClose(\'' + esc(k) + '\')">🔌 Отключить эру</button>' : '') +
       '<button class="btn ghost" onclick="admContact(\'' + esc(p.user_telegram_id||'') + '\')">💬 Написать</button>' +
+      '<button class="btn danger" onclick="openDeletePurchase(\'' + esc(k) + '\')">🗑 Удалить заявку</button>' +
     '</div></div>';
 }
 
 async function admConfirm(k){
   if (!confirm('Подтвердить заявку?')) return;
-  try {
+  await once('confirm_' + k, async function(){
     var p = DATA.purchases.filter(function(x){ return x._key === k; })[0];
     if (!p) return;
     var now = new Date();
@@ -652,26 +769,130 @@ async function admConfirm(k){
     await fbPatch('purchases/' + k, patch);
     pushLog('✅ Подтвердил заявку', '#' + p.id);
     toast('✅ Подтверждено', 'ok');
-    renderPurchases();
-  } catch(e){ toast(e.message, 'err'); }
+    await renderPurchases();
+  });
 }
 
 async function admCancel(k){
   if (!confirm('Отменить заявку?')) return;
-  try {
+  await once('cancel_' + k, async function(){
     var p = DATA.purchases.filter(function(x){ return x._key === k; })[0];
     var patch = { status: 'cancelled', status_changed_at: new Date().toISOString() };
     if (p && p.referrer_uid) patch.referral_status = 'rejected';
     await fbPatch('purchases/' + k, patch);
     pushLog('❌ Отменил заявку', '#' + (p ? p.id : k));
     toast('❌ Отменено');
-    renderPurchases();
-  } catch(e){ toast(e.message, 'err'); }
+    await renderPurchases();
+  });
 }
 
 // ═══════════════════════════════════════════════════════════
-// 🔌 ДОСРОЧНОЕ ОТКЛЮЧЕНИЕ ЭРЫ
+// 🗑 УДАЛИТЬ ЗАЯВКУ (полное удаление из Firebase)
 // ═══════════════════════════════════════════════════════════
+function openDeletePurchase(key){
+  var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
+  if (!p) return;
+  var buyer = findUser(DATA.users, p.user_telegram_id);
+  var wasPaid = p.status === 'paid' || (PAYOUTS && PAYOUTS.some && false);
+  var isApprovedOrMore = ['approved','completed','paid'].indexOf(p.status) >= 0;
+
+  $('modal-root').innerHTML =
+    '<div class="mbg" onclick="if(event.target===this)closeModal()"><div class="modal">' +
+      '<div class="mh"><h2>🗑 Удалить заявку</h2>' +
+        '<button class="x" onclick="closeModal()">✕</button></div>' +
+      '<div class="mb">' +
+
+        '<div class="card" style="background:rgba(255,92,92,.08);border-color:var(--err);margin-bottom:16px">' +
+          '<div style="font-weight:700;color:var(--err);margin-bottom:8px">⚠️ Внимание</div>' +
+          '<div class="muted" style="line-height:1.6">' +
+            'Заявка <b>#' + esc(p.id) + '</b> (' + esc(p.era_title || '—') + ') будет ' +
+            '<b>полностью удалена</b> из Firebase.<br>' +
+            'Юзер <b>' + esc(userName(buyer)) + '</b> получит уведомление об отмене.<br>' +
+            (isApprovedOrMore
+              ? '<span style="color:var(--warn)">⚠️ Заявка уже активна/завершена — начисления будут откатаны.</span><br>'
+              : '') +
+            'Восстановить данные будет невозможно.' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="frow">' +
+          '<label>Пароль для подтверждения</label>' +
+          '<input class="input" id="dp_pass" type="password" placeholder="admin123" autofocus>' +
+        '</div>' +
+
+        '<div class="frow">' +
+          '<label>Причина (опционально)</label>' +
+          '<input class="input" id="dp_reason" placeholder="Ошибочное подтверждение">' +
+        '</div>' +
+
+        '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:8px">' +
+          '<input type="checkbox" id="dp_notify" checked style="width:18px;height:18px">' +
+          '<span class="muted">Отправить юзеру уведомление</span>' +
+        '</label>' +
+
+      '</div>' +
+      '<div class="mf">' +
+        '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
+        '<button class="btn danger" onclick="doDeletePurchase(\'' + esc(key) + '\')">🗑 Удалить</button>' +
+      '</div>' +
+    '</div></div>';
+}
+
+async function doDeletePurchase(key){
+  var passEl = $('dp_pass');
+  var reasonEl = $('dp_reason');
+  var notifyEl = $('dp_notify');
+  if (!passEl) return;
+  if (passEl.value !== ADMIN_PASSWORD){
+    toast('❌ Неверный пароль', 'err');
+    passEl.value = '';
+    passEl.focus();
+    return;
+  }
+  await once('del_purchase_' + key, async function(){
+    var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
+    if (!p) return;
+    var reason = (reasonEl && reasonEl.value.trim()) || 'Заявка удалена администратором';
+    var doNotify = notifyEl ? notifyEl.checked : true;
+    var uid = p.user_telegram_id;
+
+    // 1. Если по заявке уже была выплата — откатываем её
+    var payouts = await fbGet('payouts').then(toList).catch(function(){ return []; });
+    var relatedPayouts = payouts.filter(function(po){
+      return String(po.purchase_id) === String(p.id);
+    });
+    for (var i=0; i<relatedPayouts.length; i++){
+      await fbDelete('payouts/' + relatedPayouts[i]._key);
+    }
+
+    // 2. Удаляем саму заявку
+    await fbDelete('purchases/' + key);
+
+    // 3. Уведомляем юзера
+    if (doNotify && uid){
+      try {
+        await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            chat_id: uid, parse_mode: 'HTML',
+            text: '🗑 <b>Ваша заявка удалена администратором</b>\n\n' +
+              '📩 Заявка #' + p.id + '\n' +
+              '💳 ' + (p.era_title || '—') + '\n' +
+              '💰 ' + fmt(p.total_amount) + '\n\n' +
+              '📝 Причина: <i>' + esc(reason) + '</i>\n\n' +
+              'Если это ошибка — свяжитесь с администратором.'
+          })
+        });
+      } catch(e){ console.warn('notify fail', e); }
+    }
+
+    pushLog('🗑 Удалил заявку', '#' + p.id + ' · ' + (p.era_title || ''));
+    toast('✅ Заявка #' + p.id + ' удалена', 'ok');
+    closeModal();
+    await renderPurchases();
+  });
+}
+
 function openEarlyClose(key){
   var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
   if (!p) return;
@@ -683,7 +904,6 @@ function openEarlyClose(key){
       '<div class="mh"><h2>🔌 Отключить эру</h2>' +
         '<button class="x" onclick="closeModal()">✕</button></div>' +
       '<div class="mb">' +
-
         '<div class="card" style="background:rgba(255,92,92,.08);border-color:var(--err);margin-bottom:16px">' +
           '<div style="font-weight:700;color:var(--err);margin-bottom:8px">⚠️ Внимание</div>' +
           '<div class="muted" style="line-height:1.6">' +
@@ -692,15 +912,12 @@ function openEarlyClose(key){
             'Отменить это действие нельзя.' +
           '</div>' +
         '</div>' +
-
         '<div class="frow">' +
           '<label>Введите пароль для подтверждения</label>' +
           '<input class="input" id="ec_pass" type="password" placeholder="Пароль админа" autofocus ' +
             'onkeydown="if(event.key===\'Enter\')doEarlyClose(\'' + esc(key) + '\')">' +
         '</div>' +
-
         '<div class="muted" style="font-size:11px;text-align:center">Подсказка: admin123</div>' +
-
       '</div>' +
       '<div class="mf">' +
         '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
@@ -712,36 +929,32 @@ function openEarlyClose(key){
 async function doEarlyClose(key){
   var passEl = $('ec_pass');
   if (!passEl) return;
-  var pass = passEl.value;
-  if (pass !== ADMIN_PASSWORD){
+  if (passEl.value !== ADMIN_PASSWORD){
     toast('❌ Неверный пароль', 'err');
     passEl.value = '';
     passEl.focus();
     return;
   }
-
-  var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
-  if (!p) return;
-
-  var now = new Date().toISOString();
-  var patch = {
-    status: 'completed',
-    completed_at: now,
-    status_changed_at: now,
-    completed_notified: 1,
-    early_closed: 1,
-    early_closed_at: now,
-    early_closed_by: ADMIN_IDS[0],
-    notified_3d: 1, notified_1d: 1, notified_3h: 1
-  };
-
-  try {
+  await once('early_' + key, async function(){
+    var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
+    if (!p) return;
+    var now = new Date().toISOString();
+    var patch = {
+      status: 'completed',
+      completed_at: now,
+      status_changed_at: now,
+      completed_notified: 1,
+      early_closed: 1,
+      early_closed_at: now,
+      early_closed_by: ADMIN_IDS[0],
+      notified_3d: 1, notified_1d: 1, notified_3h: 1
+    };
     await fbPatch('purchases/' + key, patch);
     pushLog('🔌 Отключил эру досрочно', '#' + p.id + ' · ' + (p.era_title||''));
     toast('✅ Эра отключена, юзеру начислено ' + fmt(p.total_amount), 'ok', 5000);
     closeModal();
-    renderPurchases();
-  } catch(e){ toast(e.message, 'err'); }
+    await renderPurchases();
+  });
 }
 
 async function admContact(uid){
@@ -754,6 +967,9 @@ async function admContact(uid){
   } catch(e){ toast(e.message, 'err'); }
 }
 
+// ═══════════════════════════════════════════════════════════
+// PAYOUTS
+// ═══════════════════════════════════════════════════════════
 var payoutFilter = 'pending';
 async function renderPayouts(){
   layout('<div class="empty">Загрузка…</div>');
@@ -806,25 +1022,28 @@ function payoutCard(po){
 }
 async function admPaid(k){
   if (!confirm('Отметить выплату?')) return;
-  try {
+  await once('paid_' + k, async function(){
     var po = DATA.payouts.filter(function(x){ return x._key === k; })[0];
     await fbPatch('payouts/' + k, { status: 'paid', paid_at: new Date().toISOString() });
     pushLog('💸 Отметил выплату', '#' + po.id);
     toast('💰 Готово', 'ok');
-    renderPayouts();
-  } catch(e){ toast(e.message, 'err'); }
+    await renderPayouts();
+  });
 }
 async function admPayoutReject(k){
   if (!confirm('Отклонить заявку?')) return;
-  try {
+  await once('rej_' + k, async function(){
     var po = DATA.payouts.filter(function(x){ return x._key === k; })[0];
     await fbPatch('payouts/' + k, { status: 'rejected', status_changed_at: new Date().toISOString() });
     pushLog('❌ Отклонил выплату', '#' + po.id);
     toast('❌ Отклонено');
-    renderPayouts();
-  } catch(e){ toast(e.message, 'err'); }
+    await renderPayouts();
+  });
 }
 
+// ═══════════════════════════════════════════════════════════
+// REF PAYOUTS
+// ═══════════════════════════════════════════════════════════
 var refPayoutFilter = 'pending';
 async function renderRefPayouts(){
   layout('<div class="empty">Загрузка…</div>');
@@ -884,7 +1103,7 @@ function refRequestCard(r){
 }
 async function refPayoutPaid(key){
   if (!confirm('Подтвердить выплату?')) return;
-  try {
+  await once('refpaid_' + key, async function(){
     var r = DATA.refPayouts.filter(function(x){ return x._key === key; })[0];
     if (!r) return;
     var amount = Number(r.amount || 0);
@@ -929,12 +1148,12 @@ async function refPayoutPaid(key){
     } catch(e){}
     pushLog('💸 Реф. выплата', '#' + r.id + ' · ' + fmt(amount));
     toast('✅ Выплачено ' + fmt(amount), 'ok');
-    renderRefPayouts();
-  } catch(e){ toast(e.message, 'err'); }
+    await renderRefPayouts();
+  });
 }
 async function refPayoutReject(key){
   if (!confirm('Отклонить заявку?')) return;
-  try {
+  await once('refrej_' + key, async function(){
     var r = DATA.refPayouts.filter(function(x){ return x._key === key; })[0];
     var now = new Date().toISOString();
     for (var i=0; i<DATA.purchases.length; i++){
@@ -963,10 +1182,120 @@ async function refPayoutReject(key){
     } catch(e){}
     pushLog('❌ Отклонил реф. заявку', '#' + r.id);
     toast('❌ Отклонено');
-    renderRefPayouts();
-  } catch(e){ toast(e.message, 'err'); }
+    await renderRefPayouts();
+  });
 }
 
+// ═══════════════════════════════════════════════════════════
+// 🚫 БЛОКИРОВКА / РАЗБЛОКИРОВКА ЮЗЕРА
+// ═══════════════════════════════════════════════════════════
+function openBlockUser(uid){
+  var u = findUser(DATA.users, uid);
+  if (!u) return;
+  var isBlocked = !!u.blocked;
+
+  $('modal-root').innerHTML =
+    '<div class="mbg" onclick="if(event.target===this)closeModal()"><div class="modal">' +
+      '<div class="mh"><h2>' + (isBlocked ? '🔓 Разблокировать' : '🚫 Заблокировать') + '</h2>' +
+        '<button class="x" onclick="closeModal()">✕</button></div>' +
+      '<div class="mb">' +
+
+        '<div class="card" style="background:' + (isBlocked ? 'rgba(57,217,138,.08)' : 'rgba(255,92,92,.08)') + ';border-color:' + (isBlocked ? 'var(--ok)' : 'var(--err)') + ';margin-bottom:16px">' +
+          '<div style="font-weight:700;color:' + (isBlocked ? 'var(--ok)' : 'var(--err)') + ';margin-bottom:8px">' +
+            (isBlocked ? '🔓 Разблокировка' : '🚫 Блокировка') +
+          '</div>' +
+          '<div class="muted" style="line-height:1.6">' +
+            (isBlocked
+              ? 'Юзер <b>' + esc(userName(u)) + '</b> снова сможет пользоваться ботом и приложением.'
+              : 'Юзер <b>' + esc(userName(u)) + '</b> не сможет создавать заявки и подавать на вывод.<br>Все существующие заявки остаются в силе.' +
+            ) +
+          '</div>' +
+        '</div>' +
+
+        '<div class="frow">' +
+          '<label>Пароль для подтверждения</label>' +
+          '<input class="input" id="bl_pass" type="password" placeholder="admin123" autofocus>' +
+        '</div>' +
+
+        (!isBlocked
+          ? '<div class="frow">' +
+              '<label>Причина блокировки</label>' +
+              '<input class="input" id="bl_reason" placeholder="Например: мошенничество">' +
+            '</div>'
+          : '') +
+
+        '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:8px">' +
+          '<input type="checkbox" id="bl_notify" checked style="width:18px;height:18px">' +
+          '<span class="muted">Отправить юзеру уведомление</span>' +
+        '</label>' +
+
+      '</div>' +
+      '<div class="mf">' +
+        '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
+        '<button class="btn ' + (isBlocked ? 'ok' : 'danger') + '" ' +
+          'onclick="doToggleBlock(\'' + esc(uid) + '\',' + (isBlocked?0:1) + ')">' +
+          (isBlocked ? '🔓 Разблокировать' : '🚫 Заблокировать') +
+        '</button>' +
+      '</div>' +
+    '</div></div>';
+}
+
+async function doToggleBlock(uid, block){
+  var passEl = $('bl_pass');
+  var reasonEl = $('bl_reason');
+  var notifyEl = $('bl_notify');
+  if (!passEl) return;
+  if (passEl.value !== ADMIN_PASSWORD){
+    toast('❌ Неверный пароль', 'err');
+    passEl.value = '';
+    passEl.focus();
+    return;
+  }
+  await once('block_' + uid, async function(){
+    var reason = (reasonEl && reasonEl.value.trim()) || '';
+    var doNotify = notifyEl ? notifyEl.checked : true;
+    var now = new Date().toISOString();
+
+    var patch = {};
+    if (block){
+      patch.blocked = 1;
+      patch.blocked_at = now;
+      patch.blocked_by = ADMIN_IDS[0];
+      patch.block_reason = reason || 'Нарушение правил';
+    } else {
+      patch.blocked = 0;
+      patch.unblocked_at = now;
+      patch.unblocked_by = ADMIN_IDS[0];
+      patch.block_reason = null;
+    }
+    await fbPatch('users/' + uid, patch);
+
+    if (doNotify){
+      try {
+        var text = block
+          ? '🚫 <b>Ваш аккаунт заблокирован</b>\n\n' +
+            '📝 Причина: <i>' + esc(reason || 'Нарушение правил') + '</i>\n\n' +
+            'Если это ошибка — свяжитесь с администратором.'
+          : '🔓 <b>Ваш аккаунт разблокирован</b>\n\n' +
+            'Теперь вы снова можете пользоваться ботом и приложением.';
+        await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ chat_id: uid, parse_mode: 'HTML', text: text })
+        });
+      } catch(e){ console.warn('notify fail', e); }
+    }
+
+    pushLog(block ? '🚫 Заблокировал юзера' : '🔓 Разблокировал юзера',
+      'ID ' + uid + (reason ? ' · ' + reason : ''));
+    toast(block ? '🚫 Заблокирован' : '🔓 Разблокирован', 'ok');
+    closeModal();
+    await renderUsers();
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// USERS
+// ═══════════════════════════════════════════════════════════
 async function renderUsers(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -1004,6 +1333,8 @@ function userCard(u){
     return String(x.referrer_uid || '') === String(u.telegram_id);
   });
   var bal = calcUserRefBalance(u.telegram_id);
+  var isBlocked = !!u.blocked;
+
   var refBlock = (bal.accrued > 0 || bal.pending > 0 || bal.pendingActive > 0)
     ? '<div class="ref" style="border-left-color:var(--ok)">' +
         '<div class="lbl">💰 Реферальный баланс</div>' +
@@ -1024,45 +1355,72 @@ function userCard(u){
         '<div class="ri"><div>💸 Выплачено</div>' +
           '<div><b style="color:var(--accent)">' + fmt(bal.paid) + '</b></div></div>' +
       '</div>' : '';
-  return '<div class="card">' +
+
+  var blockBanner = isBlocked
+    ? '<div class="ref" style="border-left-color:var(--err);background:rgba(255,92,92,.08)">' +
+        '<div class="lbl" style="color:var(--err)">🚫 Заблокирован</div>' +
+        '<div class="ri"><div class="muted">Причина:</div>' +
+          '<div><b>' + esc(u.block_reason || '—') + '</b></div></div>' +
+        '<div class="ri"><div class="muted">Заблокирован:</div>' +
+          '<div>' + fmtDate(u.blocked_at) + '</div></div>' +
+      '</div>'
+    : '';
+
+  return '<div class="card"' + (isBlocked ? ' style="border-color:var(--err)"' : '') + '>' +
     '<div class="row" style="margin-bottom:12px">' +
       '<div><b style="font-size:15px">' + esc(userName(u)) + '</b>' +
         '<div class="muted">@' + esc(u.username||'—') + ' · ID ' + esc(u.telegram_id) + '</div></div>' +
-      (u.referrer_uid ? '<span class="badge purple">🌳 реферал</span>'
-        : '<span class="badge created">⭐ прямой</span>') + '</div>' +
+      '<div class="flex">' +
+        (isBlocked ? '<span class="badge blocked">🚫 Заблокирован</span>' : '') +
+        (u.referrer_uid ? '<span class="badge purple">🌳 реферал</span>'
+          : '<span class="badge created">⭐ прямой</span>') +
+      '</div></div>' +
     '<div class="grid">' +
       '<div class="cell"><b>Вложено</b><span class="accent">' + fmt(invested) + '</span></div>' +
       '<div class="cell"><b>Получено</b><span class="ok">' + fmt(earned) + '</span></div>' +
       '<div class="cell"><b>Заявок</b><span>' + myP.length + '</span></div>' +
       '<div class="cell"><b>Пригласил</b><span style="color:var(--purple)">' + refs.length + '</span></div>' +
-    '</div>' + refBlock +
+    '</div>' + refBlock + blockBanner +
     '<div class="row" style="margin-top:12px">' +
       '<div class="muted">📅 ' + fmtDate(u.registered_at) + '</div>' +
       '<div class="flex">' +
         '<button class="btn ghost sm" onclick="admContact(\'' + esc(u.telegram_id||'') + '\')">💬</button>' +
+        (isBlocked
+          ? '<button class="btn ok sm" onclick="openBlockUser(\'' + esc(u.telegram_id) + '\')">🔓 Разблокировать</button>'
+          : '<button class="btn danger sm" onclick="openBlockUser(\'' + esc(u.telegram_id) + '\')">🚫 Заблокировать</button>'
+        ) +
       '</div></div></div>';
 }
 
+// ═══════════════════════════════════════════════════════════
+// ERAS
+// ═══════════════════════════════════════════════════════════
 async function renderEras(){
   layout('<div class="empty">Загрузка…</div>');
   try {
-    DATA.eras = await fbGet('eras').then(toList).catch(function(){ return []; });
-    DATA.eras.sort(function(a,b){
-      return Number(a.sort_order || a.id || 0) - Number(b.sort_order || b.id || 0);
-    });
+    await loadErasFresh();
     layout(
       '<div class="row" style="margin-bottom:14px">' +
         '<h2 style="font-size:17px">🧩 Товары (' + DATA.eras.length + ')</h2>' +
         '<button class="btn" onclick="createEra()">➕ Создать</button></div>' +
-      DATA.eras.map(eraCard).join(''));
+      (DATA.eras.length
+        ? DATA.eras.map(eraCard).join('')
+        : '<div class="empty"><div class="ic">📦</div><p>Нет товаров. Создайте первый.</p></div>'));
   } catch(e){
     layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
   }
 }
+async function loadErasFresh(){
+  var raw = await fbGet('eras');
+  DATA.eras = toList(raw).sort(function(a,b){
+    return Number(a.sort_order || a.id || 0) - Number(b.sort_order || b.id || 0);
+  });
+}
 function eraCard(e){
   var price = Number(e.price || 0);
   var roi = price > 0 ? Math.round(Number(e.profit_amount)/price*100) : 0;
-  return '<div class="card">' +
+  var k = e._key;
+  return '<div class="card era-admin-card" data-era="' + esc(k) + '">' +
     '<div class="row" style="margin-bottom:12px">' +
       '<div><b style="color:#4f8cff;font-size:15px">🧩 ' + esc(e.title||'Без названия') + '</b>' +
         '<div class="muted">ID #' + esc(e.id||e._key) + '</div></div>' +
@@ -1076,10 +1434,12 @@ function eraCard(e){
       '<div class="cell"><b>📈 ROI</b><span class="ok">+' + roi + '%</span></div>' +
     '</div>' +
     '<div class="flex" style="margin-top:12px">' +
-      '<button class="btn" onclick="editEra(\'' + esc(e._key) + '\')">✏️ Изменить</button>' +
-      '<button class="btn ' + (e.is_active ? 'ghost' : 'ok') + '" onclick="toggleEra(\'' + esc(e._key) + '\',' + (e.is_active?0:1) + ')">' +
+      '<button class="btn sm" onclick="editEra(\'' + esc(k) + '\')">✏️ Изменить</button>' +
+      '<button class="btn sm ' + (e.is_active ? 'ghost' : 'ok') + '" ' +
+        'onclick="toggleEra(\'' + esc(k) + '\',' + (e.is_active?0:1) + ')">' +
         (e.is_active ? '⚫ Выкл' : '🟢 Вкл') + '</button>' +
-      '<button class="btn danger" onclick="deleteEra(\'' + esc(e._key) + '\')">🗑</button></div></div>';
+      '<button class="btn sm danger" onclick="deleteEra(\'' + esc(k) + '\')">🗑 Удалить</button>' +
+    '</div></div>';
 }
 function eraForm(e){
   e = e || {};
@@ -1106,46 +1466,139 @@ function editEra(key){
   if (e) $('modal-root').innerHTML = eraForm(e);
 }
 async function saveEra(key){
-  var title = $('f_title').value.trim();
-  if (!title) return toast('Введите название', 'err');
-  var price = Number($('f_price').value) || 0;
-  var profit = Number($('f_profit').value) || 0;
-  var days = Number($('f_days').value) || 20;
-  var desc = $('f_desc').value.trim();
-  var active = Number($('f_active').value);
-  var btn = $('f_save'); btn.disabled = true; btn.textContent = '⏳...';
-  try {
+  await once('save_era_' + (key || 'new'), async function(){
+    var title = $('f_title').value.trim();
+    if (!title){ toast('Введите название', 'err'); return; }
+    var price = Number($('f_price').value) || 0;
+    var profit = Number($('f_profit').value) || 0;
+    var days = Number($('f_days').value) || 20;
+    var desc = $('f_desc').value.trim();
+    var active = Number($('f_active').value);
+    var btn = $('f_save'); btn.disabled = true; btn.textContent = '⏳...';
+
     var data = { title: title, price: price, profit_amount: profit,
       total_amount: price + profit, duration_days: days,
       description: desc, is_active: active };
-    if (key){
-      var e = DATA.eras.filter(function(x){ return x._key === key; })[0] || {};
-      data.id = e.id || key; data.sort_order = e.sort_order || data.id;
-      await fbPut('eras/' + key, data); pushLog('✏️ Изменил эру', title);
-    } else {
-      var usedIds = DATA.eras.map(function(x){ return Number(x.id||0); }).filter(Boolean);
-      var newId = usedIds.length ? Math.max.apply(null, usedIds) + 1 : 1;
-      data.id = newId; data.sort_order = newId;
-      await fbPut('eras/' + newId, data); pushLog('➕ Создал эру', title);
+
+    try {
+      if (key){
+        var e = DATA.eras.filter(function(x){ return x._key === key; })[0] || {};
+        data.id = e.id || key; data.sort_order = e.sort_order || data.id;
+        await fbPut('eras/' + key, data);
+        pushLog('✏️ Изменил эру', title);
+      } else {
+        var usedIds = DATA.eras.map(function(x){ return Number(x.id||0); }).filter(Boolean);
+        var newId = usedIds.length ? Math.max.apply(null, usedIds) + 1 : 1;
+        data.id = newId; data.sort_order = newId;
+        await fbPut('eras/' + newId, data);
+        pushLog('➕ Создал эру', title);
+      }
+      closeModal();
+      toast('💾 Сохранено', 'ok');
+      await renderEras();
+    } catch(err){
+      toast('❌ ' + err.message, 'err');
+      btn.disabled = false;
+      btn.textContent = key ? '💾 Сохранить' : '✅ Создать';
     }
-    closeModal(); toast('💾 Сохранено', 'ok'); renderEras();
-  } catch(err){
-    toast(err.message, 'err'); btn.disabled = false;
-    btn.textContent = key ? '💾 Сохранить' : '✅ Создать';
-  }
+  });
 }
 async function toggleEra(key, active){
-  try { await fbPatch('eras/' + key, { is_active: active });
-    toast(active ? '🟢 Включено' : '⚫ Отключено', 'ok'); renderEras();
-  } catch(e){ toast(e.message, 'err'); }
+  await once('toggle_' + key, async function(){
+    var local = DATA.eras.filter(function(x){ return x._key === key; })[0];
+    var old = local ? local.is_active : 0;
+    if (local) local.is_active = active;
+    toast(active ? '⏳ Включаю…' : '⏳ Отключаю…', 'info', 1500);
+    try {
+      await fbPatch('eras/' + key, { is_active: active });
+      toast(active ? '🟢 Включено' : '⚫ Отключено', 'ok');
+      await renderEras();
+    } catch(e){
+      if (local) local.is_active = old;
+      toast('❌ Не удалось: ' + e.message, 'err');
+      await renderEras();
+    }
+  });
 }
 async function deleteEra(key){
-  if (!confirm('Удалить эру?')) return;
-  try { await fbDelete('eras/' + key);
-    pushLog('🗑 Удалил эру', key); toast('🗑 Удалено', 'ok'); renderEras();
-  } catch(e){ toast(e.message, 'err'); }
+  if (!confirm('Удалить эру? Существующие заказы не пострадают.')) return;
+  await once('del_' + key, async function(){
+    var e = DATA.eras.filter(function(x){ return x._key === key; })[0];
+    toast('⏳ Удаляю…', 'info', 1200);
+    try {
+      await fbDelete('eras/' + key);
+      pushLog('🗑 Удалил эру', e ? (e.title || key) : key);
+      toast('🗑 Удалено', 'ok');
+      await renderEras();
+    } catch(err){
+      toast('❌ ' + err.message, 'err');
+    }
+  });
 }
 
+// ═══════════════════════════════════════════════════════════
+// КАТАЛОГ
+// ═══════════════════════════════════════════════════════════
+async function renderCatalog(){
+  layout('<div class="empty">Загрузка…</div>');
+  try {
+    await loadErasFresh();
+    var active = DATA.eras.filter(function(e){ return e.is_active; });
+    var sorted = active.slice().sort(function(a,b){
+      return Number(a.price||0) - Number(b.price||0);
+    });
+    var rows = sorted.map(function(e){
+      var price = Number(e.price || 0);
+      var total = Number(e.total_amount || (price + Number(e.profit_amount||0)));
+      var profit = Number(e.profit_amount || (total - price));
+      var days = Number(e.duration_days || 0);
+      var pct = price > 0 ? (profit / price * 100) : 0;
+      return '<div class="catalog-row">' +
+        '<div class="v-price">' + fmt(price) + '</div>' +
+        '<div class="v-days">' + days + ' дн.</div>' +
+        '<div class="v-total">' + fmt(total) + '</div>' +
+        '<div class="v-profit">' + fmt(profit) + '</div>' +
+        '<div><span class="v-pct">' + pct.toFixed(2) + '%</span></div>' +
+      '</div>';
+    }).join('');
+
+    layout(
+      '<div class="row" style="margin-bottom:14px">' +
+        '<h2 style="font-size:17px">✨ Каталог эр (' + sorted.length + ')</h2>' +
+        '<button class="btn sm ghost" onclick="renderCatalog()">🔄</button>' +
+      '</div>' +
+      '<div class="catalog-hero">' +
+        '<div class="catalog-logo">' +
+          '<div class="emblem">🌿</div>' +
+          '<div class="title">РОСТЭРА</div>' +
+          '<div class="sub">Новая эра твоего роста</div>' +
+        '</div>' +
+        '<div class="catalog-table">' +
+          '<div class="catalog-row header">' +
+            '<div>Эра</div>' +
+            '<div>Продолжит.</div>' +
+            '<div>Общая выплата</div>' +
+            '<div>Ваша прибыль</div>' +
+            '<div>Прибыль, %</div>' +
+          '</div>' +
+          (rows || '<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--muted)">Нет активных эр</div>') +
+        '</div>' +
+        '<div class="catalog-slogan">✨ Новая эра твоего роста ✨</div>' +
+      '</div>' +
+      '<div class="card" style="background:rgba(224,184,74,.05);border-color:rgba(224,184,74,.25)">' +
+        '<div class="muted" style="line-height:1.7">' +
+          '💡 <b style="color:var(--gold)">Подсказка:</b> таблица показывает <b>только активные эры</b>, отсортированные по цене.<br>' +
+          'Отключённые и удалённые товары здесь не отображаются.' +
+        '</div>' +
+      '</div>');
+  } catch(e){
+    layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// REFS
+// ═══════════════════════════════════════════════════════════
 async function renderRefs(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -1222,6 +1675,7 @@ async function render(){
     refPayouts: renderRefPayouts,
     users: renderUsers,
     eras: renderEras,
+    catalog: renderCatalog,
     refs: renderRefs
   };
   try { await (tabs[TAB] || renderDashboard)(); }
@@ -1232,6 +1686,7 @@ async function render(){
   }
 }
 
+// Экспорт всех функций
 window.doLogin = doLogin;
 window.logout = logout;
 window.setTab = setTab;
@@ -1243,6 +1698,7 @@ window.renderPayouts = renderPayouts;
 window.renderRefPayouts = renderRefPayouts;
 window.renderUsers = renderUsers;
 window.renderEras = renderEras;
+window.renderCatalog = renderCatalog;
 window.renderRefs = renderRefs;
 window.admConfirm = admConfirm;
 window.admCancel = admCancel;
@@ -1253,6 +1709,10 @@ window.refPayoutPaid = refPayoutPaid;
 window.refPayoutReject = refPayoutReject;
 window.openEarlyClose = openEarlyClose;
 window.doEarlyClose = doEarlyClose;
+window.openDeletePurchase = openDeletePurchase;
+window.doDeletePurchase = doDeletePurchase;
+window.openBlockUser = openBlockUser;
+window.doToggleBlock = doToggleBlock;
 window.createEra = createEra;
 window.editEra = editEra;
 window.saveEra = saveEra;

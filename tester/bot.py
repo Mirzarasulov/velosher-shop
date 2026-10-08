@@ -13,8 +13,8 @@ ADMIN_ID = ADMIN_IDS[0]
 
 CHANNEL_ID = -1004305451466
 FIREBASE = "https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app"
-WEB_URL = "https://mirzarasulov.github.io/velosher-shop/tester/web.html"
-ADMIN_URL = "https://mirzarasulov.github.io/velosher-shop/tester/admin.html"
+WEB_URL = "https://mirzarasulov.github.io/velosher-shop/tester/web.html?v=3"
+ADMIN_URL = "https://mirzarasulov.github.io/velosher-shop/tester/admin.html?v=3"
 
 PDF_FILENAME = "РОСТЭРА.pdf"
 PDF_PATH = Path(PDF_FILENAME)
@@ -127,6 +127,33 @@ def notify_admins(text, kb=None):
         tg_send(aid, text, kb=kb)
 
 # ============================================================
+# 🚫 ПРОВЕРКА БЛОКИРОВКИ
+# ============================================================
+def is_blocked(uid):
+    """Проверяет, заблокирован ли юзер в Firebase."""
+    try:
+        u = fb_get(f"users/{uid}")
+        if not u:
+            return None
+        if u.get("blocked"):
+            return u.get("block_reason") or "Нарушение правил"
+        return None
+    except Exception as e:
+        log("BLOCK", f"ошибка проверки {uid}: {e}")
+        return None
+
+def send_blocked_msg(chat_id, reason):
+    """Отправляет юзеру сообщение о блокировке."""
+    tg_send(chat_id,
+            f"🚫 <b>Вы заблокированы администрацией</b>\n\n"
+            f"📝 Причина: <i>{reason}</i>\n\n"
+            f"Обратитесь в поддержку для выяснения деталей.",
+            kb={"inline_keyboard": [[
+                {"text": "💬 Написать в поддержку", "url": f"tg://user?id={ADMIN_ID}"}
+            ]]})
+    log("BLOCK", f"юзер {chat_id} заблокирован — отказано")
+
+# ============================================================
 # УТИЛИТЫ
 # ============================================================
 def fmt_money(v):
@@ -197,11 +224,7 @@ def get_referral_bonus(p):
     except:
         return 0
 
-# ═══════════════════════════════════════════════════════════
-# ПРОВЕРКА АКТИВНОСТИ РЕФЕРЕРА
-# ═══════════════════════════════════════════════════════════
 def ref_has_active_era(ref_uid):
-    """Есть ли у реферера активная (не истёкшая) эра?"""
     ref_uid = str(ref_uid)
     purchases = fb_get("purchases") or {}
     now = datetime.now(TZ)
@@ -220,7 +243,6 @@ def ref_has_active_era(ref_uid):
     return False
 
 def activate_pending_bonuses(ref_uid):
-    """Активирует pending_active бонусы реферера (когда он сам купил эру)."""
     ref_uid = str(ref_uid)
     users = fb_get("users") or {}
     purchases = fb_get("purchases") or {}
@@ -255,7 +277,6 @@ def activate_pending_bonuses(ref_uid):
     return activated, total
 
 def force_activate_pending_bonuses(ref_uid):
-    """Принудительно активирует ВСЕ pending_active бонусы реферера (по кнопке админа)."""
     ref_uid = str(ref_uid)
     users = fb_get("users") or {}
     purchases = fb_get("purchases") or {}
@@ -285,7 +306,6 @@ def force_activate_pending_bonuses(ref_uid):
     return count, total
 
 def reject_pending_bonuses(ref_uid):
-    """Отклоняет все pending_active бонусы реферера (по кнопке админа)."""
     ref_uid = str(ref_uid)
     users = fb_get("users") or {}
     purchases = fb_get("purchases") or {}
@@ -313,7 +333,6 @@ def reject_pending_bonuses(ref_uid):
     return count, total
 
 def calc_user_ref_balance(uid):
-    """Считает баланс реферальных бонусов юзера."""
     uid = str(uid)
     users = fb_get("users") or {}
     purchases = fb_get("purchases") or {}
@@ -409,7 +428,6 @@ def kb_admin_ref_payout(rid, uid):
     ]}
 
 def kb_admin_pending_bonus(ref_uid):
-    """Кнопки для админа: активировать/отклонить отложенные бонусы."""
     return {"inline_keyboard": [
         [{"text": "✅ Начислить всё", "callback_data": f"adm_actbonus:{ref_uid}"},
          {"text": "❌ Отклонить", "callback_data": f"adm_rejbonus:{ref_uid}"}],
@@ -430,6 +448,11 @@ def kb_unknown():
     return {"inline_keyboard": [
         [{"text": "🚀 Открыть приложение", "web_app": {"url": WEB_URL}}],
         [{"text": "💬 Написать админу", "url": f"tg://user?id={ADMIN_ID}"}]
+    ]}
+
+def kb_blocked():
+    return {"inline_keyboard": [
+        [{"text": "💬 Написать в поддержку", "url": f"tg://user?id={ADMIN_ID}"}]
     ]}
 
 # ============================================================
@@ -495,6 +518,13 @@ def register_user(user, start_text):
 # КОМАНДЫ
 # ============================================================
 def cmd_start(chat_id, user, text):
+    uid = str(user["id"])
+    # 🚫 ПРОВЕРКА БЛОКИРОВКИ
+    block_reason = is_blocked(uid)
+    if block_reason:
+        send_blocked_msg(chat_id, block_reason)
+        return
+
     u = register_user(user, text)
     if u.get("agreed_terms"):
         tg_send(chat_id, WELCOME_AFTER, kb=kb_start())
@@ -563,9 +593,6 @@ def cmd_reset_era(chat_id, user_tg):
                 removed += 1
     tg_send(chat_id, f"🧹 Удалено тестовых эр: <b>{removed}</b>")
 
-# ═══════════════════════════════════════════════════════════
-# /myrefs
-# ═══════════════════════════════════════════════════════════
 def build_myrefs_text(uid):
     uid = str(uid)
     users = fb_get("users") or {}
@@ -623,6 +650,11 @@ def build_myrefs_text(uid):
     return "\n\n".join(lines)
 
 def cmd_myrefs(chat_id, user_tg):
+    # 🚫 ПРОВЕРКА БЛОКИРОВКИ
+    block_reason = is_blocked(str(user_tg))
+    if block_reason:
+        send_blocked_msg(chat_id, block_reason)
+        return
     text = build_myrefs_text(user_tg)
     ref_link = f"https://t.me/{BOT_USERNAME}?start=ref_{user_tg}"
     text += f"\n\n🔗 <b>Ваша ссылка:</b>\n<code>{ref_link}</code>"
@@ -639,6 +671,15 @@ def handle_callback(cb):
     msg_id = msg.get("message_id")
     cb_id = cb.get("id")
     log("CB", f"data={data} user={user_tg}")
+
+    # 🚫 ПРОВЕРКА БЛОКИРОВКИ для всех действий (кроме админов)
+    if not is_admin(user_tg):
+        block_reason = is_blocked(str(user_tg))
+        if block_reason:
+            tg_answer(cb_id, "🚫 Вы заблокированы", True)
+            if chat_id:
+                send_blocked_msg(chat_id, block_reason)
+            return
 
     if data == AGREE_CALLBACK:
         tg_answer(cb_id, "✅")
@@ -669,7 +710,6 @@ def handle_callback(cb):
         else: tg_send(chat_id, text, kb=kb_refs())
         return
 
-    # ─── Подтверждение/отмена заявки ───
     if data.startswith("adm_approve:"):
         if not is_admin(user_tg):
             tg_answer(cb_id, "⛔️", True); return
@@ -686,7 +726,6 @@ def handle_callback(cb):
         tg_edit(chat_id, msg_id, f"❌ <b>Заявка #{pid} отклонена</b>\n<i>Админ: <code>{user_tg}</code></i>")
         admin_set_purchase(pid, "rejected"); return
 
-    # ─── Выплаты ───
     if data.startswith("adm_paid:"):
         if not is_admin(user_tg):
             tg_answer(cb_id, "⛔️", True); return
@@ -703,7 +742,6 @@ def handle_callback(cb):
         tg_edit(chat_id, msg_id, f"❌ <b>Вывод #{poid} отклонён</b>\n<i>Админ: <code>{user_tg}</code></i>")
         admin_set_payout(poid, "rejected"); return
 
-    # ─── Реф. выплаты ───
     if data.startswith("adm_refpaid:"):
         if not is_admin(user_tg):
             tg_answer(cb_id, "⛔️", True); return
@@ -720,7 +758,6 @@ def handle_callback(cb):
         tg_edit(chat_id, msg_id, f"❌ <b>Реф. заявка #{rid} отклонена</b>\n<i>Админ: <code>{user_tg}</code></i>")
         admin_set_ref_payout(rid, "rejected"); return
 
-    # ─── Активация/отклонение отложенных бонусов ───
     if data.startswith("adm_actbonus:"):
         if not is_admin(user_tg):
             tg_answer(cb_id, "⛔️", True); return
@@ -844,6 +881,13 @@ def handle_message(msg):
         return
     log("MSG", f"{user_tg}: {text[:60] if text else '[no text]'}")
 
+    # 🚫 ПРОВЕРКА БЛОКИРОВКИ для всех команд (кроме админов)
+    if not is_admin(user_tg):
+        block_reason = is_blocked(str(user_tg))
+        if block_reason:
+            send_blocked_msg(chat_id, block_reason)
+            return
+
     if text.startswith("/start"):
         cmd_start(chat_id, user, text); return
     if text.startswith("/admin"):
@@ -919,7 +963,6 @@ def admin_set_purchase(pid, status):
         patch["approved_at"] = now_iso()
         patch["days"] = days
 
-        # 🎁 Проверяем реферера
         if p.get("referrer_uid"):
             ref_uid = str(p["referrer_uid"])
             bonus = get_referral_bonus(p)
@@ -934,7 +977,6 @@ def admin_set_purchase(pid, status):
                 if p.get("referral_bonus") in (None, ""):
                     patch["referral_bonus"] = bonus
 
-        # 🎉 Активируем ОТЛОЖЕННЫЕ бонусы покупателя (если он сам купил)
         activated_count, activated_total = activate_pending_bonuses(buyer_uid)
 
     if status in ("rejected", "cancelled"):
@@ -948,7 +990,6 @@ def admin_set_purchase(pid, status):
         updated = {**p, **patch}
         notify_purchase_status(k, updated, old_status, status)
 
-        # Уведомляем админов про отложенный бонус
         if status == "approved" and patch.get("referral_status") == "pending_active":
             ref_uid = str(p["referrer_uid"])
             ref_user = fb_get(f"users/{ref_uid}") or {}
@@ -969,7 +1010,6 @@ def admin_set_purchase(pid, status):
                 kb=kb_admin_pending_bonus(ref_uid)
             )
 
-        # Уведомляем юзера про активацию его отложенных бонусов
         if activated_count > 0:
             bal = calc_user_ref_balance(buyer_uid)
             tg_send(int(buyer_uid),

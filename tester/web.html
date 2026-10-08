@@ -67,6 +67,7 @@ h3{font-size:15px;font-weight:600}
 .btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
 .btn.ok{background:var(--ok);color:#04241a}
 .btn.warn{background:var(--warn);color:#2a1a00}
+.btn.danger{background:var(--err);color:#fff}
 .btn.sm{padding:10px 14px;font-size:13px;border-radius:10px;width:auto}
 .btn.xs{padding:7px 12px;font-size:12px;border-radius:8px;width:auto}
 .era-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:0;margin-bottom:14px;overflow:hidden}
@@ -278,134 +279,71 @@ a{color:var(--accent);text-decoration:none}
   font-family:ui-monospace,monospace;
 }
 
-/* ═══════════ ПРЕЛОАДЕР ═══════════ */
-#preloader{
-  position:fixed;inset:0;z-index:99999;
-  background:radial-gradient(circle at 50% 40%,#0f1b2e 0%,#0a0e14 70%);
+/* ═══════════ ЭКРАН БЛОКИРОВКИ ═══════════ */
+.blocked-wrap{
+  min-height:100vh;
   display:flex;align-items:center;justify-content:center;
-  flex-direction:column;
-  transition:opacity .6s ease,visibility .6s ease;
+  padding:20px;
+  background:radial-gradient(circle at 50% 30%,#2a0e0e 0%,#0a0e14 70%);
 }
-#preloader.hide{opacity:0;visibility:hidden;pointer-events:none}
-.pl-inner{text-align:center;padding:0 30px;width:100%;max-width:340px}
-.pl-emblem{
-  margin-bottom:18px;
-  opacity:0;transform:scale(.7);
-  animation:pl-pop .6s .1s cubic-bezier(.34,1.56,.64,1) forwards;
+.blocked-card{
+  background:linear-gradient(135deg,#2a0e0e,#1a0808);
+  border:1px solid #7a2020;border-radius:20px;
+  padding:40px 24px;text-align:center;
+  width:100%;max-width:400px;
+  box-shadow:0 20px 60px rgba(201,42,42,.3);
+  animation:blocked-in .5s ease;
 }
-@keyframes pl-pop{to{opacity:1;transform:scale(1)}}
-.pl-ring{
-  transform-origin:50% 50%;
-  transform:rotate(-90deg);
-  stroke-dashoffset:289;
-  animation:pl-draw 2s .4s cubic-bezier(.4,0,.2,1) forwards;
+@keyframes blocked-in{
+  from{opacity:0;transform:scale(.9)}
+  to{opacity:1;transform:scale(1)}
 }
-@keyframes pl-draw{to{stroke-dashoffset:0}}
-.pl-title{
-  font-size:32px;font-weight:900;letter-spacing:8px;
-  background:linear-gradient(180deg,#f5d97a 0%,#e0b84a 50%,#b8862d 100%);
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
-  margin-bottom:8px;
-  opacity:0;transform:translateY(10px);
-  animation:pl-up .5s .6s ease forwards;
-  filter:drop-shadow(0 2px 12px rgba(224,184,74,.4));
+.blocked-icon{
+  font-size:80px;margin-bottom:20px;
+  animation:blocked-shake 2s ease-in-out infinite;
 }
-.pl-sub{
-  font-size:11px;color:#8b949e;letter-spacing:3px;text-transform:uppercase;
-  margin-bottom:32px;
-  opacity:0;
-  animation:pl-up .5s .8s ease forwards;
-}
-@keyframes pl-up{to{opacity:1;transform:translateY(0)}}
-.pl-bar{
-  width:100%;height:3px;border-radius:3px;
-  background:rgba(224,184,74,.12);
-  overflow:hidden;position:relative;
-  opacity:0;
-  animation:pl-up .5s 1s ease forwards;
-  box-shadow:0 0 20px rgba(224,184,74,.2);
-}
-.pl-fill{
-  height:100%;width:0%;border-radius:3px;
-  background:linear-gradient(90deg,#e0b84a,#f5d97a,#e0b84a);
-  background-size:200% 100%;
-  animation:pl-shine 1.5s linear infinite;
-  box-shadow:0 0 12px rgba(224,184,74,.8);
-  transition:width .3s ease;
-}
-@keyframes pl-shine{to{background-position:-200% 0}}
-
-/* 🚨 Плашка ошибки */
-.pl-error{
-  position:absolute;bottom:0;left:0;right:0;
-  padding:18px 24px calc(18px + env(safe-area-inset-bottom));
-  background:linear-gradient(135deg,#c92a2a,#8b1e1e);
-  border-top:2px solid #ff5c5c;
-  text-align:center;
-  opacity:0;transform:translateY(100%);
-  animation:pl-error-in .5s .3s cubic-bezier(.4,0,.2,1) forwards;
-  box-shadow:0 -8px 32px rgba(201,42,42,.5);
-}
-@keyframes pl-error-in{to{opacity:1;transform:translateY(0)}}
-.pl-error .pe-icon{
-  font-size:32px;margin-bottom:8px;
-  animation:pe-shake 1.5s ease-in-out infinite;
-}
-@keyframes pe-shake{
+@keyframes blocked-shake{
   0%,100%{transform:rotate(0)}
-  25%{transform:rotate(-10deg)}
-  75%{transform:rotate(10deg)}
+  10%{transform:rotate(-8deg)}
+  20%{transform:rotate(8deg)}
+  30%{transform:rotate(-6deg)}
+  40%{transform:rotate(6deg)}
+  50%,100%{transform:rotate(0)}
 }
-.pl-error .pe-title{
-  font-size:15px;font-weight:800;color:#fff;
-  margin-bottom:4px;letter-spacing:.5px;
+.blocked-title{
+  font-size:22px;font-weight:800;color:#ff5c5c;
+  margin-bottom:12px;letter-spacing:.5px;
 }
-.pl-error .pe-text{
-  font-size:12.5px;color:#ffd6d6;line-height:1.5;
+.blocked-text{
+  font-size:13.5px;color:#c4ccd6;line-height:1.6;
+  margin-bottom:22px;
 }
-.pl-error .pe-btn{
-  display:inline-flex;align-items:center;gap:6px;
-  margin-top:12px;padding:10px 20px;border-radius:10px;
-  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
-  color:#fff;font-weight:700;font-size:13px;cursor:pointer;
-  text-decoration:none;
+.blocked-reason{
+  background:rgba(0,0,0,.4);border-radius:12px;
+  padding:14px 16px;margin-bottom:20px;text-align:left;
+  border-left:3px solid #ff5c5c;
 }
-.pl-error .pe-btn:active{background:rgba(255,255,255,.25)}
+.blocked-reason-label{
+  font-size:10.5px;color:#8b949e;text-transform:uppercase;
+  letter-spacing:1px;font-weight:700;margin-bottom:6px;
+}
+.blocked-reason-text{
+  font-size:14px;color:#e8edf3;font-weight:600;
+}
+.blocked-note{
+  font-size:12.5px;color:#8b949e;line-height:1.6;margin-bottom:22px;
+}
+.blocked-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:14px 18px;border-radius:12px;
+  background:#ff5c5c;color:#fff;font-weight:700;font-size:15px;
+  text-decoration:none;border:0;
+  box-shadow:0 8px 24px rgba(255,92,92,.4);
+}
+.blocked-btn:active{transform:scale(.97)}
 </style>
 </head>
 <body>
-
-<!-- ═══════════ ПРЕЛОАДЕР ═══════════ -->
-<div id="preloader">
-  <div class="pl-inner">
-    <div class="pl-emblem">
-      <svg viewBox="0 0 100 100" width="80" height="80">
-        <circle cx="50" cy="50" r="46" stroke="url(#plGold)" stroke-width="2" fill="none" opacity="0.3"/>
-        <circle cx="50" cy="50" r="46" stroke="url(#plGold)" stroke-width="3" fill="none"
-                stroke-linecap="round" stroke-dasharray="289"
-                class="pl-ring"/>
-        <text x="50" y="62" text-anchor="middle" font-size="36" fill="#e0b84a" font-weight="900">🌿</text>
-        <defs>
-          <linearGradient id="plGold" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#f5d97a"/>
-            <stop offset="50%" stop-color="#e0b84a"/>
-            <stop offset="100%" stop-color="#b8862d"/>
-          </linearGradient>
-        </defs>
-      </svg>
-    </div>
-    <div class="pl-title">РОСТЭРА</div>
-    <div class="pl-sub">Новая эра твоего роста</div>
-    <div class="pl-bar"><div class="pl-fill"></div></div>
-  </div>
-  <div class="pl-error" id="plError" style="display:none">
-    <div class="pe-icon">⚠️</div>
-    <div class="pe-title">Технические работы</div>
-    <div class="pe-text">Скоро всё починим. Попробуйте через пару минут.</div>
-    <a class="pe-btn" href="https://t.me/ROSTERAbot" target="_blank">💬 Написать в бот</a>
-  </div>
-</div>
 
 <div class="app" id="app">
   <div class="skel" style="height:56px"></div>
@@ -426,79 +364,11 @@ a{color:var(--accent);text-decoration:none}
 <script>
 'use strict';
 
-/* ═══════════ ПРЕЛОАДЕР ЛОГИКА ═══════════ */
-var PRELOADER = (function(){
-  var el, fill, errorEl;
-  var p = 0, timer = null, done = false, failed = false;
-
-  function init(){
-    el = document.getElementById('preloader');
-    fill = document.querySelector('.pl-fill');
-    errorEl = document.getElementById('plError');
-  }
-
-  function start(){
-    init();
-    if (!el) return;
-    timer = setInterval(function(){
-      if (done || failed) return;
-      p += Math.random() * 14;
-      if (p >= 92) p = 92;
-      if (fill) fill.style.width = p + '%';
-    }, 220);
-  }
-
-  function finish(){
-    if (done || failed) return;
-    done = true;
-    if (timer) clearInterval(timer);
-    if (fill) fill.style.width = '100%';
-    setTimeout(function(){
-      if (el) el.classList.add('hide');
-    }, 350);
-  }
-
-  function fail(){
-    if (done || failed) return;
-    failed = true;
-    if (timer) clearInterval(timer);
-    if (errorEl) errorEl.style.display = 'block';
-    // НЕ скрываем прелоадер — юзер видит ошибку
-  }
-
-  return { start: start, finish: finish, fail: fail };
-})();
-
-// Автозапуск прелоадера сразу
-PRELOADER.start();
-
-// Ловим любые ошибки
-window.addEventListener('error', function(e){
-  console.error('Global error:', e);
-  PRELOADER.fail();
-});
-window.addEventListener('unhandledrejection', function(e){
-  console.error('Unhandled promise:', e);
-  PRELOADER.fail();
-});
-
-// Страховка: если через 6 секунд не загрузилось — считаем что упало
-setTimeout(function(){
-  if (document.getElementById('preloader') &&
-      !document.getElementById('preloader').classList.contains('hide')){
-    PRELOADER.fail();
-  }
-}, 6000);
-
-/* ═══════════════════════════════════════════════════════════
-   ДАЛЬШЕ — ТВОЙ ОСНОВНОЙ КОД (без изменений)
-   ═══════════════════════════════════════════════════════════ */
-
 var FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app';
 var BOT_USERNAME = 'ROSTERAbot';
 var ADMIN_USERNAME = 'DAMIR1500';
 var REFERRAL_PERCENT = 5;
-var POLL_MS = 25000;
+var POLL_MS = 5000;  /* ⚡ было 25000 → стало 5000 для быстрой проверки блокировки */
 var TZ_TASHKENT = 'Asia/Tashkent';
 
 var tg = window.Telegram && window.Telegram.WebApp;
@@ -508,6 +378,7 @@ var ME = null, PURCHASES = [], PAYOUTS = [], ERAS = [], USER_UID = '';
 var ALL_REFERRALS = [], ALL_MY_REF_PURCHASES = [];
 var HAVE = {}, BUSY = {};
 var shopFilter = 'all', shopSearch = '';
+var IS_BLOCKED = false;  /* 🚫 флаг блокировки */
 
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){
   return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
@@ -595,6 +466,7 @@ function statusLabel(s){
 function haptic(k){ try { tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(k||'success'); } catch(e){} }
 function toast(msg, type, ms){
   var t = $('toast');
+  if (!t) return;
   t.textContent = msg;
   t.className = 'toast ' + (type || '');
   clearTimeout(t._t);
@@ -644,10 +516,49 @@ function toList(raw){
 }
 function tgUser(){ return tg && tg.initDataUnsafe && tg.initDataUnsafe.user; }
 
+/* ═══════════ 🚫 ЭКРАН БЛОКИРОВКИ ═══════════ */
+function screenBlocked(reason){
+  if (IS_BLOCKED) return;  /* уже показан */
+  IS_BLOCKED = true;
+  try { if (tg){ tg.disableVerticalSwipes && tg.disableVerticalSwipes(); } } catch(e){}
+  if ($('nav')) $('nav').classList.add('hidden');
+  document.body.style.overflow = 'hidden';
+
+  $('app').innerHTML =
+    '<div class="blocked-wrap">' +
+      '<div class="blocked-card">' +
+        '<div class="blocked-icon">🚫</div>' +
+        '<div class="blocked-title">Вы заблокированы</div>' +
+        '<div class="blocked-text">' +
+          'Администрация ограничила доступ к вашему аккаунту.' +
+        '</div>' +
+        '<div class="blocked-reason">' +
+          '<div class="blocked-reason-label">📝 Причина</div>' +
+          '<div class="blocked-reason-text">' +
+            esc(reason || 'Нарушение правил') +
+          '</div>' +
+        '</div>' +
+        '<div class="blocked-note">' +
+          '💬 Обратитесь в поддержку для выяснения деталей' +
+        '</div>' +
+        '<a class="blocked-btn" href="https://t.me/' + esc(ADMIN_USERNAME) + '" ' +
+          'target="_blank">💬 Написать в поддержку</a>' +
+      '</div>' +
+    '</div>';
+}
+
+/* ═══════════ ЗАГРУЗКА ЮЗЕРА ═══════════ */
 async function loadMe(){
   var u = tgUser(); if (!u) return null;
   USER_UID = String(u.id);
   var existing = await fbGet('users/' + u.id);
+
+  /* 🚫 ПРОВЕРКА БЛОКИРОВКИ ПРИ ОТКРЫТИИ */
+  if (existing && existing.blocked){
+    screenBlocked(existing.block_reason);
+    return null;
+  }
+
   var now = new Date().toISOString();
   var refCode = '';
   if (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param){
@@ -937,6 +848,7 @@ function renderRefHero(){
 
 window.requestRefPayout = function(){
   return once('refPayout', async function(){
+    if (IS_BLOCKED) return;
     var b = calcRefBalance();
     if (b.frozen > 0) return toast('⏳ Заявка уже отправлена', 'info', 4000);
     if (b.owed < 100) return toast('Минимум 100 ₽', 'err');
@@ -1138,6 +1050,7 @@ function statCardItem(p, kind){
 
 window.requestPayoutAll = function(){
   return once('payoutAll', async function(){
+    if (IS_BLOCKED) return;
     var avail = PURCHASES.filter(function(p){ return canWithdraw(p); });
     if (!avail.length) return toast('Нет сумм для вывода', 'err');
 
@@ -1173,6 +1086,7 @@ window.requestPayoutAll = function(){
 };
 
 window.setTab = function(tab){
+  if (IS_BLOCKED) return;
   CURRENT_TAB = tab;
   document.querySelectorAll('#nav button').forEach(function(b){
     b.classList.toggle('active', b.dataset.tab === tab);
@@ -1182,6 +1096,7 @@ window.setTab = function(tab){
 
 window.buyEra = function(id){
   return once('buy' + id, async function(){
+    if (IS_BLOCKED) return;
     var era = ERAS.filter(function(e){ return String(e.id) === String(id); })[0];
     if (!era) return;
     if (!await ask('Создать заявку?\n\n' + era.title + ' — ' + fmt(era.price))) return;
@@ -1217,6 +1132,7 @@ window.buyEra = function(id){
 
 window.requestPayout = function(pid){
   return once('po' + pid, async function(){
+    if (IS_BLOCKED) return;
     if (!await ask('Подать заявку на вывод?')) return;
     var p = PURCHASES.filter(function(x){ return String(x.id) === String(pid); })[0];
     if (!p) return;
@@ -1606,10 +1522,26 @@ async function render(force){
   RENDER_LOCK = true;
   try {
     if (!tgUser()){ screenNoTg(); return; }
+
+    /* 🚫 ЕСЛИ УЖЕ ЗАБЛОКИРОВАН — не продолжаем */
+    if (IS_BLOCKED) return;
+
+    /* 🚫 ЖИВАЯ ПРОВЕРКА БЛОКИРОВКИ (каждый поллинг) */
+    if (USER_UID){
+      try {
+        var checkU = await fbGet('users/' + USER_UID);
+        if (checkU && checkU.blocked){
+          screenBlocked(checkU.block_reason);
+          return;
+        }
+      } catch(e){ /* игнорируем ошибки сети */ }
+    }
+
     if (!ME){
       $('app').innerHTML = skeleton();
       $('nav').classList.remove('hidden');
       ME = await loadMe();
+      if (!ME) return;  /* заблокирован или нет tgUser */
     }
     if (!HAVE.eras || force) await reload();
     var y = window.scrollY;
@@ -1617,6 +1549,7 @@ async function render(force){
     window.scrollTo(0, y);
   } catch(e){
     console.error(e);
+    if (IS_BLOCKED) return;
     $('app').innerHTML = '<div class="topbar"><div class="brand"><div class="logo">⚠️</div>Ошибка</div></div>' +
       '<div class="card"><p style="margin-bottom:12px">' + esc(e.message) + '</p>' +
       '<button class="btn" onclick="refresh()">🔄 Повторить</button></div>';
@@ -1627,6 +1560,7 @@ window.refresh = function(){ HAVE = {}; render(true); };
 window.drawBuy = drawBuy;
 
 function tickTimers(){
+  if (IS_BLOCKED) return;
   document.querySelectorAll('.timer-live').forEach(function(el){
     var exp = el.dataset.expires;
     if (!exp) return;
@@ -1660,16 +1594,12 @@ function tickTimers(){
     var b = e.target.closest('button');
     if (b && b.dataset.tab) window.setTab(b.dataset.tab);
   });
-
-  render().then(function(){
-    // Успешно отрендерили — прячем прелоадер
-    PRELOADER.finish();
-  }).catch(function(e){
-    console.error('Render error:', e);
-    PRELOADER.fail();
-  });
-
-  setInterval(function(){ if (!document.hidden && tgUser()) render(true); }, POLL_MS);
+  render();
+  setInterval(function(){
+    if (document.hidden) return;
+    if (!tgUser()) return;
+    render(true);
+  }, POLL_MS);
   setInterval(tickTimers, 1000);
   document.addEventListener('visibilitychange', function(){
     if (!document.hidden && tgUser()) render(true);

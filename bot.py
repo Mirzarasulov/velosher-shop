@@ -1,5 +1,5 @@
 """
-Бот @ROSTERAbot — полная версия: 3 админа, отложенные бонусы, реф-выплаты
+Бот @ROSTERAbot — 3 админа, отложенные бонусы, реф-выплаты, досрочное отключение эры
 """
 import time
 import threading
@@ -30,9 +30,6 @@ TZ = timezone(timedelta(hours=5))
 API = f"https://api.telegram.org/bot{BOT_TOKEN}"
 REFERRAL_PERCENT = 5
 
-# ============================================================
-# ГЛОБАЛЬНОЕ СОСТОЯНИЕ
-# ============================================================
 offset = {"v": 0}
 last_seen_purchase_id = 0
 last_seen_payout_id = 0
@@ -46,7 +43,6 @@ BOT_USERNAME = "ROSTERAbot"
 SESSION = requests.Session()
 SESSION.headers.update({"Connection": "keep-alive"})
 
-
 # ============================================================
 # FIREBASE
 # ============================================================
@@ -58,7 +54,6 @@ def fb_get(path):
         log("FB", f"GET {path} ошибка: {e}")
         return None
 
-
 def fb_patch(path, data):
     try:
         r = SESSION.patch(f"{FIREBASE}/{path}.json", json=data, timeout=5)
@@ -66,7 +61,6 @@ def fb_patch(path, data):
     except Exception as e:
         log("FB", f"PATCH {path} ошибка: {e}")
         return False
-
 
 def fb_put(path, data):
     try:
@@ -76,7 +70,6 @@ def fb_put(path, data):
         log("FB", f"PUT {path} ошибка: {e}")
         return False
 
-
 def fb_post(path, data):
     try:
         r = SESSION.post(f"{FIREBASE}/{path}.json", json=data, timeout=5)
@@ -85,13 +78,8 @@ def fb_post(path, data):
         log("FB", f"POST {path} ошибка: {e}")
         return None
 
-
-# ============================================================
-# ЛОГ
-# ============================================================
 def log(tag, msg):
     print(f"[{datetime.now(TZ).strftime('%H:%M:%S')}] [{tag}] {msg}", flush=True)
-
 
 # ============================================================
 # TELEGRAM CORE
@@ -107,43 +95,29 @@ def tg(method, **kwargs):
         log("TG", f"{method} EXC: {e}")
         return None
 
-
 def tg_send(chat_id, text, kb=None, parse_mode="HTML"):
     if not chat_id:
         return False
-    payload = {
-        "chat_id": chat_id,
-        "text": text,
-        "parse_mode": parse_mode,
-        "disable_web_page_preview": True,
-    }
+    payload = {"chat_id": chat_id, "text": text, "parse_mode": parse_mode,
+               "disable_web_page_preview": True}
     if kb is not None:
         payload["reply_markup"] = kb
     res = tg("sendMessage", **payload)
     return bool(res and res.get("ok"))
 
-
 def tg_edit(chat_id, msg_id, text, kb=None):
-    payload = {
-        "chat_id": chat_id,
-        "message_id": msg_id,
-        "text": text,
-        "parse_mode": "HTML",
-    }
+    payload = {"chat_id": chat_id, "message_id": msg_id, "text": text, "parse_mode": "HTML"}
     if kb is not None:
         payload["reply_markup"] = kb
     return tg("editMessageText", **payload)
-
 
 def tg_delete(chat_id, msg_id):
     if not chat_id or not msg_id:
         return
     return tg("deleteMessage", chat_id=chat_id, message_id=msg_id)
 
-
 def tg_answer(cb_id, text="", alert=False):
     return tg("answerCallbackQuery", callback_query_id=cb_id, text=text, show_alert=alert)
-
 
 def is_admin(uid):
     try:
@@ -151,11 +125,9 @@ def is_admin(uid):
     except:
         return False
 
-
 def notify_admins(text, kb=None):
     for aid in ADMIN_IDS:
         tg_send(aid, text, kb=kb)
-
 
 # ============================================================
 # УТИЛИТЫ
@@ -166,10 +138,8 @@ def fmt_money(v):
     except:
         return f"{v} ₽"
 
-
 def now_iso():
     return datetime.now(TZ).isoformat()
-
 
 def parse_dt(s):
     if not s:
@@ -182,7 +152,6 @@ def parse_dt(s):
     except:
         return None
 
-
 def fmt_date(dt):
     if isinstance(dt, str):
         dt = parse_dt(dt)
@@ -192,11 +161,9 @@ def fmt_date(dt):
               "июл","авг","сен","окт","ноя","дек"]
     return f"{dt.day} {months[dt.month-1]} {dt.year}"
 
-
 def fmt_dt(s):
     dt = parse_dt(s)
     return dt.strftime("%d.%m.%Y %H:%M") if dt else "—"
-
 
 def calc_dates(activated_at, days):
     d0 = activated_at.date() if isinstance(activated_at, datetime) else parse_dt(activated_at).date()
@@ -208,7 +175,6 @@ def calc_dates(activated_at, days):
         "last_day": datetime(last.year, last.month, last.day, tzinfo=TZ).isoformat(),
         "expires_at": datetime(expires.year, expires.month, expires.day, tzinfo=TZ).isoformat(),
     }
-
 
 def find_record(collection, target_id):
     all_ = fb_get(collection) or {}
@@ -223,7 +189,6 @@ def find_record(collection, target_id):
             return k, v
     return None, None
 
-
 def get_referral_bonus(p):
     if p.get("referral_bonus") not in (None, ""):
         try:
@@ -235,22 +200,15 @@ def get_referral_bonus(p):
     except:
         return 0
 
-
 # ═══════════════════════════════════════════════════════════
 # ПРОВЕРКА АКТИВНОСТИ РЕФЕРЕРА
 # ═══════════════════════════════════════════════════════════
 def ref_has_active_era(ref_uid):
-    """
-    Есть ли у юзера хотя бы одна АКТИВНАЯ эра:
-    status=approved И expires_at > сейчас.
-    """
     ref_uid = str(ref_uid)
     purchases = fb_get("purchases") or {}
     now = datetime.now(TZ)
-
     if not isinstance(purchases, dict):
         return False
-
     for p in purchases.values():
         if not isinstance(p, dict):
             continue
@@ -261,29 +219,20 @@ def ref_has_active_era(ref_uid):
         exp = parse_dt(p.get("expires_at"))
         if exp and exp > now:
             return True
-
     return False
 
-
 def activate_pending_bonuses(ref_uid):
-    """
-    Активирует все отложенные бонусы (pending_active) реферера → approved.
-    Возвращает (кол-во покупок, сумма).
-    """
     ref_uid = str(ref_uid)
     users = fb_get("users") or {}
     purchases = fb_get("purchases") or {}
-
     my_ids = set()
     if isinstance(users, dict):
         for u in users.values():
             if isinstance(u, dict) and str(u.get("referrer_uid", "")) == ref_uid:
                 my_ids.add(str(u.get("telegram_id")))
-
     activated = 0
     total = 0
     now = now_iso()
-
     if isinstance(purchases, dict):
         for pk, p in purchases.items():
             if not isinstance(p, dict):
@@ -294,11 +243,9 @@ def activate_pending_bonuses(ref_uid):
                 continue
             if (p.get("referral_status") or "") != "pending_active":
                 continue
-
             bonus = get_referral_bonus(p)
             if bonus <= 0:
                 continue
-
             fb_patch(f"purchases/{pk}", {
                 "referral_status": "approved",
                 "referral_activated_at": now,
@@ -306,25 +253,17 @@ def activate_pending_bonuses(ref_uid):
             })
             activated += 1
             total += bonus
-
     return activated, total
 
-
 def calc_user_ref_balance(uid):
-    """
-    Баланс реф. бонусов юзера.
-    Учитывает: approved, frozen, paid, pending, pending_active.
-    """
     uid = str(uid)
     users = fb_get("users") or {}
     purchases = fb_get("purchases") or {}
-
     my_ids = set()
     if isinstance(users, dict):
         for u in users.values():
             if isinstance(u, dict) and str(u.get("referrer_uid", "")) == uid:
                 my_ids.add(str(u.get("telegram_id")))
-
     accrued = 0
     paid = 0
     pending = 0
@@ -332,7 +271,6 @@ def calc_user_ref_balance(uid):
     pending_active = 0
     last_at = None
     last_amount = 0
-
     if isinstance(purchases, dict):
         for p in purchases.values():
             if not isinstance(p, dict):
@@ -345,13 +283,11 @@ def calc_user_ref_balance(uid):
             st = p.get("referral_status") or "pending"
             if st == "rejected":
                 continue
-
             frozen_amt = 0
             try:
                 frozen_amt = int(float(p.get("referral_frozen_amount") or 0))
             except:
                 frozen_amt = 0
-
             if st == "paid":
                 accrued += b
                 paid += b
@@ -371,27 +307,18 @@ def calc_user_ref_balance(uid):
                 pending_active += b
             else:
                 pending += b
-
     return {
-        "accrued": accrued,
-        "paid": paid,
-        "pending": pending,
-        "frozen": frozen,
-        "pending_active": pending_active,
+        "accrued": accrued, "paid": paid, "pending": pending,
+        "frozen": frozen, "pending_active": pending_active,
         "owed": max(0, accrued - paid - frozen),
-        "last_at": last_at,
-        "last_amount": last_amount,
+        "last_at": last_at, "last_amount": last_amount,
     }
-
 
 # ============================================================
 # КЛАВИАТУРЫ
 # ============================================================
 def kb_agree():
-    return {"inline_keyboard": [[
-        {"text": "✅ Я СОГЛАСЕН/А", "callback_data": AGREE_CALLBACK}
-    ]]}
-
+    return {"inline_keyboard": [[{"text": "✅ Я СОГЛАСЕН/А", "callback_data": AGREE_CALLBACK}]]}
 
 def kb_start():
     return {"inline_keyboard": [
@@ -400,44 +327,31 @@ def kb_start():
         [{"text": "👥 Мои рефералы", "callback_data": "my_refs"}]
     ]}
 
-
 def kb_admin_purchase(pid, uid):
     return {"inline_keyboard": [
-        [
-            {"text": "✅ Подтвердить", "callback_data": f"adm_approve:{pid}"},
-            {"text": "❌ Отклонить",   "callback_data": f"adm_reject:{pid}"}
-        ],
+        [{"text": "✅ Подтвердить", "callback_data": f"adm_approve:{pid}"},
+         {"text": "❌ Отклонить", "callback_data": f"adm_reject:{pid}"}],
         [{"text": "💬 Написать", "url": f"tg://user?id={uid}"}],
         [{"text": "🌐 Открыть админку", "web_app": {"url": ADMIN_URL}}]
     ]}
-
 
 def kb_admin_payout(poid, uid):
     return {"inline_keyboard": [
-        [
-            {"text": "💸 Выплачено", "callback_data": f"adm_paid:{poid}"},
-            {"text": "❌ Отклонить", "callback_data": f"adm_preject:{poid}"}
-        ],
+        [{"text": "💸 Выплачено", "callback_data": f"adm_paid:{poid}"},
+         {"text": "❌ Отклонить", "callback_data": f"adm_preject:{poid}"}],
         [{"text": "💬 Написать", "url": f"tg://user?id={uid}"}]
     ]}
 
-
 def kb_admin_ref_payout(rid, uid):
     return {"inline_keyboard": [
-        [
-            {"text": "✅ Выплачено", "callback_data": f"adm_refpaid:{rid}"},
-            {"text": "❌ Отклонить", "callback_data": f"adm_refreject:{rid}"}
-        ],
+        [{"text": "✅ Выплачено", "callback_data": f"adm_refpaid:{rid}"},
+         {"text": "❌ Отклонить", "callback_data": f"adm_refreject:{rid}"}],
         [{"text": "💬 Написать", "url": f"tg://user?id={uid}"}],
         [{"text": "🌐 Открыть админку", "web_app": {"url": ADMIN_URL}}]
     ]}
 
-
 def kb_withdraw():
-    return {"inline_keyboard": [[
-        {"text": "💸 Подать заявку на вывод", "callback_data": "withdraw_start"}
-    ]]}
-
+    return {"inline_keyboard": [[{"text": "💸 Подать заявку на вывод", "callback_data": "withdraw_start"}]]}
 
 def kb_refs():
     return {"inline_keyboard": [
@@ -445,13 +359,11 @@ def kb_refs():
         [{"text": "🔄 Обновить", "callback_data": "my_refs"}]
     ]}
 
-
 def kb_unknown():
     return {"inline_keyboard": [
         [{"text": "🚀 Открыть приложение", "web_app": {"url": WEB_URL}}],
         [{"text": "💬 Написать админу", "url": f"tg://user?id={ADMIN_ID}"}]
     ]}
-
 
 # ============================================================
 # PDF + СОГЛАСИЕ
@@ -473,7 +385,6 @@ def send_pdf_and_button(chat_id):
         tg_send(chat_id, AGREE_TEXT, kb=kb_agree())
         AGREE_MESSAGES[str(chat_id)] = {"pdf": pdf_id}
     threading.Thread(target=_run, daemon=True).start()
-
 
 # ============================================================
 # РЕГИСТРАЦИЯ
@@ -513,7 +424,6 @@ def register_user(user, start_text):
     fb_put(f"users/{uid}", data)
     return data
 
-
 # ============================================================
 # КОМАНДЫ
 # ============================================================
@@ -523,7 +433,6 @@ def cmd_start(chat_id, user, text):
         tg_send(chat_id, WELCOME_AFTER, kb=kb_start())
         return
     send_pdf_and_button(chat_id)
-
 
 def cmd_admin(chat_id):
     tg_send(chat_id,
@@ -551,49 +460,32 @@ def cmd_test(chat_id, user_tg):
             f"💰 Реф. процент: <b>{REFERRAL_PERCENT}%</b>\n\n"
             f"<i>Если это сообщение пришло — бот может вам писать.</i>")
 
-
 def cmd_test_era(chat_id, user_tg):
     if not is_admin(user_tg):
         tg_send(chat_id, "⛔️ Только для админа"); return
-
     cur = fb_get("counters/purchase") or 0
     pid = int(cur) + 1
     fb_put("counters/purchase", pid)
-
     u = fb_get(f"users/{user_tg}") or {}
     now = now_iso()
     test_purchase = {
-        "id": pid,
-        "user_telegram_id": user_tg,
+        "id": pid, "user_telegram_id": user_tg,
         "user_username": u.get("username", ""),
         "user_first_name": u.get("first_name", "Тест"),
         "era_title": "🧪 ТЕСТ ЭРА (1 день)",
-        "purchase_price": 1000,
-        "total_amount": 1500,
-        "days": 1,
-        "status": "created",
-        "created_at": now,
-        "is_test": 1,
+        "purchase_price": 1000, "total_amount": 1500,
+        "days": 1, "status": "created", "created_at": now, "is_test": 1,
         "referrer_uid": u.get("referrer_uid"),
-        "referral_percent": REFERRAL_PERCENT,
-        "referral_bonus": 50,
+        "referral_percent": REFERRAL_PERCENT, "referral_bonus": 50,
         "referral_status": "pending" if u.get("referrer_uid") else None,
     }
     fb_post("purchases", test_purchase)
-
-    tg_send(chat_id,
-            f"🧪 <b>Тестовая эра создана</b>\n\n"
-            f"📩 Заявка #{pid}\n"
-            f"💳 ТЕСТ ЭРА (1 день)\n"
-            f"💰 1 500 ₽")
-
+    tg_send(chat_id, f"🧪 <b>Тестовая эра создана</b>\n\n📩 Заявка #{pid}\n💳 ТЕСТ ЭРА\n💰 1 500 ₽")
     notify_new_purchase(test_purchase, pid)
-
 
 def cmd_reset_era(chat_id, user_tg):
     if not is_admin(user_tg):
         tg_send(chat_id, "⛔️ Только для админа"); return
-
     P = fb_get("purchases") or {}
     removed = 0
     if isinstance(P, dict):
@@ -602,9 +494,7 @@ def cmd_reset_era(chat_id, user_tg):
                 fb_put(f"purchases/{k}", None)
                 PURCHASE_STATUS_CACHE.pop(k, None)
                 removed += 1
-
     tg_send(chat_id, f"🧹 Удалено тестовых эр: <b>{removed}</b>")
-
 
 # ═══════════════════════════════════════════════════════════
 # /myrefs
@@ -613,28 +503,18 @@ def build_myrefs_text(uid):
     uid = str(uid)
     users = fb_get("users") or {}
     purchases = fb_get("purchases") or {}
-
     my_refs = []
     if isinstance(users, dict):
         for u in users.values():
             if isinstance(u, dict) and str(u.get("referrer_uid", "")) == uid:
                 my_refs.append(u)
     my_refs.sort(key=lambda r: r.get("registered_at", ""), reverse=True)
-
     bal = calc_user_ref_balance(uid)
-
     if not my_refs:
-        return (
-            "👥 <b>Мои рефералы</b>\n\n"
-            "Пока никого нет.\n\n"
-            f"<i>Приглашайте друзей — вы получаете {REFERRAL_PERCENT}% "
-            f"с каждой их покупки.</i>"
-        )
-
+        return ("👥 <b>Мои рефералы</b>\n\nПока никого нет.\n\n"
+                f"<i>Приглашайте друзей — вы получаете {REFERRAL_PERCENT}% с каждой их покупки.</i>")
     lines = [
-        f"👥 <b>Мои рефералы ({len(my_refs)})</b>",
-        "",
-        "━━━━━━━━━━━━━━━",
+        f"👥 <b>Мои рефералы ({len(my_refs)})</b>", "", "━━━━━━━━━━━━━━━",
         "💰 <b>БАЛАНС</b>",
         f"💎 К выводу: <b>{fmt_money(bal['owed'])}</b>",
         f"📈 Начислено: {fmt_money(bal['accrued'])}",
@@ -646,13 +526,9 @@ def build_myrefs_text(uid):
         lines.append(f"⏸ Отложено: {fmt_money(bal['pending_active'])}")
         lines.append("   <i>(нужно купить эру — активируются)</i>")
     if bal["last_at"]:
-        lines.append(
-            f"\n<i>Последняя выплата: {fmt_money(bal['last_amount'])} · "
-            f"{fmt_dt(bal['last_at'])} (Ташкент)</i>"
-        )
+        lines.append(f"\n<i>Последняя выплата: {fmt_money(bal['last_amount'])} · {fmt_dt(bal['last_at'])} (Ташкент)</i>")
     lines.append("━━━━━━━━━━━━━━━")
     lines.append("")
-
     my_ids = {str(r.get("telegram_id")) for r in my_refs}
     purchases_by_ref = {}
     if isinstance(purchases, dict):
@@ -665,7 +541,6 @@ def build_myrefs_text(uid):
             if p.get("status") in ("rejected", "cancelled"):
                 continue
             purchases_by_ref.setdefault(buyer, []).append(p)
-
     for r in my_refs[:15]:
         rid = str(r.get("telegram_id"))
         name = r.get("first_name") or "Пользователь"
@@ -673,25 +548,18 @@ def build_myrefs_text(uid):
         rp = purchases_by_ref.get(rid, [])
         bsum = sum(get_referral_bonus(p) for p in rp)
         if rp:
-            lines.append(
-                f"👤 <b>{name}</b> ({un})\n"
-                f"   🛒 {len(rp)} покупок · 🎁 {fmt_money(bsum)}"
-            )
+            lines.append(f"👤 <b>{name}</b> ({un})\n   🛒 {len(rp)} покупок · 🎁 {fmt_money(bsum)}")
         else:
             lines.append(f"👤 <b>{name}</b> ({un})\n   <i>Пока без покупок</i>")
-
     if len(my_refs) > 15:
         lines.append(f"\n<i>…и ещё {len(my_refs) - 15}</i>")
-
     return "\n\n".join(lines)
-
 
 def cmd_myrefs(chat_id, user_tg):
     text = build_myrefs_text(user_tg)
     ref_link = f"https://t.me/{BOT_USERNAME}?start=ref_{user_tg}"
     text += f"\n\n🔗 <b>Ваша ссылка:</b>\n<code>{ref_link}</code>"
     tg_send(chat_id, text, kb=kb_refs())
-
 
 # ============================================================
 # CALLBACK HANDLER
@@ -703,23 +571,18 @@ def handle_callback(cb):
     chat_id = msg.get("chat", {}).get("id")
     msg_id = msg.get("message_id")
     cb_id = cb.get("id")
-
     log("CB", f"data={data} user={user_tg}")
 
     if data == AGREE_CALLBACK:
         tg_answer(cb_id, "✅")
         uid = str(user_tg)
         stored = AGREE_MESSAGES.get(str(chat_id)) or {}
-        if msg_id:
-            tg_delete(chat_id, msg_id)
-        if stored.get("pdf"):
-            tg_delete(chat_id, stored["pdf"])
+        if msg_id: tg_delete(chat_id, msg_id)
+        if stored.get("pdf"): tg_delete(chat_id, stored["pdf"])
         AGREE_MESSAGES.pop(str(chat_id), None)
-
         u = fb_get(f"users/{uid}") or {}
         if u.get("telegram_id"):
             fb_patch(f"users/{uid}", {"agreed_terms": 1, "agreed_at": now_iso()})
-
         tg_send(chat_id, WELCOME_AFTER, kb=kb_start())
         return
 
@@ -735,10 +598,8 @@ def handle_callback(cb):
         text = build_myrefs_text(user_tg)
         ref_link = f"https://t.me/{BOT_USERNAME}?start=ref_{user_tg}"
         text += f"\n\n🔗 <b>Ваша ссылка:</b>\n<code>{ref_link}</code>"
-        if msg_id:
-            tg_edit(chat_id, msg_id, text, kb=kb_refs())
-        else:
-            tg_send(chat_id, text, kb=kb_refs())
+        if msg_id: tg_edit(chat_id, msg_id, text, kb=kb_refs())
+        else: tg_send(chat_id, text, kb=kb_refs())
         return
 
     if data.startswith("adm_approve:"):
@@ -791,20 +652,17 @@ def handle_callback(cb):
 
     tg_answer(cb_id, "")
 
-
 # ============================================================
-# UI ВЫВОДА (обычные выплаты)
+# UI ВЫВОДА
 # ============================================================
 def ui_withdraw(chat_id, user_tg, cb_id=None, msg_id=None):
     all_p = fb_get("purchases") or {}
     all_po = fb_get("payouts") or {}
-
     blocked = set()
     if isinstance(all_po, dict):
         for po in all_po.values():
             if isinstance(po, dict) and po.get("status") in ("pending", "paid", "processing"):
                 blocked.add(str(po.get("purchase_id")))
-
     available = []
     if isinstance(all_p, dict):
         for k, p in all_p.items():
@@ -817,29 +675,18 @@ def ui_withdraw(chat_id, user_tg, cb_id=None, msg_id=None):
             if str(p.get("id")) in blocked:
                 continue
             available.append((k, p))
-
     if cb_id:
         tg_answer(cb_id)
-
     if not available:
         text = "📭 Нет эр для вывода"
         kb = {"inline_keyboard": [[{"text": "🚀 Приложение", "web_app": {"url": WEB_URL}}]]}
-        if msg_id:
-            tg_edit(chat_id, msg_id, text, kb=kb)
-        else:
-            tg_send(chat_id, text, kb=kb)
+        if msg_id: tg_edit(chat_id, msg_id, text, kb=kb)
+        else: tg_send(chat_id, text, kb=kb)
         return
-
-    buttons = [[{
-        "text": f"📄 #{p.get('id')} · {fmt_money(p.get('total_amount', 0))}",
-        "callback_data": f"wd_sel:{k}"
-    }] for k, p in available]
-
-    if msg_id:
-        tg_edit(chat_id, msg_id, "📋 <b>Выберите покупку:</b>", kb={"inline_keyboard": buttons})
-    else:
-        tg_send(chat_id, "📋 <b>Выберите покупку:</b>", kb={"inline_keyboard": buttons})
-
+    buttons = [[{"text": f"📄 #{p.get('id')} · {fmt_money(p.get('total_amount', 0))}",
+                 "callback_data": f"wd_sel:{k}"}] for k, p in available]
+    if msg_id: tg_edit(chat_id, msg_id, "📋 <b>Выберите покупку:</b>", kb={"inline_keyboard": buttons})
+    else: tg_send(chat_id, "📋 <b>Выберите покупку:</b>", kb={"inline_keyboard": buttons})
 
 def ui_wd_sel(chat_id, user_tg, key, msg_id, cb_id):
     tg_answer(cb_id)
@@ -852,42 +699,32 @@ def ui_wd_sel(chat_id, user_tg, key, msg_id, cb_id):
     kb = {"inline_keyboard": [[{"text": "🔘 Подать заявку", "callback_data": f"wd_confirm:{key}"}]]}
     tg_edit(chat_id, msg_id, text, kb=kb)
 
-
 def ui_wd_confirm(chat_id, user_tg, key, msg_id, cb_id):
     tg_answer(cb_id, "✅ Создаю…")
     p = fb_get(f"purchases/{key}")
     if not p:
         tg_send(chat_id, "❌ Не найдено"); return
-
     cur = fb_get("counters/payout") or 0
     poid = int(cur) + 1
     fb_put("counters/payout", poid)
-
     u = fb_get(f"users/{user_tg}") or {}
     now = now_iso()
     po = {
-        "id": poid,
-        "purchase_id": p.get("id"),
+        "id": poid, "purchase_id": p.get("id"),
         "user_telegram_id": user_tg,
         "user_username": u.get("username", ""),
         "user_first_name": u.get("first_name", ""),
         "era_title": p.get("era_title", ""),
         "purchase_price": p.get("purchase_price", 0),
         "amount": p.get("total_amount", 0),
-        "status": "pending",
-        "requested_at": now,
-        "paid_at": None,
+        "status": "pending", "requested_at": now, "paid_at": None,
     }
     fb_post("payouts", po)
-
     tg_edit(chat_id, msg_id,
-            f"✅ <b>Заявка #{poid} создана</b>\n"
-            f"💰 {fmt_money(po['amount'])}\n\n"
+            f"✅ <b>Заявка #{poid} создана</b>\n💰 {fmt_money(po['amount'])}\n\n"
             f"⏳ Ожидайте — администратор свяжется с вами.")
-
     PAYOUT_STATUS_CACHE[str(poid)] = "pending"
     notify_new_payout(po)
-
 
 # ============================================================
 # СООБЩЕНИЯ
@@ -898,10 +735,8 @@ def handle_message(msg):
     chat_id = chat.get("id")
     user = msg.get("from", {})
     user_tg = user.get("id")
-
     if chat.get("type") != "private":
         return
-
     log("MSG", f"{user_tg}: {text[:60] if text else '[no text]'}")
 
     if text.startswith("/start"):
@@ -926,7 +761,6 @@ def handle_message(msg):
             "• 💬 Связаться с админом",
             kb=kb_unknown())
 
-
 # ============================================================
 # ПОЛЛИНГ
 # ============================================================
@@ -948,7 +782,6 @@ def poll():
             except Exception as e:
                 log("UPD", f"ошибка: {e}")
     except requests.exceptions.ReadTimeout:
-        # нормально при long polling
         pass
     except requests.exceptions.ConnectionError as e:
         log("POLL", f"сеть: {e}")
@@ -956,7 +789,6 @@ def poll():
     except Exception as e:
         log("POLL", f"{e}")
         time.sleep(1)
-
 
 # ============================================================
 # АДМИН-ДЕЙСТВИЯ
@@ -967,10 +799,8 @@ def admin_set_purchase(pid, status):
     if not p:
         notify_admins(f"⚠️ Заявка #{pid} не найдена в Firebase.")
         return
-
     old_status = p.get("status", "")
     patch = {"status": status, "status_changed_at": now_iso()}
-
     if status == "approved":
         try:
             days = int(p.get("days") or DEFAULT_DAYS)
@@ -979,46 +809,34 @@ def admin_set_purchase(pid, status):
         patch.update(calc_dates(now_iso(), days))
         patch["approved_at"] = now_iso()
         patch["days"] = days
-
-        # 💰 Реф. бонус + проверка активности реферера
         if p.get("referrer_uid"):
             ref_uid = str(p["referrer_uid"])
             bonus = get_referral_bonus(p)
-
             if ref_has_active_era(ref_uid):
                 patch["referral_status"] = "approved"
                 patch["referral_activated_at"] = now_iso()
                 if p.get("referral_bonus") in (None, ""):
                     patch["referral_bonus"] = bonus
-                log("REF", f"бонус {bonus}₽ → approved (реферер {ref_uid} активен)")
             else:
                 patch["referral_status"] = "pending_active"
                 patch["referral_pending_reason"] = "У реферера нет активной эры"
                 if p.get("referral_bonus") in (None, ""):
                     patch["referral_bonus"] = bonus
-                log("REF", f"бонус {bonus}₽ → pending_active (реферер {ref_uid} не активен)")
-
-        # 🎉 Если это покупка РЕФЕРЕРА — активируем его отложенные бонусы
         buyer_uid = str(p.get("user_telegram_id"))
         pending_activated, pending_total = activate_pending_bonuses(buyer_uid)
         if pending_activated > 0:
             patch["_activated_pending_count"] = pending_activated
             patch["_activated_pending_total"] = pending_total
-
     if status in ("rejected", "cancelled"):
         if p.get("referrer_uid"):
             patch["referral_status"] = "rejected"
-
     activated_count = patch.pop("_activated_pending_count", 0)
     activated_total = patch.pop("_activated_pending_total", 0)
-
     fb_patch(f"purchases/{k}", patch)
     PURCHASE_STATUS_CACHE[k] = status
-
     if old_status != status:
         updated = {**p, **patch}
         notify_purchase_status(k, updated, old_status, status)
-
         if activated_count > 0:
             bal = calc_user_ref_balance(buyer_uid)
             tg_send(int(buyer_uid),
@@ -1028,25 +846,20 @@ def admin_set_purchase(pid, status):
                     f"💎 К выводу: <b>{fmt_money(bal['owed'])}</b>",
                     kb=kb_refs())
 
-
 def admin_set_payout(poid, status):
     log("ADM", f"payout #{poid} → {status}")
     k, po = find_record("payouts", poid)
     if not po:
         notify_admins(f"⚠️ Вывод #{poid} не найден.")
         return
-
     old_status = po.get("status", "")
     patch = {"status": status, "status_changed_at": now_iso()}
     if status == "paid":
         patch["paid_at"] = now_iso()
-
     fb_patch(f"payouts/{k}", patch)
     PAYOUT_STATUS_CACHE[k] = status
-
     if old_status != status:
         notify_payout_status(k, {**po, **patch}, old_status, status)
-
 
 def admin_set_ref_payout(rid, status):
     log("ADM", f"ref_payout #{rid} → {status}")
@@ -1054,11 +867,9 @@ def admin_set_ref_payout(rid, status):
     if not r:
         notify_admins(f"⚠️ Реф. заявка #{rid} не найдена.")
         return
-
     uid = str(r.get("user_telegram_id"))
     amount = int(float(r.get("amount", 0)))
     now = now_iso()
-
     if status == "paid":
         users = fb_get("users") or {}
         purchases = fb_get("purchases") or {}
@@ -1067,7 +878,6 @@ def admin_set_ref_payout(rid, status):
             for u in users.values():
                 if isinstance(u, dict) and str(u.get("referrer_uid", "")) == uid:
                     my_ids.add(str(u.get("telegram_id")))
-
         if isinstance(purchases, dict):
             for pk, p in purchases.items():
                 if not isinstance(p, dict):
@@ -1093,15 +903,10 @@ def admin_set_ref_payout(rid, status):
                     "referral_frozen_at": None,
                     "referral_request_id": None,
                 })
-
         fb_post("ref_payouts_log", {
-            "user_telegram_id": uid,
-            "amount": amount,
-            "request_id": r.get("id"),
-            "paid_at": now,
-            "paid_by": ADMIN_ID,
+            "user_telegram_id": uid, "amount": amount,
+            "request_id": r.get("id"), "paid_at": now, "paid_by": ADMIN_ID,
         })
-
     elif status == "rejected":
         purchases = fb_get("purchases") or {}
         if isinstance(purchases, dict):
@@ -1118,26 +923,18 @@ def admin_set_ref_payout(rid, status):
                     "referral_frozen_at": None,
                     "referral_request_id": None,
                 })
-
     fb_patch(f"ref_payout_requests/{k}", {
-        "status": status,
-        "status_changed_at": now,
+        "status": status, "status_changed_at": now,
     })
-
     if status == "paid":
         bal = calc_user_ref_balance(uid)
-        remain_text = (
-            f"🎁 Осталось к выводу: <b>{fmt_money(bal['owed'])}</b>"
-            if bal["owed"] > 0 else
-            "✅ <b>Все бонусы выплачены!</b>"
-        )
+        remain_text = (f"🎁 Осталось к выводу: <b>{fmt_money(bal['owed'])}</b>"
+                       if bal["owed"] > 0 else "✅ <b>Все бонусы выплачены!</b>")
         tg_send(int(uid),
                 f"💸 <b>Вам выплачен реферальный бонус!</b>\n\n"
                 f"💰 Сумма: <b>{fmt_money(amount)}</b>\n"
-                f"🕐 {fmt_dt(now)} (Ташкент)\n\n"
-                f"{remain_text}",
+                f"🕐 {fmt_dt(now)} (Ташкент)\n\n{remain_text}",
                 kb=kb_refs())
-
     elif status == "rejected":
         bal = calc_user_ref_balance(uid)
         tg_send(int(uid),
@@ -1146,13 +943,10 @@ def admin_set_ref_payout(rid, status):
                 f"💎 Вернулось к выводу: <b>{fmt_money(bal['owed'])}</b>\n\n"
                 f"Если это ошибка — напишите администратору.",
                 kb=kb_refs())
-
     notify_admins(
         f"🔄 <b>Реф. заявка #{r.get('id')}</b>: {status}\n"
         f"👤 {r.get('user_first_name', '—')}\n"
-        f"💰 {fmt_money(amount)}"
-    )
-
+        f"💰 {fmt_money(amount)}")
 
 # ============================================================
 # УВЕДОМЛЕНИЯ
@@ -1160,14 +954,12 @@ def admin_set_ref_payout(rid, status):
 def notify_new_purchase(p, pid):
     uid = p.get("user_telegram_id")
     log("NOTIFY", f"новая заявка #{pid} от uid={uid}")
-
     tg_send(uid,
             f"📩 <b>Заявка #{pid} создана</b>\n\n"
             f"💳 {p.get('era_title', '—')}\n"
             f"💵 {fmt_money(p.get('purchase_price', 0))}\n"
             f"🏆 {fmt_money(p.get('total_amount', 0))}\n\n"
             f"⏳ Ожидайте подтверждения.")
-
     notify_admins(
         f"📩 <b>НОВАЯ ЗАЯВКА #{pid}</b>\n\n"
         f"👤 {p.get('user_first_name', '—')} @{p.get('user_username') or '—'}\n"
@@ -1175,9 +967,7 @@ def notify_new_purchase(p, pid):
         f"💳 {p.get('era_title', '—')}\n"
         f"💵 {fmt_money(p.get('purchase_price', 0))} → <b>{fmt_money(p.get('total_amount', 0))}</b>\n\n"
         f"👇 Подтвердите или отклоните:",
-        kb=kb_admin_purchase(pid, uid)
-    )
-
+        kb=kb_admin_purchase(pid, uid))
     buyer = fb_get(f"users/{uid}") or {}
     ref_uid = buyer.get("referrer_uid") or p.get("referrer_uid")
     if ref_uid:
@@ -1191,45 +981,33 @@ def notify_new_purchase(p, pid):
                 f"⏳ Ожидает подтверждения админом.",
                 kb=kb_refs())
 
-
 def notify_new_payout(po):
     uid = po.get("user_telegram_id")
     poid = po.get("id")
-
     tg_send(uid,
             f"📤 <b>Заявка на вывод #{poid} создана</b>\n\n"
-            f"💰 {fmt_money(po.get('amount', 0))}\n\n"
-            f"⏳ Ожидайте.")
-
+            f"💰 {fmt_money(po.get('amount', 0))}\n\n⏳ Ожидайте.")
     notify_admins(
         f"📤 <b>ЗАЯВКА НА ВЫВОД #{poid}</b>\n\n"
         f"👤 {po.get('user_first_name', '—')} @{po.get('user_username') or '—'}\n"
         f"🆔 <code>{uid}</code>\n"
         f"💰 <b>{fmt_money(po.get('amount', 0))}</b>",
-        kb=kb_admin_payout(poid, uid)
-    )
-
+        kb=kb_admin_payout(poid, uid))
 
 def notify_new_ref_request(r):
     rid = r.get("id")
     uid = r.get("user_telegram_id")
     amount = fmt_money(r.get("amount", 0))
-
     tg_send(int(uid),
             f"✅ <b>Заявка на вывод бонуса #{rid}</b>\n\n"
-            f"💰 Сумма: <b>{amount}</b>\n\n"
-            f"⏳ Ожидайте подтверждения админом.",
+            f"💰 Сумма: <b>{amount}</b>\n\n⏳ Ожидайте подтверждения админом.",
             kb=kb_refs())
-
     notify_admins(
         f"💰 <b>НОВАЯ ЗАЯВКА НА ВЫВОД БОНУСА #{rid}</b>\n\n"
         f"👤 {r.get('user_first_name', '—')} @{r.get('user_username') or '—'}\n"
         f"🆔 <code>{uid}</code>\n"
-        f"💰 Сумма: <b>{amount}</b>\n\n"
-        f"👇 Подтвердите или отклоните:",
-        kb=kb_admin_ref_payout(rid, uid)
-    )
-
+        f"💰 Сумма: <b>{amount}</b>\n\n👇 Подтвердите или отклоните:",
+        kb=kb_admin_ref_payout(rid, uid))
 
 def notify_purchase_status(k, p, old_status, new_status):
     uid = p.get("user_telegram_id")
@@ -1237,7 +1015,6 @@ def notify_purchase_status(k, p, old_status, new_status):
     era = p.get("era_title", "—")
     price = fmt_money(p.get("purchase_price", 0))
     total = fmt_money(p.get("total_amount", 0))
-
     log("NOTIFY", f"purchase #{pid} {old_status}→{new_status}")
 
     if new_status == "approved":
@@ -1245,24 +1022,19 @@ def notify_purchase_status(k, p, old_status, new_status):
         last = fmt_date(p.get("last_day"))
         exp = fmt_date(p.get("expires_at"))
         days = p.get("days", DEFAULT_DAYS)
-
         tg_send(uid,
                 f"✅ <b>Заявка #{pid} подтверждена!</b>\n\n"
                 f"💳 Эра: <b>{era}</b>\n"
                 f"💵 Номинал: {price}\n"
                 f"🏆 К выплате: <b>{total}</b>\n\n"
                 f"🟢 <b>Эра активна:</b>\n"
-                f"▶️ С {start}\n"
-                f"⏹ По {last}\n"
-                f"⏰ Истекает: {exp}\n"
+                f"▶️ С {start}\n⏹ По {last}\n⏰ Истекает: {exp}\n"
                 f"📅 Длительность: <b>{days} дн.</b>")
-
         buyer = fb_get(f"users/{uid}") or {}
         ref_uid = buyer.get("referrer_uid") or p.get("referrer_uid")
         if ref_uid:
             bonus = get_referral_bonus(p)
             ref_status = p.get("referral_status") or "approved"
-
             if ref_status == "approved":
                 bal = calc_user_ref_balance(ref_uid)
                 tg_send(int(ref_uid),
@@ -1282,27 +1054,24 @@ def notify_purchase_status(k, p, old_status, new_status):
                         f"🎯 <i>Купите любую эру — и отложенные бонусы "
                         f"(<b>{fmt_money(bal['pending_active'])}</b>) активируются автоматически.</i>",
                         kb=kb_refs())
-
     elif new_status in ("rejected", "cancelled"):
         emoji = "❌" if new_status == "rejected" else "🚫"
         tg_send(uid,
                 f"{emoji} <b>Заявка #{pid} отклонена</b>\n\n"
-                f"💳 {era}\n"
-                f"💵 {price}")
-
+                f"💳 {era}\n💵 {price}")
         buyer = fb_get(f"users/{uid}") or {}
         ref_uid = buyer.get("referrer_uid") or p.get("referrer_uid")
         if ref_uid:
             tg_send(int(ref_uid),
                     f"⚠️ <b>Заявка вашего реферала отклонена</b>\n\n"
                     f"👤 {p.get('user_first_name', '—')}\n"
-                    f"💳 {era}\n\n"
-                    f"<i>Бонус не начислен.</i>")
-
+                    f"💳 {era}\n\n<i>Бонус не начислен.</i>")
     elif new_status == "completed":
         start = fmt_date(p.get("start_date"))
         last = fmt_date(p.get("last_day"))
-
+        if p.get("early_closed"):
+            notify_purchase_early_closed(k, p, p.get("early_closed_by", ADMIN_ID))
+            return
         tg_send(uid,
                 f"🏁 <b>Период по заявке #{pid} завершён!</b>\n\n"
                 f"💳 Эра: <b>{era}</b>\n"
@@ -1311,12 +1080,36 @@ def notify_purchase_status(k, p, old_status, new_status):
                 f"Подайте заявку на вывод 👇",
                 kb=kb_withdraw())
 
+def notify_purchase_early_closed(k, p, closed_by):
+    uid = p.get("user_telegram_id")
+    pid = p.get("id")
+    era = p.get("era_title", "—")
+    total = fmt_money(p.get("total_amount", 0))
+    price = fmt_money(p.get("purchase_price", 0))
+    profit = fmt_money(p.get("profit_amount", 0))
+    tg_send(uid,
+            f"🔌 <b>Эра отключена</b>\n\n"
+            f"📩 Заявка #{pid}\n"
+            f"💳 Эра: <b>{era}</b>\n\n"
+            f"💰 <b>Досрочное начисление:</b>\n"
+            f"💵 Вложено: {price}\n"
+            f"📈 Начислено: +{profit}\n"
+            f"🏆 <b>К выводу: {total}</b>\n\n"
+            f"✅ Сумма доступна к выводу.\n"
+            f"<i>Обратитесь к администратору или подайте заявку в приложении.</i>",
+            kb=kb_withdraw())
+    notify_admins(
+        f"🔌 <b>Эра отключена досрочно</b>\n\n"
+        f"👤 {p.get('user_first_name', '—')} @{p.get('user_username') or '—'}\n"
+        f"🆔 <code>{uid}</code>\n"
+        f"💳 {era}\n"
+        f"💰 Начислено: <b>{total}</b>\n"
+        f"👑 Админ: <code>{closed_by}</code>")
 
 def notify_payout_status(k, po, old_status, new_status):
     uid = po.get("user_telegram_id")
     poid = po.get("id")
     amount = fmt_money(po.get("amount", 0))
-
     if new_status == "paid":
         tg_send(uid,
                 f"💸 <b>Выплата #{poid} произведена!</b>\n\n"
@@ -1324,22 +1117,17 @@ def notify_payout_status(k, po, old_status, new_status):
                 f"🕐 {fmt_dt(po.get('paid_at'))} (Ташкент)")
     elif new_status in ("rejected", "cancelled"):
         tg_send(uid,
-                f"❌ <b>Заявка на вывод #{poid} отклонена</b>\n\n"
-                f"💰 {amount}")
-
+                f"❌ <b>Заявка на вывод #{poid} отклонена</b>\n\n💰 {amount}")
     notify_admins(
         f"🔄 <b>Вывод #{poid}</b>: {old_status} → <b>{new_status}</b>\n"
         f"👤 {po.get('user_first_name', '—')}\n"
-        f"💰 {amount}"
-    )
-
+        f"💰 {amount}")
 
 # ============================================================
 # ФОНОВЫЙ МОНИТОРИНГ
 # ============================================================
 def check_new():
     global last_seen_purchase_id, last_seen_payout_id, last_seen_ref_request_id
-
     P = fb_get("purchases") or {}
     if isinstance(P, dict):
         for k, p in P.items():
@@ -1351,16 +1139,17 @@ def check_new():
                 continue
             cur_status = p.get("status", "")
             old_status = PURCHASE_STATUS_CACHE.get(k)
-
             if pid > last_seen_purchase_id:
                 last_seen_purchase_id = pid
                 if cur_status == "created":
                     notify_new_purchase(p, pid)
             elif old_status and old_status != cur_status:
+                if cur_status == "completed" and p.get("early_closed"):
+                    notify_purchase_early_closed(k, p, p.get("early_closed_by", ADMIN_ID))
+                    PURCHASE_STATUS_CACHE[k] = cur_status
+                    continue
                 notify_purchase_status(k, p, old_status, cur_status)
-
             PURCHASE_STATUS_CACHE[k] = cur_status
-
     PO = fb_get("payouts") or {}
     if isinstance(PO, dict):
         for k, po in PO.items():
@@ -1372,16 +1161,13 @@ def check_new():
                 continue
             cur_status = po.get("status", "")
             old_status = PAYOUT_STATUS_CACHE.get(k)
-
             if poid > last_seen_payout_id:
                 last_seen_payout_id = poid
                 if cur_status == "pending":
                     notify_new_payout(po)
             elif old_status and old_status != cur_status:
                 notify_payout_status(k, po, old_status, cur_status)
-
             PAYOUT_STATUS_CACHE[k] = cur_status
-
     RQ = fb_get("ref_payout_requests") or {}
     if isinstance(RQ, dict):
         for k, r in RQ.items():
@@ -1393,24 +1179,20 @@ def check_new():
                 continue
             cur_status = r.get("status", "")
             old_status = REF_REQUEST_STATUS_CACHE.get(k)
-
             if rid > last_seen_ref_request_id:
                 last_seen_ref_request_id = rid
                 if cur_status == "pending":
                     notify_new_ref_request(r)
-
             REF_REQUEST_STATUS_CACHE[k] = cur_status
 
-
 # ============================================================
-# НАПОМИНАНИЯ (короткие)
+# НАПОМИНАНИЯ
 # ============================================================
 def check_expired():
     P = fb_get("purchases") or {}
     if not isinstance(P, dict):
         return
     now = datetime.now(TZ)
-
     for k, p in P.items():
         if not isinstance(p, dict):
             continue
@@ -1419,9 +1201,7 @@ def check_expired():
         exp = parse_dt(p.get("expires_at"))
         if not exp:
             continue
-
         hours = (exp - now).total_seconds() / 3600
-
         uid = p.get("user_telegram_id")
         pid = p.get("id")
         era = p.get("era_title", "—")
@@ -1429,7 +1209,6 @@ def check_expired():
         last_d = fmt_date(p.get("last_day"))
         exp_d = fmt_dt(p.get("expires_at"))
 
-        # ⏰ 3 дня
         if 48 < hours <= 72 and not p.get("notified_3d"):
             tg_send(uid,
                     f"⏰ <b>Осталось 3 дня до окончания эры «{era}»</b>\n\n"
@@ -1437,8 +1216,6 @@ def check_expired():
                     f"⏰ Истекает: {exp_d}\n"
                     f"🏆 К выплате: <b>{total}</b>")
             fb_patch(f"purchases/{k}", {"notified_3d": 1})
-
-        # ⏰ 1 день
         elif 3 < hours <= 24 and not p.get("notified_1d"):
             tg_send(uid,
                     f"⏰ <b>Остался 1 день до окончания эры «{era}»</b>\n\n"
@@ -1447,8 +1224,6 @@ def check_expired():
                     f"⏰ Истекает: {exp_d}\n"
                     f"🏆 К выплате: <b>{total}</b>")
             fb_patch(f"purchases/{k}", {"notified_1d": 1})
-
-        # ⏰ 3 часа
         elif 0 < hours <= 3 and not p.get("notified_3h"):
             tg_send(uid,
                     f"⏰ <b>Осталось 3 часа до окончания эры «{era}»</b>\n\n"
@@ -1456,8 +1231,6 @@ def check_expired():
                     f"⏰ Истекает: {exp_d}\n"
                     f"🏆 К выплате: <b>{total}</b>")
             fb_patch(f"purchases/{k}", {"notified_3h": 1})
-
-        # 🏁 Завершение
         if now >= exp and not p.get("completed_notified"):
             fb_patch(f"purchases/{k}", {
                 "status": "completed",
@@ -1469,13 +1242,11 @@ def check_expired():
             notify_purchase_status(k, {**p, "status": "completed"}, old_status, "completed")
             PURCHASE_STATUS_CACHE[k] = "completed"
 
-
 # ============================================================
 # MAIN
 # ============================================================
 def main():
     global last_seen_purchase_id, last_seen_payout_id, last_seen_ref_request_id, BOT_USERNAME
-
     print("=" * 60)
     print("🤖 Бот @ROSTERAbot")
     print(f"👑 Админы: {ADMIN_IDS}")
@@ -1535,7 +1306,6 @@ def main():
 
     last_new = 0
     last_exp = 0
-
     while True:
         try:
             poll()
@@ -1549,7 +1319,6 @@ def main():
         except Exception as e:
             log("MAIN", f"{e}")
         time.sleep(0.1)
-
 
 if __name__ == "__main__":
     main()

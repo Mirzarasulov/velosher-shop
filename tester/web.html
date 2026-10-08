@@ -196,7 +196,7 @@ a{color:var(--accent);text-decoration:none}
 .ref-chip.info{background:rgba(99,169,255,.12);color:var(--info);border-color:rgba(99,169,255,.25)}
 .ref-chip.purple{background:rgba(167,139,250,.12);color:var(--purple);border-color:rgba(167,139,250,.25)}
 
-/* ═══════ ❄️ ЗАМОРОЖЕННЫЕ БОНУСЫ ═══════ */
+/* ❄️ ЗАМОРОЖЕННЫЕ */
 .frozen-hero{
   background:linear-gradient(135deg,#3a2d12 0%,#2a1f0a 100%);
   border:1px solid #8a6a1f;border-radius:16px;padding:16px;
@@ -211,80 +211,94 @@ a{color:var(--accent);text-decoration:none}
   background:radial-gradient(circle,rgba(245,181,71,.18),transparent 70%);
   pointer-events:none;
 }
-.frozen-hero .fh-head{
-  display:flex;align-items:center;gap:10px;margin-bottom:12px;
-  position:relative;z-index:1;
-}
+.frozen-hero .fh-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;position:relative;z-index:1}
 .frozen-hero .fh-emoji{
   width:44px;height:44px;border-radius:12px;
   background:rgba(245,181,71,.18);border:1px solid rgba(245,181,71,.4);
   display:flex;align-items:center;justify-content:center;font-size:22px;
   animation:frozen-pulse 2.5s ease-in-out infinite;
 }
-@keyframes frozen-pulse{
-  0%,100%{box-shadow:0 0 0 0 rgba(245,181,71,.4)}
-  50%{box-shadow:0 0 0 8px rgba(245,181,71,0)}
-}
+@keyframes frozen-pulse{0%,100%{box-shadow:0 0 0 0 rgba(245,181,71,.4)}50%{box-shadow:0 0 0 8px rgba(245,181,71,0)}}
 .frozen-hero .fh-title{font-weight:700;font-size:15px;color:#f5d97a}
 .frozen-hero .fh-sub{font-size:11.5px;color:rgba(245,217,122,.7);margin-top:2px}
-.frozen-hero .fh-amount{
-  font-size:28px;font-weight:900;color:#f5b547;
-  text-align:center;margin:6px 0 12px;
-  font-family:ui-monospace,"SF Mono",Menlo,monospace;
-  letter-spacing:-.5px;position:relative;z-index:1;
-}
-.frozen-hero .fh-note{
-  font-size:12px;color:#e8d9a8;text-align:center;
+.frozen-hero .fh-amount{font-size:28px;font-weight:900;color:#f5b547;text-align:center;margin:6px 0 12px;
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:-.5px;position:relative;z-index:1}
+.frozen-hero .fh-note{font-size:12px;color:#e8d9a8;text-align:center;
   padding:10px 12px;background:rgba(0,0,0,.3);border-radius:10px;
-  line-height:1.5;position:relative;z-index:1;margin-bottom:12px;
-}
-.frozen-hero .fh-btn{
-  width:100%;padding:12px;border-radius:10px;border:0;
+  line-height:1.5;position:relative;z-index:1;margin-bottom:12px}
+.frozen-hero .fh-btn{width:100%;padding:12px;border-radius:10px;border:0;
   background:linear-gradient(135deg,#f5d97a,#e0b84a);
   color:#2a1a00;font-weight:800;font-size:14px;cursor:pointer;
-  position:relative;z-index:1;display:flex;align-items:center;
-  justify-content:center;gap:6px;
-}
+  position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:6px}
 .frozen-hero .fh-btn:active{transform:scale(.97)}
-
-.frozen-item{
-  background:var(--card2);border:1px solid rgba(245,181,71,.25);
-  border-radius:12px;padding:12px 14px;
-  border-left:3px solid var(--warn);
-  margin-bottom:10px;
-}
-.frozen-item .fi-head{
-  display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:8px;gap:8px;
-}
+.frozen-item{background:var(--card2);border:1px solid rgba(245,181,71,.25);
+  border-radius:12px;padding:12px 14px;border-left:3px solid var(--warn);margin-bottom:10px}
+.frozen-item .fi-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px}
 .frozen-item .fi-name{font-weight:700;font-size:14px}
-.frozen-item .fi-amount{
-  font-size:16px;font-weight:800;color:var(--warn);
-  font-family:ui-monospace,monospace;
-}
-.frozen-item .fi-meta{
-  font-size:11.5px;color:var(--muted);line-height:1.6;
-}
-.frozen-summary{
-  background:linear-gradient(135deg,#3a2d12,#2a1f0a);
-  border:1px solid #8a6a1f;border-radius:14px;padding:16px;
-  margin-bottom:14px;text-align:center;
-}
-.frozen-summary .fs-label{
-  font-size:11px;color:rgba(245,217,122,.7);
-  text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;
-}
-.frozen-summary .fs-value{
-  font-size:32px;font-weight:900;color:#f5b547;
-  font-family:ui-monospace,monospace;
-}
+.frozen-item .fi-amount{font-size:16px;font-weight:800;color:var(--warn);font-family:ui-monospace,monospace}
+.frozen-item .fi-meta{font-size:11.5px;color:var(--muted);line-height:1.6}
+.frozen-summary{background:linear-gradient(135deg,#3a2d12,#2a1f0a);border:1px solid #8a6a1f;
+  border-radius:14px;padding:16px;margin-bottom:14px;text-align:center}
+.frozen-summary .fs-label{font-size:11px;color:rgba(245,217,122,.7);
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.frozen-summary .fs-value{font-size:32px;font-weight:900;color:#f5b547;font-family:ui-monospace,monospace}
 
-/* ═══════════ ЭКРАН БЛОКИРОВКИ ═══════════ */
+/* 💳 РЕКВИЗИТЫ */
+.req-hero{
+  background:linear-gradient(135deg,#12351f 0%,#0f2a1a 100%);
+  border:1px solid #1f6b41;border-radius:16px;
+  padding:16px;margin-bottom:12px;
+}
+.req-hero.empty{
+  background:linear-gradient(135deg,#1b2a4a 0%,#16233f 100%);
+  border-color:#2c3d63;cursor:pointer;
+}
+.req-hero .rh-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.req-hero .rh-emoji{
+  width:44px;height:44px;border-radius:12px;
+  background:rgba(57,217,138,.18);border:1px solid rgba(57,217,138,.4);
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+}
+.req-hero.empty .rh-emoji{
+  background:rgba(79,140,255,.18);border-color:rgba(79,140,255,.4);
+}
+.req-hero .rh-title{font-weight:700;font-size:15px;color:#a8f0cc}
+.req-hero.empty .rh-title{color:#cfe0ff}
+.req-hero .rh-sub{font-size:11.5px;color:rgba(168,240,204,.7);margin-top:2px}
+.req-hero.empty .rh-sub{color:rgba(207,224,255,.7)}
+.req-hero .rh-data{
+  font-size:12.5px;color:#e8edf3;line-height:1.8;
+  background:rgba(0,0,0,.25);border-radius:10px;padding:12px 14px;
+}
+.req-hero .rh-data b{color:#a8f0cc}
+.req-hero .rh-edit{
+  width:100%;margin-top:12px;padding:11px;border-radius:10px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(168,240,204,.3);
+  color:#a8f0cc;font-weight:700;font-size:13px;cursor:pointer;
+}
+.req-hero.empty .rh-edit{
+  background:linear-gradient(135deg,#4f8cff,#356fd8);
+  border:0;color:#fff;font-weight:800;
+}
+.req-hero .rh-edit:active{transform:scale(.97)}
+.req-form{display:flex;flex-direction:column;gap:12px}
+.req-field label{
+  display:block;font-size:11px;color:var(--muted);
+  text-transform:uppercase;font-weight:700;
+  margin-bottom:6px;letter-spacing:.5px;
+}
+.req-field input{
+  width:100%;padding:14px 16px;border-radius:12px;
+  border:1px solid var(--border2);background:var(--card2);
+  color:var(--text);font-size:15px;outline:none;font-family:inherit;
+}
+.req-field input:focus{border-color:var(--accent)}
+.req-field input::placeholder{color:var(--muted);opacity:.6}
+
+/* 🚫 ЭКРАН БЛОКИРОВКИ */
 .blocked-wrap{
-  min-height:100vh;
-  display:flex;align-items:center;justify-content:center;
-  padding:20px;
-  background:radial-gradient(circle at 50% 30%,#2a0e0e 0%,#0a0e14 70%);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:20px;background:radial-gradient(circle at 50% 30%,#2a0e0e 0%,#0a0e14 70%);
 }
 .blocked-card{
   background:linear-gradient(135deg,#2a0e0e,#1a0808);
@@ -294,161 +308,92 @@ a{color:var(--accent);text-decoration:none}
   box-shadow:0 20px 60px rgba(201,42,42,.3);
   animation:blocked-in .5s ease;
 }
-@keyframes blocked-in{
-  from{opacity:0;transform:scale(.9)}
-  to{opacity:1;transform:scale(1)}
-}
-.blocked-icon{
-  font-size:80px;margin-bottom:20px;
-  animation:blocked-shake 2s ease-in-out infinite;
-}
+@keyframes blocked-in{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.blocked-icon{font-size:80px;margin-bottom:20px;animation:blocked-shake 2s ease-in-out infinite}
 @keyframes blocked-shake{
-  0%,100%{transform:rotate(0)}
-  10%{transform:rotate(-8deg)}
-  20%{transform:rotate(8deg)}
-  30%{transform:rotate(-6deg)}
-  40%{transform:rotate(6deg)}
-  50%,100%{transform:rotate(0)}
+  0%,100%{transform:rotate(0)}10%{transform:rotate(-8deg)}
+  20%{transform:rotate(8deg)}30%{transform:rotate(-6deg)}
+  40%{transform:rotate(6deg)}50%,100%{transform:rotate(0)}
 }
-.blocked-title{
-  font-size:22px;font-weight:800;color:#ff5c5c;
-  margin-bottom:12px;letter-spacing:.5px;
-}
-.blocked-text{
-  font-size:13.5px;color:#c4ccd6;line-height:1.6;
-  margin-bottom:22px;
-}
-.blocked-reason{
-  background:rgba(0,0,0,.4);border-radius:12px;
-  padding:14px 16px;margin-bottom:20px;text-align:left;
-  border-left:3px solid #ff5c5c;
-}
-.blocked-reason-label{
-  font-size:10.5px;color:#8b949e;text-transform:uppercase;
-  letter-spacing:1px;font-weight:700;margin-bottom:6px;
-}
-.blocked-reason-text{
-  font-size:14px;color:#e8edf3;font-weight:600;
-}
-.blocked-note{
-  font-size:12.5px;color:#8b949e;line-height:1.6;margin-bottom:22px;
-}
-.blocked-btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+.blocked-title{font-size:22px;font-weight:800;color:#ff5c5c;margin-bottom:12px;letter-spacing:.5px}
+.blocked-text{font-size:13.5px;color:#c4ccd6;line-height:1.6;margin-bottom:22px}
+.blocked-reason{background:rgba(0,0,0,.4);border-radius:12px;
+  padding:14px 16px;margin-bottom:20px;text-align:left;border-left:3px solid #ff5c5c}
+.blocked-reason-label{font-size:10.5px;color:#8b949e;text-transform:uppercase;
+  letter-spacing:1px;font-weight:700;margin-bottom:6px}
+.blocked-reason-text{font-size:14px;color:#e8edf3;font-weight:600}
+.blocked-note{font-size:12.5px;color:#8b949e;line-height:1.6;margin-bottom:22px}
+.blocked-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
   width:100%;padding:14px 18px;border-radius:12px;
   background:#ff5c5c;color:#fff;font-weight:700;font-size:15px;
-  text-decoration:none;border:0;
-  box-shadow:0 8px 24px rgba(255,92,92,.4);
-}
+  text-decoration:none;border:0;box-shadow:0 8px 24px rgba(255,92,92,.4)}
 .blocked-btn:active{transform:scale(.97)}
 
-/* ═══════════════ ПРЕЛОАДЕР РОСТЭРА ═══════════════ */
+/* ═══ ПРЕЛОАДЕР ═══ */
 #preloader{
   position:fixed;inset:0;z-index:99999;
   background:radial-gradient(circle at 50% 40%,#0f1b2e 0%,#0a0e14 70%);
-  display:flex;align-items:center;justify-content:center;
-  flex-direction:column;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
   transition:opacity .6s ease,visibility .6s ease;
 }
 #preloader.hide{opacity:0;visibility:hidden;pointer-events:none}
 .pl-inner{text-align:center;padding:0 30px;width:100%;max-width:340px}
-.pl-emblem{
-  margin-bottom:18px;
-  opacity:0;transform:scale(.7);
-  animation:pl-pop .6s .1s cubic-bezier(.34,1.56,.64,1) forwards;
-}
+.pl-emblem{margin-bottom:18px;opacity:0;transform:scale(.7);
+  animation:pl-pop .6s .1s cubic-bezier(.34,1.56,.64,1) forwards}
 @keyframes pl-pop{to{opacity:1;transform:scale(1)}}
-.pl-ring{
-  transform-origin:50% 50%;
-  transform:rotate(-90deg);
-  stroke-dashoffset:289;
-  animation:pl-draw 2s .4s cubic-bezier(.4,0,.2,1) forwards;
-}
+.pl-ring{transform-origin:50% 50%;transform:rotate(-90deg);
+  stroke-dashoffset:289;animation:pl-draw 2s .4s cubic-bezier(.4,0,.2,1) forwards}
 @keyframes pl-draw{to{stroke-dashoffset:0}}
 .pl-title{
   font-size:32px;font-weight:900;letter-spacing:8px;
   background:linear-gradient(180deg,#f5d97a 0%,#e0b84a 50%,#b8862d 100%);
   -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
-  margin-bottom:8px;
+  -webkit-text-fill-color:transparent;margin-bottom:8px;
   opacity:0;transform:translateY(10px);
   animation:pl-up .5s .6s ease forwards;
   filter:drop-shadow(0 2px 12px rgba(224,184,74,.4));
 }
-.pl-sub{
-  font-size:11px;color:#8b949e;letter-spacing:3px;text-transform:uppercase;
-  margin-bottom:32px;
-  opacity:0;
-  animation:pl-up .5s .8s ease forwards;
-}
+.pl-sub{font-size:11px;color:#8b949e;letter-spacing:3px;text-transform:uppercase;
+  margin-bottom:32px;opacity:0;animation:pl-up .5s .8s ease forwards}
 @keyframes pl-up{to{opacity:1;transform:translateY(0)}}
-.pl-bar{
-  width:100%;height:3px;border-radius:3px;
-  background:rgba(224,184,74,.12);
-  overflow:hidden;position:relative;
-  opacity:0;
-  animation:pl-up .5s 1s ease forwards;
-  box-shadow:0 0 20px rgba(224,184,74,.2);
-}
-.pl-fill{
-  height:100%;width:0%;border-radius:3px;
+.pl-bar{width:100%;height:3px;border-radius:3px;
+  background:rgba(224,184,74,.12);overflow:hidden;position:relative;
+  opacity:0;animation:pl-up .5s 1s ease forwards;
+  box-shadow:0 0 20px rgba(224,184,74,.2)}
+.pl-fill{height:100%;width:0%;border-radius:3px;
   background:linear-gradient(90deg,#e0b84a,#f5d97a,#e0b84a);
-  background-size:200% 100%;
-  animation:pl-shine 1.5s linear infinite;
-  box-shadow:0 0 12px rgba(224,184,74,.8);
-  transition:width .3s ease;
-}
+  background-size:200% 100%;animation:pl-shine 1.5s linear infinite;
+  box-shadow:0 0 12px rgba(224,184,74,.8);transition:width .3s ease}
 @keyframes pl-shine{to{background-position:-200% 0}}
-
-/* 🚨 Плашка ошибки */
-.pl-error{
-  position:absolute;bottom:0;left:0;right:0;
+.pl-error{position:absolute;bottom:0;left:0;right:0;
   padding:18px 24px calc(18px + env(safe-area-inset-bottom));
   background:linear-gradient(135deg,#c92a2a,#8b1e1e);
-  border-top:2px solid #ff5c5c;
-  text-align:center;
+  border-top:2px solid #ff5c5c;text-align:center;
   opacity:0;transform:translateY(100%);
   animation:pl-error-in .5s .3s cubic-bezier(.4,0,.2,1) forwards;
-  box-shadow:0 -8px 32px rgba(201,42,42,.5);
-}
+  box-shadow:0 -8px 32px rgba(201,42,42,.5)}
 @keyframes pl-error-in{to{opacity:1;transform:translateY(0)}}
-.pl-error .pe-icon{
-  font-size:32px;margin-bottom:8px;
-  animation:pe-shake 1.5s ease-in-out infinite;
-}
-@keyframes pe-shake{
-  0%,100%{transform:rotate(0)}
-  25%{transform:rotate(-10deg)}
-  75%{transform:rotate(10deg)}
-}
-.pl-error .pe-title{
-  font-size:15px;font-weight:800;color:#fff;
-  margin-bottom:4px;letter-spacing:.5px;
-}
-.pl-error .pe-text{
-  font-size:12.5px;color:#ffd6d6;line-height:1.5;
-}
-.pl-error .pe-btn{
-  display:inline-flex;align-items:center;gap:6px;
+.pl-error .pe-icon{font-size:32px;margin-bottom:8px;
+  animation:pe-shake 1.5s ease-in-out infinite}
+@keyframes pe-shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+.pl-error .pe-title{font-size:15px;font-weight:800;color:#fff;margin-bottom:4px;letter-spacing:.5px}
+.pl-error .pe-text{font-size:12.5px;color:#ffd6d6;line-height:1.5}
+.pl-error .pe-btn{display:inline-flex;align-items:center;gap:6px;
   margin-top:12px;padding:10px 20px;border-radius:10px;
   background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
-  color:#fff;font-weight:700;font-size:13px;cursor:pointer;
-  text-decoration:none;
-}
+  color:#fff;font-weight:700;font-size:13px;cursor:pointer;text-decoration:none}
 .pl-error .pe-btn:active{background:rgba(255,255,255,.25)}
 </style>
 </head>
 <body>
 
-<!-- ═══════════ ПРЕЛОАДЕР РОСТЭРА ═══════════ -->
 <div id="preloader">
   <div class="pl-inner">
     <div class="pl-emblem">
       <svg viewBox="0 0 100 100" width="80" height="80">
         <circle cx="50" cy="50" r="46" stroke="url(#plGold)" stroke-width="2" fill="none" opacity="0.3"/>
         <circle cx="50" cy="50" r="46" stroke="url(#plGold)" stroke-width="3" fill="none"
-                stroke-linecap="round" stroke-dasharray="289"
-                class="pl-ring"/>
+                stroke-linecap="round" stroke-dasharray="289" class="pl-ring"/>
         <text x="50" y="62" text-anchor="middle" font-size="36" fill="#e0b84a" font-weight="900">🌿</text>
         <defs>
           <linearGradient id="plGold" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -490,17 +435,15 @@ a{color:var(--accent);text-decoration:none}
 <script>
 'use strict';
 
-/* ═══════════ ПРЕЛОАДЕР ЛОГИКА ═══════════ */
+/* ═══ ПРЕЛОАДЕР ═══ */
 var PRELOADER = (function(){
   var el, fill, errorEl;
   var p = 0, timer = null, done = false, failed = false;
-
   function init(){
     el = document.getElementById('preloader');
     fill = document.querySelector('.pl-fill');
     errorEl = document.getElementById('plError');
   }
-
   function start(){
     init();
     if (!el) return;
@@ -510,44 +453,26 @@ var PRELOADER = (function(){
       if (p >= 92) p = 92;
       if (fill) fill.style.width = p + '%';
     }, 220);
-    /* Страховка: если через 6 сек ничего не произошло — считаем что упало */
-    setTimeout(function(){
-      if (!done && !failed) fail();
-    }, 6000);
+    setTimeout(function(){ if (!done && !failed) fail(); }, 6000);
   }
-
   function finish(){
     if (done || failed) return;
     done = true;
     if (timer) clearInterval(timer);
     if (fill) fill.style.width = '100%';
-    setTimeout(function(){
-      if (el) el.classList.add('hide');
-    }, 350);
+    setTimeout(function(){ if (el) el.classList.add('hide'); }, 350);
   }
-
   function fail(){
     if (done || failed) return;
     failed = true;
     if (timer) clearInterval(timer);
     if (errorEl) errorEl.style.display = 'block';
-    /* НЕ скрываем прелоадер — юзер видит ошибку */
   }
-
-  function reset(){
-    /* Сброс при повторной попытке (например, разблокировка) */
-    done = false; failed = false; p = 0;
-    if (errorEl) errorEl.style.display = 'none';
-    if (fill) fill.style.width = '0%';
-    if (el) el.classList.remove('hide');
-  }
-
-  return { start: start, finish: finish, fail: fail, reset: reset };
+  return { start: start, finish: finish, fail: fail };
 })();
 
 PRELOADER.start();
 
-/* Ловим глобальные ошибки */
 window.addEventListener('error', function(e){
   console.error('Global error:', e);
   PRELOADER.fail();
@@ -556,7 +481,7 @@ window.addEventListener('unhandledrejection', function(e){
   console.error('Unhandled promise:', e);
 });
 
-/* ═══════════════════════════════════════════════════════════ */
+/* ═══ ОСНОВНОЕ ═══ */
 
 var FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app';
 var BOT_USERNAME = 'ROSTERAbot';
@@ -710,18 +635,15 @@ function toList(raw){
 }
 function tgUser(){ return tg && tg.initDataUnsafe && tg.initDataUnsafe.user; }
 
-/* ═══════════ 🚫 ЭКРАН БЛОКИРОВКИ ═══════════ */
+/* 🚫 ЭКРАН БЛОКИРОВКИ */
 function screenBlocked(reason){
   if (IS_BLOCKED) return;
   IS_BLOCKED = true;
   try { if (tg){ tg.disableVerticalSwipes && tg.disableVerticalSwipes(); } } catch(e){}
   if ($('nav')) $('nav').classList.add('hidden');
   document.body.style.overflow = 'hidden';
-
-  /* Скрываем прелоадер — показываем экран блокировки */
   var prel = document.getElementById('preloader');
   if (prel) prel.classList.add('hide');
-
   $('app').innerHTML =
     '<div class="blocked-wrap">' +
       '<div class="blocked-card">' +
@@ -732,26 +654,19 @@ function screenBlocked(reason){
         '</div>' +
         '<div class="blocked-reason">' +
           '<div class="blocked-reason-label">📝 Причина</div>' +
-          '<div class="blocked-reason-text">' +
-            esc(reason || 'Нарушение правил') +
-          '</div>' +
+          '<div class="blocked-reason-text">' + esc(reason || 'Нарушение правил') + '</div>' +
         '</div>' +
-        '<div class="blocked-note">' +
-          '💬 Обратитесь в поддержку для выяснения деталей' +
-        '</div>' +
-        '<a class="blocked-btn" href="https://t.me/' + esc(ADMIN_USERNAME) + '" ' +
-          'target="_blank">💬 Написать в поддержку</a>' +
+        '<div class="blocked-note">💬 Обратитесь в поддержку для выяснения деталей</div>' +
+        '<a class="blocked-btn" href="https://t.me/' + esc(ADMIN_USERNAME) + '" target="_blank">💬 Написать в поддержку</a>' +
       '</div>' +
     '</div>';
 }
 
-/* ═══════════ ЗАГРУЗКА ЮЗЕРА ═══════════ */
 async function loadMe(){
   var u = tgUser(); if (!u) return null;
   USER_UID = String(u.id);
   var existing = await fbGet('users/' + u.id);
 
-  /* 🚫 ПРОВЕРКА БЛОКИРОВКИ ПРИ ОТКРЫТИИ */
   if (existing && existing.blocked){
     screenBlocked(existing.block_reason);
     return null;
@@ -766,7 +681,8 @@ async function loadMe(){
     telegram_id: u.id, username: u.username || '',
     first_name: u.first_name || '', last_name: u.last_name || '',
     photo_url: u.photo_url || (existing && existing.photo_url) || '',
-    registered_at: (existing && existing.registered_at) || now
+    registered_at: (existing && existing.registered_at) || now,
+    requisites: (existing && existing.requisites) || undefined
   };
   if (existing && existing.referrer_uid){
     data.referrer_uid = existing.referrer_uid;
@@ -830,13 +746,11 @@ async function loadMyReferrals(){
 function calcRefBalance(){
   var accrued=0, paid=0, pending=0, frozen=0, pendingActive=0;
   var lastAt=null, lastAmount=0;
-
   ALL_MY_REF_PURCHASES.forEach(function(p){
     if (['rejected','cancelled'].indexOf(p.status) >= 0) return;
     var bonus = num(p.referral_bonus) || Math.round(num(p.purchase_price) * REFERRAL_PERCENT / 100);
     var st = p.referral_status || 'pending';
     if (st === 'rejected') return;
-
     if (st === 'paid'){
       accrued += bonus; paid += bonus;
       if (p.referral_paid_at && (!lastAt || p.referral_paid_at > lastAt)){
@@ -854,7 +768,6 @@ function calcRefBalance(){
       pending += bonus;
     }
   });
-
   return {
     accrued: accrued, paid: paid, pending: pending,
     frozen: frozen, pendingActive: pendingActive,
@@ -892,12 +805,9 @@ function getFrozenItems(){
 function renderFrozenHero(){
   var b = calcRefBalance();
   if (b.pendingActive <= 0) return '';
-
   var items = getFrozenItems();
-  var countText = items.length === 1
-    ? 'от 1 покупки реферала'
+  var countText = items.length === 1 ? 'от 1 покупки реферала'
     : 'от ' + items.length + ' покупок рефералов';
-
   return '<div class="frozen-hero" onclick="openFrozenBonuses()">' +
     '<div class="fh-head">' +
       '<div class="fh-emoji">❄️</div>' +
@@ -908,73 +818,45 @@ function renderFrozenHero(){
       '<div style="font-size:20px;color:#f5d97a;opacity:.6">→</div>' +
     '</div>' +
     '<div class="fh-amount">' + fmt(b.pendingActive) + '</div>' +
-    '<div class="fh-note">' +
-      '🔒 Эти бонусы временно недоступны.<br>' +
-      'Купите <b>любую эру</b> — и они сразу разблокируются.' +
-    '</div>' +
-    '<button class="fh-btn" onclick="event.stopPropagation();setTab(\'buy\')">' +
-      '🔓 Разблокировать — купить эру' +
-    '</button>' +
+    '<div class="fh-note">🔒 Эти бонусы временно недоступны.<br>Купите <b>любую эру</b> — и они сразу разблокируются.</div>' +
+    '<button class="fh-btn" onclick="event.stopPropagation();setTab(\'buy\')">🔓 Разблокировать — купить эру</button>' +
   '</div>';
 }
 
 window.openFrozenBonuses = function(){
   var b = calcRefBalance();
-  if (b.pendingActive <= 0){
-    toast('Нет замороженных бонусов', 'info');
-    return;
-  }
-
+  if (b.pendingActive <= 0){ toast('Нет замороженных бонусов', 'info'); return; }
   var items = getFrozenItems();
-  if (!items.length){
-    toast('Список пуст', 'info');
-    return;
-  }
-
+  if (!items.length){ toast('Список пуст', 'info'); return; }
   var itemsHtml = items.map(function(it){
     return '<div class="frozen-item">' +
       '<div class="fi-head">' +
         '<div class="fi-name">👤 ' + esc(it.name) + '</div>' +
         '<div class="fi-amount">+' + fmt(it.bonus) + '</div>' +
       '</div>' +
-      '<div class="fi-meta">' +
-        (it.username ? '@' + esc(it.username) + ' · ' : '') +
-        'ID ' + esc(it.telegram_id) +
-      '</div>' +
-      '<div class="fi-meta">' +
-        '💳 ' + esc(it.era) + '<br>' +
-        '🕐 ' + fmtDT(it.date) +
-      '</div>' +
+      '<div class="fi-meta">' + (it.username ? '@' + esc(it.username) + ' · ' : '') + 'ID ' + esc(it.telegram_id) + '</div>' +
+      '<div class="fi-meta">💳 ' + esc(it.era) + '<br>🕐 ' + fmtDT(it.date) + '</div>' +
     '</div>';
   }).join('');
-
   showModal(
     '<div class="modal-head"><div>' +
       '<h2>❄️ Замороженные бонусы</h2>' +
-      '<div class="muted-sm">' + items.length + ' ' +
-        (items.length === 1 ? 'запись' : 'записей') +
-      '</div>' +
+      '<div class="muted-sm">' + items.length + ' ' + (items.length === 1 ? 'запись' : 'записей') + '</div>' +
     '</div>' +
     '<button class="close-x" onclick="closeModal()">✕</button></div>' +
     '<div class="modal-body">' +
-      '<div class="frozen-summary">' +
-        '<div class="fs-label">Всего заморожено</div>' +
-        '<div class="fs-value">' + fmt(b.pendingActive) + '</div>' +
-      '</div>' +
+      '<div class="frozen-summary"><div class="fs-label">Всего заморожено</div>' +
+        '<div class="fs-value">' + fmt(b.pendingActive) + '</div></div>' +
       '<div class="card2" style="background:rgba(245,181,71,.08);border-color:rgba(245,181,71,.25);margin-bottom:14px">' +
         '<div style="font-size:12.5px;line-height:1.6;color:#e8d9a8">' +
           '🔒 <b>Почему заморожено?</b><br>' +
           'Вы получаете <b>' + REFERRAL_PERCENT + '%</b> с покупок рефералов. ' +
           'Но бонусы разблокируются <b>только когда у вас есть активная эра</b>.<br><br>' +
-          '💡 <b>Как разблокировать:</b> купите любую эру — и все замороженные бонусы ' +
-          'сразу зачислятся на баланс.' +
+          '💡 <b>Как разблокировать:</b> купите любую эру — и все замороженные бонусы сразу зачислятся на баланс.' +
         '</div>' +
       '</div>' +
       '<div style="display:flex;flex-direction:column;gap:0">' + itemsHtml + '</div>' +
-      '<button class="btn" style="margin-top:14px" ' +
-        'onclick="closeModal();setTab(\'buy\')">' +
-        '🔓 Купить эру и разблокировать' +
-      '</button>' +
+      '<button class="btn" style="margin-top:14px" onclick="closeModal();setTab(\'buy\')">🔓 Купить эру и разблокировать</button>' +
     '</div>');
 };
 
@@ -984,7 +866,6 @@ function renderRefHero(){
   var isFullyPaid = b.owed <= 0 && b.paid > 0 && !isFrozen;
   var nothing = b.owed <= 0 && b.paid === 0 && b.pending === 0 &&
                 !isFrozen && b.pendingActive === 0;
-
   if (nothing){
     return '<div class="ref-hero">' +
       '<div class="title"><span class="emo">💰</span> Реферальный баланс' +
@@ -993,25 +874,20 @@ function renderRefHero(){
         'Приглашайте друзей — получайте ' + REFERRAL_PERCENT + '% с каждой их покупки' +
       '</div></div>';
   }
-
   var cls = 'ref-hero' + (isFullyPaid ? ' paid' : '') + (isFrozen ? ' frozen' : '');
   var title = isFullyPaid ? '✅ Все бонусы выплачены' :
               isFrozen ? '⏳ Заявка отправлена' :
               '💰 Реферальный баланс';
-
   var last = b.lastAt
     ? '<div class="last-paid">Последняя выплата: <b>' + fmt(b.lastAmount) + '</b> · ' +
       fmtDT(b.lastAt) + ' <span style="opacity:.6">(Ташкент)</span></div>'
     : '';
-
   var pendingActiveNote = '';
   if (b.pendingActive > 0){
     pendingActiveNote = '<div class="warn-note" onclick="event.stopPropagation();openFrozenBonuses()" style="cursor:pointer">' +
-      '❄️ <b>Заморожено: ' + fmt(b.pendingActive) + '</b><br>' +
-      'Нажмите, чтобы посмотреть детали' +
+      '❄️ <b>Заморожено: ' + fmt(b.pendingActive) + '</b><br>Нажмите, чтобы посмотреть детали' +
     '</div>';
   }
-
   var btn = '';
   if (isFrozen){
     btn = '<button class="btn warn sm" style="flex:1" disabled>⏳ Заявка на ' + fmt(b.frozen) + ' ждёт</button>';
@@ -1020,14 +896,12 @@ function renderRefHero(){
   } else if (b.owed > 0){
     btn = '<button class="btn ghost sm" style="flex:1" disabled>Минимум 100 ₽ · у вас ' + fmt(b.owed) + '</button>';
   }
-
   var note = '';
   if (isFrozen){
     note = '<div class="frozen-note">⏳ Заявка на <b>' + fmt(b.frozen) + '</b> — ждёт админа</div>';
   } else if (b.pending > 0){
     note = '<div style="text-align:center;font-size:11.5px;color:var(--warn);margin-bottom:10px">⏳ На проверке: ' + fmt(b.pending) + '</div>';
   }
-
   return '<div class="' + cls + '">' +
     '<div class="title"><span class="emo">' + (isFullyPaid?'✅':isFrozen?'⏳':'💰') + '</span> ' + title +
       '<span class="percent-badge">' + REFERRAL_PERCENT + '%</span></div>' +
@@ -1051,6 +925,14 @@ window.requestRefPayout = function(){
     if (b.frozen > 0) return toast('⏳ Заявка уже отправлена', 'info', 4000);
     if (b.owed < 100) return toast('Минимум 100 ₽', 'err');
 
+    /* 💳 ПРОВЕРКА РЕКВИЗИТОВ */
+    var req = (ME && ME.requisites) || {};
+    if (!req.fio || !req.card || !req.bank){
+      var goFill = await ask('💳 Сначала заполните реквизиты для вывода\n\nНужно: Ф.И.О., карта/телефон, банк.\n\nЗаполнить сейчас?');
+      if (goFill) window.openRequisites();
+      return;
+    }
+
     var requests = await fbGet('ref_payout_requests') || {};
     var mine = toList(requests).filter(function(r){
       return String(r.user_telegram_id) === String(USER_UID);
@@ -1060,8 +942,8 @@ window.requestRefPayout = function(){
     })[0];
     if (active) return toast('⏳ Уже есть заявка #' + active.id, 'info', 4000);
 
-    var ok = await ask('Вывести всю сумму бонусов?\n\n💰 ' + fmt(b.owed) +
-      '\n\nЗаявка уйдёт администратору.');
+    var ok = await ask('Вывести бонусы?\n\n💰 ' + fmt(b.owed) +
+      '\n\n💳 Реквизиты:\n👤 ' + req.fio + '\n💳 ' + req.card + '\n🏦 ' + req.bank);
     if (!ok) return;
 
     var cur = await fbGet('counters/ref_payout') || 0;
@@ -1074,7 +956,8 @@ window.requestRefPayout = function(){
       user_username: ME.username || '',
       user_first_name: ME.first_name || '',
       amount: b.owed, balance_before: b.owed,
-      status: 'pending', requested_at: now
+      status: 'pending', requested_at: now,
+      requisites: { fio: req.fio, card: req.card, bank: req.bank }
     });
 
     await freezeRefBonuses(USER_UID, b.owed, rid);
@@ -1103,7 +986,6 @@ async function freezeRefBonuses(uid, amount, requestId){
     queue.push({ key: k, p: p });
   });
   queue.sort(function(a,b){ return new Date(a.p.created_at||0) - new Date(b.p.created_at||0); });
-
   var left = amount, now = new Date().toISOString();
   for (var i = 0; i < queue.length && left > 0; i++){
     var item = queue[i];
@@ -1121,36 +1003,128 @@ async function freezeRefBonuses(uid, amount, requestId){
   }
 }
 
-window.openStatList = function(kind){
-  var list = [];
-  var title = '', subtitle = '', sumLabel = '';
+/* 💳 РЕКВИЗИТЫ */
+function renderReqHero(){
+  if (!ME) return '';
+  var req = ME.requisites || {};
+  var hasData = req.fio || req.card || req.bank;
 
+  if (!hasData){
+    return '<div class="req-hero empty" onclick="openRequisites()">' +
+      '<div class="rh-head">' +
+        '<div class="rh-emoji">💳</div>' +
+        '<div style="flex:1">' +
+          '<div class="rh-title">Реквизиты для вывода</div>' +
+          '<div class="rh-sub">Не заполнены</div>' +
+        '</div>' +
+        '<div style="font-size:20px;color:#cfe0ff;opacity:.6">→</div>' +
+      '</div>' +
+      '<div style="font-size:12.5px;line-height:1.6;color:#cfe0ff;text-align:center;padding:10px 12px;background:rgba(0,0,0,.25);border-radius:10px;margin-bottom:12px">' +
+        '💳 Заполните реквизиты заранее — чтобы при выводе не тратить время' +
+      '</div>' +
+      '<button class="rh-edit">➕ Заполнить реквизиты</button>' +
+    '</div>';
+  }
+
+  return '<div class="req-hero" onclick="openRequisites()" style="cursor:pointer">' +
+    '<div class="rh-head">' +
+      '<div class="rh-emoji">💳</div>' +
+      '<div style="flex:1">' +
+        '<div class="rh-title">Реквизиты для вывода</div>' +
+        '<div class="rh-sub">Заполнены</div>' +
+      '</div>' +
+      '<div style="font-size:20px;color:#a8f0cc;opacity:.6">✏️</div>' +
+    '</div>' +
+    '<div class="rh-data">' +
+      '👤 <b>Ф.И.О.:</b> ' + esc(req.fio || '—') + '<br>' +
+      '💳 <b>Карта/Телефон:</b> ' + esc(req.card || '—') + '<br>' +
+      '🏦 <b>Банк:</b> ' + esc(req.bank || '—') +
+    '</div>' +
+    '<button class="rh-edit" onclick="event.stopPropagation();openRequisites()">✏️ Изменить реквизиты</button>' +
+  '</div>';
+}
+
+window.openRequisites = function(){
+  if (IS_BLOCKED) return;
+  var req = (ME && ME.requisites) || {};
+  showModal(
+    '<div class="modal-head"><div>' +
+      '<h2>💳 Реквизиты для вывода</h2>' +
+      '<div class="muted-sm">Заполните — они будут использоваться при выводе</div>' +
+    '</div>' +
+    '<button class="close-x" onclick="closeModal()">✕</button></div>' +
+    '<div class="modal-body">' +
+      '<div class="card2" style="background:rgba(79,140,255,.08);border-color:rgba(79,140,255,.25);margin-bottom:16px">' +
+        '<div style="font-size:12.5px;line-height:1.6;color:#cfe0ff">' +
+          '💡 <b>Зачем это нужно?</b><br>' +
+          'Когда ваша эра завершится и вы подадите заявку на вывод — админам сразу придут ваши реквизиты.' +
+        '</div>' +
+      '</div>' +
+      '<div class="req-form">' +
+        '<div class="req-field">' +
+          '<label>👤 Ф.И.О. получателя</label>' +
+          '<input type="text" id="reqFio" placeholder="Иванов Иван Иванович" value="' + esc(req.fio || '') + '" autocomplete="name">' +
+        '</div>' +
+        '<div class="req-field">' +
+          '<label>💳 Номер карты или телефона (СБП)</label>' +
+          '<input type="text" id="reqCard" placeholder="0000 0000 0000 0000 или +7 999 123-45-67" value="' + esc(req.card || '') + '" inputmode="numeric">' +
+        '</div>' +
+        '<div class="req-field">' +
+          '<label>🏦 Название банка</label>' +
+          '<input type="text" id="reqBank" placeholder="Сбербанк / Тинькофф / ВТБ" value="' + esc(req.bank || '') + '">' +
+        '</div>' +
+      '</div>' +
+      '<div style="font-size:11.5px;color:var(--muted);text-align:center;margin:16px 0;line-height:1.5">' +
+        '🔒 Данные защищены и видны только администрации' +
+      '</div>' +
+    '</div>' +
+    '<div class="mf">' +
+      '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
+      '<button class="btn ok" onclick="saveRequisites()">💾 Сохранить</button>' +
+    '</div>');
+};
+
+window.saveRequisites = async function(){
+  if (IS_BLOCKED) return;
+  var fio = ($('reqFio').value || '').trim();
+  var card = ($('reqCard').value || '').trim();
+  var bank = ($('reqBank').value || '').trim();
+  if (!fio || fio.length < 3){ toast('⚠️ Введите Ф.И.О. полностью', 'err'); return; }
+  if (!card || card.length < 5){ toast('⚠️ Введите номер карты или телефона', 'err'); return; }
+  if (!bank || bank.length < 2){ toast('⚠️ Введите название банка', 'err'); return; }
+  try {
+    await fbPatch('users/' + USER_UID, {
+      requisites: { fio: fio, card: card, bank: bank, updated_at: new Date().toISOString() }
+    });
+    if (ME) ME.requisites = { fio: fio, card: card, bank: bank, updated_at: new Date().toISOString() };
+    toast('✅ Реквизиты сохранены', 'ok', 3000);
+    haptic();
+    closeModal();
+    render();
+  } catch(e){
+    toast('❌ Ошибка сохранения: ' + e.message, 'err', 4000);
+  }
+};
+
+window.openStatList = function(kind){
+  var list = [], title = '', subtitle = '', sumLabel = '';
   if (kind === 'invested'){
     list = PURCHASES.filter(function(p){ return p.status !== 'cancelled'; });
     title = '💰 Инвестировано (' + list.length + ')';
-    subtitle = 'Все ваши покупки';
-    sumLabel = 'Всего вложено';
+    subtitle = 'Все ваши покупки'; sumLabel = 'Всего вложено';
   } else if (kind === 'active'){
-    list = PURCHASES.filter(function(p){
-      return ['created','approved'].indexOf(p.status) >= 0;
-    });
+    list = PURCHASES.filter(function(p){ return ['created','approved'].indexOf(p.status) >= 0; });
     title = '🟢 Активных (' + list.length + ')';
-    subtitle = 'Сейчас работают';
-    sumLabel = 'Всего вложено';
+    subtitle = 'Сейчас работают'; sumLabel = 'Всего вложено';
   } else if (kind === 'completed'){
-    list = PURCHASES.filter(function(p){
-      return p.status === 'completed' || p.early_closed;
-    });
+    list = PURCHASES.filter(function(p){ return p.status === 'completed' || p.early_closed; });
     title = '🏁 Завершено (' + list.length + ')';
-    subtitle = 'Период окончен';
-    sumLabel = 'Всего получено';
+    subtitle = 'Период окончен'; sumLabel = 'Всего получено';
   } else if (kind === 'available'){
     list = PURCHASES.filter(function(p){ return canWithdraw(p); });
     title = '💸 К выводу (' + list.length + ')';
-    subtitle = 'Можно подать заявку';
-    sumLabel = 'Всего к выводу';
+    subtitle = 'Можно подать заявку'; sumLabel = 'Всего к выводу';
   }
-
   if (!list.length){
     var emptyMsg = (kind === 'available')
       ? '✅ Нет сумм для вывода.<br>Все эры ещё активны или уже выведены.'
@@ -1163,15 +1137,12 @@ window.openStatList = function(kind){
       '</div>');
     return;
   }
-
   var cardsHtml = list.map(function(p){ return statCardItem(p, kind); }).join('');
-
   var totalSum = 0;
   list.forEach(function(p){
     if (kind === 'invested' || kind === 'active') totalSum += num(p.purchase_price);
     else totalSum += num(p.total_amount);
   });
-
   showModal(
     '<div class="modal-head"><div>' +
       '<h2>' + title + '</h2>' +
@@ -1181,67 +1152,49 @@ window.openStatList = function(kind){
     '<div class="modal-body">' +
       '<div class="stat" style="margin-bottom:14px;cursor:default">' +
         '<div class="label">' + sumLabel + '</div>' +
-        '<div class="value ' + (kind === 'available' ? 'ok' : 'accent') + '">' +
-          fmt(totalSum) + '</div>' +
+        '<div class="value ' + (kind === 'available' ? 'ok' : 'accent') + '">' + fmt(totalSum) + '</div>' +
       '</div>' +
       (kind === 'available' && list.length > 0
-        ? '<button class="btn ok" style="margin-bottom:16px" onclick="requestPayoutAll()">' +
-            '💸 Вывести всё (' + fmt(totalSum) + ')</button>'
+        ? '<button class="btn ok" style="margin-bottom:16px" onclick="requestPayoutAll()">💸 Вывести всё (' + fmt(totalSum) + ')</button>'
         : '') +
-      '<div style="display:flex;flex-direction:column;gap:10px">' +
-        cardsHtml +
-      '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:10px">' + cardsHtml + '</div>' +
     '</div>');
 };
 
 function statCardItem(p, kind){
   var canW = canWithdraw(p);
   var isEarly = !!p.early_closed;
-
   var statusBadge = isEarly
     ? '<span class="badge early">🔌 Досрочно</span>'
     : '<span class="badge ' + esc(p.status) + '">' + esc(statusLabel(p.status)) + '</span>';
-
   var infoLine = '';
   if (p.status === 'approved' && !isEarly && p.expires_at){
     var ms = msLeft(p);
-    if (ms > 0){
-      infoLine = '<div class="muted-sm" style="margin-top:8px">⏰ ' + esc(dayLabel(p)) + '</div>';
-    }
+    if (ms > 0) infoLine = '<div class="muted-sm" style="margin-top:8px">⏰ ' + esc(dayLabel(p)) + '</div>';
   } else if (isEarly){
-    infoLine = '<div class="muted-sm" style="margin-top:8px;color:var(--warn)">' +
-      '🔌 Отключена админом · ' + fmtDT(p.early_closed_at) + '</div>';
+    infoLine = '<div class="muted-sm" style="margin-top:8px;color:var(--warn)">🔌 Отключена админом · ' + fmtDT(p.early_closed_at) + '</div>';
   } else if (p.status === 'completed'){
-    infoLine = '<div class="muted-sm" style="margin-top:8px;color:var(--ok)">' +
-      '🏁 Завершено · ' + fmtDT(p.completed_at || p.expires_at) + '</div>';
+    infoLine = '<div class="muted-sm" style="margin-top:8px;color:var(--ok)">🏁 Завершено · ' + fmtDT(p.completed_at || p.expires_at) + '</div>';
   } else if (p.status === 'created'){
     infoLine = '<div class="muted-sm" style="margin-top:8px">⏳ Ожидает подтверждения админа</div>';
   }
-
   return '<div class="card" style="margin-bottom:0;padding:14px">' +
     '<div class="row" style="margin-bottom:8px">' +
       '<b style="color:#4f8cff;font-size:14px">📩 #' + esc(p.id) + '</b>' +
       statusBadge +
     '</div>' +
-    '<div style="font-weight:600;font-size:14px;margin-bottom:8px">' +
-      esc(p.era_title || '—') +
-    '</div>' +
+    '<div style="font-weight:600;font-size:14px;margin-bottom:8px">' + esc(p.era_title || '—') + '</div>' +
     '<div class="metrics" style="grid-template-columns:repeat(3,1fr);gap:6px">' +
-      '<div class="metric" style="padding:8px 6px">' +
-        '<div class="l" style="font-size:9px">Вложено</div>' +
+      '<div class="metric" style="padding:8px 6px"><div class="l" style="font-size:9px">Вложено</div>' +
         '<div class="v" style="font-size:12px">' + fmt(p.purchase_price) + '</div></div>' +
-      '<div class="metric" style="padding:8px 6px">' +
-        '<div class="l" style="font-size:9px">Начисл.</div>' +
+      '<div class="metric" style="padding:8px 6px"><div class="l" style="font-size:9px">Начисл.</div>' +
         '<div class="v profit" style="font-size:12px">+' + fmt(p.profit_amount) + '</div></div>' +
-      '<div class="metric" style="padding:8px 6px">' +
-        '<div class="l" style="font-size:9px">Итого</div>' +
+      '<div class="metric" style="padding:8px 6px"><div class="l" style="font-size:9px">Итого</div>' +
         '<div class="v total" style="font-size:12px">' + fmt(p.total_amount) + '</div></div>' +
     '</div>' +
     infoLine +
     (kind === 'available' && canW
-      ? '<button class="btn ok sm" style="width:100%;margin-top:10px" ' +
-        'onclick="requestPayout(' + JSON.stringify(p.id) + ')">' +
-        '💸 Вывести ' + fmt(p.total_amount) + '</button>'
+      ? '<button class="btn ok sm" style="width:100%;margin-top:10px" onclick="requestPayout(' + JSON.stringify(p.id) + ')">💸 Вывести ' + fmt(p.total_amount) + '</button>'
       : '') +
   '</div>';
 }
@@ -1249,14 +1202,18 @@ function statCardItem(p, kind){
 window.requestPayoutAll = function(){
   return once('payoutAll', async function(){
     if (IS_BLOCKED) return;
+    /* 💳 РЕКВИЗИТЫ */
+    var req = (ME && ME.requisites) || {};
+    if (!req.fio || !req.card || !req.bank){
+      var goFill = await ask('💳 Сначала заполните реквизиты для вывода\n\nЗаполнить сейчас?');
+      if (goFill) window.openRequisites();
+      return;
+    }
     var avail = PURCHASES.filter(function(p){ return canWithdraw(p); });
     if (!avail.length) return toast('Нет сумм для вывода', 'err');
-
     var total = avail.reduce(function(s,p){ return s + num(p.total_amount); }, 0);
-
     if (!await ask('Вывести все завершённые эры?\n\n💰 ' + fmt(total) +
-      '\n📦 ' + avail.length + ' заявок')) return;
-
+      '\n📦 ' + avail.length + ' заявок\n\n💳 Реквизиты:\n👤 ' + req.fio + '\n💳 ' + req.card + '\n🏦 ' + req.bank)) return;
     var u = tgUser() || {};
     var count = 0;
     for (var i = 0; i < avail.length; i++){
@@ -1269,12 +1226,12 @@ window.requestPayoutAll = function(){
           user_first_name: u.first_name || '',
           era_title: p.era_title, purchase_price: p.purchase_price,
           amount: p.total_amount, status: 'pending',
-          requested_at: new Date().toISOString()
+          requested_at: new Date().toISOString(),
+          requisites: { fio: req.fio, card: req.card, bank: req.bank }
         });
         count++;
       } catch(e){ console.warn('fail', p.id, e); }
     }
-
     toast('✅ Создано заявок: ' + count, 'ok', 4000);
     haptic();
     await reload();
@@ -1298,15 +1255,12 @@ window.buyEra = function(id){
     var era = ERAS.filter(function(e){ return String(e.id) === String(id); })[0];
     if (!era) return;
     if (!await ask('Создать заявку?\n\n' + era.title + ' — ' + fmt(era.price))) return;
-
     var u = tgUser() || {};
     var now = new Date().toISOString();
     var nextId = await getNextId('purchase');
-
     var meData = await fbGet('users/' + u.id).catch(function(){return null;});
     var referrerUid = meData && meData.referrer_uid ? String(meData.referrer_uid) : null;
     var refBonus = referrerUid ? Math.round(num(era.price) * REFERRAL_PERCENT / 100) : 0;
-
     await fbPost('purchases', {
       id: nextId, user_telegram_id: u.id,
       user_username: u.username || '', user_first_name: u.first_name || '',
@@ -1320,7 +1274,6 @@ window.buyEra = function(id){
       referral_bonus: refBonus,
       referral_status: referrerUid ? 'pending' : null
     });
-
     toast('✅ Заявка #' + nextId, 'ok', 4500);
     haptic();
     await reload();
@@ -1331,9 +1284,20 @@ window.buyEra = function(id){
 window.requestPayout = function(pid){
   return once('po' + pid, async function(){
     if (IS_BLOCKED) return;
-    if (!await ask('Подать заявку на вывод?')) return;
+    /* 💳 ПРОВЕРКА */
+    var req = (ME && ME.requisites) || {};
+    if (!req.fio || !req.card || !req.bank){
+      var goFill = await ask('💳 Сначала заполните реквизиты для вывода\n\nНужно: Ф.И.О., карта/телефон, банк.\n\nЗаполнить сейчас?');
+      if (goFill) window.openRequisites();
+      return;
+    }
     var p = PURCHASES.filter(function(x){ return String(x.id) === String(pid); })[0];
     if (!p) return;
+    var confirmText =
+      'Подать заявку на вывод?\n\n' +
+      '💰 Сумма: ' + fmt(p.total_amount) + '\n\n' +
+      '💳 Реквизиты:\n👤 ' + req.fio + '\n💳 ' + req.card + '\n🏦 ' + req.bank + '\n\nВсё верно?';
+    if (!await ask(confirmText)) return;
     var u = tgUser() || {};
     var nextId = await getNextId('payout');
     await fbPost('payouts', {
@@ -1342,7 +1306,8 @@ window.requestPayout = function(pid){
       user_first_name: u.first_name || '',
       era_title: p.era_title, purchase_price: p.purchase_price,
       amount: p.total_amount, status: 'pending',
-      requested_at: new Date().toISOString()
+      requested_at: new Date().toISOString(),
+      requisites: { fio: req.fio, card: req.card, bank: req.bank }
     });
     toast('✅ Заявка на вывод #' + nextId, 'ok', 4000);
     haptic();
@@ -1417,7 +1382,6 @@ window.openMyRefs = function(){
     if (!byRef[rid]) byRef[rid] = [];
     byRef[rid].push(p);
   });
-
   var items = ALL_REFERRALS.length ? ALL_REFERRALS.map(function(r){
     var rp = byRef[String(r.telegram_id)] || [];
     var sum=0, paid=0, pending=0, approved=0, frozen=0, pendingActive=0;
@@ -1450,9 +1414,7 @@ window.openMyRefs = function(){
       (rp.length ? '<div class="meta">🛒 Покупок: <b>' + rp.length + '</b> · на ' + fmt(sum) + '</div>' : '') +
       '<div class="stat-row">' + chips.join('') + '</div></div>';
   }).join('') : '<div class="empty"><div class="icon">👥</div><p>Пока никого нет</p></div>';
-
   var b = calcRefBalance();
-
   showModal(
     '<div class="modal-head"><h2>👥 Рефералы (' + ALL_REFERRALS.length + ')</h2>' +
       '<button class="close-x" onclick="closeModal()">✕</button></div>' +
@@ -1488,7 +1450,6 @@ function setApp(html){
 }
 function screenNoTg(){
   $('nav').classList.add('hidden');
-  /* Скрываем прелоадер если нет Telegram */
   var prel = document.getElementById('preloader');
   if (prel) prel.classList.add('hide');
   $('app').innerHTML =
@@ -1511,7 +1472,6 @@ function drawHome(){
     .reduce(function(s,p){ return s + num(p.total_amount); }, 0);
   var name = me.first_name || u.first_name || me.username || 'друг';
   var photo = me.photo_url || u.photo_url || '';
-
   setApp(
     '<div class="topbar"><div class="brand"><div class="logo">✨</div>Эры</div>' +
       '<div><button class="icon-btn" onclick="refresh()">🔄</button></div></div>' +
@@ -1535,6 +1495,7 @@ function drawHome(){
         '<div class="value sm ' + (available>0?'ok':'') + '">' + fmt(available) + '</div></div>' +
     '</div>' +
     renderFrozenHero() +
+    renderReqHero() +
     renderRefHero() +
     '<div class="section-title"><h2>Мои заявки</h2>' +
       (P.length ? '<button class="btn ghost xs" onclick="setTab(\'purchases\')">Все →</button>' : '') + '</div>' +
@@ -1546,20 +1507,11 @@ function drawHome(){
 }
 
 function eraCardPurchase(p){
-  var cls = dayCls(p);
-  var prog = progressOf(p);
-  var canW = canWithdraw(p);
-  var ms = msLeft(p);
-  var isEarly = !!p.early_closed;
-
+  var cls = dayCls(p), prog = progressOf(p), canW = canWithdraw(p);
+  var ms = msLeft(p), isEarly = !!p.early_closed;
   var timerHtml = (!isEarly && p.status === 'approved' && ms != null && ms > 0)
-    ? '<div class="timer-live ' + cls + '" data-expires="' + esc(p.expires_at) + '">' + fmtCountdown(ms) + '</div>'
-    : '';
-
-  var badgeExtra = isEarly
-    ? '<span class="badge early" style="margin-left:6px">🔌 Досрочно</span>'
-    : '';
-
+    ? '<div class="timer-live ' + cls + '" data-expires="' + esc(p.expires_at) + '">' + fmtCountdown(ms) + '</div>' : '';
+  var badgeExtra = isEarly ? '<span class="badge early" style="margin-left:6px">🔌 Досрочно</span>' : '';
   return '<div class="era-card" data-pid="' + esc(p.id) + '">' +
     '<div class="head"><div class="order-num">📩 Заявка #' + esc(p.id) + '</div>' +
       '<div class="row">' +
@@ -1568,8 +1520,7 @@ function eraCardPurchase(p){
             '<div class="tier">' + num(p.duration_days) + ' дней</div></div></div>' +
         '<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end">' +
           '<span class="badge ' + esc(p.status) + '">' + esc(statusLabel(p.status)) + '</span>' + badgeExtra +
-        '</div>' +
-      '</div></div>' +
+        '</div></div></div>' +
     '<div class="body">' +
       '<div class="metrics">' +
         '<div class="metric"><div class="l">Вложено</div><div class="v">' + fmt(p.purchase_price) + '</div></div>' +
@@ -1587,8 +1538,7 @@ function eraCardPurchase(p){
         (!isEarly && p.expires_at ? '<br>⏰ <b>Истекает:</b> ' + fmtDT(p.expires_at) : '') +
         (isEarly && p.early_closed_at
           ? '<br>🔌 <b>Отключена:</b> ' + fmtDT(p.early_closed_at) +
-            '<br><span style="color:var(--warn)">Сумма начислена досрочно</span>'
-          : '') +
+            '<br><span style="color:var(--warn)">Сумма начислена досрочно</span>' : '') +
       '</div>' +
     '</div>' +
     (canW ? '<div class="actions"><button class="btn ok" onclick="requestPayout(' +
@@ -1627,8 +1577,7 @@ function fillShop(){
   if (shopFilter === 'middle') list = list.filter(function(e){ return e.price >= 5000 && e.price < 15000; });
   if (shopFilter === 'premium') list = list.filter(function(e){ return e.price >= 15000; });
   box.innerHTML = list.length ? list.map(eraCardShop).join('')
-    : '<div class="card empty"><div class="icon">📦</div><h3>' +
-      (ERAS.length ? 'Ничего не найдено' : 'Товаров нет') + '</h3></div>';
+    : '<div class="card empty"><div class="icon">📦</div><h3>' + (ERAS.length ? 'Ничего не найдено' : 'Товаров нет') + '</h3></div>';
 }
 
 function eraCardShop(e){
@@ -1685,7 +1634,6 @@ function drawProfile(){
       '<div class="left"><div class="emo">' + emo + '</div><div>' + label + '</div></div>' +
       '<div style="color:var(--muted)">→</div></div>';
   };
-
   setApp(
     '<div class="topbar"><div class="brand"><div class="logo">👤</div>Профиль</div></div>' +
     '<div class="hero center" style="padding:24px 20px;text-align:center">' +
@@ -1694,9 +1642,11 @@ function drawProfile(){
       '<h2 style="margin-bottom:4px">' + esc(name) + '</h2>' +
       (me.username ? '<div class="muted">@' + esc(me.username) + '</div>' : '') + '</div>' +
     renderFrozenHero() +
+    renderReqHero() +
     renderRefHero() +
     '<div class="section-title"><h2>Мой аккаунт</h2></div>' +
     '<div class="card" style="padding:0 16px">' +
+      item('💳', 'Реквизиты для вывода', 'openRequisites()') +
       item('👥', 'Мои рефералы', 'openMyRefs()') +
       item('💬', 'Связь с админом', 'openContact()') + '</div>' +
     '<div class="section-title"><h2>Данные</h2></div>' +
@@ -1723,10 +1673,7 @@ async function render(force){
   RENDER_LOCK = true;
   try {
     if (!tgUser()){ screenNoTg(); return; }
-
     if (IS_BLOCKED) return;
-
-    /* 🚫 ЖИВАЯ ПРОВЕРКА БЛОКИРОВКИ */
     if (USER_UID){
       try {
         var checkU = await fbGet('users/' + USER_UID);
@@ -1734,27 +1681,22 @@ async function render(force){
           screenBlocked(checkU.block_reason);
           return;
         }
-      } catch(e){ /* игнорируем */ }
+      } catch(e){}
     }
-
     if (!ME){
       $('app').innerHTML = skeleton();
       $('nav').classList.remove('hidden');
       ME = await loadMe();
-      if (!ME) return;  /* заблокирован или нет tgUser */
+      if (!ME) return;
     }
     if (!HAVE.eras || force) await reload();
     var y = window.scrollY;
     (SCREENS[CURRENT_TAB] || drawHome)();
     window.scrollTo(0, y);
-
-    /* ✅ УСПЕШНО ОТРЕНДЕРИЛИ — СКРЫВАЕМ ПРЕЛОАДЕР */
     PRELOADER.finish();
-
   } catch(e){
     console.error(e);
     if (IS_BLOCKED) return;
-    /* ❌ ОШИБКА — оставляем прелоадер + красная плашка */
     PRELOADER.fail();
     $('app').innerHTML = '<div class="topbar"><div class="brand"><div class="logo">⚠️</div>Ошибка</div></div>' +
       '<div class="card"><p style="margin-bottom:12px">' + esc(e.message) + '</p>' +

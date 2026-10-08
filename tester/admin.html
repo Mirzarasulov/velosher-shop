@@ -1203,12 +1203,12 @@ function openBlockUser(uid){
           '<div style="font-weight:700;color:' + (isBlocked ? 'var(--ok)' : 'var(--err)') + ';margin-bottom:8px">' +
             (isBlocked ? '🔓 Разблокировка' : '🚫 Блокировка') +
           '</div>' +
-          '<div class="muted" style="line-height:1.6">' +
-            (isBlocked
-              ? 'Юзер <b>' + esc(userName(u)) + '</b> снова сможет пользоваться ботом и приложением.'
-              : 'Юзер <b>' + esc(userName(u)) + '</b> не сможет создавать заявки и подавать на вывод.<br>Все существующие заявки остаются в силе.' +
-            ) +
-          '</div>' +
+         '<div class="muted" style="line-height:1.6">' +
+  (isBlocked
+    ? 'Юзер <b>' + esc(userName(u)) + '</b> снова сможет пользоваться ботом и приложением.'
+    : 'Юзер <b>' + esc(userName(u)) + '</b> не сможет создавать заявки и подавать на вывод.<br>Все существующие заявки остаются в силе.'
+  ) +
+'</div>' +
         '</div>' +
 
         '<div class="frow">' +

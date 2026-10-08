@@ -165,6 +165,33 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .dleft.err{background:rgba(255,92,92,.15);color:var(--err)}
 .dleft.muted{background:rgba(139,148,158,.12);color:var(--muted)}
 
+/* 💳 Реквизиты в админке */
+.req-block{
+  background:linear-gradient(135deg,#12351f 0%,#0f2a1a 100%);
+  border-radius:10px;padding:14px;margin-top:12px;
+  border-left:3px solid var(--ok);
+}
+.req-block.missing{
+  background:rgba(245,181,71,.08);
+  border-left-color:var(--warn);
+}
+.req-block .req-lbl{
+  font-size:10.5px;text-transform:uppercase;color:var(--muted);
+  font-weight:700;margin-bottom:10px;
+}
+.req-block .req-line{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;font-size:13.5px;gap:10px;flex-wrap:wrap;
+}
+.req-block .req-line+.req-line{border-top:1px solid rgba(255,255,255,.06)}
+.req-block .req-val{
+  font-weight:700;color:#a8f0cc;
+}
+.req-block .req-val code{
+  background:rgba(0,0,0,.35);padding:4px 8px;border-radius:6px;
+  font-size:13.5px;color:#a8f0cc;
+}
+
 .catalog-hero{
   position:relative;border-radius:20px;overflow:hidden;padding:24px 16px 16px;
   background:
@@ -396,6 +423,16 @@ function fmtLeft(ms){
   if (m > 0) return m+'м '+sec+'с';
   return sec+'с';
 }
+/* 🔍 Фильтр по поиску (имя, username, ID) */
+function userMatches(u, q){
+  if (!q) return true;
+  if (!u) return false;
+  q = q.toLowerCase().trim();
+  return String(u.first_name||'').toLowerCase().indexOf(q) >= 0 ||
+         String(u.last_name||'').toLowerCase().indexOf(q) >= 0 ||
+         String(u.username||'').toLowerCase().indexOf(q) >= 0 ||
+         String(u.telegram_id||'').indexOf(q) >= 0;
+}
 function calcUserRefBalance(uid){
   var accrued=0, paid=0, pending=0, frozen=0, pendingActive=0;
   var lastPaidAt=null, lastPaidAmount=0;
@@ -431,6 +468,61 @@ function calcUserRefBalance(uid){
     pendingActive: pendingActive,
     owed: Math.max(0, accrued - paid - frozen),
     lastPaidAt: lastPaidAt, lastPaidAmount: lastPaidAmount };
+}
+
+/* 💳 Реквизиты */
+function renderReqBlock(req, opts){
+  opts = opts || {};
+  var hasData = req && (req.fio || req.card || req.bank);
+  if (!hasData){
+    return '<div class="req-block missing">' +
+      '<div class="req-lbl" style="color:var(--warn)">💳 Реквизиты</div>' +
+      '<div class="req-line" style="justify-content:center">' +
+        '<span class="muted">⚠️ Не заполнены юзером</span>' +
+      '</div>' +
+    '</div>';
+  }
+  var copyBtn = opts.withCopy !== false
+    ? '<div style="margin-top:10px"><button class="btn ok sm" onclick="copyText(\'' +
+      esc(req.card || '').replace(/'/g, "\\'") + '\')">📋 Копировать ' +
+      (opts.copyLabel || 'карту') + '</button></div>'
+    : '';
+  return '<div class="req-block">' +
+    '<div class="req-lbl" style="color:var(--ok)">💳 Реквизиты для перевода</div>' +
+    '<div class="req-line">' +
+      '<div>👤 <b>Ф.И.О.</b></div>' +
+      '<div class="req-val">' + esc(req.fio || '—') + '</div>' +
+    '</div>' +
+    '<div class="req-line">' +
+      '<div>💳 <b>Карта/Телефон</b></div>' +
+      '<div class="req-val"><code>' + esc(req.card || '—') + '</code></div>' +
+    '</div>' +
+    '<div class="req-line">' +
+      '<div>🏦 <b>Банк</b></div>' +
+      '<div class="req-val">' + esc(req.bank || '—') + '</div>' +
+    '</div>' +
+    copyBtn +
+  '</div>';
+}
+
+/* 📋 Копирование текста */
+window.copyText = function(text){
+  if (!text) return;
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){
+      toast('📋 Скопировано: ' + text, 'ok', 2500);
+    }).catch(function(){ fallbackCopyText(text); });
+  } else {
+    fallbackCopyText(text);
+  }
+};
+function fallbackCopyText(text){
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); toast('📋 Скопировано', 'ok', 2000); }
+  catch(e){ toast('❌ Не удалось', 'err'); }
+  ta.remove();
 }
 
 function renderLogin(){
@@ -583,7 +675,9 @@ async function renderPurchases(){
 
     var q = SEARCH.toLowerCase().trim();
     var filtered = q ? DATA.purchases.filter(function(p){
-      return String(p.user_first_name||'').toLowerCase().indexOf(q) >= 0 ||
+      var buyer = findUser(DATA.users, p.user_telegram_id);
+      return userMatches(buyer, q) ||
+        String(p.user_first_name||'').toLowerCase().indexOf(q) >= 0 ||
         String(p.user_username||'').toLowerCase().indexOf(q) >= 0 ||
         String(p.user_telegram_id||'').indexOf(q) >= 0 ||
         String(p.era_title||'').toLowerCase().indexOf(q) >= 0 ||
@@ -1048,7 +1142,9 @@ async function admContact(uid){
   } catch(e){ toast(e.message, 'err'); }
 }
 
+/* ═══ ВЫПЛАТЫ ═══ */
 var payoutFilter = 'pending';
+var payoutSearch = '';
 async function renderPayouts(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -1058,18 +1154,35 @@ async function renderPayouts(){
     ]);
     DATA.payouts = res[0]; DATA.users = res[1];
     DATA.payouts.sort(function(a,b){ return Number(b.id||0) - Number(a.id||0); });
+
+    var q = payoutSearch.toLowerCase().trim();
+    var filtered = q ? DATA.payouts.filter(function(po){
+      var u = findUser(DATA.users, po.user_telegram_id);
+      return userMatches(u, q) ||
+        String(po.user_first_name||'').toLowerCase().indexOf(q) >= 0 ||
+        String(po.user_username||'').toLowerCase().indexOf(q) >= 0 ||
+        String(po.user_telegram_id||'').indexOf(q) >= 0 ||
+        String(po.era_title||'').toLowerCase().indexOf(q) >= 0 ||
+        String(po.purchase_id||'').indexOf(q) >= 0 ||
+        String(po.id||'').indexOf(q) >= 0;
+    }) : DATA.payouts;
+
     var counts = {
-      pending: DATA.payouts.filter(function(p){ return p.status === 'pending'; }).length,
-      paid: DATA.payouts.filter(function(p){ return p.status === 'paid'; }).length,
-      rejected: DATA.payouts.filter(function(p){ return p.status === 'rejected'; }).length,
-      all: DATA.payouts.length
+      pending: filtered.filter(function(p){ return p.status === 'pending'; }).length,
+      paid: filtered.filter(function(p){ return p.status === 'paid'; }).length,
+      rejected: filtered.filter(function(p){ return p.status === 'rejected'; }).length,
+      all: filtered.length
     };
-    var shown = payoutFilter === 'all' ? DATA.payouts
-      : DATA.payouts.filter(function(p){ return p.status === payoutFilter; });
+    var shown = payoutFilter === 'all' ? filtered
+      : filtered.filter(function(p){ return p.status === payoutFilter; });
+
     layout(
+      '<div class="search"><input class="input" placeholder="Поиск: имя, @ник, ID, эра, номер…" ' +
+        'value="' + esc(payoutSearch) + '" oninput="payoutSearch=this.value;renderPayouts()"></div>' +
       '<div class="tabs">' +
         '<button class="tab ' + (payoutFilter==='pending'?'active':'') + '" onclick="payoutFilter=\'pending\';renderPayouts()">⏳ Ожидают (' + counts.pending + ')</button>' +
         '<button class="tab ' + (payoutFilter==='paid'?'active':'') + '" onclick="payoutFilter=\'paid\';renderPayouts()">✅ Выплачено (' + counts.paid + ')</button>' +
+        '<button class="tab ' + (payoutFilter==='rejected'?'active':'') + '" onclick="payoutFilter=\'rejected\';renderPayouts()">❌ Отклонено (' + counts.rejected + ')</button>' +
         '<button class="tab ' + (payoutFilter==='all'?'active':'') + '" onclick="payoutFilter=\'all\';renderPayouts()">📋 Все (' + counts.all + ')</button>' +
       '</div>' +
       (shown.length ? shown.map(payoutCard).join('')
@@ -1081,6 +1194,14 @@ async function renderPayouts(){
 function payoutCard(po){
   var k = po._key;
   var isPending = po.status === 'pending';
+
+  /* 💳 Реквизиты из заявки или из профиля юзера */
+  var req = po.requisites || {};
+  if (!req.fio || !req.card || !req.bank){
+    var u = findUser(DATA.users, po.user_telegram_id);
+    if (u && u.requisites) req = u.requisites;
+  }
+
   return '<div class="card">' +
     '<div class="row" style="margin-bottom:12px">' +
       '<b style="color:#4f8cff;font-size:16px">💸 Выплата #' + esc(po.id) + '</b>' +
@@ -1090,8 +1211,12 @@ function payoutCard(po){
       '<div class="cell"><b>🔗</b><span>@' + esc(po.user_username||'—') + '</span></div>' +
       '<div class="cell"><b>🆔</b><span>' + esc(po.user_telegram_id||'—') + '</span></div>' +
       '<div class="cell"><b>💰 Сумма</b><span class="ok">' + fmt(po.amount) + '</span></div>' +
+      '<div class="cell"><b>📩 От заявки</b><span>#' + esc(po.purchase_id||'—') + '</span></div>' +
+      '<div class="cell"><b>💳 Эра</b><span>' + esc(po.era_title||'—') + '</span></div>' +
     '</div>' +
-    '<div class="muted" style="margin:12px 0">🕐 ' + fmtDate(po.requested_at) + '</div>' +
+    renderReqBlock(req, { copyLabel: 'карту' }) +
+    '<div class="muted" style="margin:12px 0">🕐 ' + fmtDate(po.requested_at) +
+      (po.paid_at ? ' · ✅ ' + fmtDate(po.paid_at) : '') + '</div>' +
     '<div class="flex">' +
       (isPending ? '<button class="btn ok" onclick="admPaid(\'' + esc(k) + '\')">✅ Выплачено</button>' : '') +
       (isPending ? '<button class="btn danger" onclick="admPayoutReject(\'' + esc(k) + '\')">❌ Отклонить</button>' : '') +
@@ -1119,7 +1244,9 @@ async function admPayoutReject(k){
   });
 }
 
+/* ═══ РЕФ ВЫПЛАТЫ ═══ */
 var refPayoutFilter = 'pending';
+var refPayoutSearch = '';
 async function renderRefPayouts(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -1130,16 +1257,30 @@ async function renderRefPayouts(){
     ]);
     DATA.refPayouts = res[0]; DATA.users = res[1]; DATA.purchases = res[2];
     DATA.refPayouts.sort(function(a,b){ return Number(b.id||0) - Number(a.id||0); });
+
+    var q = refPayoutSearch.toLowerCase().trim();
+    var filtered = q ? DATA.refPayouts.filter(function(r){
+      var u = findUser(DATA.users, r.user_telegram_id);
+      return userMatches(u, q) ||
+        String(r.user_first_name||'').toLowerCase().indexOf(q) >= 0 ||
+        String(r.user_username||'').toLowerCase().indexOf(q) >= 0 ||
+        String(r.user_telegram_id||'').indexOf(q) >= 0 ||
+        String(r.id||'').indexOf(q) >= 0;
+    }) : DATA.refPayouts;
+
     var counts = {
-      pending: DATA.refPayouts.filter(function(r){ return r.status === 'pending'; }).length,
-      paid: DATA.refPayouts.filter(function(r){ return r.status === 'paid'; }).length,
-      rejected: DATA.refPayouts.filter(function(r){ return r.status === 'rejected'; }).length,
-      all: DATA.refPayouts.length
+      pending: filtered.filter(function(r){ return r.status === 'pending'; }).length,
+      paid: filtered.filter(function(r){ return r.status === 'paid'; }).length,
+      rejected: filtered.filter(function(r){ return r.status === 'rejected'; }).length,
+      all: filtered.length
     };
-    var shown = refPayoutFilter === 'all' ? DATA.refPayouts
-      : DATA.refPayouts.filter(function(r){ return r.status === refPayoutFilter; });
+    var shown = refPayoutFilter === 'all' ? filtered
+      : filtered.filter(function(r){ return r.status === refPayoutFilter; });
+
     layout(
       '<h2 style="font-size:17px;margin-bottom:14px">💰 Заявки на вывод реф. бонусов</h2>' +
+      '<div class="search"><input class="input" placeholder="Поиск: имя, @ник, ID, номер заявки…" ' +
+        'value="' + esc(refPayoutSearch) + '" oninput="refPayoutSearch=this.value;renderRefPayouts()"></div>' +
       '<div class="tabs">' +
         '<button class="tab ' + (refPayoutFilter==='pending'?'active':'') + '" onclick="refPayoutFilter=\'pending\';renderRefPayouts()">⏳ Ждут (' + counts.pending + ')</button>' +
         '<button class="tab ' + (refPayoutFilter==='paid'?'active':'') + '" onclick="refPayoutFilter=\'paid\';renderRefPayouts()">✅ Выплачено (' + counts.paid + ')</button>' +
@@ -1157,6 +1298,12 @@ function refRequestCard(r){
   var u = findUser(DATA.users, r.user_telegram_id);
   var isPending = r.status === 'pending';
   var bal = calcUserRefBalance(r.user_telegram_id);
+
+  var req = r.requisites || {};
+  if (!req.fio || !req.card || !req.bank){
+    if (u && u.requisites) req = u.requisites;
+  }
+
   return '<div class="card">' +
     '<div class="row" style="margin-bottom:12px">' +
       '<b style="color:#4f8cff;font-size:16px">💰 Заявка #' + esc(r.id) + '</b>' +
@@ -1169,6 +1316,7 @@ function refRequestCard(r){
       '<div class="cell"><b>💎 К выводу</b><span class="warn">' + fmt(bal.owed) + '</span></div>' +
       '<div class="cell"><b>📈 Начислено</b><span class="ok">' + fmt(bal.accrued) + '</span></div>' +
     '</div>' +
+    renderReqBlock(req, { copyLabel: 'карту' }) +
     '<div class="muted" style="margin:12px 0">🕐 ' + fmtDate(r.requested_at) + '</div>' +
     '<div class="flex">' +
       (isPending ? '<button class="btn ok" onclick="refPayoutPaid(\'' + esc(k) + '\')">✅ Выплачено</button>' : '') +
@@ -1359,6 +1507,7 @@ async function doToggleBlock(uid, block){
   });
 }
 
+/* ═══ ЮЗЕРЫ ═══ */
 async function renderUsers(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -1369,11 +1518,7 @@ async function renderUsers(){
     DATA.users = res[0]; DATA.purchases = res[1];
     DATA.users.sort(function(a,b){ return new Date(b.registered_at||0) - new Date(a.registered_at||0); });
     var q = SEARCH.toLowerCase().trim();
-    var filtered = q ? DATA.users.filter(function(u){
-      return String(u.first_name||'').toLowerCase().indexOf(q) >= 0 ||
-        String(u.username||'').toLowerCase().indexOf(q) >= 0 ||
-        String(u.telegram_id||'').indexOf(q) >= 0;
-    }) : DATA.users;
+    var filtered = q ? DATA.users.filter(function(u){ return userMatches(u, q); }) : DATA.users;
     layout(
       '<div class="search"><input class="input" placeholder="Поиск: имя, @username, ID…" ' +
         'value="' + esc(SEARCH) + '" oninput="SEARCH=this.value;renderUsers()"></div>' +
@@ -1397,6 +1542,7 @@ function userCard(u){
   });
   var bal = calcUserRefBalance(u.telegram_id);
   var isBlocked = !!u.blocked;
+  var req = u.requisites || {};
 
   var refBlock = (bal.accrued > 0 || bal.pending > 0 || bal.pendingActive > 0)
     ? '<div class="ref" style="border-left-color:var(--ok)">' +
@@ -1442,13 +1588,16 @@ function userCard(u){
           : '<span class="badge created">⭐ прямой</span>') +
         (bal.pendingActive > 0
           ? '<span class="badge pending_active">❄️ ' + fmt(bal.pendingActive) + '</span>' : '') +
+        (req.fio ? '<span class="badge approved">💳 реквизиты</span>' : '') +
       '</div></div>' +
     '<div class="grid">' +
       '<div class="cell"><b>Вложено</b><span class="accent">' + fmt(invested) + '</span></div>' +
       '<div class="cell"><b>Получено</b><span class="ok">' + fmt(earned) + '</span></div>' +
       '<div class="cell"><b>Заявок</b><span>' + myP.length + '</span></div>' +
       '<div class="cell"><b>Пригласил</b><span style="color:var(--purple)">' + refs.length + '</span></div>' +
-    '</div>' + refBlock + blockBanner +
+    '</div>' +
+    (req.fio ? renderReqBlock(req, { copyLabel: 'карту' }) : '') +
+    refBlock + blockBanner +
     '<div class="row" style="margin-top:12px">' +
       '<div class="muted">📅 ' + fmtDate(u.registered_at) + '</div>' +
       '<div class="flex">' +
@@ -1460,6 +1609,8 @@ function userCard(u){
       '</div></div></div>';
 }
 
+/* ═══ ТОВАРЫ ═══ */
+var eraSearch = '';
 async function renderEras(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -1467,6 +1618,14 @@ async function renderEras(){
     var hasMismatch = DATA.eras.some(function(e){
       return String(e._key) !== String(e.id);
     });
+    var q = eraSearch.toLowerCase().trim();
+    var list = q ? DATA.eras.filter(function(e){
+      return String(e.title||'').toLowerCase().indexOf(q) >= 0 ||
+        String(e.description||'').toLowerCase().indexOf(q) >= 0 ||
+        String(e.id||'').indexOf(q) >= 0 ||
+        String(e.price||'').indexOf(q) >= 0;
+    }) : DATA.eras;
+
     layout(
       '<div class="row" style="margin-bottom:14px">' +
         '<h2 style="font-size:17px">🧩 Товары (' + DATA.eras.length + ')</h2>' +
@@ -1475,6 +1634,8 @@ async function renderEras(){
           '<button class="btn" onclick="createEra()">➕ Создать</button>' +
         '</div>' +
       '</div>' +
+      '<div class="search"><input class="input" placeholder="Поиск: название, ID, цена…" ' +
+        'value="' + esc(eraSearch) + '" oninput="eraSearch=this.value;renderEras()"></div>' +
       (hasMismatch
         ? '<div class="card" style="background:rgba(245,181,71,.08);border-color:var(--warn);margin-bottom:14px">' +
             '<div style="font-weight:700;color:var(--warn);margin-bottom:6px">⚠️ Несовпадения ключей</div>' +
@@ -1482,9 +1643,10 @@ async function renderEras(){
             '<button class="btn warn sm" onclick="fixEraKeys()">🔧 Починить ключи</button>' +
           '</div>'
         : '') +
-      (DATA.eras.length
-        ? DATA.eras.map(eraCard).join('')
-        : '<div class="empty"><div class="ic">📦</div><p>Нет товаров. Создайте или загрузите 8 эр.</p></div>'));
+      (list.length
+        ? list.map(eraCard).join('')
+        : '<div class="empty"><div class="ic">📦</div><p>' +
+          (DATA.eras.length ? 'Ничего не найдено' : 'Нет товаров. Создайте или загрузите 8 эр.') + '</p></div>'));
   } catch(e){
     layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
   }
@@ -1744,6 +1906,7 @@ async function fixEraKeys(){
   });
 }
 
+/* ═══ КАТАЛОГ ═══ */
 async function renderCatalog(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -1800,6 +1963,8 @@ async function renderCatalog(){
   }
 }
 
+/* ═══ РЕФЕРАЛЫ ═══ */
+var refsSearch = '';
 async function renderRefs(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -1811,6 +1976,18 @@ async function renderRefs(){
     var refs = DATA.users.filter(function(u){ return u.referrer_uid; });
     var inviterIds = {}; refs.forEach(function(r){ inviterIds[String(r.referrer_uid)] = 1; });
     var inviters = DATA.users.filter(function(u){ return inviterIds[String(u.telegram_id)]; });
+
+    var q = refsSearch.toLowerCase().trim();
+    if (q){
+      inviters = inviters.filter(function(inv){
+        if (userMatches(inv, q)) return true;
+        var rl = DATA.users.filter(function(x){
+          return String(x.referrer_uid || '') === String(inv.telegram_id);
+        });
+        return rl.some(function(r){ return userMatches(r, q); });
+      });
+    }
+
     var stat = {};
     inviters.forEach(function(inv){
       stat[inv.telegram_id] = calcUserRefBalance(inv.telegram_id);
@@ -1825,6 +2002,8 @@ async function renderRefs(){
     });
     layout(
       '<h2 style="font-size:17px;margin-bottom:14px">🌳 Реферальная система</h2>' +
+      '<div class="search"><input class="input" placeholder="Поиск: имя реферера или реферала, @ник, ID…" ' +
+        'value="' + esc(refsSearch) + '" oninput="refsSearch=this.value;renderRefs()"></div>' +
       '<div class="stats" style="margin-bottom:16px">' +
         '<div class="stat"><div class="ic">🌳</div><div class="l">Рефералов</div><div class="v purple">' + refs.length + '</div></div>' +
         '<div class="stat"><div class="ic">🎁</div><div class="l">Пригласивших</div><div class="v ok">' + inviters.length + '</div></div>' +
@@ -1839,6 +2018,9 @@ async function renderRefs(){
             var rl = DATA.users.filter(function(x){
               return String(x.referrer_uid || '') === String(inv.telegram_id);
             });
+            if (q && !userMatches(inv, q)){
+              rl = rl.filter(function(r){ return userMatches(r, q); });
+            }
             var s = stat[inv.telegram_id] || {};
             return '<div class="card">' +
               '<div class="row" style="margin-bottom:12px">' +
@@ -1865,7 +2047,8 @@ async function renderRefs(){
               }).join('')) +
             '</div>';
           }).join('')
-        : '<div class="empty"><div class="ic">🌳</div><p>Пока нет рефералов</p></div>'));
+        : '<div class="empty"><div class="ic">🌳</div><p>' +
+          (refsSearch ? 'Ничего не найдено' : 'Пока нет рефералов') + '</p></div>'));
   } catch(e){
     layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
   }

@@ -78,6 +78,7 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .btn.ghost{background:transparent;border:1px solid var(--border2);color:#c4ccd6}
 .btn.danger{background:var(--err)}
 .btn.ok{background:var(--ok);color:#04241a}
+.btn.warn{background:var(--warn);color:#2a1a00}
 .btn.purple{background:var(--purple);color:#12002e}
 .btn.sm{padding:7px 12px;font-size:12px;min-height:34px}
 .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;
@@ -87,6 +88,7 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .badge.approved,.badge.completed,.badge.paid{background:rgba(57,217,138,.15);color:var(--ok)}
 .badge.cancelled,.badge.rejected{background:rgba(255,92,92,.15);color:var(--err)}
 .badge.purple{background:rgba(167,139,250,.15);color:var(--purple)}
+.badge.early{background:rgba(245,181,71,.2);color:var(--warn);margin-left:6px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
   gap:8px;margin:10px 0}
 .cell{background:var(--card2);border-radius:9px;padding:10px 12px}
@@ -185,7 +187,7 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 var FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app';
 var ADMIN_PASSWORD = 'admin123';
 var BOT_TOKEN = '8880107122:AAFa0r2WsfEeDmKIqRZI_YvvwRdXLz7y2kQ';
-var ADMIN_IDS = ['6040186314', '6972338698'];
+var ADMIN_IDS = ['6040186314', '6972338698', '6544017826'];
 var REF_PERCENT = 5;
 var TZ_TASHKENT = 'Asia/Tashkent';
 
@@ -509,6 +511,7 @@ function orderCard(p){
   var canCancel = canConfirm;
   var isActive = p.status === 'approved';
   var isDone = ['completed','paid'].indexOf(p.status) >= 0;
+  var isEarly = !!p.early_closed;
 
   var fast = '⏳';
   if (isActive && p.expires_at){
@@ -525,7 +528,8 @@ function orderCard(p){
     var expMs = p.expires_at ? new Date(p.expires_at).getTime() : null;
     var remain = expMs ? expMs - Date.now() : null;
     var cls = 'ok', txt = '—';
-    if (remain != null){
+    if (isEarly){ cls = 'warn'; txt = 'Отключено админом'; }
+    else if (remain != null){
       if (remain <= 0){ cls = 'muted'; txt = 'Завершено'; }
       else {
         var hh = remain/3600000;
@@ -542,7 +546,11 @@ function orderCard(p){
         '<div class="dcell"><b>⏰ Истекает</b><span>' + fmtDate(p.expires_at) + '</span></div>' +
         '<div class="dcell"><b>📅 Длит.</b><span>' + Number(p.duration_days||p.days||0) + ' дн.</span></div>' +
       '</div>' +
-      '<div class="dleft ' + cls + '">⏳ Осталось: <b>' + txt + '</b></div></div>';
+      '<div class="dleft ' + cls + '">' +
+        (isEarly
+          ? '🔌 <b>Отключено досрочно</b> · ' + fmtDate(p.early_closed_at)
+          : '⏳ Осталось: <b>' + txt + '</b>') +
+      '</div></div>';
   }
 
   var refBlock = '';
@@ -584,7 +592,10 @@ function orderCard(p){
 
   return '<div class="card">' +
     '<div class="row" style="margin-bottom:12px">' +
-      '<b style="color:#4f8cff;font-size:16px">📩 Заявка #' + esc(p.id) + ' ' + fast + '</b>' +
+      '<div>' +
+        '<b style="color:#4f8cff;font-size:16px">📩 Заявка #' + esc(p.id) + ' ' + fast + '</b>' +
+        (isEarly ? '<span class="badge early">🔌 Досрочно</span>' : '') +
+      '</div>' +
       '<span class="badge ' + esc(p.status) + '">' + statusLabel(p.status) + '</span></div>' +
     '<div class="grid">' +
       '<div class="cell"><b>👤 Участник</b><span>' + esc(p.user_first_name||'—') + '</span></div>' +
@@ -605,6 +616,7 @@ function orderCard(p){
     '<div class="flex">' +
       (canConfirm ? '<button class="btn ok" onclick="admConfirm(\'' + esc(k) + '\')">✅ Подтвердить</button>' : '') +
       (canCancel ? '<button class="btn danger" onclick="admCancel(\'' + esc(k) + '\')">❌ Отменить</button>' : '') +
+      (isActive ? '<button class="btn warn" onclick="openEarlyClose(\'' + esc(k) + '\')">🔌 Отключить эру</button>' : '') +
       '<button class="btn ghost" onclick="admContact(\'' + esc(p.user_telegram_id||'') + '\')">💬 Написать</button>' +
     '</div></div>';
 }
@@ -653,6 +665,81 @@ async function admCancel(k){
     await fbPatch('purchases/' + k, patch);
     pushLog('❌ Отменил заявку', '#' + (p ? p.id : k));
     toast('❌ Отменено');
+    renderPurchases();
+  } catch(e){ toast(e.message, 'err'); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// 🔌 ДОСРОЧНОЕ ОТКЛЮЧЕНИЕ ЭРЫ
+// ═══════════════════════════════════════════════════════════
+function openEarlyClose(key){
+  var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
+  if (!p) return;
+  var total = fmt(p.total_amount);
+  var era = p.era_title || '—';
+
+  $('modal-root').innerHTML =
+    '<div class="mbg" onclick="if(event.target===this)closeModal()"><div class="modal">' +
+      '<div class="mh"><h2>🔌 Отключить эру</h2>' +
+        '<button class="x" onclick="closeModal()">✕</button></div>' +
+      '<div class="mb">' +
+
+        '<div class="card" style="background:rgba(255,92,92,.08);border-color:var(--err);margin-bottom:16px">' +
+          '<div style="font-weight:700;color:var(--err);margin-bottom:8px">⚠️ Внимание</div>' +
+          '<div class="muted" style="line-height:1.6">' +
+            'Эра <b>' + esc(era) + '</b> будет <b>досрочно завершена</b>.<br>' +
+            'Юзеру <b>сразу начислится ' + total + '</b> к выводу.<br>' +
+            'Отменить это действие нельзя.' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="frow">' +
+          '<label>Введите пароль для подтверждения</label>' +
+          '<input class="input" id="ec_pass" type="password" placeholder="Пароль админа" autofocus ' +
+            'onkeydown="if(event.key===\'Enter\')doEarlyClose(\'' + esc(key) + '\')">' +
+        '</div>' +
+
+        '<div class="muted" style="font-size:11px;text-align:center">Подсказка: admin123</div>' +
+
+      '</div>' +
+      '<div class="mf">' +
+        '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
+        '<button class="btn danger" onclick="doEarlyClose(\'' + esc(key) + '\')">🔌 Отключить и начислить</button>' +
+      '</div>' +
+    '</div></div>';
+}
+
+async function doEarlyClose(key){
+  var passEl = $('ec_pass');
+  if (!passEl) return;
+  var pass = passEl.value;
+  if (pass !== ADMIN_PASSWORD){
+    toast('❌ Неверный пароль', 'err');
+    passEl.value = '';
+    passEl.focus();
+    return;
+  }
+
+  var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
+  if (!p) return;
+
+  var now = new Date().toISOString();
+  var patch = {
+    status: 'completed',
+    completed_at: now,
+    status_changed_at: now,
+    completed_notified: 1,
+    early_closed: 1,
+    early_closed_at: now,
+    early_closed_by: ADMIN_IDS[0],
+    notified_3d: 1, notified_1d: 1, notified_3h: 1
+  };
+
+  try {
+    await fbPatch('purchases/' + key, patch);
+    pushLog('🔌 Отключил эру досрочно', '#' + p.id + ' · ' + (p.era_title||''));
+    toast('✅ Эра отключена, юзеру начислено ' + fmt(p.total_amount), 'ok', 5000);
+    closeModal();
     renderPurchases();
   } catch(e){ toast(e.message, 'err'); }
 }
@@ -1164,6 +1251,8 @@ window.admPaid = admPaid;
 window.admPayoutReject = admPayoutReject;
 window.refPayoutPaid = refPayoutPaid;
 window.refPayoutReject = refPayoutReject;
+window.openEarlyClose = openEarlyClose;
+window.doEarlyClose = doEarlyClose;
 window.createEra = createEra;
 window.editEra = editEra;
 window.saveEra = saveEra;

@@ -13,8 +13,8 @@ ADMIN_ID = ADMIN_IDS[0]
 
 CHANNEL_ID = -1004305451466
 FIREBASE = "https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app"
-WEB_URL = "https://mirzarasulov.github.io/velosher-shop/tester/web.html?v=3"
-ADMIN_URL = "https://mirzarasulov.github.io/velosher-shop/tester/admin.html?v=3"
+WEB_URL = "https://mirzarasulov.github.io/velosher-shop/tester/web.html?v=4"
+ADMIN_URL = "https://mirzarasulov.github.io/velosher-shop/tester/admin.html?v=4"
 
 PDF_FILENAME = "РОСТЭРА.pdf"
 PDF_PATH = Path(PDF_FILENAME)
@@ -127,10 +127,9 @@ def notify_admins(text, kb=None):
         tg_send(aid, text, kb=kb)
 
 # ============================================================
-# 🚫 ПРОВЕРКА БЛОКИРОВКИ
+# 🚫 БЛОКИРОВКА
 # ============================================================
 def is_blocked(uid):
-    """Проверяет, заблокирован ли юзер в Firebase."""
     try:
         u = fb_get(f"users/{uid}")
         if not u:
@@ -143,7 +142,6 @@ def is_blocked(uid):
         return None
 
 def send_blocked_msg(chat_id, reason):
-    """Отправляет юзеру сообщение о блокировке."""
     tg_send(chat_id,
             f"🚫 <b>Вы заблокированы администрацией</b>\n\n"
             f"📝 Причина: <i>{reason}</i>\n\n"
@@ -392,6 +390,31 @@ def calc_user_ref_balance(uid):
     }
 
 # ============================================================
+# 💳 РЕКВИЗИТЫ
+# ============================================================
+def get_requisites(uid):
+    """Возвращает dict с реквизитами юзера: fio, card, bank."""
+    u = fb_get(f"users/{uid}") or {}
+    r = u.get("requisites") or {}
+    return {
+        "fio": r.get("fio") or "",
+        "card": r.get("card") or "",
+        "bank": r.get("bank") or "",
+    }
+
+def fmt_requisites(req):
+    """Форматирует реквизиты для сообщения админу."""
+    fio = req.get("fio") or "—"
+    card = req.get("card") or "—"
+    bank = req.get("bank") or "—"
+    return (
+        f"💳 <b>РЕКВИЗИТЫ:</b>\n"
+        f"👤 Ф.И.О.: <b>{fio}</b>\n"
+        f"💳 Карта/Тел: <code>{card}</code>\n"
+        f"🏦 Банк: <b>{bank}</b>"
+    )
+
+# ============================================================
 # КЛАВИАТУРЫ
 # ============================================================
 def kb_agree():
@@ -448,11 +471,6 @@ def kb_unknown():
     return {"inline_keyboard": [
         [{"text": "🚀 Открыть приложение", "web_app": {"url": WEB_URL}}],
         [{"text": "💬 Написать админу", "url": f"tg://user?id={ADMIN_ID}"}]
-    ]}
-
-def kb_blocked():
-    return {"inline_keyboard": [
-        [{"text": "💬 Написать в поддержку", "url": f"tg://user?id={ADMIN_ID}"}]
     ]}
 
 # ============================================================
@@ -519,7 +537,6 @@ def register_user(user, start_text):
 # ============================================================
 def cmd_start(chat_id, user, text):
     uid = str(user["id"])
-    # 🚫 ПРОВЕРКА БЛОКИРОВКИ
     block_reason = is_blocked(uid)
     if block_reason:
         send_blocked_msg(chat_id, block_reason)
@@ -650,7 +667,6 @@ def build_myrefs_text(uid):
     return "\n\n".join(lines)
 
 def cmd_myrefs(chat_id, user_tg):
-    # 🚫 ПРОВЕРКА БЛОКИРОВКИ
     block_reason = is_blocked(str(user_tg))
     if block_reason:
         send_blocked_msg(chat_id, block_reason)
@@ -672,7 +688,6 @@ def handle_callback(cb):
     cb_id = cb.get("id")
     log("CB", f"data={data} user={user_tg}")
 
-    # 🚫 ПРОВЕРКА БЛОКИРОВКИ для всех действий (кроме админов)
     if not is_admin(user_tg):
         block_reason = is_blocked(str(user_tg))
         if block_reason:
@@ -835,9 +850,15 @@ def ui_wd_sel(chat_id, user_tg, key, msg_id, cb_id):
     p = fb_get(f"purchases/{key}")
     if not p:
         tg_send(chat_id, "❌ Не найдено"); return
+    req = get_requisites(user_tg)
+    has_req = bool(req["fio"] and req["card"] and req["bank"])
     text = (f"📄 <b>#{p.get('id')}</b>\n"
             f"💳 {p.get('era_title', '—')}\n"
-            f"💰 {fmt_money(p.get('total_amount', 0))}")
+            f"💰 {fmt_money(p.get('total_amount', 0))}\n\n")
+    if has_req:
+        text += fmt_requisites(req)
+    else:
+        text += "⚠️ <b>Реквизиты не заполнены</b>\nЗаполните их в приложении → Профиль → Реквизиты."
     kb = {"inline_keyboard": [[{"text": "🔘 Подать заявку", "callback_data": f"wd_confirm:{key}"}]]}
     tg_edit(chat_id, msg_id, text, kb=kb)
 
@@ -846,6 +867,18 @@ def ui_wd_confirm(chat_id, user_tg, key, msg_id, cb_id):
     p = fb_get(f"purchases/{key}")
     if not p:
         tg_send(chat_id, "❌ Не найдено"); return
+
+    req = get_requisites(user_tg)
+    if not (req["fio"] and req["card"] and req["bank"]):
+        tg_edit(chat_id, msg_id,
+                "⚠️ <b>Реквизиты не заполнены</b>\n\n"
+                "Откройте приложение → Профиль → Реквизиты и заполните:\n"
+                "👤 Ф.И.О.\n💳 Карта/телефон\n🏦 Банк",
+                kb={"inline_keyboard": [[
+                    {"text": "🚀 Открыть приложение", "web_app": {"url": WEB_URL}}
+                ]]})
+        return
+
     cur = fb_get("counters/payout") or 0
     poid = int(cur) + 1
     fb_put("counters/payout", poid)
@@ -860,10 +893,12 @@ def ui_wd_confirm(chat_id, user_tg, key, msg_id, cb_id):
         "purchase_price": p.get("purchase_price", 0),
         "amount": p.get("total_amount", 0),
         "status": "pending", "requested_at": now, "paid_at": None,
+        "requisites": req,
     }
     fb_post("payouts", po)
     tg_edit(chat_id, msg_id,
             f"✅ <b>Заявка #{poid} создана</b>\n💰 {fmt_money(po['amount'])}\n\n"
+            f"{fmt_requisites(req)}\n\n"
             f"⏳ Ожидайте — администратор свяжется с вами.")
     PAYOUT_STATUS_CACHE[str(poid)] = "pending"
     notify_new_payout(po)
@@ -881,7 +916,6 @@ def handle_message(msg):
         return
     log("MSG", f"{user_tg}: {text[:60] if text else '[no text]'}")
 
-    # 🚫 ПРОВЕРКА БЛОКИРОВКИ для всех команд (кроме админов)
     if not is_admin(user_tg):
         block_reason = is_blocked(str(user_tg))
         if block_reason:
@@ -1157,20 +1191,36 @@ def notify_new_purchase(p, pid):
 def notify_new_payout(po):
     uid = po.get("user_telegram_id")
     poid = po.get("id")
+    amount = fmt_money(po.get("amount", 0))
+
+    # 💳 Реквизиты из заявки или из профиля
+    req = po.get("requisites") or {}
+    if not req or not req.get("fio"):
+        req = get_requisites(uid)
+
     tg_send(uid,
             f"📤 <b>Заявка на вывод #{poid} создана</b>\n\n"
-            f"💰 {fmt_money(po.get('amount', 0))}\n\n⏳ Ожидайте.")
+            f"💰 {amount}\n\n⏳ Ожидайте — админ скоро обработает.",
+            kb=kb_withdraw())
+
     notify_admins(
-        f"📤 <b>ЗАЯВКА НА ВЫВОД #{poid}</b>\n\n"
+        f"📤 <b>НОВАЯ ЗАЯВКА НА ВЫВОД #{poid}</b>\n\n"
         f"👤 {po.get('user_first_name', '—')} @{po.get('user_username') or '—'}\n"
         f"🆔 <code>{uid}</code>\n"
-        f"💰 <b>{fmt_money(po.get('amount', 0))}</b>",
+        f"💰 <b>{amount}</b>\n\n"
+        f"{fmt_requisites(req)}\n\n"
+        f"👇 Проверьте и подтвердите:",
         kb=kb_admin_payout(poid, uid))
 
 def notify_new_ref_request(r):
     rid = r.get("id")
     uid = r.get("user_telegram_id")
     amount = fmt_money(r.get("amount", 0))
+
+    req = r.get("requisites") or {}
+    if not req or not req.get("fio"):
+        req = get_requisites(uid)
+
     tg_send(int(uid),
             f"✅ <b>Заявка на вывод бонуса #{rid}</b>\n\n"
             f"💰 Сумма: <b>{amount}</b>\n\n⏳ Ожидайте подтверждения админом.",
@@ -1179,7 +1229,8 @@ def notify_new_ref_request(r):
         f"💰 <b>НОВАЯ ЗАЯВКА НА ВЫВОД БОНУСА #{rid}</b>\n\n"
         f"👤 {r.get('user_first_name', '—')} @{r.get('user_username') or '—'}\n"
         f"🆔 <code>{uid}</code>\n"
-        f"💰 Сумма: <b>{amount}</b>\n\n👇 Подтвердите или отклоните:",
+        f"💰 Сумма: <b>{amount}</b>\n\n"
+        f"{fmt_requisites(req)}\n\n👇 Подтвердите или отклоните:",
         kb=kb_admin_ref_payout(rid, uid))
 
 def notify_purchase_status(k, p, old_status, new_status):

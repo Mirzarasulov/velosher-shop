@@ -246,7 +246,6 @@ a{color:var(--accent);text-decoration:none}
 }
 .frozen-hero .fh-btn:active{transform:scale(.97)}
 
-/* Модалка со списком заморозок */
 .frozen-item{
   background:var(--card2);border:1px solid rgba(245,181,71,.25);
   border-radius:12px;padding:12px 14px;
@@ -278,9 +277,135 @@ a{color:var(--accent);text-decoration:none}
   font-size:32px;font-weight:900;color:#f5b547;
   font-family:ui-monospace,monospace;
 }
+
+/* ═══════════ ПРЕЛОАДЕР ═══════════ */
+#preloader{
+  position:fixed;inset:0;z-index:99999;
+  background:radial-gradient(circle at 50% 40%,#0f1b2e 0%,#0a0e14 70%);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;
+  transition:opacity .6s ease,visibility .6s ease;
+}
+#preloader.hide{opacity:0;visibility:hidden;pointer-events:none}
+.pl-inner{text-align:center;padding:0 30px;width:100%;max-width:340px}
+.pl-emblem{
+  margin-bottom:18px;
+  opacity:0;transform:scale(.7);
+  animation:pl-pop .6s .1s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes pl-pop{to{opacity:1;transform:scale(1)}}
+.pl-ring{
+  transform-origin:50% 50%;
+  transform:rotate(-90deg);
+  stroke-dashoffset:289;
+  animation:pl-draw 2s .4s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes pl-draw{to{stroke-dashoffset:0}}
+.pl-title{
+  font-size:32px;font-weight:900;letter-spacing:8px;
+  background:linear-gradient(180deg,#f5d97a 0%,#e0b84a 50%,#b8862d 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  margin-bottom:8px;
+  opacity:0;transform:translateY(10px);
+  animation:pl-up .5s .6s ease forwards;
+  filter:drop-shadow(0 2px 12px rgba(224,184,74,.4));
+}
+.pl-sub{
+  font-size:11px;color:#8b949e;letter-spacing:3px;text-transform:uppercase;
+  margin-bottom:32px;
+  opacity:0;
+  animation:pl-up .5s .8s ease forwards;
+}
+@keyframes pl-up{to{opacity:1;transform:translateY(0)}}
+.pl-bar{
+  width:100%;height:3px;border-radius:3px;
+  background:rgba(224,184,74,.12);
+  overflow:hidden;position:relative;
+  opacity:0;
+  animation:pl-up .5s 1s ease forwards;
+  box-shadow:0 0 20px rgba(224,184,74,.2);
+}
+.pl-fill{
+  height:100%;width:0%;border-radius:3px;
+  background:linear-gradient(90deg,#e0b84a,#f5d97a,#e0b84a);
+  background-size:200% 100%;
+  animation:pl-shine 1.5s linear infinite;
+  box-shadow:0 0 12px rgba(224,184,74,.8);
+  transition:width .3s ease;
+}
+@keyframes pl-shine{to{background-position:-200% 0}}
+
+/* 🚨 Плашка ошибки */
+.pl-error{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:18px 24px calc(18px + env(safe-area-inset-bottom));
+  background:linear-gradient(135deg,#c92a2a,#8b1e1e);
+  border-top:2px solid #ff5c5c;
+  text-align:center;
+  opacity:0;transform:translateY(100%);
+  animation:pl-error-in .5s .3s cubic-bezier(.4,0,.2,1) forwards;
+  box-shadow:0 -8px 32px rgba(201,42,42,.5);
+}
+@keyframes pl-error-in{to{opacity:1;transform:translateY(0)}}
+.pl-error .pe-icon{
+  font-size:32px;margin-bottom:8px;
+  animation:pe-shake 1.5s ease-in-out infinite;
+}
+@keyframes pe-shake{
+  0%,100%{transform:rotate(0)}
+  25%{transform:rotate(-10deg)}
+  75%{transform:rotate(10deg)}
+}
+.pl-error .pe-title{
+  font-size:15px;font-weight:800;color:#fff;
+  margin-bottom:4px;letter-spacing:.5px;
+}
+.pl-error .pe-text{
+  font-size:12.5px;color:#ffd6d6;line-height:1.5;
+}
+.pl-error .pe-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-top:12px;padding:10px 20px;border-radius:10px;
+  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
+  color:#fff;font-weight:700;font-size:13px;cursor:pointer;
+  text-decoration:none;
+}
+.pl-error .pe-btn:active{background:rgba(255,255,255,.25)}
 </style>
 </head>
 <body>
+
+<!-- ═══════════ ПРЕЛОАДЕР ═══════════ -->
+<div id="preloader">
+  <div class="pl-inner">
+    <div class="pl-emblem">
+      <svg viewBox="0 0 100 100" width="80" height="80">
+        <circle cx="50" cy="50" r="46" stroke="url(#plGold)" stroke-width="2" fill="none" opacity="0.3"/>
+        <circle cx="50" cy="50" r="46" stroke="url(#plGold)" stroke-width="3" fill="none"
+                stroke-linecap="round" stroke-dasharray="289"
+                class="pl-ring"/>
+        <text x="50" y="62" text-anchor="middle" font-size="36" fill="#e0b84a" font-weight="900">🌿</text>
+        <defs>
+          <linearGradient id="plGold" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f5d97a"/>
+            <stop offset="50%" stop-color="#e0b84a"/>
+            <stop offset="100%" stop-color="#b8862d"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+    <div class="pl-title">РОСТЭРА</div>
+    <div class="pl-sub">Новая эра твоего роста</div>
+    <div class="pl-bar"><div class="pl-fill"></div></div>
+  </div>
+  <div class="pl-error" id="plError" style="display:none">
+    <div class="pe-icon">⚠️</div>
+    <div class="pe-title">Технические работы</div>
+    <div class="pe-text">Скоро всё починим. Попробуйте через пару минут.</div>
+    <a class="pe-btn" href="https://t.me/ROSTERAbot" target="_blank">💬 Написать в бот</a>
+  </div>
+</div>
 
 <div class="app" id="app">
   <div class="skel" style="height:56px"></div>
@@ -300,6 +425,74 @@ a{color:var(--accent);text-decoration:none}
 
 <script>
 'use strict';
+
+/* ═══════════ ПРЕЛОАДЕР ЛОГИКА ═══════════ */
+var PRELOADER = (function(){
+  var el, fill, errorEl;
+  var p = 0, timer = null, done = false, failed = false;
+
+  function init(){
+    el = document.getElementById('preloader');
+    fill = document.querySelector('.pl-fill');
+    errorEl = document.getElementById('plError');
+  }
+
+  function start(){
+    init();
+    if (!el) return;
+    timer = setInterval(function(){
+      if (done || failed) return;
+      p += Math.random() * 14;
+      if (p >= 92) p = 92;
+      if (fill) fill.style.width = p + '%';
+    }, 220);
+  }
+
+  function finish(){
+    if (done || failed) return;
+    done = true;
+    if (timer) clearInterval(timer);
+    if (fill) fill.style.width = '100%';
+    setTimeout(function(){
+      if (el) el.classList.add('hide');
+    }, 350);
+  }
+
+  function fail(){
+    if (done || failed) return;
+    failed = true;
+    if (timer) clearInterval(timer);
+    if (errorEl) errorEl.style.display = 'block';
+    // НЕ скрываем прелоадер — юзер видит ошибку
+  }
+
+  return { start: start, finish: finish, fail: fail };
+})();
+
+// Автозапуск прелоадера сразу
+PRELOADER.start();
+
+// Ловим любые ошибки
+window.addEventListener('error', function(e){
+  console.error('Global error:', e);
+  PRELOADER.fail();
+});
+window.addEventListener('unhandledrejection', function(e){
+  console.error('Unhandled promise:', e);
+  PRELOADER.fail();
+});
+
+// Страховка: если через 6 секунд не загрузилось — считаем что упало
+setTimeout(function(){
+  if (document.getElementById('preloader') &&
+      !document.getElementById('preloader').classList.contains('hide')){
+    PRELOADER.fail();
+  }
+}, 6000);
+
+/* ═══════════════════════════════════════════════════════════
+   ДАЛЬШЕ — ТВОЙ ОСНОВНОЙ КОД (без изменений)
+   ═══════════════════════════════════════════════════════════ */
 
 var FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app';
 var BOT_USERNAME = 'ROSTERAbot';
@@ -525,7 +718,6 @@ async function loadMyReferrals(){
   });
 }
 
-// ═══════ 💰 РЕФ БАЛАНС ═══════
 function calcRefBalance(){
   var accrued=0, paid=0, pending=0, frozen=0, pendingActive=0;
   var lastAt=null, lastAmount=0;
@@ -562,7 +754,6 @@ function calcRefBalance(){
   };
 }
 
-// ═══════ ❄️ СПИСОК ЗАМОРОЖЕННЫХ (для модалки) ═══════
 function getFrozenItems(){
   var items = [];
   ALL_MY_REF_PURCHASES.forEach(function(p){
@@ -820,9 +1011,6 @@ async function freezeRefBonuses(uid, amount, requestId){
   }
 }
 
-// ═══════════════════════════════════════════════════════════
-// 📊 КЛИКАБЕЛЬНАЯ СТАТИСТИКА
-// ═══════════════════════════════════════════════════════════
 window.openStatList = function(kind){
   var list = [];
   var title = '', subtitle = '', sumLabel = '';
@@ -984,7 +1172,6 @@ window.requestPayoutAll = function(){
   });
 };
 
-// ═══════ ДЕЙСТВИЯ ═══════
 window.setTab = function(tab){
   CURRENT_TAB = tab;
   document.querySelectorAll('#nav button').forEach(function(b){
@@ -1178,7 +1365,6 @@ window.openMyRefs = function(){
     '</div>');
 };
 
-// ═══════ ЭКРАНЫ ═══════
 function skeleton(){
   return '<div class="skel" style="height:56px"></div><div class="skel" style="height:110px"></div><div class="skel" style="height:150px"></div>';
 }
@@ -1474,7 +1660,15 @@ function tickTimers(){
     var b = e.target.closest('button');
     if (b && b.dataset.tab) window.setTab(b.dataset.tab);
   });
-  render();
+
+  render().then(function(){
+    // Успешно отрендерили — прячем прелоадер
+    PRELOADER.finish();
+  }).catch(function(e){
+    console.error('Render error:', e);
+    PRELOADER.fail();
+  });
+
   setInterval(function(){ if (!document.hidden && tgUser()) render(true); }, POLL_MS);
   setInterval(tickTimers, 1000);
   document.addEventListener('visibilitychange', function(){

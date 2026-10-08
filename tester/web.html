@@ -194,6 +194,90 @@ a{color:var(--accent);text-decoration:none}
 .ref-chip.warn{background:rgba(245,181,71,.12);color:var(--warn);border-color:rgba(245,181,71,.25)}
 .ref-chip.info{background:rgba(99,169,255,.12);color:var(--info);border-color:rgba(99,169,255,.25)}
 .ref-chip.purple{background:rgba(167,139,250,.12);color:var(--purple);border-color:rgba(167,139,250,.25)}
+
+/* ═══════ ❄️ ЗАМОРОЖЕННЫЕ БОНУСЫ ═══════ */
+.frozen-hero{
+  background:linear-gradient(135deg,#3a2d12 0%,#2a1f0a 100%);
+  border:1px solid #8a6a1f;border-radius:16px;padding:16px;
+  margin-bottom:12px;position:relative;overflow:hidden;
+  cursor:pointer;transition:transform .15s,border-color .2s;
+}
+.frozen-hero:active{transform:scale(.98)}
+.frozen-hero:hover{border-color:#d4a72c}
+.frozen-hero::before{
+  content:'';position:absolute;top:-50%;right:-30%;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(245,181,71,.18),transparent 70%);
+  pointer-events:none;
+}
+.frozen-hero .fh-head{
+  display:flex;align-items:center;gap:10px;margin-bottom:12px;
+  position:relative;z-index:1;
+}
+.frozen-hero .fh-emoji{
+  width:44px;height:44px;border-radius:12px;
+  background:rgba(245,181,71,.18);border:1px solid rgba(245,181,71,.4);
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  animation:frozen-pulse 2.5s ease-in-out infinite;
+}
+@keyframes frozen-pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(245,181,71,.4)}
+  50%{box-shadow:0 0 0 8px rgba(245,181,71,0)}
+}
+.frozen-hero .fh-title{font-weight:700;font-size:15px;color:#f5d97a}
+.frozen-hero .fh-sub{font-size:11.5px;color:rgba(245,217,122,.7);margin-top:2px}
+.frozen-hero .fh-amount{
+  font-size:28px;font-weight:900;color:#f5b547;
+  text-align:center;margin:6px 0 12px;
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;
+  letter-spacing:-.5px;position:relative;z-index:1;
+}
+.frozen-hero .fh-note{
+  font-size:12px;color:#e8d9a8;text-align:center;
+  padding:10px 12px;background:rgba(0,0,0,.3);border-radius:10px;
+  line-height:1.5;position:relative;z-index:1;margin-bottom:12px;
+}
+.frozen-hero .fh-btn{
+  width:100%;padding:12px;border-radius:10px;border:0;
+  background:linear-gradient(135deg,#f5d97a,#e0b84a);
+  color:#2a1a00;font-weight:800;font-size:14px;cursor:pointer;
+  position:relative;z-index:1;display:flex;align-items:center;
+  justify-content:center;gap:6px;
+}
+.frozen-hero .fh-btn:active{transform:scale(.97)}
+
+/* Модалка со списком заморозок */
+.frozen-item{
+  background:var(--card2);border:1px solid rgba(245,181,71,.25);
+  border-radius:12px;padding:12px 14px;
+  border-left:3px solid var(--warn);
+  margin-bottom:10px;
+}
+.frozen-item .fi-head{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:8px;gap:8px;
+}
+.frozen-item .fi-name{font-weight:700;font-size:14px}
+.frozen-item .fi-amount{
+  font-size:16px;font-weight:800;color:var(--warn);
+  font-family:ui-monospace,monospace;
+}
+.frozen-item .fi-meta{
+  font-size:11.5px;color:var(--muted);line-height:1.6;
+}
+.frozen-summary{
+  background:linear-gradient(135deg,#3a2d12,#2a1f0a);
+  border:1px solid #8a6a1f;border-radius:14px;padding:16px;
+  margin-bottom:14px;text-align:center;
+}
+.frozen-summary .fs-label{
+  font-size:11px;color:rgba(245,217,122,.7);
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;
+}
+.frozen-summary .fs-value{
+  font-size:32px;font-weight:900;color:#f5b547;
+  font-family:ui-monospace,monospace;
+}
 </style>
 </head>
 <body>
@@ -478,6 +562,122 @@ function calcRefBalance(){
   };
 }
 
+// ═══════ ❄️ СПИСОК ЗАМОРОЖЕННЫХ (для модалки) ═══════
+function getFrozenItems(){
+  var items = [];
+  ALL_MY_REF_PURCHASES.forEach(function(p){
+    if (['rejected','cancelled'].indexOf(p.status) >= 0) return;
+    if ((p.referral_status || '') !== 'pending_active') return;
+    var bonus = num(p.referral_bonus) || Math.round(num(p.purchase_price) * REFERRAL_PERCENT / 100);
+    if (bonus <= 0) return;
+    var refUser = null;
+    for (var i = 0; i < ALL_REFERRALS.length; i++){
+      if (String(ALL_REFERRALS[i].telegram_id) === String(p.user_telegram_id)){
+        refUser = ALL_REFERRALS[i]; break;
+      }
+    }
+    items.push({
+      name: refUser ? (refUser.first_name || 'Пользователь') : 'Пользователь',
+      username: refUser ? (refUser.username || '') : '',
+      telegram_id: p.user_telegram_id,
+      bonus: bonus,
+      era: p.era_title || '—',
+      date: p.created_at || p.approved_at,
+      purchase_id: p.id
+    });
+  });
+  return items;
+}
+
+function renderFrozenHero(){
+  var b = calcRefBalance();
+  if (b.pendingActive <= 0) return '';
+
+  var items = getFrozenItems();
+  var countText = items.length === 1
+    ? 'от 1 покупки реферала'
+    : 'от ' + items.length + ' покупок рефералов';
+
+  return '<div class="frozen-hero" onclick="openFrozenBonuses()">' +
+    '<div class="fh-head">' +
+      '<div class="fh-emoji">❄️</div>' +
+      '<div style="flex:1">' +
+        '<div class="fh-title">Замороженные бонусы</div>' +
+        '<div class="fh-sub">' + countText + '</div>' +
+      '</div>' +
+      '<div style="font-size:20px;color:#f5d97a;opacity:.6">→</div>' +
+    '</div>' +
+    '<div class="fh-amount">' + fmt(b.pendingActive) + '</div>' +
+    '<div class="fh-note">' +
+      '🔒 Эти бонусы временно недоступны.<br>' +
+      'Купите <b>любую эру</b> — и они сразу разблокируются.' +
+    '</div>' +
+    '<button class="fh-btn" onclick="event.stopPropagation();setTab(\'buy\')">' +
+      '🔓 Разблокировать — купить эру' +
+    '</button>' +
+  '</div>';
+}
+
+window.openFrozenBonuses = function(){
+  var b = calcRefBalance();
+  if (b.pendingActive <= 0){
+    toast('Нет замороженных бонусов', 'info');
+    return;
+  }
+
+  var items = getFrozenItems();
+  if (!items.length){
+    toast('Список пуст', 'info');
+    return;
+  }
+
+  var itemsHtml = items.map(function(it){
+    return '<div class="frozen-item">' +
+      '<div class="fi-head">' +
+        '<div class="fi-name">👤 ' + esc(it.name) + '</div>' +
+        '<div class="fi-amount">+' + fmt(it.bonus) + '</div>' +
+      '</div>' +
+      '<div class="fi-meta">' +
+        (it.username ? '@' + esc(it.username) + ' · ' : '') +
+        'ID ' + esc(it.telegram_id) +
+      '</div>' +
+      '<div class="fi-meta">' +
+        '💳 ' + esc(it.era) + '<br>' +
+        '🕐 ' + fmtDT(it.date) +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  showModal(
+    '<div class="modal-head"><div>' +
+      '<h2>❄️ Замороженные бонусы</h2>' +
+      '<div class="muted-sm">' + items.length + ' ' +
+        (items.length === 1 ? 'запись' : 'записей') +
+      '</div>' +
+    '</div>' +
+    '<button class="close-x" onclick="closeModal()">✕</button></div>' +
+    '<div class="modal-body">' +
+      '<div class="frozen-summary">' +
+        '<div class="fs-label">Всего заморожено</div>' +
+        '<div class="fs-value">' + fmt(b.pendingActive) + '</div>' +
+      '</div>' +
+      '<div class="card2" style="background:rgba(245,181,71,.08);border-color:rgba(245,181,71,.25);margin-bottom:14px">' +
+        '<div style="font-size:12.5px;line-height:1.6;color:#e8d9a8">' +
+          '🔒 <b>Почему заморожено?</b><br>' +
+          'Вы получаете <b>' + REFERRAL_PERCENT + '%</b> с покупок рефералов. ' +
+          'Но бонусы разблокируются <b>только когда у вас есть активная эра</b>.<br><br>' +
+          '💡 <b>Как разблокировать:</b> купите любую эру — и все замороженные бонусы ' +
+          'сразу зачислятся на баланс.' +
+        '</div>' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:0">' + itemsHtml + '</div>' +
+      '<button class="btn" style="margin-top:14px" ' +
+        'onclick="closeModal();setTab(\'buy\')">' +
+        '🔓 Купить эру и разблокировать' +
+      '</button>' +
+    '</div>');
+};
+
 function renderRefHero(){
   var b = calcRefBalance();
   var isFrozen = b.frozen > 0;
@@ -506,9 +706,9 @@ function renderRefHero(){
 
   var pendingActiveNote = '';
   if (b.pendingActive > 0){
-    pendingActiveNote = '<div class="warn-note">' +
-      '⏳ <b>Отложено: ' + fmt(b.pendingActive) + '</b><br>' +
-      'Купите эру — и эти бонусы сразу зачислятся на баланс' +
+    pendingActiveNote = '<div class="warn-note" onclick="event.stopPropagation();openFrozenBonuses()" style="cursor:pointer">' +
+      '❄️ <b>Заморожено: ' + fmt(b.pendingActive) + '</b><br>' +
+      'Нажмите, чтобы посмотреть детали' +
     '</div>';
   }
 
@@ -937,7 +1137,7 @@ window.openMyRefs = function(){
     if (!rp.length) chips.push('<span class="ref-chip info">🕓 Пока без покупок</span>');
     else {
       if (pending > 0)  chips.push('<span class="ref-chip warn">⏳ ' + fmt(pending) + '</span>');
-      if (pendingActive > 0) chips.push('<span class="ref-chip info">⏸ Отложено ' + fmt(pendingActive) + '</span>');
+      if (pendingActive > 0) chips.push('<span class="ref-chip warn">❄️ Заморожено ' + fmt(pendingActive) + '</span>');
       if (approved > 0) chips.push('<span class="ref-chip ok">✅ ' + fmt(approved) + '</span>');
       if (frozen > 0)   chips.push('<span class="ref-chip warn">⏳ В заявке ' + fmt(frozen) + '</span>');
       if (paid > 0)     chips.push('<span class="ref-chip purple">💸 ' + fmt(paid) + '</span>');
@@ -967,7 +1167,7 @@ window.openMyRefs = function(){
             '<div class="v paid">' + fmt(b.paid) + '</div></div>' +
         '</div>' +
         (b.pendingActive > 0
-          ? '<div class="warn-note">⏸ Отложено <b>' + fmt(b.pendingActive) + '</b> — купите эру, чтобы активировать</div>'
+          ? '<div class="warn-note">❄️ Заморожено <b>' + fmt(b.pendingActive) + '</b> — купите эру, чтобы разблокировать</div>'
           : '') +
       '</div>' +
       '<div class="card2" style="margin-bottom:14px">' +
@@ -1031,6 +1231,7 @@ function drawHome(){
         '<div class="label">К выводу <span class="arrow">→</span></div>' +
         '<div class="value sm ' + (available>0?'ok':'') + '">' + fmt(available) + '</div></div>' +
     '</div>' +
+    renderFrozenHero() +
     renderRefHero() +
     '<div class="section-title"><h2>Мои заявки</h2>' +
       (P.length ? '<button class="btn ghost xs" onclick="setTab(\'purchases\')">Все →</button>' : '') + '</div>' +
@@ -1189,6 +1390,7 @@ function drawProfile(){
         (photo ? '<img src="' + esc(photo) + '" alt="">' : esc((name[0]||'?').toUpperCase())) + '</div>' +
       '<h2 style="margin-bottom:4px">' + esc(name) + '</h2>' +
       (me.username ? '<div class="muted">@' + esc(me.username) + '</div>' : '') + '</div>' +
+    renderFrozenHero() +
     renderRefHero() +
     '<div class="section-title"><h2>Мой аккаунт</h2></div>' +
     '<div class="card" style="padding:0 16px">' +

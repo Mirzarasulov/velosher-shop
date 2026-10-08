@@ -1,4 +1,3 @@
-
 import time
 import threading
 import requests
@@ -202,6 +201,7 @@ def get_referral_bonus(p):
 # ПРОВЕРКА АКТИВНОСТИ РЕФЕРЕРА
 # ═══════════════════════════════════════════════════════════
 def ref_has_active_era(ref_uid):
+    """Есть ли у реферера активная (не истёкшая) эра?"""
     ref_uid = str(ref_uid)
     purchases = fb_get("purchases") or {}
     now = datetime.now(TZ)
@@ -220,6 +220,7 @@ def ref_has_active_era(ref_uid):
     return False
 
 def activate_pending_bonuses(ref_uid):
+    """Активирует pending_active бонусы реферера (когда он сам купил эру)."""
     ref_uid = str(ref_uid)
     users = fb_get("users") or {}
     purchases = fb_get("purchases") or {}
@@ -253,7 +254,66 @@ def activate_pending_bonuses(ref_uid):
             total += bonus
     return activated, total
 
+def force_activate_pending_bonuses(ref_uid):
+    """Принудительно активирует ВСЕ pending_active бонусы реферера (по кнопке админа)."""
+    ref_uid = str(ref_uid)
+    users = fb_get("users") or {}
+    purchases = fb_get("purchases") or {}
+    my_ids = set()
+    if isinstance(users, dict):
+        for u in users.values():
+            if isinstance(u, dict) and str(u.get("referrer_uid", "")) == ref_uid:
+                my_ids.add(str(u.get("telegram_id")))
+    count = 0
+    total = 0
+    now = now_iso()
+    if isinstance(purchases, dict):
+        for pk, p in purchases.items():
+            if not isinstance(p, dict): continue
+            if str(p.get("user_telegram_id")) not in my_ids: continue
+            if p.get("status") in ("rejected", "cancelled"): continue
+            if (p.get("referral_status") or "") != "pending_active": continue
+            bonus = get_referral_bonus(p)
+            if bonus <= 0: continue
+            fb_patch(f"purchases/{pk}", {
+                "referral_status": "approved",
+                "referral_activated_at": now,
+                "referral_activated_by": "admin_manual",
+            })
+            count += 1
+            total += bonus
+    return count, total
+
+def reject_pending_bonuses(ref_uid):
+    """Отклоняет все pending_active бонусы реферера (по кнопке админа)."""
+    ref_uid = str(ref_uid)
+    users = fb_get("users") or {}
+    purchases = fb_get("purchases") or {}
+    my_ids = set()
+    if isinstance(users, dict):
+        for u in users.values():
+            if isinstance(u, dict) and str(u.get("referrer_uid", "")) == ref_uid:
+                my_ids.add(str(u.get("telegram_id")))
+    count = 0
+    total = 0
+    now = now_iso()
+    if isinstance(purchases, dict):
+        for pk, p in purchases.items():
+            if not isinstance(p, dict): continue
+            if str(p.get("user_telegram_id")) not in my_ids: continue
+            if (p.get("referral_status") or "") != "pending_active": continue
+            bonus = get_referral_bonus(p)
+            fb_patch(f"purchases/{pk}", {
+                "referral_status": "rejected",
+                "referral_rejected_at": now,
+                "referral_rejected_by": "admin_manual",
+            })
+            count += 1
+            total += bonus
+    return count, total
+
 def calc_user_ref_balance(uid):
+    """Считает баланс реферальных бонусов юзера."""
     uid = str(uid)
     users = fb_get("users") or {}
     purchases = fb_get("purchases") or {}
@@ -345,6 +405,15 @@ def kb_admin_ref_payout(rid, uid):
         [{"text": "✅ Выплачено", "callback_data": f"adm_refpaid:{rid}"},
          {"text": "❌ Отклонить", "callback_data": f"adm_refreject:{rid}"}],
         [{"text": "💬 Написать", "url": f"tg://user?id={uid}"}],
+        [{"text": "🌐 Открыть админку", "web_app": {"url": ADMIN_URL}}]
+    ]}
+
+def kb_admin_pending_bonus(ref_uid):
+    """Кнопки для админа: активировать/отклонить отложенные бонусы."""
+    return {"inline_keyboard": [
+        [{"text": "✅ Начислить всё", "callback_data": f"adm_actbonus:{ref_uid}"},
+         {"text": "❌ Отклонить", "callback_data": f"adm_rejbonus:{ref_uid}"}],
+        [{"text": "💬 Написать рефереру", "url": f"tg://user?id={ref_uid}"}],
         [{"text": "🌐 Открыть админку", "web_app": {"url": ADMIN_URL}}]
     ]}
 
@@ -600,6 +669,7 @@ def handle_callback(cb):
         else: tg_send(chat_id, text, kb=kb_refs())
         return
 
+    # ─── Подтверждение/отмена заявки ───
     if data.startswith("adm_approve:"):
         if not is_admin(user_tg):
             tg_answer(cb_id, "⛔️", True); return
@@ -616,6 +686,7 @@ def handle_callback(cb):
         tg_edit(chat_id, msg_id, f"❌ <b>Заявка #{pid} отклонена</b>\n<i>Админ: <code>{user_tg}</code></i>")
         admin_set_purchase(pid, "rejected"); return
 
+    # ─── Выплаты ───
     if data.startswith("adm_paid:"):
         if not is_admin(user_tg):
             tg_answer(cb_id, "⛔️", True); return
@@ -632,6 +703,7 @@ def handle_callback(cb):
         tg_edit(chat_id, msg_id, f"❌ <b>Вывод #{poid} отклонён</b>\n<i>Админ: <code>{user_tg}</code></i>")
         admin_set_payout(poid, "rejected"); return
 
+    # ─── Реф. выплаты ───
     if data.startswith("adm_refpaid:"):
         if not is_admin(user_tg):
             tg_answer(cb_id, "⛔️", True); return
@@ -647,6 +719,41 @@ def handle_callback(cb):
         tg_answer(cb_id, "❌")
         tg_edit(chat_id, msg_id, f"❌ <b>Реф. заявка #{rid} отклонена</b>\n<i>Админ: <code>{user_tg}</code></i>")
         admin_set_ref_payout(rid, "rejected"); return
+
+    # ─── Активация/отклонение отложенных бонусов ───
+    if data.startswith("adm_actbonus:"):
+        if not is_admin(user_tg):
+            tg_answer(cb_id, "⛔️", True); return
+        ref_uid = data.split(":", 1)[1]
+        tg_answer(cb_id, "⏳ Активирую…")
+        count, total = force_activate_pending_bonuses(ref_uid)
+        tg_edit(chat_id, msg_id,
+                f"✅ <b>Активировано {count} бонусов</b>\n"
+                f"💰 На сумму: <b>{fmt_money(total)}</b>\n"
+                f"👤 Реферер: <code>{ref_uid}</code>")
+        bal = calc_user_ref_balance(ref_uid)
+        tg_send(int(ref_uid),
+                f"🎉 <b>Бонусы активированы!</b>\n\n"
+                f"💰 Начислено: <b>+{fmt_money(total)}</b>\n"
+                f"📦 От {count} покупк{'и' if count == 1 else 'ок'}\n\n"
+                f"💎 К выводу: <b>{fmt_money(bal['owed'])}</b>",
+                kb=kb_refs())
+        return
+
+    if data.startswith("adm_rejbonus:"):
+        if not is_admin(user_tg):
+            tg_answer(cb_id, "⛔️", True); return
+        ref_uid = data.split(":", 1)[1]
+        tg_answer(cb_id, "❌ Отклонено")
+        count, total = reject_pending_bonuses(ref_uid)
+        tg_edit(chat_id, msg_id,
+                f"❌ <b>Отклонено {count} бонусов</b>\n"
+                f"💰 На сумму: <b>{fmt_money(total)}</b>")
+        tg_send(int(ref_uid),
+                f"❌ <b>Отложенные бонусы отклонены</b>\n\n"
+                f"💰 {fmt_money(total)} не будут начислены.\n\n"
+                f"Если это ошибка — свяжитесь с админом.")
+        return
 
     tg_answer(cb_id, "")
 
@@ -799,6 +906,10 @@ def admin_set_purchase(pid, status):
         return
     old_status = p.get("status", "")
     patch = {"status": status, "status_changed_at": now_iso()}
+    buyer_uid = str(p.get("user_telegram_id"))
+    activated_count = 0
+    activated_total = 0
+
     if status == "approved":
         try:
             days = int(p.get("days") or DEFAULT_DAYS)
@@ -807,6 +918,8 @@ def admin_set_purchase(pid, status):
         patch.update(calc_dates(now_iso(), days))
         patch["approved_at"] = now_iso()
         patch["days"] = days
+
+        # 🎁 Проверяем реферера
         if p.get("referrer_uid"):
             ref_uid = str(p["referrer_uid"])
             bonus = get_referral_bonus(p)
@@ -820,21 +933,43 @@ def admin_set_purchase(pid, status):
                 patch["referral_pending_reason"] = "У реферера нет активной эры"
                 if p.get("referral_bonus") in (None, ""):
                     patch["referral_bonus"] = bonus
-        buyer_uid = str(p.get("user_telegram_id"))
-        pending_activated, pending_total = activate_pending_bonuses(buyer_uid)
-        if pending_activated > 0:
-            patch["_activated_pending_count"] = pending_activated
-            patch["_activated_pending_total"] = pending_total
+
+        # 🎉 Активируем ОТЛОЖЕННЫЕ бонусы покупателя (если он сам купил)
+        activated_count, activated_total = activate_pending_bonuses(buyer_uid)
+
     if status in ("rejected", "cancelled"):
         if p.get("referrer_uid"):
             patch["referral_status"] = "rejected"
-    activated_count = patch.pop("_activated_pending_count", 0)
-    activated_total = patch.pop("_activated_pending_total", 0)
+
     fb_patch(f"purchases/{k}", patch)
     PURCHASE_STATUS_CACHE[k] = status
+
     if old_status != status:
         updated = {**p, **patch}
         notify_purchase_status(k, updated, old_status, status)
+
+        # Уведомляем админов про отложенный бонус
+        if status == "approved" and patch.get("referral_status") == "pending_active":
+            ref_uid = str(p["referrer_uid"])
+            ref_user = fb_get(f"users/{ref_uid}") or {}
+            bonus = get_referral_bonus(p)
+            ref_bal = calc_user_ref_balance(ref_uid)
+            notify_admins(
+                f"⏸ <b>Бонус отложен — нужна проверка</b>\n\n"
+                f"🎁 Реферер: <b>{ref_user.get('first_name', '—')}</b> "
+                f"{'@' + ref_user.get('username') if ref_user.get('username') else ''}\n"
+                f"🆔 <code>{ref_uid}</code>\n\n"
+                f"👤 Купил: {p.get('user_first_name', '—')}\n"
+                f"💳 {p.get('era_title', '—')}\n"
+                f"💰 Бонус: <b>{fmt_money(bonus)}</b>\n\n"
+                f"❌ Причина: у реферера нет активной эры\n\n"
+                f"📊 Всего отложено у реферера: "
+                f"<b>{fmt_money(ref_bal['pending_active'])}</b>\n\n"
+                f"👇 Начислить принудительно или отклонить?",
+                kb=kb_admin_pending_bonus(ref_uid)
+            )
+
+        # Уведомляем юзера про активацию его отложенных бонусов
         if activated_count > 0:
             bal = calc_user_ref_balance(buyer_uid)
             tg_send(int(buyer_uid),

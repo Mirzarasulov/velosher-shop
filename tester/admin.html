@@ -729,13 +729,13 @@ function orderCard(p){
       '<div class="ri"><span class="muted">Прямая регистрация</span></div></div>') +
     dateBlock + refBlock +
     '<div class="muted" style="margin:12px 0">🕐 Создано: ' + fmtDate(p.created_at) + '</div>' +
-'<div class="flex">' +
-  (canConfirm ? '<button class="btn ok" onclick="admConfirm(\'' + esc(k) + '\')">✅ Подтвердить</button>' : '') +
-  (canCancel ? '<button class="btn danger" onclick="admCancel(\'' + esc(k) + '\')">❌ Отменить</button>' : '') +
-  (isActive ? '<button class="btn warn" onclick="openEarlyClose(\'' + esc(k) + '\')">🔌 Отключить эру</button>' : '') +
-  '<button class="btn ghost" onclick="admContact(\'' + esc(p.user_telegram_id || '') + '\')">💬 Написать</button>' +
-  '<button class="btn danger" onclick="openDeletePurchase(\'' + esc(k) + '\')">🗑 Удалить заявку</button>' +
-'</div></div>';
+    '<div class="flex">' +
+      (canConfirm ? '<button class="btn ok" onclick="admConfirm(\'' + esc(k) + '\')">✅ Подтвердить</button>' : '') +
+      (canCancel ? '<button class="btn danger" onclick="admCancel(\'' + esc(k) + '\')">❌ Отменить</button>' : '') +
+      (isActive ? '<button class="btn warn" onclick="openEarlyClose(\'' + esc(k) + '\')">🔌 Отключить эру</button>' : '') +
+      '<button class="btn ghost" onclick="admContact(\'' + esc(p.user_telegram_id||'') + '\')">💬 Написать</button>' +
+      '<button class="btn danger" onclick="openDeletePurchase(\'' + esc(k) + '\')">🗑 Удалить заявку</button>' +
+    '</div></div>';
 }
 
 async function admConfirm(k){
@@ -793,7 +793,6 @@ function openDeletePurchase(key){
   var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
   if (!p) return;
   var buyer = findUser(DATA.users, p.user_telegram_id);
-  var wasPaid = p.status === 'paid' || (PAYOUTS && PAYOUTS.some && false);
   var isApprovedOrMore = ['approved','completed','paid'].indexOf(p.status) >= 0;
 
   $('modal-root').innerHTML =

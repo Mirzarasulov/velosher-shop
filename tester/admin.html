@@ -81,6 +81,7 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .btn.ok{background:var(--ok);color:#04241a}
 .btn.warn{background:var(--warn);color:#2a1a00}
 .btn.purple{background:var(--purple);color:#12002e}
+.btn.gold{background:linear-gradient(135deg,#f5d97a,#e0b84a,#b8862d);color:#2a1a00;font-weight:800}
 .btn.sm{padding:7px 12px;font-size:12px;min-height:34px}
 .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;
   border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase}
@@ -246,6 +247,8 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
   padding:16px;margin-bottom:12px;transition:opacity .2s
 }
 .era-admin-card.loading{opacity:.5;pointer-events:none}
+.era-admin-card.mismatch{border-color:var(--warn);background:rgba(245,181,71,.04)}
+
 @media(max-width:768px){
   .layout{flex-direction:column}
   .side{width:100%;height:auto;position:sticky;top:0;z-index:50;border-right:0;
@@ -787,7 +790,7 @@ async function admCancel(k){
 }
 
 // ═══════════════════════════════════════════════════════════
-// 🗑 УДАЛИТЬ ЗАЯВКУ (полное удаление из Firebase)
+// 🗑 УДАЛИТЬ ЗАЯВКУ
 // ═══════════════════════════════════════════════════════════
 function openDeletePurchase(key){
   var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
@@ -800,7 +803,6 @@ function openDeletePurchase(key){
       '<div class="mh"><h2>🗑 Удалить заявку</h2>' +
         '<button class="x" onclick="closeModal()">✕</button></div>' +
       '<div class="mb">' +
-
         '<div class="card" style="background:rgba(255,92,92,.08);border-color:var(--err);margin-bottom:16px">' +
           '<div style="font-weight:700;color:var(--err);margin-bottom:8px">⚠️ Внимание</div>' +
           '<div class="muted" style="line-height:1.6">' +
@@ -813,22 +815,18 @@ function openDeletePurchase(key){
             'Восстановить данные будет невозможно.' +
           '</div>' +
         '</div>' +
-
         '<div class="frow">' +
           '<label>Пароль для подтверждения</label>' +
-          '<input class="input" id="dp_pass" type="password" placeholder="admin123" autofocus>' +
+          '<input class="input" id="dp_pass" type="password" placeholder="Пароль админа" autofocus>' +
         '</div>' +
-
         '<div class="frow">' +
           '<label>Причина (опционально)</label>' +
           '<input class="input" id="dp_reason" placeholder="Ошибочное подтверждение">' +
         '</div>' +
-
         '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:8px">' +
           '<input type="checkbox" id="dp_notify" checked style="width:18px;height:18px">' +
           '<span class="muted">Отправить юзеру уведомление</span>' +
         '</label>' +
-
       '</div>' +
       '<div class="mf">' +
         '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
@@ -855,7 +853,6 @@ async function doDeletePurchase(key){
     var doNotify = notifyEl ? notifyEl.checked : true;
     var uid = p.user_telegram_id;
 
-    // 1. Если по заявке уже была выплата — откатываем её
     var payouts = await fbGet('payouts').then(toList).catch(function(){ return []; });
     var relatedPayouts = payouts.filter(function(po){
       return String(po.purchase_id) === String(p.id);
@@ -864,10 +861,8 @@ async function doDeletePurchase(key){
       await fbDelete('payouts/' + relatedPayouts[i]._key);
     }
 
-    // 2. Удаляем саму заявку
     await fbDelete('purchases/' + key);
 
-    // 3. Уведомляем юзера
     if (doNotify && uid){
       try {
         await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
@@ -916,7 +911,6 @@ function openEarlyClose(key){
           '<input class="input" id="ec_pass" type="password" placeholder="Пароль админа" autofocus ' +
             'onkeydown="if(event.key===\'Enter\')doEarlyClose(\'' + esc(key) + '\')">' +
         '</div>' +
-        '<div class="muted" style="font-size:11px;text-align:center">Подсказка: admin123</div>' +
       '</div>' +
       '<div class="mf">' +
         '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
@@ -1198,36 +1192,31 @@ function openBlockUser(uid){
       '<div class="mh"><h2>' + (isBlocked ? '🔓 Разблокировать' : '🚫 Заблокировать') + '</h2>' +
         '<button class="x" onclick="closeModal()">✕</button></div>' +
       '<div class="mb">' +
-
         '<div class="card" style="background:' + (isBlocked ? 'rgba(57,217,138,.08)' : 'rgba(255,92,92,.08)') + ';border-color:' + (isBlocked ? 'var(--ok)' : 'var(--err)') + ';margin-bottom:16px">' +
           '<div style="font-weight:700;color:' + (isBlocked ? 'var(--ok)' : 'var(--err)') + ';margin-bottom:8px">' +
             (isBlocked ? '🔓 Разблокировка' : '🚫 Блокировка') +
           '</div>' +
-         '<div class="muted" style="line-height:1.6">' +
-  (isBlocked
-    ? 'Юзер <b>' + esc(userName(u)) + '</b> снова сможет пользоваться ботом и приложением.'
-    : 'Юзер <b>' + esc(userName(u)) + '</b> не сможет создавать заявки и подавать на вывод.<br>Все существующие заявки остаются в силе.'
-  ) +
-'</div>' +
+          '<div class="muted" style="line-height:1.6">' +
+            (isBlocked
+              ? 'Юзер <b>' + esc(userName(u)) + '</b> снова сможет пользоваться ботом и приложением.'
+              : 'Юзер <b>' + esc(userName(u)) + '</b> не сможет создавать заявки и подавать на вывод.<br>Все существующие заявки остаются в силе.'
+            ) +
+          '</div>' +
         '</div>' +
-
         '<div class="frow">' +
           '<label>Пароль для подтверждения</label>' +
-          '<input class="input" id="bl_pass" type="password" placeholder="admin123" autofocus>' +
+          '<input class="input" id="bl_pass" type="password" placeholder="Пароль админа" autofocus>' +
         '</div>' +
-
         (!isBlocked
           ? '<div class="frow">' +
               '<label>Причина блокировки</label>' +
               '<input class="input" id="bl_reason" placeholder="Например: мошенничество">' +
             '</div>'
           : '') +
-
         '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:8px">' +
           '<input type="checkbox" id="bl_notify" checked style="width:18px;height:18px">' +
           '<span class="muted">Отправить юзеру уведомление</span>' +
         '</label>' +
-
       '</div>' +
       '<div class="mf">' +
         '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
@@ -1392,37 +1381,68 @@ function userCard(u){
 }
 
 // ═══════════════════════════════════════════════════════════
-// ERAS
+// ERAS — ИСПРАВЛЕННАЯ ЛОГИКА
 // ═══════════════════════════════════════════════════════════
 async function renderEras(){
   layout('<div class="empty">Загрузка…</div>');
   try {
     await loadErasFresh();
+    var hasMismatch = DATA.eras.some(function(e){
+      return String(e._key) !== String(e.id);
+    });
     layout(
       '<div class="row" style="margin-bottom:14px">' +
         '<h2 style="font-size:17px">🧩 Товары (' + DATA.eras.length + ')</h2>' +
-        '<button class="btn" onclick="createEra()">➕ Создать</button></div>' +
+        '<div class="flex">' +
+          '<button class="btn gold" onclick="seedDefaultEras()">📥 Загрузить 8 эр</button>' +
+          '<button class="btn" onclick="createEra()">➕ Создать</button>' +
+        '</div>' +
+      '</div>' +
+      (hasMismatch
+        ? '<div class="card" style="background:rgba(245,181,71,.08);border-color:var(--warn);margin-bottom:14px">' +
+            '<div style="font-weight:700;color:var(--warn);margin-bottom:6px">⚠️ Обнаружены несовпадения ключей</div>' +
+            '<div class="muted" style="margin-bottom:10px">У некоторых эр _key ≠ id. Это может ломать редактирование. Нажмите кнопку — всё починится автоматически.</div>' +
+            '<button class="btn warn sm" onclick="fixEraKeys()">🔧 Починить ключи</button>' +
+          '</div>'
+        : '') +
       (DATA.eras.length
         ? DATA.eras.map(eraCard).join('')
-        : '<div class="empty"><div class="ic">📦</div><p>Нет товаров. Создайте первый.</p></div>'));
+        : '<div class="empty"><div class="ic">📦</div><p>Нет товаров. Создайте первый или загрузите 8 эр.</p></div>'));
   } catch(e){
     layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
   }
 }
+
 async function loadErasFresh(){
   var raw = await fbGet('eras');
-  DATA.eras = toList(raw).sort(function(a,b){
-    return Number(a.sort_order || a.id || 0) - Number(b.sort_order || b.id || 0);
-  });
+  DATA.eras = toList(raw)
+    .map(function(e){
+      e.price = Number(e.price) || 0;
+      e.profit_amount = Number(e.profit_amount) || 0;
+      e.total_amount = Number(e.total_amount) || (e.price + e.profit_amount);
+      e.duration_days = Number(e.duration_days) || 0;
+      e.id = Number(e.id) || Number(e._key) || 0;
+      e.sort_order = Number(e.sort_order) || e.id;
+      e.is_active = (e.is_active === 0 || e.is_active === false) ? 0 : 1;
+      return e;
+    })
+    .sort(function(a,b){
+      return (Number(a.sort_order)||0) - (Number(b.sort_order)||0);
+    });
 }
+
 function eraCard(e){
   var price = Number(e.price || 0);
   var roi = price > 0 ? Math.round(Number(e.profit_amount)/price*100) : 0;
-  var k = e._key;
-  return '<div class="card era-admin-card" data-era="' + esc(k) + '">' +
+  var key = String(e.id || e._key); // ✅ Всегда используем id как ключ
+  var mismatch = String(e._key) !== String(e.id);
+
+  return '<div class="card era-admin-card' + (mismatch ? ' mismatch' : '') + '" data-era="' + esc(key) + '">' +
     '<div class="row" style="margin-bottom:12px">' +
       '<div><b style="color:#4f8cff;font-size:15px">🧩 ' + esc(e.title||'Без названия') + '</b>' +
-        '<div class="muted">ID #' + esc(e.id||e._key) + '</div></div>' +
+        '<div class="muted">ID #' + esc(e.id) + ' · key <code style="background:var(--card2);padding:1px 5px;border-radius:4px">' + esc(e._key) + '</code>' +
+          (mismatch ? ' <span style="color:var(--warn)">⚠️</span>' : '') +
+        '</div></div>' +
       '<span class="badge ' + (e.is_active ? 'approved' : 'cancelled') + '">' +
         (e.is_active ? '🟢 Активна' : '⚫ Отключена') + '</span></div>' +
     '<div class="grid">' +
@@ -1432,18 +1452,23 @@ function eraCard(e){
       '<div class="cell"><b>📅 Срок</b><span>' + Number(e.duration_days||0) + ' дн.</span></div>' +
       '<div class="cell"><b>📈 ROI</b><span class="ok">+' + roi + '%</span></div>' +
     '</div>' +
+    (e.description
+      ? '<div class="muted" style="margin:10px 0;line-height:1.5">' + esc(e.description) + '</div>'
+      : '') +
     '<div class="flex" style="margin-top:12px">' +
-      '<button class="btn sm" onclick="editEra(\'' + esc(k) + '\')">✏️ Изменить</button>' +
+      '<button class="btn sm" onclick="editEra(' + e.id + ')">✏️ Изменить</button>' +
       '<button class="btn sm ' + (e.is_active ? 'ghost' : 'ok') + '" ' +
-        'onclick="toggleEra(\'' + esc(k) + '\',' + (e.is_active?0:1) + ')">' +
+        'onclick="toggleEra(' + e.id + ',' + (e.is_active?0:1) + ')">' +
         (e.is_active ? '⚫ Выкл' : '🟢 Вкл') + '</button>' +
-      '<button class="btn sm danger" onclick="deleteEra(\'' + esc(k) + '\')">🗑 Удалить</button>' +
+      '<button class="btn sm danger" onclick="deleteEra(' + e.id + ')">🗑 Удалить</button>' +
     '</div></div>';
 }
+
 function eraForm(e){
   e = e || {};
+  var isEdit = !!e.id;
   return '<div class="mbg" onclick="if(event.target===this)closeModal()"><div class="modal">' +
-    '<div class="mh"><h2>' + (e._key ? '✏️ Изменить' : '➕ Создать') + ' эру</h2>' +
+    '<div class="mh"><h2>' + (isEdit ? '✏️ Изменить #' + e.id : '➕ Создать') + ' эру</h2>' +
       '<button class="x" onclick="closeModal()">✕</button></div>' +
     '<div class="mb">' +
       '<div class="frow"><label>Название</label><input class="input" id="f_title" value="' + esc(e.title||'Новая эра') + '"></div>' +
@@ -1452,20 +1477,25 @@ function eraForm(e){
       '<div class="frow"><label>Срок (дней)</label><input class="input" id="f_days" type="number" value="' + (e.duration_days||20) + '"></div>' +
       '<div class="frow"><label>Описание</label><textarea class="input" id="f_desc" rows="3">' + esc(e.description||'') + '</textarea></div>' +
       '<div class="frow"><label>Активна</label><select class="input" id="f_active">' +
-        '<option value="1"' + (!e._key || e.is_active ? ' selected' : '') + '>Да</option>' +
-        '<option value="0"' + (e._key && !e.is_active ? ' selected' : '') + '>Нет</option></select></div>' +
+        '<option value="1"' + (!isEdit || e.is_active ? ' selected' : '') + '>Да</option>' +
+        '<option value="0"' + (isEdit && !e.is_active ? ' selected' : '') + '>Нет</option></select></div>' +
+      (isEdit ? '<div class="muted" style="font-size:11px">ID: <code>' + e.id + '</code> · key: <code>' + esc(e._key) + '</code></div>' : '') +
     '</div>' +
     '<div class="mf"><button class="btn ghost" onclick="closeModal()">Отмена</button>' +
-      '<button class="btn" id="f_save" onclick="saveEra(\'' + (e._key||'') + '\')">' +
-        (e._key ? '💾 Сохранить' : '✅ Создать') + '</button></div></div></div>';
+      '<button class="btn" id="f_save" onclick="saveEra(' + (isEdit ? e.id : 0) + ')">' +
+        (isEdit ? '💾 Сохранить' : '✅ Создать') + '</button></div></div></div>';
 }
+
 function createEra(){ $('modal-root').innerHTML = eraForm(null); }
-function editEra(key){
-  var e = DATA.eras.filter(function(x){ return x._key === key; })[0];
-  if (e) $('modal-root').innerHTML = eraForm(e);
+
+function editEra(id){
+  var e = DATA.eras.filter(function(x){ return String(x.id) === String(id); })[0];
+  if (!e) return toast('Эра не найдена (id ' + id + ')', 'err');
+  $('modal-root').innerHTML = eraForm(e);
 }
-async function saveEra(key){
-  await once('save_era_' + (key || 'new'), async function(){
+
+async function saveEra(id){
+  await once('save_era_' + id, async function(){
     var title = $('f_title').value.trim();
     if (!title){ toast('Введите название', 'err'); return; }
     var price = Number($('f_price').value) || 0;
@@ -1475,63 +1505,178 @@ async function saveEra(key){
     var active = Number($('f_active').value);
     var btn = $('f_save'); btn.disabled = true; btn.textContent = '⏳...';
 
-    var data = { title: title, price: price, profit_amount: profit,
-      total_amount: price + profit, duration_days: days,
-      description: desc, is_active: active };
+    var data = {
+      title: title,
+      price: price,
+      profit_amount: profit,
+      total_amount: price + profit,
+      duration_days: days,
+      description: desc,
+      is_active: active
+    };
 
     try {
-      if (key){
-        var e = DATA.eras.filter(function(x){ return x._key === key; })[0] || {};
-        data.id = e.id || key; data.sort_order = e.sort_order || data.id;
-        await fbPut('eras/' + key, data);
-        pushLog('✏️ Изменил эру', title);
+      if (id && id > 0){
+        // ✅ РЕДАКТИРОВАНИЕ: ищем по id, пишем по id
+        var existing = DATA.eras.filter(function(x){ return String(x.id) === String(id); })[0];
+        if (!existing) throw new Error('Эра #' + id + ' не найдена');
+        data.id = id;
+        data.sort_order = existing.sort_order || id;
+        // Пишем СТРОГО в eras/{id}
+        await fbPut('eras/' + id, data);
+        // Если был другой _key — удаляем старую запись
+        if (String(existing._key) !== String(id)){
+          await fbDelete('eras/' + existing._key);
+          console.log('🗑 Удалён старый ключ:', existing._key);
+        }
+        pushLog('✏️ Изменил эру', '#' + id + ' · ' + title);
+        toast('💾 Эра #' + id + ' сохранена', 'ok');
       } else {
+        // ✅ СОЗДАНИЕ: новый id = max(id)+1
         var usedIds = DATA.eras.map(function(x){ return Number(x.id||0); }).filter(Boolean);
         var newId = usedIds.length ? Math.max.apply(null, usedIds) + 1 : 1;
-        data.id = newId; data.sort_order = newId;
+        data.id = newId;
+        data.sort_order = newId;
         await fbPut('eras/' + newId, data);
-        pushLog('➕ Создал эру', title);
+        pushLog('➕ Создал эру', '#' + newId + ' · ' + title);
+        toast('✅ Эра #' + newId + ' создана', 'ok');
       }
       closeModal();
-      toast('💾 Сохранено', 'ok');
       await renderEras();
     } catch(err){
+      console.error(err);
       toast('❌ ' + err.message, 'err');
       btn.disabled = false;
-      btn.textContent = key ? '💾 Сохранить' : '✅ Создать';
+      btn.textContent = id ? '💾 Сохранить' : '✅ Создать';
     }
   });
 }
-async function toggleEra(key, active){
-  await once('toggle_' + key, async function(){
-    var local = DATA.eras.filter(function(x){ return x._key === key; })[0];
-    var old = local ? local.is_active : 0;
-    if (local) local.is_active = active;
+
+async function toggleEra(id, active){
+  await once('toggle_' + id, async function(){
+    var e = DATA.eras.filter(function(x){ return String(x.id) === String(id); })[0];
+    if (!e) return toast('Эра не найдена', 'err');
+    var old = e.is_active;
+    e.is_active = active;
     toast(active ? '⏳ Включаю…' : '⏳ Отключаю…', 'info', 1500);
     try {
-      await fbPatch('eras/' + key, { is_active: active });
+      // ✅ Пишем по id (или по _key если он отличается)
+      await fbPatch('eras/' + (e.id || e._key), { is_active: active });
       toast(active ? '🟢 Включено' : '⚫ Отключено', 'ok');
       await renderEras();
-    } catch(e){
-      if (local) local.is_active = old;
-      toast('❌ Не удалось: ' + e.message, 'err');
+    } catch(err){
+      e.is_active = old;
+      toast('❌ Не удалось: ' + err.message, 'err');
       await renderEras();
     }
   });
 }
-async function deleteEra(key){
-  if (!confirm('Удалить эру? Существующие заказы не пострадают.')) return;
-  await once('del_' + key, async function(){
-    var e = DATA.eras.filter(function(x){ return x._key === key; })[0];
+
+async function deleteEra(id){
+  var e = DATA.eras.filter(function(x){ return String(x.id) === String(id); })[0];
+  if (!e) return toast('Эра не найдена', 'err');
+  if (!confirm('Удалить эру #' + id + ' «' + (e.title||'') + '»?\n\nСуществующие заказы не пострадают.')) return;
+
+  await once('del_' + id, async function(){
     toast('⏳ Удаляю…', 'info', 1200);
     try {
-      await fbDelete('eras/' + key);
-      pushLog('🗑 Удалил эру', e ? (e.title || key) : key);
-      toast('🗑 Удалено', 'ok');
+      // Удаляем по id
+      await fbDelete('eras/' + id);
+      // И по _key, если отличается
+      if (String(e._key) !== String(id)){
+        await fbDelete('eras/' + e._key);
+      }
+      pushLog('🗑 Удалил эру', '#' + id + ' · ' + (e.title || ''));
+      toast('🗑 Эра #' + id + ' удалена', 'ok');
       await renderEras();
     } catch(err){
       toast('❌ ' + err.message, 'err');
     }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// 📥 SEED — загрузка 8 эр одним кликом
+// ═══════════════════════════════════════════════════════════
+async function seedDefaultEras(){
+  if (!confirm('Загрузить 8 стандартных эр из РОСТЭРА?\n\nСуществующие эры с такими же ID будут перезаписаны.')) return;
+  await once('seed_eras', async function(){
+    var seed = [
+      { title: 'Эра 1 — Старт', price: 1500, profit: 1000, days: 20,
+        desc: 'Первая ступень роста. Идеальный вход для знакомства с проектом РОСТЭРА.' },
+      { title: 'Эра 2 — Разгон', price: 2500, profit: 2000, days: 22,
+        desc: 'Уверенный старт с повышенной доходностью. Для тех, кто готов двигаться дальше.' },
+      { title: 'Эра 3 — Рост', price: 4500, profit: 3000, days: 24,
+        desc: 'Сбалансированная эра для стабильного прироста капитала.' },
+      { title: 'Эра 4 — Импульс', price: 7500, profit: 5500, days: 26,
+        desc: 'Ускоренный рост. Для тех, кто ценит своё время и хочет большего.' },
+      { title: 'Эра 5 — Прорыв', price: 13000, profit: 8000, days: 28,
+        desc: 'Серьёзный шаг вперёд. Ваш капитал работает на полную мощность.' },
+      { title: 'Эра 6 — Мастер', price: 21000, profit: 18000, days: 28,
+        desc: 'Эра для опытных участников. Максимальная доходность на длинной дистанции.' },
+      { title: 'Эра 7 — Легенда', price: 39000, profit: 34000, days: 28,
+        desc: 'Финальная ступень. Для тех, кто мыслит масштабно и не останавливается на достигнутом.' },
+      { title: 'Эра 8 — РОСТЭРА Premium', price: 50000, profit: 45000, days: 30,
+        desc: 'Премиум-эра для лидеров. Максимальные возможности проекта РОСТЭРА.' }
+    ];
+    var maxId = 0;
+    DATA.eras.forEach(function(e){ if (Number(e.id) > maxId) maxId = Number(e.id); });
+    var created = 0;
+    for (var i = 0; i < seed.length; i++){
+      var s = seed[i];
+      var id = maxId + i + 1;
+      var data = {
+        id: id,
+        sort_order: id,
+        title: s.title,
+        price: s.price,
+        profit_amount: s.profit,
+        total_amount: s.price + s.profit,
+        duration_days: s.days,
+        description: s.desc,
+        is_active: 1
+      };
+      await fbPut('eras/' + id, data);
+      created++;
+    }
+    pushLog('📥 Загрузил 8 эр', 'ID ' + (maxId+1) + '…' + (maxId+8));
+    toast('✅ Загружено ' + created + ' эр', 'ok', 4000);
+    await renderEras();
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// 🔧 FIX — починка несовпадающих ключей
+// ═══════════════════════════════════════════════════════════
+async function fixEraKeys(){
+  if (!confirm('Пересоздать все эры с правильными ключами?\n\nКаждая эра будет записана в eras/{id}. Старые ключи удалятся.')) return;
+  await once('fix_keys', async function(){
+    var raw = await fbGet('eras');
+    var list = toList(raw);
+    var fixed = 0;
+    for (var i = 0; i < list.length; i++){
+      var e = list[i];
+      var id = Number(e.id) || Number(e._key) || (i + 1);
+      var data = {
+        id: id,
+        sort_order: Number(e.sort_order) || id,
+        title: e.title || 'Эра ' + id,
+        price: Number(e.price) || 0,
+        profit_amount: Number(e.profit_amount) || 0,
+        total_amount: Number(e.total_amount) || (Number(e.price||0) + Number(e.profit_amount||0)),
+        duration_days: Number(e.duration_days) || 20,
+        description: e.description || '',
+        is_active: (e.is_active === 0 || e.is_active === false) ? 0 : 1
+      };
+      await fbPut('eras/' + id, data);
+      if (String(e._key) !== String(id)){
+        await fbDelete('eras/' + e._key);
+        fixed++;
+      }
+    }
+    pushLog('🔧 Починил ключи эр', 'Исправлено: ' + fixed);
+    toast('✅ Готово. Исправлено: ' + fixed, 'ok', 4000);
+    await renderEras();
   });
 }
 
@@ -1557,7 +1702,7 @@ async function renderCatalog(){
         '<div class="v-days">' + days + ' дн.</div>' +
         '<div class="v-total">' + fmt(total) + '</div>' +
         '<div class="v-profit">' + fmt(profit) + '</div>' +
-        '<div><span class="v-pct">' + pct.toFixed(2) + '%</span></div>' +
+        '<div><span class="v-pct">' + pct.toFixed(2).replace('.', ',') + '%</span></div>' +
       '</div>';
     }).join('');
 
@@ -1717,6 +1862,8 @@ window.editEra = editEra;
 window.saveEra = saveEra;
 window.toggleEra = toggleEra;
 window.deleteEra = deleteEra;
+window.seedDefaultEras = seedDefaultEras;
+window.fixEraKeys = fixEraKeys;
 
 render();
 </script>

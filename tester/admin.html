@@ -168,7 +168,6 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .dleft.err{background:rgba(255,92,92,.15);color:var(--err)}
 .dleft.muted{background:rgba(139,148,158,.12);color:var(--muted)}
 
-/* 💳 Реквизиты */
 .req-block{
   background:linear-gradient(135deg,#12351f 0%,#0f2a1a 100%);
   border-radius:10px;padding:14px;margin-top:12px;
@@ -183,6 +182,35 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .req-block .req-val{font-weight:700;color:#a8f0cc}
 .req-block .req-val code{background:rgba(0,0,0,.35);padding:4px 8px;border-radius:6px;
   font-size:13.5px;color:#a8f0cc}
+
+.ref-setup-item{
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;margin-bottom:6px;
+  cursor:pointer;transition:border-color .15s,background .15s;
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+}
+.ref-setup-item:hover{border-color:var(--accent);background:rgba(79,140,255,.05)}
+.ref-setup-item:active{transform:scale(.99)}
+.ref-setup-item .rsi-name{font-weight:700;font-size:13.5px}
+.ref-setup-item .rsi-sub{color:var(--muted);font-size:11.5px;margin-top:2px}
+.ref-setup-item .rsi-badge{
+  padding:3px 8px;border-radius:6px;background:rgba(167,139,250,.15);
+  color:var(--purple);font-size:10px;font-weight:700;white-space:nowrap;
+}
+.ref-setup-step{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;font-weight:700;color:var(--accent);
+  margin-bottom:10px;padding:8px 12px;
+  background:rgba(79,140,255,.08);border-radius:8px;
+}
+.ref-setup-preview{
+  background:linear-gradient(135deg,#1b2a4a 0%,#16233f 100%);
+  border:1px solid #2c3d63;border-radius:12px;padding:14px;
+  margin:12px 0;text-align:center;
+}
+.ref-setup-preview .arrow{font-size:24px;color:var(--purple);margin:6px 0}
+.ref-setup-preview .who{font-weight:700;font-size:14px}
+.ref-setup-preview .who.small{font-size:12px;color:var(--muted);font-weight:500}
 
 .catalog-hero{
   position:relative;border-radius:20px;overflow:hidden;padding:24px 16px 16px;
@@ -222,7 +250,6 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .catalog-row .v-profit{color:var(--gold)}
 .catalog-row .v-pct{display:inline-block;padding:3px 8px;border-radius:6px;
   background:rgba(224,184,74,.15);color:var(--gold);font-size:11px;font-weight:800}
-.catalog-row:hover{background:rgba(224,184,74,.04)}
 .catalog-slogan{text-align:center;padding:14px 0 6px;font-size:14px;font-weight:800;
   letter-spacing:.15em;background:linear-gradient(180deg,#f5d97a 0%,#b8862d 100%);
   -webkit-background-clip:text;background-clip:text;
@@ -234,93 +261,58 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
   .catalog-row .v-pct{font-size:10px;padding:2px 5px}
   .catalog-logo .emblem{width:52px;height:52px;font-size:22px}
 }
-
 .era-admin-card{background:var(--card);border:1px solid var(--border);border-radius:14px;
   padding:16px;margin-bottom:12px;transition:opacity .2s}
 .era-admin-card.loading{opacity:.5;pointer-events:none}
 .era-admin-card.mismatch{border-color:var(--warn);background:rgba(245,181,71,.04)}
-
-/* 👤 Карточка юзера */
 .user-hero{
   background:linear-gradient(135deg,#1b2a4a 0%,#16233f 100%);
   border:1px solid #2c3d63;border-radius:16px;padding:20px;
   margin-bottom:14px;position:relative;overflow:hidden;
 }
-.user-hero.blocked{
-  background:linear-gradient(135deg,#2a0e0e,#1a0808);
-  border-color:#7a2020;
-}
-.user-hero .uh-head{
-  display:flex;align-items:center;gap:14px;margin-bottom:14px;
-}
-.user-hero .uh-avatar{
-  width:64px;height:64px;border-radius:50%;
+.user-hero.blocked{background:linear-gradient(135deg,#2a0e0e,#1a0808);border-color:#7a2020}
+.user-hero .uh-head{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.user-hero .uh-avatar{width:64px;height:64px;border-radius:50%;
   background:var(--card3);border:2px solid var(--border2);
   display:flex;align-items:center;justify-content:center;
-  font-size:26px;font-weight:700;color:var(--accent);
-  overflow:hidden;flex-shrink:0;
-}
+  font-size:26px;font-weight:700;color:var(--accent);overflow:hidden;flex-shrink:0}
 .user-hero .uh-avatar img{width:100%;height:100%;object-fit:cover}
 .user-hero .uh-info{min-width:0;flex:1}
 .user-hero .uh-name{font-size:19px;font-weight:700;margin-bottom:2px}
 .user-hero .uh-sub{font-size:13px;color:var(--text2)}
-
-.user-section{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:14px;margin-bottom:12px;overflow:hidden;
-}
-.user-section .us-head{
-  padding:14px 18px;background:var(--card2);
+.user-section{background:var(--card);border:1px solid var(--border);
+  border-radius:14px;margin-bottom:12px;overflow:hidden}
+.user-section .us-head{padding:14px 18px;background:var(--card2);
   border-bottom:1px solid var(--border);
   font-size:13.5px;font-weight:700;display:flex;
-  justify-content:space-between;align-items:center;gap:10px;
-}
+  justify-content:space-between;align-items:center;gap:10px}
 .user-section .us-body{padding:14px 18px}
-.purchase-item{
-  background:var(--card2);border-radius:12px;padding:14px;
-  margin-bottom:10px;border-left:3px solid var(--accent);
-}
+.purchase-item{background:var(--card2);border-radius:12px;padding:14px;
+  margin-bottom:10px;border-left:3px solid var(--accent)}
 .purchase-item.approved{border-left-color:var(--ok)}
 .purchase-item.completed{border-left-color:var(--info)}
 .purchase-item.created{border-left-color:var(--accent)}
 .purchase-item.cancelled{border-left-color:var(--err)}
 .purchase-item.rejected{border-left-color:var(--err)}
-.purchase-item .pi-head{
-  display:flex;justify-content:space-between;align-items:center;
-  gap:10px;margin-bottom:10px;flex-wrap:wrap;
-}
-.purchase-item .pi-id{
-  font-weight:700;font-size:14px;color:var(--accent);
-}
-.purchase-item .pi-metrics{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:8px;margin-bottom:10px;
-}
-.purchase-item .pi-metric{
-  background:rgba(0,0,0,.25);border-radius:8px;
-  padding:8px 10px;text-align:center;
-}
-.purchase-item .pi-metric b{
-  display:block;font-size:9.5px;color:var(--muted);
-  text-transform:uppercase;margin-bottom:3px;font-weight:600;
-}
-.purchase-item .pi-metric span{
-  font-size:13px;font-weight:700;
-}
+.purchase-item .pi-head{display:flex;justify-content:space-between;align-items:center;
+  gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.purchase-item .pi-id{font-weight:700;font-size:14px;color:var(--accent)}
+.purchase-item .pi-metrics{display:grid;grid-template-columns:repeat(3,1fr);
+  gap:8px;margin-bottom:10px}
+.purchase-item .pi-metric{background:rgba(0,0,0,.25);border-radius:8px;
+  padding:8px 10px;text-align:center}
+.purchase-item .pi-metric b{display:block;font-size:9.5px;color:var(--muted);
+  text-transform:uppercase;margin-bottom:3px;font-weight:600}
+.purchase-item .pi-metric span{font-size:13px;font-weight:700}
 .purchase-item .pi-metric span.ok{color:var(--ok)}
 .purchase-item .pi-metric span.accent{color:var(--accent)}
-.purchase-item .pi-dates{
-  display:flex;flex-wrap:wrap;gap:6px;font-size:11.5px;
-  color:var(--muted);line-height:1.6;
-}
+.purchase-item .pi-dates{display:flex;flex-wrap:wrap;gap:6px;font-size:11.5px;
+  color:var(--muted);line-height:1.6}
 .purchase-item .pi-dates b{color:var(--text2)}
-
-/* ═══ ПРОКРУТКА ═══ */
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-track{background:var(--card)}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 ::-webkit-scrollbar-thumb:hover{background:var(--muted)}
-
 @media(max-width:768px){
   .layout{flex-direction:column}
   .side{width:100%;height:auto;position:sticky;top:0;z-index:50;border-right:0;
@@ -511,7 +503,7 @@ function calcUserRefBalance(uid){
   });
   return { accrued: accrued, paid: paid, pending: pending, frozen: frozen,
     pendingActive: pendingActive,
-    owed: Math.max(0, accrued - accrued + accrued - paid - frozen),
+    owed: Math.max(0, accrued - paid - frozen),
     lastPaidAt: lastPaidAt, lastPaidAmount: lastPaidAmount };
 }
 
@@ -609,6 +601,7 @@ function layout(content){
       nav('eras','🧩','Товары', eraCnt) +
       nav('catalog','✨','Каталог') +
       nav('refs','🌳','Рефералы') +
+      '<button class="nav" onclick="openRefSetup()"><span class="emo">🎁</span>Реф-настройка</button>' +
       '<div class="sect">Система</div>' +
       '<button class="nav" onclick="openLog()"><span class="emo">📜</span>Лог</button>' +
       '<button class="nav" onclick="logout()" style="color:var(--err)"><span class="emo">🚪</span>Выйти</button>' +
@@ -682,6 +675,24 @@ async function renderDashboard(){
     };
 
     layout(
+      '<div class="card clickable" onclick="openRefSetup()" ' +
+        'style="background:linear-gradient(135deg,#1b2a4a 0%,#16233f 100%);' +
+        'border:1px solid #2c3d63;padding:18px;margin-bottom:16px">' +
+        '<div class="row">' +
+          '<div style="display:flex;align-items:center;gap:14px">' +
+            '<div style="width:48px;height:48px;border-radius:12px;' +
+              'background:rgba(167,139,250,.18);border:1px solid rgba(167,139,250,.4);' +
+              'display:flex;align-items:center;justify-content:center;font-size:22px">🎁</div>' +
+            '<div>' +
+              '<div style="font-weight:700;font-size:15px;color:#cfe0ff">Настройка рефералов</div>' +
+              '<div style="font-size:12px;color:rgba(207,224,255,.7);margin-top:2px">' +
+                'Привязать вручную (для тех, кто не перешёл по ссылке)' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="font-size:20px;color:#cfe0ff;opacity:.6">→</div>' +
+        '</div>' +
+      '</div>' +
       '<div class="stats">' +
         stat('👥','Юзеров', DATA.users.length) +
         stat('🚫','Заблокировано', blockedCnt, 'warn') +
@@ -845,12 +856,8 @@ function orderCard(p){
       || Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
     var st = p.referral_status || 'pending';
     var stLabel = {
-      pending:'⏳ Ожидает',
-      approved:'✅ К выплате',
-      frozen:'❄️ В заявке',
-      paid:'💸 Выплачено',
-      rejected:'❌ Отклонено',
-      pending_active:'❄️ ЗАМОРОЖЕНО'
+      pending:'⏳ Ожидает', approved:'✅ К выплате', frozen:'❄️ В заявке',
+      paid:'💸 Выплачено', rejected:'❌ Отклонено', pending_active:'❄️ ЗАМОРОЖЕНО'
     }[st] || st;
     var stColor = (st === 'rejected') ? 'var(--err)' :
                   (st === 'pending_active') ? 'var(--warn)' :
@@ -861,12 +868,10 @@ function orderCard(p){
     var refNote = '';
     if (st === 'pending_active'){
       refNote = '<div class="muted" style="margin-top:6px;font-size:11.5px;color:var(--warn)">' +
-        '❄️ У реферера нет активной эры. Бонус заморожен.<br>' +
-        'Разморозится автоматически, когда реферер купит эру.</div>' +
-        '<div style="margin-top:8px"><button class="btn warn sm" onclick="admForceActivate(\'' + esc(p.referrer_uid) + '\')">🔓 Разморозить принудительно</button></div>';
+        '❄️ У реферера нет активной эры. Бонус заморожен.</div>' +
+        '<div style="margin-top:8px"><button class="btn warn sm" onclick="admForceActivate(\'' + esc(p.referrer_uid) + '\')">🔓 Разморозить</button></div>';
     } else if (st === 'rejected'){
-      refNote = '<div class="muted" style="margin-top:6px;font-size:11.5px;color:var(--err)">' +
-        '❌ Бонус не начислен</div>';
+      refNote = '<div class="muted" style="margin-top:6px;font-size:11.5px;color:var(--err)">❌ Бонус не начислен</div>';
     }
 
     refBlock = '<div class="ref" style="border-left-color:' + stColor + '">' +
@@ -898,16 +903,17 @@ function orderCard(p){
     (referrer ? '<div class="ref"><div class="lbl">🎁 Пригласил</div>' +
       '<div class="ri"><div><b>' + esc(userName(referrer)) + '</b> · ' + userLink(referrer) + '</div></div></div>'
       : '<div class="ref" style="border-left-color:var(--muted)"><div class="lbl">🎁 Пригласил</div>' +
-      '<div class="ri"><span class="muted">Прямая регистрация</span></div></div>') +
+      '<div class="ri"><span class="muted">Прямая регистрация</span></div>' +
+      '<div style="margin-top:8px"><button class="btn purple sm" onclick="openRefSetup(\'' + esc(p.user_telegram_id) + '\')">🔗 Привязать реферера</button></div></div>') +
     dateBlock + refBlock +
     '<div class="muted" style="margin:12px 0">🕐 Создано: ' + fmtDate(p.created_at) + '</div>' +
     '<div class="flex">' +
       (canConfirm ? '<button class="btn ok" onclick="admConfirm(\'' + esc(k) + '\')">✅ Подтвердить</button>' : '') +
       (canCancel ? '<button class="btn danger" onclick="admCancel(\'' + esc(k) + '\')">❌ Отменить</button>' : '') +
-      (isActive ? '<button class="btn warn" onclick="openEarlyClose(\'' + esc(k) + '\')">🔌 Отключить эру</button>' : '') +
-      '<button class="btn ghost" onclick="admContact(\'' + esc(p.user_telegram_id||'') + '\')">💬 Написать</button>' +
-      (buyer ? '<button class="btn purple" onclick="openUserCard(\'' + esc(p.user_telegram_id) + '\')">👤 Карточка</button>' : '') +
-      '<button class="btn danger" onclick="openDeletePurchase(\'' + esc(k) + '\')">🗑 Удалить</button>' +
+      (isActive ? '<button class="btn warn" onclick="openEarlyClose(\'' + esc(k) + '\')">🔌 Отключить</button>' : '') +
+      '<button class="btn ghost" onclick="admContact(\'' + esc(p.user_telegram_id||'') + '\')">💬</button>' +
+      (buyer ? '<button class="btn purple" onclick="openUserCard(\'' + esc(p.user_telegram_id) + '\')">👤</button>' : '') +
+      '<button class="btn danger" onclick="openDeletePurchase(\'' + esc(k) + '\')">🗑</button>' +
     '</div></div>';
 }
 
@@ -924,36 +930,27 @@ async function admConfirm(k){
     var exp = new Date(d0); exp.setDate(d0.getDate() + days);
 
     var patch = {
-      status: 'approved',
-      approved_at: now.toISOString(),
-      start_date: d0.toISOString(),
-      last_day: last.toISOString(),
-      expires_at: exp.toISOString(),
-      status_changed_at: now.toISOString(),
+      status: 'approved', approved_at: now.toISOString(),
+      start_date: d0.toISOString(), last_day: last.toISOString(),
+      expires_at: exp.toISOString(), status_changed_at: now.toISOString(),
       notified_3d: 0, notified_1d: 0, notified_3h: 0, completed_notified: 0
     };
 
-    var refUid = null;
     if (p.referrer_uid){
-      refUid = String(p.referrer_uid);
+      var refUid = String(p.referrer_uid);
       var refBonus = Number(p.referral_bonus || 0)
         || Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
-
       var refHasActive = DATA.purchases.some(function(x){
         return String(x.user_telegram_id) === refUid
-          && x.status === 'approved'
-          && x.expires_at
+          && x.status === 'approved' && x.expires_at
           && new Date(x.expires_at).getTime() > Date.now();
       });
-
       if (refHasActive){
         patch.referral_status = 'approved';
         patch.referral_activated_at = now.toISOString();
-        patch.referral_activated_reason = 'ref_active';
       } else {
         patch.referral_status = 'pending_active';
         patch.referral_pending_reason = 'У реферера нет активной эры';
-        patch.referral_frozen_at = now.toISOString();
       }
       if (!p.referral_bonus) patch.referral_bonus = refBonus;
     }
@@ -967,37 +964,21 @@ async function admConfirm(k){
     });
 
     await fbPatch('purchases/' + k, patch);
-
-    var activatedTotal = 0;
-    var activatedCount = 0;
     for (var i = 0; i < pendingToActivate.length; i++){
-      var pending = pendingToActivate[i];
-      var bonus = Number(pending.referral_bonus || 0)
-        || Math.round(Number(pending.purchase_price || 0) * REF_PERCENT / 100);
-      await fbPatch('purchases/' + pending._key, {
+      await fbPatch('purchases/' + pendingToActivate[i]._key, {
         referral_status: 'approved',
-        referral_activated_at: now.toISOString(),
-        referral_activated_reason: 'ref_active_after_purchase'
+        referral_activated_at: now.toISOString()
       });
-      activatedTotal += bonus;
-      activatedCount++;
     }
 
     pushLog('✅ Подтвердил заявку', '#' + p.id);
-
-    if (patch.referral_status === 'pending_active'){
-      toast('✅ Подтверждено. Бонус #' + p.id + ' ЗАМОРОЖЕН', 'ok', 5000);
-    } else if (activatedTotal > 0){
-      toast('✅ Подтверждено. Разморожено: ' + Math.round(activatedTotal) + ' ₽', 'ok', 5000);
-    } else {
-      toast('✅ Подтверждено', 'ok');
-    }
+    toast('✅ Подтверждено', 'ok');
     await renderPurchases();
   });
 }
 
 async function admForceActivate(refUid){
-  if (!confirm('Разморозить ВСЕ отложенные бонусы этого юзера?\n\nUID: ' + refUid)) return;
+  if (!confirm('Разморозить ВСЕ отложенные бонусы?\n\nUID: ' + refUid)) return;
   await once('force_act_' + refUid, async function(){
     var now = new Date().toISOString();
     var pendingList = DATA.purchases.filter(function(x){
@@ -1005,10 +986,7 @@ async function admForceActivate(refUid){
         && x.referral_status === 'pending_active'
         && x.status === 'approved';
     });
-    if (!pendingList.length){
-      toast('Нет замороженных бонусов у этого юзера', 'info');
-      return;
-    }
+    if (!pendingList.length) return toast('Нет замороженных', 'info');
     var total = 0;
     for (var i = 0; i < pendingList.length; i++){
       var bonus = Number(pendingList[i].referral_bonus || 0)
@@ -1020,22 +998,8 @@ async function admForceActivate(refUid){
       });
       total += bonus;
     }
-    pushLog('❄️→✅ Разморозил бонусы', 'UID ' + refUid + ' · ' + Math.round(total) + ' ₽');
-    toast('✅ Разморожено ' + Math.round(total) + ' ₽ (' + pendingList.length + ' шт)', 'ok', 5000);
-
-    try {
-      await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
-        method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          chat_id: refUid, parse_mode: 'HTML',
-          text: '🎉 <b>Замороженные бонусы разблокированы!</b>\n\n' +
-            '💰 Начислено: <b>+' + fmt(total) + '</b>\n' +
-            '📦 От ' + pendingList.length + ' покупок рефералов\n\n' +
-            '💎 Проверьте баланс в приложении.'
-        })
-      });
-    } catch(e){ console.warn('notify fail', e); }
-
+    pushLog('❄️→✅ Разморозил', 'UID ' + refUid + ' · ' + Math.round(total) + ' ₽');
+    toast('✅ Разморожено ' + Math.round(total) + ' ₽', 'ok', 5000);
     if (TAB === 'users') await renderUsers();
     else if (TAB === 'refs') await renderRefs();
     else if (TAB === 'purchases') await renderPurchases();
@@ -1049,7 +1013,7 @@ async function admCancel(k){
     var patch = { status: 'cancelled', status_changed_at: new Date().toISOString() };
     if (p && p.referrer_uid) patch.referral_status = 'rejected';
     await fbPatch('purchases/' + k, patch);
-    pushLog('❌ Отменил заявку', '#' + (p ? p.id : k));
+    pushLog('❌ Отменил', '#' + (p ? p.id : k));
     toast('❌ Отменено');
     await renderPurchases();
   });
@@ -1059,7 +1023,6 @@ function openDeletePurchase(key){
   var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
   if (!p) return;
   var buyer = findUser(DATA.users, p.user_telegram_id);
-  var isApprovedOrMore = ['approved','completed','paid'].indexOf(p.status) >= 0;
 
   $('modal-root').innerHTML =
     '<div class="mbg" onclick="if(event.target===this)closeModal()"><div class="modal">' +
@@ -1068,28 +1031,13 @@ function openDeletePurchase(key){
       '<div class="mb">' +
         '<div class="card" style="background:rgba(255,92,92,.08);border-color:var(--err);margin-bottom:16px">' +
           '<div style="font-weight:700;color:var(--err);margin-bottom:8px">⚠️ Внимание</div>' +
-          '<div class="muted" style="line-height:1.6">' +
-            'Заявка <b>#' + esc(p.id) + '</b> (' + esc(p.era_title || '—') + ') будет ' +
-            '<b>полностью удалена</b>.<br>' +
-            'Юзер <b>' + esc(userName(buyer)) + '</b> получит уведомление.<br>' +
-            (isApprovedOrMore
-              ? '<span style="color:var(--warn)">⚠️ Заявка уже активна — начисления откатятся.</span><br>'
-              : '') +
-            'Восстановить нельзя.' +
-          '</div>' +
+          '<div class="muted" style="line-height:1.6">Заявка <b>#' + esc(p.id) +
+            '</b> будет удалена. Юзер <b>' + esc(userName(buyer)) + '</b> получит уведомление.</div>' +
         '</div>' +
-        '<div class="frow">' +
-          '<label>Пароль для подтверждения</label>' +
-          '<input class="input" id="dp_pass" type="password" placeholder="Пароль админа" autofocus>' +
-        '</div>' +
-        '<div class="frow">' +
-          '<label>Причина (опционально)</label>' +
-          '<input class="input" id="dp_reason" placeholder="Ошибочное подтверждение">' +
-        '</div>' +
-        '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:8px">' +
-          '<input type="checkbox" id="dp_notify" checked style="width:18px;height:18px">' +
-          '<span class="muted">Отправить юзеру уведомление</span>' +
-        '</label>' +
+        '<div class="frow"><label>Пароль</label>' +
+          '<input class="input" id="dp_pass" type="password" placeholder="Пароль админа" autofocus></div>' +
+        '<div class="frow"><label>Причина</label>' +
+          '<input class="input" id="dp_reason" placeholder="Ошибочное подтверждение"></div>' +
       '</div>' +
       '<div class="mf">' +
         '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
@@ -1100,21 +1048,15 @@ function openDeletePurchase(key){
 
 async function doDeletePurchase(key){
   var passEl = $('dp_pass');
-  var reasonEl = $('dp_reason');
-  var notifyEl = $('dp_notify');
   if (!passEl) return;
   if (passEl.value !== ADMIN_PASSWORD){
     toast('❌ Неверный пароль', 'err');
-    passEl.value = '';
-    passEl.focus();
+    passEl.value = ''; passEl.focus();
     return;
   }
   await once('del_purchase_' + key, async function(){
     var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
     if (!p) return;
-    var reason = (reasonEl && reasonEl.value.trim()) || 'Заявка удалена администратором';
-    var doNotify = notifyEl ? notifyEl.checked : true;
-    var uid = p.user_telegram_id;
 
     var payouts = await fbGet('payouts').then(toList).catch(function(){ return []; });
     var relatedPayouts = payouts.filter(function(po){
@@ -1125,22 +1067,7 @@ async function doDeletePurchase(key){
     }
 
     await fbDelete('purchases/' + key);
-
-    if (doNotify && uid){
-      try {
-        await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
-          method: 'POST', headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            chat_id: uid, parse_mode: 'HTML',
-            text: '🗑 <b>Ваша заявка удалена администратором</b>\n\n' +
-              '📩 Заявка #' + p.id + '\n💳 ' + (p.era_title || '—') + '\n' +
-              '💰 ' + fmt(p.total_amount) + '\n\n📝 Причина: <i>' + esc(reason) + '</i>'
-          })
-        });
-      } catch(e){ console.warn('notify fail', e); }
-    }
-
-    pushLog('🗑 Удалил заявку', '#' + p.id + ' · ' + (p.era_title || ''));
+    pushLog('🗑 Удалил заявку', '#' + p.id);
     toast('✅ Заявка #' + p.id + ' удалена', 'ok');
     closeModal();
     await renderPurchases();
@@ -1150,8 +1077,6 @@ async function doDeletePurchase(key){
 function openEarlyClose(key){
   var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
   if (!p) return;
-  var total = fmt(p.total_amount);
-  var era = p.era_title || '—';
 
   $('modal-root').innerHTML =
     '<div class="mbg" onclick="if(event.target===this)closeModal()"><div class="modal">' +
@@ -1160,17 +1085,12 @@ function openEarlyClose(key){
       '<div class="mb">' +
         '<div class="card" style="background:rgba(255,92,92,.08);border-color:var(--err);margin-bottom:16px">' +
           '<div style="font-weight:700;color:var(--err);margin-bottom:8px">⚠️ Внимание</div>' +
-          '<div class="muted" style="line-height:1.6">' +
-            'Эра <b>' + esc(era) + '</b> будет <b>досрочно завершена</b>.<br>' +
-            'Юзеру <b>сразу начислится ' + total + '</b> к выводу.<br>' +
-            'Отменить нельзя.' +
-          '</div>' +
+          '<div class="muted" style="line-height:1.6">Эра <b>' + esc(p.era_title||'—') +
+            '</b> будет досрочно завершена. Юзеру начислится <b>' + fmt(p.total_amount) +
+            '</b>.</div>' +
         '</div>' +
-        '<div class="frow">' +
-          '<label>Введите пароль</label>' +
-          '<input class="input" id="ec_pass" type="password" placeholder="Пароль админа" autofocus ' +
-            'onkeydown="if(event.key===\'Enter\')doEarlyClose(\'' + esc(key) + '\')">' +
-        '</div>' +
+        '<div class="frow"><label>Пароль</label>' +
+          '<input class="input" id="ec_pass" type="password" placeholder="Пароль админа" autofocus></div>' +
       '</div>' +
       '<div class="mf">' +
         '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
@@ -1184,23 +1104,21 @@ async function doEarlyClose(key){
   if (!passEl) return;
   if (passEl.value !== ADMIN_PASSWORD){
     toast('❌ Неверный пароль', 'err');
-    passEl.value = '';
-    passEl.focus();
+    passEl.value = ''; passEl.focus();
     return;
   }
   await once('early_' + key, async function(){
     var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
     if (!p) return;
     var now = new Date().toISOString();
-    var patch = {
+    await fbPatch('purchases/' + key, {
       status: 'completed', completed_at: now, status_changed_at: now,
       completed_notified: 1, early_closed: 1, early_closed_at: now,
       early_closed_by: ADMIN_IDS[0],
       notified_3d: 1, notified_1d: 1, notified_3h: 1
-    };
-    await fbPatch('purchases/' + key, patch);
-    pushLog('🔌 Отключил эру досрочно', '#' + p.id + ' · ' + (p.era_title||''));
-    toast('✅ Отключено, юзеру начислено ' + fmt(p.total_amount), 'ok', 5000);
+    });
+    pushLog('🔌 Отключил эру', '#' + p.id);
+    toast('✅ Отключено, начислено ' + fmt(p.total_amount), 'ok', 5000);
     closeModal();
     await renderPurchases();
   });
@@ -1215,7 +1133,7 @@ async function admContact(uid){
     window.open(url, '_blank');
   } catch(e){ toast(e.message, 'err'); }
 }
-
+  
 /* ═══ ВЫПЛАТЫ ═══ */
 var payoutFilter = 'pending';
 var payoutSearch = '';
@@ -1298,7 +1216,6 @@ window.onPayoutSearchInput = function(){
   clearTimeout(_payoutSearchTimer);
   _payoutSearchTimer = setTimeout(function(){ drawPayoutList(); }, 250);
 };
-
 function payoutCard(po){
   var k = po._key;
   var isPending = po.status === 'pending';
@@ -1326,8 +1243,8 @@ function payoutCard(po){
     '<div class="flex">' +
       (isPending ? '<button class="btn ok" onclick="admPaid(\'' + esc(k) + '\')">✅ Выплачено</button>' : '') +
       (isPending ? '<button class="btn danger" onclick="admPayoutReject(\'' + esc(k) + '\')">❌ Отклонить</button>' : '') +
-      '<button class="btn ghost" onclick="admContact(\'' + esc(po.user_telegram_id||'') + '\')">💬 Написать</button>' +
-      '<button class="btn purple" onclick="openUserCard(\'' + esc(po.user_telegram_id) + '\')">👤 Карточка</button>' +
+      '<button class="btn ghost" onclick="admContact(\'' + esc(po.user_telegram_id||'') + '\')">💬</button>' +
+      '<button class="btn purple" onclick="openUserCard(\'' + esc(po.user_telegram_id) + '\')">👤</button>' +
     '</div></div>';
 }
 async function admPaid(k){
@@ -1402,7 +1319,7 @@ async function renderRefPayouts(){
     layout(
       '<h2 style="font-size:17px;margin-bottom:14px">💰 Заявки на вывод реф. бонусов</h2>' +
       '<div class="search">' +
-        '<input class="input" id="refPayoutSearchInput" placeholder="Поиск: имя, @ник, ID, номер заявки…" ' +
+        '<input class="input" id="refPayoutSearchInput" placeholder="Поиск: имя, @ник, ID, номер…" ' +
           'value="' + esc(refPayoutSearch) + '" oninput="onRefPayoutSearchInput()">' +
       '</div>' +
       '<div class="tabs" id="refPayoutTabs">' +
@@ -1433,7 +1350,6 @@ window.onRefPayoutSearchInput = function(){
   clearTimeout(_refPayoutSearchTimer);
   _refPayoutSearchTimer = setTimeout(function(){ drawRefPayoutList(); }, 250);
 };
-
 function refRequestCard(r){
   var k = r._key;
   var u = findUser(DATA.users, r.user_telegram_id);
@@ -1461,8 +1377,8 @@ function refRequestCard(r){
     '<div class="flex">' +
       (isPending ? '<button class="btn ok" onclick="refPayoutPaid(\'' + esc(k) + '\')">✅ Выплачено</button>' : '') +
       (isPending ? '<button class="btn danger" onclick="refPayoutReject(\'' + esc(k) + '\')">❌ Отклонить</button>' : '') +
-      '<button class="btn ghost" onclick="admContact(\'' + esc(r.user_telegram_id) + '\')">💬 Написать</button>' +
-      '<button class="btn purple" onclick="openUserCard(\'' + esc(r.user_telegram_id) + '\')">👤 Карточка</button>' +
+      '<button class="btn ghost" onclick="admContact(\'' + esc(r.user_telegram_id) + '\')">💬</button>' +
+      '<button class="btn purple" onclick="openUserCard(\'' + esc(r.user_telegram_id) + '\')">👤</button>' +
     '</div></div>';
 }
 async function refPayoutPaid(key){
@@ -1492,21 +1408,6 @@ async function refPayoutPaid(key){
       user_telegram_id: uid, amount: amount, request_id: r.id,
       paid_at: now, paid_by: ADMIN_IDS[0]
     });
-    try {
-      var bal = calcUserRefBalance(uid);
-      var remainText = bal.owed > 0
-        ? '🎁 Осталось к выводу: <b>' + fmt(bal.owed) + '</b>'
-        : '✅ <b>Все бонусы выплачены!</b>';
-      await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
-        method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          chat_id: uid, parse_mode: 'HTML',
-          text: '💸 <b>Вам выплачен реферальный бонус!</b>\n\n' +
-            '💰 Сумма: <b>' + fmt(amount) + '</b>\n' +
-            '🕐 ' + fmtDate(now) + ' (Ташкент)\n\n' + remainText
-        })
-      });
-    } catch(e){}
     pushLog('💸 Реф. выплата', '#' + r.id + ' · ' + fmt(amount));
     toast('✅ Выплачено ' + fmt(amount), 'ok');
     await renderRefPayouts();
@@ -1529,22 +1430,260 @@ async function refPayoutReject(key){
     await fbPatch('ref_payout_requests/' + key, {
       status: 'rejected', status_changed_at: now
     });
-    try {
-      await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
-        method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          chat_id: r.user_telegram_id, parse_mode: 'HTML',
-          text: '❌ <b>Заявка на вывод бонуса отклонена</b>\n\n' +
-            '💰 ' + fmt(r.amount) + '\n\nСумма вернулась к выводу.'
-        })
-      });
-    } catch(e){}
     pushLog('❌ Отклонил реф. заявку', '#' + r.id);
     toast('❌ Отклонено');
     await renderRefPayouts();
   });
 }
 
+/* ═══ 🎁 НАСТРОЙКА РЕФЕРАЛОВ ═══ */
+var _refSetupQuery = '';
+var _refSetupSelectedRef = null;
+var _refSetupSelectedOwner = null;
+
+window.openRefSetup = function(prefillId){
+  _refSetupQuery = '';
+  _refSetupSelectedRef = null;
+  _refSetupSelectedOwner = null;
+  if (prefillId){
+    var ru = findUser(DATA.users, prefillId);
+    if (ru) _refSetupSelectedRef = ru;
+  }
+  renderRefSetupModal();
+};
+
+function renderRefSetupModal(){
+  var refBlock = '';
+  if (_refSetupSelectedRef){
+    refBlock =
+      '<div class="card" style="background:rgba(79,140,255,.08);border-color:rgba(79,140,255,.3);margin-bottom:12px;padding:14px">' +
+        '<div class="row">' +
+          '<div>' +
+            '<b style="font-size:15px">👤 ' + esc(userName(_refSetupSelectedRef)) + '</b>' +
+            '<div class="muted">@' + esc(_refSetupSelectedRef.username||'—') + ' · ID ' + esc(_refSetupSelectedRef.telegram_id) + '</div>' +
+            (_refSetupSelectedRef.referrer_uid
+              ? '<div class="muted" style="font-size:11.5px;margin-top:4px">Текущий реферер: <b>ID ' +
+                esc(_refSetupSelectedRef.referrer_uid) + '</b></div>'
+              : '<div class="muted" style="font-size:11.5px;margin-top:4px">Сейчас: <b>прямая регистрация</b></div>') +
+          '</div>' +
+          '<button class="btn ghost sm" onclick="_refSetupSelectedRef=null;renderRefSetupModal()">✕</button>' +
+        '</div>' +
+      '</div>';
+  } else {
+    refBlock =
+      '<div class="frow">' +
+        '<label>1️⃣ Кого привязываем (реферал)</label>' +
+        '<input class="input" id="refSearchInput" placeholder="Имя, @ник или ID…" ' +
+          'value="' + esc(_refSetupQuery) + '" oninput="onRefSetupSearch(this.value)" autofocus>' +
+      '</div>' +
+      '<div id="refSearchResults" style="margin-bottom:16px"></div>';
+  }
+
+  var ownerBlock = '';
+  if (_refSetupSelectedRef){
+    if (_refSetupSelectedOwner){
+      ownerBlock =
+        '<div class="card" style="background:rgba(167,139,250,.08);border-color:rgba(167,139,250,.3);margin-bottom:12px;padding:14px">' +
+          '<div class="row">' +
+            '<div>' +
+              '<b style="font-size:15px">🎁 ' + esc(userName(_refSetupSelectedOwner)) + '</b>' +
+              '<div class="muted">@' + esc(_refSetupSelectedOwner.username||'—') + ' · ID ' + esc(_refSetupSelectedOwner.telegram_id) + '</div>' +
+            '</div>' +
+            '<button class="btn ghost sm" onclick="_refSetupSelectedOwner=null;renderRefSetupModal()">✕</button>' +
+          '</div>' +
+        '</div>';
+    } else {
+      ownerBlock =
+        '<div class="frow">' +
+          '<label>2️⃣ К кому привязываем (реферер)</label>' +
+          '<input class="input" id="ownerSearchInput" placeholder="Имя, @ник или ID…" ' +
+            'value="' + esc(_refSetupQuery) + '" oninput="onOwnerSetupSearch(this.value)" autofocus>' +
+        '</div>' +
+        '<div id="ownerSearchResults" style="margin-bottom:16px"></div>';
+    }
+  }
+
+  var preview = '';
+  if (_refSetupSelectedRef && _refSetupSelectedOwner){
+    preview =
+      '<div class="ref-setup-preview">' +
+        '<div class="who">👤 ' + esc(userName(_refSetupSelectedRef)) + '</div>' +
+        '<div class="who small">ID ' + esc(_refSetupSelectedRef.telegram_id) + '</div>' +
+        '<div class="arrow">↓ будет привязан к ↓</div>' +
+        '<div class="who">🎁 ' + esc(userName(_refSetupSelectedOwner)) + '</div>' +
+        '<div class="who small">ID ' + esc(_refSetupSelectedOwner.telegram_id) + '</div>' +
+      '</div>';
+  }
+
+  $('modal-root').innerHTML =
+    '<div class="mbg" onclick="if(event.target===this)closeModal()">' +
+      '<div class="modal" style="max-width:560px">' +
+        '<div class="mh"><h2>🎁 Настройка рефералов</h2>' +
+          '<button class="x" onclick="closeModal()">✕</button></div>' +
+        '<div class="mb">' +
+          '<div class="ref-setup-step">' +
+            (_refSetupSelectedRef
+              ? '✅ Шаг 1: реферал выбран'
+              : '📍 Шаг 1: выбери реферала') +
+            (_refSetupSelectedOwner
+              ? ' · ✅ Шаг 2: реферер выбран'
+              : (_refSetupSelectedRef ? ' · 📍 Шаг 2: выбери реферера' : '')) +
+          '</div>' +
+          refBlock + ownerBlock + preview +
+          ((_refSetupSelectedRef && _refSetupSelectedOwner)
+            ? '<div class="card2" style="background:rgba(57,217,138,.08);border-color:rgba(57,217,138,.25);margin-bottom:12px">' +
+                '<div class="muted" style="line-height:1.6;font-size:12px">' +
+                  '✅ <b>Что произойдёт:</b><br>' +
+                  '• Реферал будет привязан к рефереру в базе<br>' +
+                  '• Реферер получит <b>' + REF_PERCENT + '%</b> со следующих покупок реферала<br>' +
+                  '• За уже оплаченные заявки бонус начислен НЕ будет' +
+                '</div>' +
+              '</div>'
+            : '') +
+        '</div>' +
+        '<div class="mf">' +
+          '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
+          ((_refSetupSelectedRef && _refSetupSelectedOwner)
+            ? '<button class="btn purple" onclick="doLinkReferral()">🎁 Привязать</button>'
+            : '<button class="btn" disabled>Выбери обоих</button>') +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  if (!_refSetupSelectedRef){
+    setTimeout(function(){
+      var el = $('refSearchInput');
+      if (el) el.focus();
+    }, 100);
+  } else if (!_refSetupSelectedOwner){
+    setTimeout(function(){
+      var el = $('ownerSearchInput');
+      if (el) el.focus();
+    }, 100);
+  }
+}
+
+window.onRefSetupSearch = function(val){
+  _refSetupQuery = val;
+  var box = $('refSearchResults');
+  if (!box) return;
+  var q = val.toLowerCase().trim();
+  var list = DATA.users.filter(function(u){
+    return String(u.telegram_id) !== String(_refSetupSelectedRef ? _refSetupSelectedRef.telegram_id : '')
+      && userMatches(u, q);
+  }).slice(0, 20);
+
+  if (!q){
+    box.innerHTML = '<div class="muted" style="text-align:center;padding:12px">Введи имя, @ник или ID</div>';
+    return;
+  }
+  if (!list.length){
+    box.innerHTML = '<div class="muted" style="text-align:center;padding:12px">Ничего не найдено</div>';
+    return;
+  }
+  box.innerHTML = list.map(function(u){
+    return '<div class="ref-setup-item" onclick="selectRefSetupReferral(\'' + esc(u.telegram_id) + '\')">' +
+      '<div>' +
+        '<div class="rsi-name">' + esc(userName(u)) + '</div>' +
+        '<div class="rsi-sub">@' + esc(u.username||'—') + ' · ID ' + esc(u.telegram_id) + '</div>' +
+      '</div>' +
+      (u.referrer_uid
+        ? '<span class="rsi-badge">уже привязан</span>'
+        : '<span style="color:var(--accent);font-size:16px">→</span>') +
+    '</div>';
+  }).join('');
+};
+
+window.onOwnerSetupSearch = function(val){
+  _refSetupQuery = val;
+  var box = $('ownerSearchResults');
+  if (!box) return;
+  var q = val.toLowerCase().trim();
+  var refId = _refSetupSelectedRef ? String(_refSetupSelectedRef.telegram_id) : '';
+  var list = DATA.users.filter(function(u){
+    return String(u.telegram_id) !== refId && userMatches(u, q);
+  }).slice(0, 20);
+
+  if (!q){
+    box.innerHTML = '<div class="muted" style="text-align:center;padding:12px">Введи имя, @ник или ID</div>';
+    return;
+  }
+  if (!list.length){
+    box.innerHTML = '<div class="muted" style="text-align:center;padding:12px">Ничего не найдено</div>';
+    return;
+  }
+  box.innerHTML = list.map(function(u){
+    var refsCnt = DATA.users.filter(function(x){
+      return String(x.referrer_uid || '') === String(u.telegram_id);
+    }).length;
+    return '<div class="ref-setup-item" onclick="selectRefSetupOwner(\'' + esc(u.telegram_id) + '\')">' +
+      '<div>' +
+        '<div class="rsi-name">' + esc(userName(u)) + '</div>' +
+        '<div class="rsi-sub">@' + esc(u.username||'—') + ' · ID ' + esc(u.telegram_id) + '</div>' +
+      '</div>' +
+      (refsCnt > 0
+        ? '<span class="rsi-badge">' + refsCnt + ' реф.</span>'
+        : '<span style="color:var(--accent);font-size:16px">→</span>') +
+    '</div>';
+  }).join('');
+};
+
+window.selectRefSetupReferral = function(uid){
+  var u = findUser(DATA.users, uid);
+  if (!u) return;
+  _refSetupSelectedRef = u;
+  _refSetupQuery = '';
+  renderRefSetupModal();
+};
+
+window.selectRefSetupOwner = function(uid){
+  var u = findUser(DATA.users, uid);
+  if (!u) return;
+  _refSetupSelectedOwner = u;
+  _refSetupQuery = '';
+  renderRefSetupModal();
+};
+
+window.doLinkReferral = function(){
+  if (!_refSetupSelectedRef || !_refSetupSelectedOwner) return;
+  var refId = String(_refSetupSelectedRef.telegram_id);
+  var ownerId = String(_refSetupSelectedOwner.telegram_id);
+
+  if (refId === ownerId){
+    toast('❌ Нельзя привязать к самому себе', 'err');
+    return;
+  }
+
+  return once('link_ref_' + refId, async function(){
+    var refName = userName(_refSetupSelectedRef);
+    var ownerName = userName(_refSetupSelectedOwner);
+
+    await fbPatch('users/' + refId, { referrer_uid: ownerId });
+
+    if (_refSetupSelectedRef) _refSetupSelectedRef.referrer_uid = ownerId;
+    var ownerInData = findUser(DATA.users, ownerId);
+    if (ownerInData) _refSetupSelectedOwner = ownerInData;
+
+    pushLog('🎁 Привязал реферала', refName + ' → ' + ownerName);
+    toast('✅ ' + refName + ' привязан к ' + ownerName, 'ok', 4000);
+    closeModal();
+    if (TAB === 'users') await renderUsers();
+    else if (TAB === 'refs') await renderRefs();
+    else if (TAB === 'purchases') await renderPurchases();
+    else if (TAB === 'dashboard') await renderDashboard();
+  });
+};
+
+window.unlinkReferral = function(uid){
+  if (!confirm('Отвязать реферала от реферера?')) return;
+  return once('unlink_' + uid, async function(){
+    await fbPatch('users/' + uid, { referrer_uid: null });
+    pushLog('🎁 Отвязал реферала', 'ID ' + uid);
+    toast('✅ Отвязан', 'ok');
+    await renderUsers();
+  });
+};
+  
 /* ═══ БЛОКИРОВКА ═══ */
 function openBlockUser(uid){
   var u = findUser(DATA.users, uid);
@@ -1553,7 +1692,7 @@ function openBlockUser(uid){
 
   var descText = isBlocked
     ? 'Юзер <b>' + esc(userName(u)) + '</b> снова сможет пользоваться ботом.'
-    : 'Юзер <b>' + esc(userName(u)) + '</b> не сможет создавать заявки и подавать на вывод. Все существующие заявки остаются в силе.';
+    : 'Юзер <b>' + esc(userName(u)) + '</b> не сможет создавать заявки и подавать на вывод.';
 
   $('modal-root').innerHTML =
     '<div class="mbg" onclick="if(event.target===this)closeModal()"><div class="modal">' +
@@ -1567,18 +1706,16 @@ function openBlockUser(uid){
           '<div class="muted" style="line-height:1.6">' + descText + '</div>' +
         '</div>' +
         '<div class="frow">' +
-          '<label>Пароль для подтверждения</label>' +
+          '<label>Пароль</label>' +
           '<input class="input" id="bl_pass" type="password" placeholder="Пароль админа" autofocus>' +
         '</div>' +
         (!isBlocked
-          ? '<div class="frow">' +
-              '<label>Причина блокировки</label>' +
-              '<input class="input" id="bl_reason" placeholder="Например: мошенничество">' +
-            '</div>'
+          ? '<div class="frow"><label>Причина блокировки</label>' +
+            '<input class="input" id="bl_reason" placeholder="Например: мошенничество"></div>'
           : '') +
         '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:8px">' +
           '<input type="checkbox" id="bl_notify" checked style="width:18px;height:18px">' +
-          '<span class="muted">Отправить юзеру уведомление</span>' +
+          '<span class="muted">Отправить уведомление</span>' +
         '</label>' +
       '</div>' +
       '<div class="mf">' +
@@ -1594,19 +1731,15 @@ function openBlockUser(uid){
 async function doToggleBlock(uid, block){
   var passEl = $('bl_pass');
   var reasonEl = $('bl_reason');
-  var notifyEl = $('bl_notify');
   if (!passEl) return;
   if (passEl.value !== ADMIN_PASSWORD){
     toast('❌ Неверный пароль', 'err');
-    passEl.value = '';
-    passEl.focus();
+    passEl.value = ''; passEl.focus();
     return;
   }
   await once('block_' + uid, async function(){
     var reason = (reasonEl && reasonEl.value.trim()) || '';
-    var doNotify = notifyEl ? notifyEl.checked : true;
     var now = new Date().toISOString();
-
     var patch = {};
     if (block){
       patch.blocked = 1;
@@ -1620,24 +1753,7 @@ async function doToggleBlock(uid, block){
       patch.block_reason = null;
     }
     await fbPatch('users/' + uid, patch);
-
-    if (doNotify){
-      try {
-        var text = block
-          ? '🚫 <b>Ваш аккаунт заблокирован</b>\n\n' +
-            '📝 Причина: <i>' + esc(reason || 'Нарушение правил') + '</i>\n\n' +
-            'Если это ошибка — свяжитесь с администратором.'
-          : '🔓 <b>Ваш аккаунт разблокирован</b>\n\n' +
-            'Теперь вы снова можете пользоваться ботом.';
-        await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
-          method: 'POST', headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ chat_id: uid, parse_mode: 'HTML', text: text })
-        });
-      } catch(e){ console.warn('notify fail', e); }
-    }
-
-    pushLog(block ? '🚫 Заблокировал юзера' : '🔓 Разблокировал юзера',
-      'ID ' + uid + (reason ? ' · ' + reason : ''));
+    pushLog(block ? '🚫 Заблокировал' : '🔓 Разблокировал', 'ID ' + uid);
     toast(block ? '🚫 Заблокирован' : '🔓 Разблокирован', 'ok');
     closeModal();
     await renderUsers();
@@ -1649,12 +1765,7 @@ var userSearch = '';
 function filterUsers(){
   var q = userSearch.toLowerCase().trim();
   if (!q) return DATA.users;
-  return DATA.users.filter(function(u){
-    return String(u.first_name||'').toLowerCase().indexOf(q) >= 0 ||
-      String(u.last_name||'').toLowerCase().indexOf(q) >= 0 ||
-      String(u.username||'').toLowerCase().indexOf(q) >= 0 ||
-      String(u.telegram_id||'').indexOf(q) >= 0;
-  });
+  return DATA.users.filter(function(u){ return userMatches(u, q); });
 }
 function drawUserList(){
   var box = $('userListBox');
@@ -1734,20 +1845,17 @@ function userCard(u){
     '</div></div>';
 }
 
-/* 👤 ПОЛНАЯ КАРТОЧКА ЮЗЕРА */
+/* 👤 КАРТОЧКА ЮЗЕРА */
 window.openUserCard = async function(uid){
   var u = findUser(DATA.users, uid);
   if (!u) {
-    /* Возможно, данных нет — подгрузим */
     try { u = await fbGet('users/' + uid); } catch(e){}
     if (!u) return toast('Юзер не найден', 'err');
   }
 
   var myP = DATA.purchases.filter(function(p){
     return String(p.user_telegram_id) === String(uid);
-  }).sort(function(a,b){
-    return Number(b.id||0) - Number(a.id||0);
-  });
+  }).sort(function(a,b){ return Number(b.id||0) - Number(a.id||0); });
 
   var refs = DATA.users.filter(function(x){
     return String(x.referrer_uid || '') === String(u.telegram_id);
@@ -1759,7 +1867,6 @@ window.openUserCard = async function(uid){
   var name = userName(u);
   var photo = u.photo_url || '';
 
-  /* Статистика */
   var invested = 0, earned = 0, activeCount = 0, completedCount = 0, createdCount = 0, cancelledCount = 0;
   myP.forEach(function(p){
     if (p.status !== 'cancelled') invested += Number(p.purchase_price||0);
@@ -1818,8 +1925,7 @@ window.openUserCard = async function(uid){
 
   var refsHtml = '';
   if (!refs.length){
-    refsHtml = '<div class="empty" style="padding:20px 12px">' +
-      '<p class="muted">Приглашённых нет</p></div>';
+    refsHtml = '<div class="empty" style="padding:20px 12px"><p class="muted">Приглашённых нет</p></div>';
   } else {
     refsHtml = refs.map(function(r){
       var rPurch = DATA.purchases.filter(function(pp){
@@ -1836,13 +1942,10 @@ window.openUserCard = async function(uid){
   $('modal-root').innerHTML =
     '<div class="mbg" onclick="if(event.target===this)closeModal()">' +
       '<div class="modal" style="max-width:640px">' +
-        '<div class="mh">' +
-          '<h2>👤 Карточка юзера</h2>' +
-          '<button class="x" onclick="closeModal()">✕</button>' +
-        '</div>' +
+        '<div class="mh"><h2>👤 Карточка юзера</h2>' +
+          '<button class="x" onclick="closeModal()">✕</button></div>' +
         '<div class="mb">' +
 
-          /* HERO */
           '<div class="user-hero' + (isBlocked ? ' blocked' : '') + '">' +
             '<div class="uh-head">' +
               '<div class="uh-avatar">' +
@@ -1859,14 +1962,8 @@ window.openUserCard = async function(uid){
               (u.referrer_uid ? '<span class="badge purple">🌳 реферал</span>' : '<span class="badge created">⭐ прямой</span>') +
               (req.fio ? '<span class="badge ok">💳 реквизиты есть</span>' : '') +
             '</div>' +
-            (isBlocked && u.block_reason
-              ? '<div class="ri" style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.1)">' +
-                  '<div class="muted">Причина блокировки:</div>' +
-                  '<div><b style="color:var(--err)">' + esc(u.block_reason) + '</b></div></div>'
-              : '') +
           '</div>' +
 
-          /* СТАТИСТИКА */
           '<div class="user-section">' +
             '<div class="us-head">📊 Статистика</div>' +
             '<div class="us-body">' +
@@ -1883,7 +1980,6 @@ window.openUserCard = async function(uid){
             '</div>' +
           '</div>' +
 
-          /* РЕКВИЗИТЫ */
           '<div class="user-section">' +
             '<div class="us-head">💳 Реквизиты для вывода</div>' +
             '<div class="us-body" style="padding-top:0">' +
@@ -1891,7 +1987,6 @@ window.openUserCard = async function(uid){
             '</div>' +
           '</div>' +
 
-          /* РЕФ БАЛАНС */
           ((bal.accrued > 0 || bal.pending > 0 || bal.pendingActive > 0)
             ? '<div class="user-section">' +
                 '<div class="us-head">💰 Реферальный баланс</div>' +
@@ -1911,22 +2006,14 @@ window.openUserCard = async function(uid){
               '</div>'
             : '') +
 
-          /* ЗАЯВКИ */
           '<div class="user-section">' +
-            '<div class="us-head">' +
-              '<span>📩 Заявки (' + myP.length + ')</span>' +
-            '</div>' +
-            '<div class="us-body" style="padding-top:8px">' +
-              purchasesHtml +
-            '</div>' +
+            '<div class="us-head"><span>📩 Заявки (' + myP.length + ')</span></div>' +
+            '<div class="us-body" style="padding-top:8px">' + purchasesHtml + '</div>' +
           '</div>' +
 
-          /* РЕФЕРАЛЫ */
           '<div class="user-section">' +
             '<div class="us-head">👥 Приглашённые (' + refs.length + ')</div>' +
-            '<div class="us-body" style="padding:8px 18px">' +
-              refsHtml +
-            '</div>' +
+            '<div class="us-body" style="padding:8px 18px">' + refsHtml + '</div>' +
           '</div>' +
 
         '</div>' +
@@ -1965,17 +2052,16 @@ function drawEraList(){
   var mismatchHtml = hasMismatch
     ? '<div class="card" style="background:rgba(245,181,71,.08);border-color:var(--warn);margin-bottom:14px">' +
         '<div style="font-weight:700;color:var(--warn);margin-bottom:6px">⚠️ Несовпадения ключей</div>' +
-        '<div class="muted" style="margin-bottom:10px">У некоторых эр _key ≠ id. Нажмите починить.</div>' +
-        '<button class="btn warn sm" onclick="fixEraKeys()">🔧 Починить ключи</button>' +
+        '<div class="muted" style="margin-bottom:10px">У некоторых эр _key ≠ id.</div>' +
+        '<button class="btn warn sm" onclick="fixEraKeys()">🔧 Починить</button>' +
       '</div>'
     : '';
   var head = '<div class="row" style="margin-bottom:14px">' +
     '<h2 style="font-size:17px">🧩 Товары (' + DATA.eras.length + ')</h2>' +
     '<div class="flex">' +
-      '<button class="btn gold" onclick="seedDefaultEras()">📥 Загрузить 8 эр</button>' +
+      '<button class="btn gold" onclick="seedDefaultEras()">📥 8 эр</button>' +
       '<button class="btn" onclick="createEra()">➕ Создать</button>' +
-    '</div>' +
-  '</div>';
+    '</div></div>';
   box.innerHTML = head + mismatchHtml +
     (list.length ? list.map(eraCard).join('')
       : '<div class="empty"><div class="ic">📦</div><p>' +
@@ -2081,7 +2167,7 @@ function eraForm(e){
 function createEra(){ $('modal-root').innerHTML = eraForm(null); }
 function editEra(id){
   var e = DATA.eras.filter(function(x){ return String(x.id) === String(id); })[0];
-  if (!e) return toast('Эра не найдена (id ' + id + ')', 'err');
+  if (!e) return toast('Эра не найдена', 'err');
   $('modal-root').innerHTML = eraForm(e);
 }
 
@@ -2112,18 +2198,17 @@ async function saveEra(id){
         if (String(existing._key) !== String(id)){
           await fbDelete('eras/' + existing._key);
         }
-        pushLog('✏️ Изменил эру', '#' + id + ' · ' + title);
-        toast('💾 Эра #' + id + ' сохранена', 'ok');
+        pushLog('✏️ Изменил эру', '#' + id);
       } else {
         var usedIds = DATA.eras.map(function(x){ return Number(x.id||0); }).filter(Boolean);
         var newId = usedIds.length ? Math.max.apply(null, usedIds) + 1 : 1;
         data.id = newId;
         data.sort_order = newId;
         await fbPut('eras/' + newId, data);
-        pushLog('➕ Создал эру', '#' + newId + ' · ' + title);
-        toast('✅ Эра #' + newId + ' создана', 'ok');
+        pushLog('➕ Создал эру', '#' + newId);
       }
       closeModal();
+      toast('💾 Сохранено', 'ok');
       await renderEras();
     } catch(err){
       toast('❌ ' + err.message, 'err');
@@ -2137,37 +2222,23 @@ async function toggleEra(id, active){
   await once('toggle_' + id, async function(){
     var e = DATA.eras.filter(function(x){ return String(x.id) === String(id); })[0];
     if (!e) return toast('Эра не найдена', 'err');
-    var old = e.is_active;
-    e.is_active = active;
-    toast(active ? '⏳ Включаю…' : '⏳ Отключаю…', 'info', 1500);
-    try {
-      await fbPatch('eras/' + (e.id || e._key), { is_active: active });
-      toast(active ? '🟢 Включено' : '⚫ Отключено', 'ok');
-      await renderEras();
-    } catch(err){
-      e.is_active = old;
-      toast('❌ Не удалось: ' + err.message, 'err');
-      await renderEras();
-    }
+    await fbPatch('eras/' + (e.id || e._key), { is_active: active });
+    toast(active ? '🟢 Включено' : '⚫ Отключено', 'ok');
+    await renderEras();
   });
 }
 
 async function deleteEra(id){
   var e = DATA.eras.filter(function(x){ return String(x.id) === String(id); })[0];
   if (!e) return toast('Эра не найдена', 'err');
-  if (!confirm('Удалить эру #' + id + ' «' + (e.title||'') + '»?\n\nСуществующие заказы не пострадают.')) return;
+  if (!confirm('Удалить эру #' + id + ' «' + (e.title||'') + '»?')) return;
 
   await once('del_' + id, async function(){
-    toast('⏳ Удаляю…', 'info', 1200);
-    try {
-      await fbDelete('eras/' + id);
-      if (String(e._key) !== String(id)) await fbDelete('eras/' + e._key);
-      pushLog('🗑 Удалил эру', '#' + id + ' · ' + (e.title || ''));
-      toast('🗑 Эра #' + id + ' удалена', 'ok');
-      await renderEras();
-    } catch(err){
-      toast('❌ ' + err.message, 'err');
-    }
+    await fbDelete('eras/' + id);
+    if (String(e._key) !== String(id)) await fbDelete('eras/' + e._key);
+    pushLog('🗑 Удалил эру', '#' + id);
+    toast('🗑 Удалено', 'ok');
+    await renderEras();
   });
 }
 
@@ -2178,19 +2249,19 @@ async function seedDefaultEras(){
       { title: 'Эра 1 — Старт', price: 1500, profit: 1000, days: 20,
         desc: 'Первая ступень роста. Идеальный вход для знакомства с проектом РОСТЭРА.' },
       { title: 'Эра 2 — Разгон', price: 2500, profit: 2000, days: 22,
-        desc: 'Уверенный старт с повышенной доходностью. Для тех, кто готов двигаться дальше.' },
+        desc: 'Уверенный старт с повышенной доходностью.' },
       { title: 'Эра 3 — Рост', price: 4500, profit: 3000, days: 24,
         desc: 'Сбалансированная эра для стабильного прироста капитала.' },
       { title: 'Эра 4 — Импульс', price: 7500, profit: 5500, days: 26,
-        desc: 'Ускоренный рост. Для тех, кто ценит время и хочет большего.' },
+        desc: 'Ускоренный рост. Для тех, кто ценит время.' },
       { title: 'Эра 5 — Прорыв', price: 13000, profit: 8000, days: 28,
-        desc: 'Серьёзный шаг вперёд. Ваш капитал работает на полную мощность.' },
+        desc: 'Серьёзный шаг вперёд.' },
       { title: 'Эра 6 — Мастер', price: 21000, profit: 18000, days: 28,
-        desc: 'Эра для опытных участников. Максимальная доходность на длинной дистанции.' },
+        desc: 'Эра для опытных участников.' },
       { title: 'Эра 7 — Легенда', price: 39000, profit: 34000, days: 28,
         desc: 'Финальная ступень. Для тех, кто мыслит масштабно.' },
       { title: 'Эра 8 — РОСТЭРА Premium', price: 50000, profit: 45000, days: 30,
-        desc: 'Премиум-эра для лидеров. Максимальные возможности проекта РОСТЭРА.' }
+        desc: 'Премиум-эра для лидеров.' }
     ];
     var maxId = 0;
     DATA.eras.forEach(function(e){ if (Number(e.id) > maxId) maxId = Number(e.id); });
@@ -2198,13 +2269,12 @@ async function seedDefaultEras(){
     for (var i = 0; i < seed.length; i++){
       var s = seed[i];
       var id = maxId + i + 1;
-      var data = {
+      await fbPut('eras/' + id, {
         id: id, sort_order: id, title: s.title,
         price: s.price, profit_amount: s.profit,
         total_amount: s.price + s.profit, duration_days: s.days,
         description: s.desc, is_active: 1
-      };
-      await fbPut('eras/' + id, data);
+      });
       created++;
     }
     pushLog('📥 Загрузил 8 эр', 'ID ' + (maxId+1) + '…' + (maxId+8));
@@ -2222,7 +2292,7 @@ async function fixEraKeys(){
     for (var i = 0; i < list.length; i++){
       var e = list[i];
       var id = Number(e.id) || Number(e._key) || (i + 1);
-      var data = {
+      await fbPut('eras/' + id, {
         id: id, sort_order: Number(e.sort_order) || id,
         title: e.title || 'Эра ' + id,
         price: Number(e.price) || 0,
@@ -2231,14 +2301,13 @@ async function fixEraKeys(){
         duration_days: Number(e.duration_days) || 20,
         description: e.description || '',
         is_active: (e.is_active === 0 || e.is_active === false) ? 0 : 1
-      };
-      await fbPut('eras/' + id, data);
+      });
       if (String(e._key) !== String(id)){
         await fbDelete('eras/' + e._key);
         fixed++;
       }
     }
-    pushLog('🔧 Починил ключи эр', 'Исправлено: ' + fixed);
+    pushLog('🔧 Починил ключи', 'Исправлено: ' + fixed);
     toast('✅ Готово. Исправлено: ' + fixed, 'ok', 4000);
     await renderEras();
   });
@@ -2466,6 +2535,9 @@ window.seedDefaultEras = seedDefaultEras;
 window.fixEraKeys = fixEraKeys;
 window.admForceActivate = admForceActivate;
 window.openUserCard = openUserCard;
+window.openRefSetup = openRefSetup;
+window.doLinkReferral = doLinkReferral;
+window.unlinkReferral = unlinkReferral;
 
 render();
 </script>

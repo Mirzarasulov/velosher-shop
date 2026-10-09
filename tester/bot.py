@@ -7,7 +7,7 @@ from pathlib import Path
 # ============================================================
 # КОНФИГ
 # ============================================================
-BOT_TOKEN = "8880107122:AAEEjCmGnnv1fFM0nD_I2oDsYwEj-dgU3Go"
+BOT_TOKEN = "8880107122:AAGJN5GVRkrIYaCflcBuJrzHacS43TyuaTk"
 ADMIN_IDS = [6040186314, 6972338698, 6544017826]
 ADMIN_ID = ADMIN_IDS[0]
 

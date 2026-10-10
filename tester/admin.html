@@ -341,6 +341,7 @@ var ADMIN_PASSWORD = 'admin123';
 var BOT_TOKEN = '8880107122:AAFixW8sKxpKYm6dmQ5wMKALlBIjAj4zlMM';
 var ADMIN_IDS = ['6040186314', '6972338698', '6544017826'];
 var REF_PERCENT = 5;
+var MIN_WITHDRAW = 1500;
 var TZ_TASHKENT = 'Asia/Tashkent';
 
 var AUTH = sessionStorage.getItem('admin_auth') === '1';
@@ -607,7 +608,7 @@ function layout(content){
       '<button class="nav" onclick="logout()" style="color:var(--err)"><span class="emo">🚪</span>Выйти</button>' +
     '</aside><main class="main">' +
       '<div class="h1">⚡ Era Admin</div>' +
-      '<div class="sub">@ROSTERAbot · реф. ' + REF_PERCENT + '%</div>' +
+      '<div class="sub">@ROSTERAbot · реф. ' + REF_PERCENT + '% · мин. вывод ' + fmt(MIN_WITHDRAW) + '</div>' +
       '<div id="content">' + content + '</div>' +
     '</main></div>';
 }
@@ -1133,7 +1134,7 @@ async function admContact(uid){
     window.open(url, '_blank');
   } catch(e){ toast(e.message, 'err'); }
 }
-  
+
 /* ═══ ВЫПЛАТЫ ═══ */
 var payoutFilter = 'pending';
 var payoutSearch = '';
@@ -1317,7 +1318,8 @@ async function renderRefPayouts(){
     DATA.refPayouts = res[0]; DATA.users = res[1]; DATA.purchases = res[2];
     DATA.refPayouts.sort(function(a,b){ return Number(b.id||0) - Number(a.id||0); });
     layout(
-      '<h2 style="font-size:17px;margin-bottom:14px">💰 Заявки на вывод реф. бонусов</h2>' +
+      '<h2 style="font-size:17px;margin-bottom:14px">💰 Заявки на вывод реф. бонусов ' +
+        '<span class="muted" style="font-size:12px;font-weight:400">(мин. ' + fmt(MIN_WITHDRAW) + ')</span></h2>' +
       '<div class="search">' +
         '<input class="input" id="refPayoutSearchInput" placeholder="Поиск: имя, @ник, ID, номер…" ' +
           'value="' + esc(refPayoutSearch) + '" oninput="onRefPayoutSearchInput()">' +
@@ -1359,16 +1361,21 @@ function refRequestCard(r){
   if (!req.fio || !req.card || !req.bank){
     if (u && u.requisites) req = u.requisites;
   }
+  var belowMin = Number(r.amount) < MIN_WITHDRAW;
 
   return '<div class="card">' +
     '<div class="row" style="margin-bottom:12px">' +
       '<b style="color:#4f8cff;font-size:16px">💰 Заявка #' + esc(r.id) + '</b>' +
-      '<span class="badge ' + esc(r.status) + '">' + statusLabel(r.status) + '</span></div>' +
+      '<div class="flex">' +
+        (belowMin ? '<span class="badge pending" style="color:var(--warn)">⚠️ &lt; ' + fmt(MIN_WITHDRAW) + '</span>' : '') +
+        '<span class="badge ' + esc(r.status) + '">' + statusLabel(r.status) + '</span>' +
+      '</div>' +
+    '</div>' +
     '<div class="grid">' +
       '<div class="cell"><b>👤</b><span>' + esc(r.user_first_name || (u && userName(u)) || '—') + '</span></div>' +
       '<div class="cell"><b>🔗</b><span>@' + esc(r.user_username || (u && u.username) || '—') + '</span></div>' +
       '<div class="cell"><b>🆔</b><span>' + esc(r.user_telegram_id) + '</span></div>' +
-      '<div class="cell"><b>💰 Запрошено</b><span class="accent">' + fmt(r.amount) + '</span></div>' +
+      '<div class="cell"><b>💰 Запрошено</b><span class="' + (belowMin ? 'warn' : 'accent') + '">' + fmt(r.amount) + '</span></div>' +
       '<div class="cell"><b>💎 К выводу</b><span class="warn">' + fmt(bal.owed) + '</span></div>' +
       '<div class="cell"><b>📈 Начислено</b><span class="ok">' + fmt(bal.accrued) + '</span></div>' +
     '</div>' +
@@ -1683,7 +1690,7 @@ window.unlinkReferral = function(uid){
     await renderUsers();
   });
 };
-  
+
 /* ═══ БЛОКИРОВКА ═══ */
 function openBlockUser(uid){
   var u = findUser(DATA.users, uid);
@@ -1989,16 +1996,21 @@ window.openUserCard = async function(uid){
 
           ((bal.accrued > 0 || bal.pending > 0 || bal.pendingActive > 0)
             ? '<div class="user-section">' +
-                '<div class="us-head">💰 Реферальный баланс</div>' +
+                '<div class="us-head">💰 Реферальный баланс ' +
+                  '<span class="muted" style="font-size:11px;font-weight:400">мин. вывод ' + fmt(MIN_WITHDRAW) + '</span>' +
+                '</div>' +
                 '<div class="us-body" style="padding-top:0">' +
                   '<div class="grid" style="margin:0">' +
-                    '<div class="cell"><b>К выводу</b><span class="' + (bal.owed>0?'warn':'ok') + '">' + fmt(bal.owed) + '</span></div>' +
+                    '<div class="cell"><b>К выводу</b><span class="' + (bal.owed>=MIN_WITHDRAW?'ok':'warn') + '">' + fmt(bal.owed) + '</span></div>' +
                     '<div class="cell"><b>Начислено</b><span class="ok">' + fmt(bal.accrued) + '</span></div>' +
                     (bal.pending > 0 ? '<div class="cell"><b>Ожидает</b><span class="warn">' + fmt(bal.pending) + '</span></div>' : '') +
                     (bal.pendingActive > 0 ? '<div class="cell"><b>Заморожено</b><span class="warn">' + fmt(bal.pendingActive) + '</span></div>' : '') +
                     (bal.frozen > 0 ? '<div class="cell"><b>В заявке</b><span class="warn">' + fmt(bal.frozen) + '</span></div>' : '') +
                     '<div class="cell"><b>Выплачено</b><span class="accent">' + fmt(bal.paid) + '</span></div>' +
                   '</div>' +
+                  (bal.owed > 0 && bal.owed < MIN_WITHDRAW
+                    ? '<div class="muted" style="margin-top:10px;color:var(--warn);font-size:12px">⚠️ Не хватает до минимума: ' +
+                      fmt(MIN_WITHDRAW - bal.owed) + '</div>' : '') +
                   (bal.pendingActive > 0
                     ? '<button class="btn warn" style="margin-top:10px" onclick="closeModal();setTimeout(function(){admForceActivate(\'' +
                       esc(u.telegram_id) + '\')},200)">🔓 Разморозить всё (' + fmt(bal.pendingActive) + ')</button>' : '') +
@@ -2458,7 +2470,8 @@ async function renderRefs(){
     ]);
     DATA.users = res[0]; DATA.purchases = res[1];
     layout(
-      '<h2 style="font-size:17px;margin-bottom:14px">🌳 Реферальная система</h2>' +
+      '<h2 style="font-size:17px;margin-bottom:14px">🌳 Реферальная система ' +
+        '<span class="muted" style="font-size:12px;font-weight:400">мин. вывод ' + fmt(MIN_WITHDRAW) + '</span></h2>' +
       '<div class="search">' +
         '<input class="input" id="refsSearchInput" placeholder="Поиск: имя реферера/реферала, @ник, ID…" ' +
           'value="' + esc(refsSearch) + '" oninput="onRefsSearchInput()">' +

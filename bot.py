@@ -22,6 +22,8 @@ AGREE_TEXT = "📄 Подтвердите ознакомление с услов
 WELCOME_AFTER = (
     "👋 <b>Добро пожаловать в проект «РОСТЭРА»!</b>\n\n"
     "Откройте приложение:\n\n"
+    "💬 <b>Поддержка:</b> @DAMIR1500\n"
+    "👨‍💻 <b>Создатель проекта:</b> @razrabotchik11_bot"
 )
 AGREE_CALLBACK = "user_agree_terms"
 
@@ -76,6 +78,9 @@ PURCHASE_STATUS_CACHE = {}
 PAYOUT_STATUS_CACHE = {}
 REF_REQUEST_STATUS_CACHE = {}
 BOT_USERNAME = "ROSTERAbot"
+
+# Состояние диалогов рассылки (uid -> dict)
+BROADCAST_STATE = {}
 
 SESSION = requests.Session()
 SESSION.headers.update({"Connection": "keep-alive"})
@@ -472,7 +477,6 @@ def kb_info():
         [{"text": "🔙 Назад", "callback_data": "back_to_start"}],
     ]}
 
-# ---- Кнопки для админ-уведомлений: только "Открыть админку" ----
 def kb_admin_purchase(pid, uid):
     return {"inline_keyboard": [
         [{"text": "🌐 Открыть админку", "web_app": {"url": ADMIN_URL}}]
@@ -507,6 +511,9 @@ def kb_unknown():
         [{"text": "🚀 Открыть приложение", "web_app": {"url": WEB_URL}}],
         [{"text": "💬 Написать админу", "url": "https://t.me/DAMIR1500"}]
     ]}
+
+def kb_broadcast_cancel():
+    return {"inline_keyboard": [[{"text": "❌ Отмена", "callback_data": "bc_cancel"}]]}
 
 # ============================================================
 # PDF + СОГЛАСИЕ
@@ -568,6 +575,217 @@ def register_user(user, start_text):
     return data
 
 # ============================================================
+# 📢 РАССЫЛКА (из бота)
+# ============================================================
+def cmd_broadcast(chat_id, user_tg):
+    if not is_admin(user_tg):
+        tg_send(chat_id, "⛔️ Только для админа"); return
+    BROADCAST_STATE[str(user_tg)] = {"step": "choose_target"}
+    tg_send(chat_id,
+            "📢 <b>Рассылка</b>\n\n"
+            "Выберите получателя:",
+            kb={"inline_keyboard": [
+                [{"text": "📢 Всем пользователям", "callback_data": "bc_all"}],
+                [{"text": "👤 Одному юзеру", "callback_data": "bc_one"}],
+                [{"text": "❌ Отмена", "callback_data": "bc_cancel"}]
+            ]})
+
+def handle_broadcast_callback(cb, data):
+    user_tg = cb["from"]["id"]
+    msg = cb.get("message", {})
+    chat_id = msg.get("chat", {}).get("id")
+    msg_id = msg.get("message_id")
+    cb_id = cb.get("id")
+
+    if not is_admin(user_tg):
+        tg_answer(cb_id, "⛔️", True); return True
+
+    st = BROADCAST_STATE.get(str(user_tg))
+    if not st: return False
+
+    if data == "bc_cancel":
+        BROADCAST_STATE.pop(str(user_tg), None)
+        tg_answer(cb_id, "❌ Отменено")
+        tg_edit(chat_id, msg_id, "❌ Рассылка отменена")
+        return True
+
+    if data == "bc_all":
+        tg_answer(cb_id, "📢")
+        st["target"] = "all"
+        st["step"] = "text"
+        tg_edit(chat_id, msg_id,
+                "📢 <b>Рассылка ВСЕМ</b>\n\n"
+                "Отправьте текст сообщения.\n"
+                "Можно также прислать <b>фото с подписью</b> или <b>фото + текст</b> отдельно.",
+                kb=kb_broadcast_cancel())
+        return True
+
+    if data == "bc_one":
+        tg_answer(cb_id, "👤")
+        st["target"] = "one"
+        st["step"] = "user_id"
+        tg_edit(chat_id, msg_id,
+                "👤 <b>Рассылка одному</b>\n\n"
+                "Введите Telegram ID пользователя или @username:",
+                kb=kb_broadcast_cancel())
+        return True
+
+    if data == "bc_send":
+        tg_answer(cb_id, "📤 Отправляю…")
+        threading.Thread(target=do_broadcast_send, args=(chat_id, msg_id, user_tg), daemon=True).start()
+        return True
+
+    return False
+
+def do_broadcast_send(chat_id, msg_id, admin_tg):
+    st = BROADCAST_STATE.get(str(admin_tg))
+    if not st: return
+    text = st.get("text") or ""
+    photo = st.get("photo") or ""
+    target = st.get("target")
+    target_id = st.get("target_id")
+
+    if target == "all":
+        users = fb_get("users") or {}
+        recipients = []
+        if isinstance(users, dict):
+            for u in users.values():
+                if isinstance(u, dict) and u.get("telegram_id") and not u.get("blocked"):
+                    recipients.append(int(u["telegram_id"]))
+    elif target == "one":
+        recipients = [int(target_id)] if target_id else []
+    else:
+        recipients = []
+
+    if not recipients:
+        tg_edit(chat_id, msg_id, "❌ Нет получателей")
+        BROADCAST_STATE.pop(str(admin_tg), None)
+        return
+
+    sent = 0
+    failed = 0
+    for uid in recipients:
+        try:
+            if photo:
+                res = tg("sendPhoto", chat_id=uid, photo=photo, caption=text, parse_mode="HTML")
+                if not (res and res.get("ok")):
+                    if tg_send(uid, text): sent += 1
+                    else: failed += 1
+                else:
+                    sent += 1
+            else:
+                if tg_send(uid, text): sent += 1
+                else: failed += 1
+            time.sleep(0.05)
+        except Exception as e:
+            failed += 1
+            log("BC", f"{uid}: {e}")
+
+    tg_edit(chat_id, msg_id,
+            f"✅ <b>Рассылка завершена</b>\n\n"
+            f"📤 Отправлено: <b>{sent}</b>\n"
+            f"❌ Ошибок: <b>{failed}</b>")
+    BROADCAST_STATE.pop(str(admin_tg), None)
+
+# ============================================================
+# 📥 ОБРАБОТКА ЗАДАЧ РАССЫЛКИ ИЗ ВЕБ-ПАНЕЛИ
+# ============================================================
+def bot_process_broadcast_tasks():
+    T = fb_get("broadcast_tasks") or {}
+    if not isinstance(T, dict): return
+    for k, task in T.items():
+        if not isinstance(task, dict): continue
+        if task.get("status") != "pending": continue
+
+        log("BC", f"обработка задачи {task.get('id')}")
+        fb_patch(f"broadcast_tasks/{k}", {"status": "processing"})
+
+        target = task.get("target")
+        target_id = task.get("target_id")
+        text = task.get("text") or ""
+        photo = task.get("photo") or ""
+
+        if target == "all":
+            users = fb_get("users") or {}
+            recipients = []
+            if isinstance(users, dict):
+                for u in users.values():
+                    if isinstance(u, dict) and u.get("telegram_id") and not u.get("blocked"):
+                        recipients.append(int(u["telegram_id"]))
+        elif target == "one" and target_id:
+            recipients = [int(target_id)]
+        else:
+            recipients = []
+
+        sent = 0
+        failed = 0
+        for uid in recipients:
+            try:
+                if photo:
+                    res = tg("sendPhoto", chat_id=uid, photo=photo,
+                             caption=text, parse_mode="HTML")
+                    if res and res.get("ok"):
+                        sent += 1
+                    else:
+                        if tg_send(uid, text): sent += 1
+                        else: failed += 1
+                else:
+                    if tg_send(uid, text): sent += 1
+                    else: failed += 1
+                time.sleep(0.05)
+            except Exception as e:
+                failed += 1
+                log("BC", f"{uid}: {e}")
+
+        fb_patch(f"broadcast_tasks/{k}", {
+            "status": "done",
+            "sent": sent,
+            "failed": failed,
+            "finished_at": now_iso()
+        })
+        log("BC", f"задача {task.get('id')} готова: {sent}/{failed}")
+
+# ============================================================
+# 🔔 АВТО-ПРОВЕРКА АДМИН-ПАНЕЛИ НА НЕОБРАБОТАННЫЕ УВЕДОМЛЕНИЯ
+# ============================================================
+def bot_check_admin_panel_notifications():
+    """
+    Бот сам проверяет:
+    если заявка создана/в pending, но флаг notified_new не выставлен —
+    значит админка её не уведомила (была закрыта, перезапущена, ошибка).
+    Бот берёт уведомление на себя.
+    """
+    P = fb_get("purchases") or {}
+    if isinstance(P, dict):
+        for k, p in P.items():
+            if not isinstance(p, dict): continue
+            if p.get("status") != "created": continue
+            if p.get("notified_new"): continue
+            log("AUTO", f"purchase #{p.get('id')} не уведомлена админкой — отправляю")
+            notify_new_purchase(p, p.get("id", 0))
+            fb_patch(f"purchases/{k}", {"notified_new": 1})
+
+    PO = fb_get("payouts") or {}
+    if isinstance(PO, dict):
+        for k, po in PO.items():
+            if not isinstance(po, dict): continue
+            if po.get("status") != "pending": continue
+            if po.get("notified_new"): continue
+            log("AUTO", f"payout #{po.get('id')} не уведомлён — отправляю")
+            notify_new_payout(po)
+            fb_patch(f"payouts/{k}", {"notified_new": 1})
+
+    RQ = fb_get("ref_payout_requests") or {}
+    if isinstance(RQ, dict):
+        for k, r in RQ.items():
+            if not isinstance(r, dict): continue
+            if r.get("status") != "pending": continue
+            if r.get("notified_new"): continue
+            log("AUTO", f"ref_payout #{r.get('id')} не уведомлён — отправляю")
+            notify_new_ref_request(r)
+            fb_patch(f"ref_payout_requests/{k}", {"notified_new": 1})
+
+# ============================================================
 # КОМАНДЫ
 # ============================================================
 def cmd_start(chat_id, user, text):
@@ -589,12 +807,15 @@ def cmd_admin(chat_id):
             "Все действия — заявки, выплаты, статистика, товары, рефералы — "
             "доступны в веб-панели.\n\n"
             "<b>Доступные команды:</b>\n"
+            "/broadcast — рассылка (текст + фото)\n"
             "/test — самодиагностика\n"
             "/test_era — создать тестовую эру на 1 день\n"
-            "/reset_era — удалить все тестовые эры",
-            kb={"inline_keyboard": [[
-                {"text": "🌐 Открыть админ-панель", "web_app": {"url": ADMIN_URL}}
-            ]]})
+            "/reset_era — удалить все тестовые эры\n"
+            "/cancel — отменить текущее действие",
+            kb={"inline_keyboard": [
+                [{"text": "🌐 Открыть админ-панель", "web_app": {"url": ADMIN_URL}}],
+                [{"text": "📢 Рассылка", "callback_data": "open_broadcast"}]
+            ]})
 
 def cmd_test(chat_id, user_tg):
     if not is_admin(user_tg):
@@ -731,6 +952,17 @@ def handle_callback(cb):
                 send_blocked_msg(chat_id, block_reason)
             return
 
+    # ---- РАССЫЛКА ----
+    if data.startswith("bc_"):
+        if handle_broadcast_callback(cb, data):
+            return
+    if data == "open_broadcast":
+        if not is_admin(user_tg):
+            tg_answer(cb_id, "⛔️", True); return
+        tg_answer(cb_id, "📢")
+        cmd_broadcast(chat_id, user_tg)
+        return
+
     if data == AGREE_CALLBACK:
         tg_answer(cb_id, "✅")
         uid = str(user_tg)
@@ -744,7 +976,6 @@ def handle_callback(cb):
         tg_send(chat_id, WELCOME_AFTER, kb=kb_start())
         return
 
-    # ---- ИНФО-РАЗДЕЛЫ ----
     if data == "info_how":
         tg_answer(cb_id, "📖")
         if msg_id:
@@ -785,7 +1016,6 @@ def handle_callback(cb):
         else: tg_send(chat_id, text, kb=kb_refs())
         return
 
-    # ---- Callback-обработчики для старых сообщений (кнопки в истории) ----
     if data.startswith("adm_approve:"):
         if not is_admin(user_tg):
             tg_answer(cb_id, "⛔️", True); return
@@ -955,6 +1185,7 @@ def ui_wd_confirm(chat_id, user_tg, key, msg_id, cb_id):
         "amount": p.get("total_amount", 0),
         "status": "pending", "requested_at": now, "paid_at": None,
         "requisites": req,
+        "notified_new": 0,
     }
     fb_post("payouts", po)
     tg_edit(chat_id, msg_id,
@@ -983,12 +1214,70 @@ def handle_message(msg):
             send_blocked_msg(chat_id, block_reason)
             return
 
+    # --- Состояние рассылки (админ пишет текст/фото) ---
+    bc_st = BROADCAST_STATE.get(str(user_tg))
+    if bc_st and is_admin(user_tg):
+        step = bc_st.get("step")
+
+        if step == "user_id":
+            target = text.strip().lstrip("@")
+            user_data = None
+            if target.isdigit():
+                user_data = fb_get(f"users/{target}")
+            else:
+                users = fb_get("users") or {}
+                if isinstance(users, dict):
+                    for u in users.values():
+                        if isinstance(u, dict) and (u.get("username") or "").lower() == target.lower():
+                            user_data = u
+                            break
+            if not user_data:
+                tg_send(chat_id, "❌ Не найден. Попробуйте ещё раз или /cancel")
+                return
+            bc_st["target_id"] = user_data.get("telegram_id")
+            bc_st["step"] = "text"
+            tg_send(chat_id,
+                    f"✅ Получатель: <b>{user_data.get('first_name', '—')}</b>\n\n"
+                    "Отправьте текст сообщения (можно с фото):",
+                    kb=kb_broadcast_cancel())
+            return
+
+        if step == "text":
+            photo_id = None
+            if msg.get("photo"):
+                photo_id = msg["photo"][-1]["file_id"]
+                bc_st["text"] = msg.get("caption") or ""
+            else:
+                bc_st["text"] = text
+            bc_st["photo"] = photo_id or ""
+            bc_st["step"] = "confirm"
+            preview = bc_st["text"][:200] or "(без текста)"
+            target_label = "ВСЕМ" if bc_st.get("target") == "all" else f"ID {bc_st.get('target_id')}"
+            tg_send(chat_id,
+                    f"📢 <b>Предпросмотр рассылки</b>\n\n"
+                    f"👥 Кому: <b>{target_label}</b>\n"
+                    f"{'🖼 С фото' if photo_id else '📝 Только текст'}\n\n"
+                    f"<b>Текст:</b>\n<i>{preview}</i>",
+                    kb={"inline_keyboard": [
+                        [{"text": "✅ Отправить", "callback_data": "bc_send"}],
+                        [{"text": "❌ Отмена", "callback_data": "bc_cancel"}]
+                    ]})
+            return
+
+    if text.startswith("/cancel"):
+        if BROADCAST_STATE.get(str(user_tg)):
+            BROADCAST_STATE.pop(str(user_tg), None)
+            tg_send(chat_id, "❌ Отменено")
+            return
+
     if text.startswith("/start"):
         cmd_start(chat_id, user, text); return
     if text.startswith("/admin"):
         if not is_admin(user_tg):
             tg_send(chat_id, "⛔️ Доступ запрещён"); return
         cmd_admin(chat_id); return
+    if text.startswith("/broadcast"):
+        cmd_broadcast(chat_id, user_tg); return
     if text.startswith("/myrefs") or text.startswith("/refs"):
         cmd_myrefs(chat_id, user_tg); return
     if text.startswith("/test_era"):
@@ -1258,12 +1547,10 @@ def notify_new_payout(po):
     if not req or not req.get("fio"):
         req = get_requisites(uid)
 
-    # Уведомление пользователю — БЕЗ кнопок
     tg_send(uid,
             f"📤 <b>Заявка на вывод #{poid} создана</b>\n\n"
             f"💰 {amount}\n\n⏳ Ожидайте — админ скоро обработает.")
 
-    # Уведомление админам — только кнопка "Открыть админку"
     notify_admins(
         f"📤 <b>НОВАЯ ЗАЯВКА НА ВЫВОД #{poid}</b>\n\n"
         f"👤 {po.get('user_first_name', '—')} @{po.get('user_username') or '—'}\n"
@@ -1282,12 +1569,10 @@ def notify_new_ref_request(r):
     if not req or not req.get("fio"):
         req = get_requisites(uid)
 
-    # Уведомление пользователю — БЕЗ кнопок
     tg_send(int(uid),
             f"✅ <b>Заявка на вывод бонуса #{rid}</b>\n\n"
             f"💰 Сумма: <b>{amount}</b>\n\n⏳ Ожидайте подтверждения админом.")
 
-    # Уведомление админам — только кнопка "Открыть админку"
     notify_admins(
         f"💰 <b>НОВАЯ ЗАЯВКА НА ВЫВОД БОНУСА #{rid}</b>\n\n"
         f"👤 {r.get('user_first_name', '—')} @{r.get('user_username') or '—'}\n"
@@ -1411,25 +1696,25 @@ def notify_payout_status(k, po, old_status, new_status):
         f"💰 {amount}")
 
 # ============================================================
-# ФОНОВЫЙ МОНИТОРИНГ
+# ФОНОВЫЙ МОНИТОРИНГ (новая логика через notified_new)
 # ============================================================
 def check_new():
-    global last_seen_purchase_id, last_seen_payout_id, last_seen_ref_request_id
+    """
+    Новая логика: уведомляем по флагу notified_new, а не по last_seen_id.
+    Это значит: если заявку создали во время перезапуска бота — она всё равно будет уведомлена.
+    """
     P = fb_get("purchases") or {}
     if isinstance(P, dict):
         for k, p in P.items():
             if not isinstance(p, dict):
                 continue
-            try:
-                pid = int(p.get("id", 0))
-            except:
-                continue
             cur_status = p.get("status", "")
             old_status = PURCHASE_STATUS_CACHE.get(k)
-            if pid > last_seen_purchase_id:
-                last_seen_purchase_id = pid
-                if cur_status == "created":
-                    notify_new_purchase(p, pid)
+            # Уведомляем о новых заявках по флагу
+            if cur_status == "created" and not p.get("notified_new"):
+                notify_new_purchase(p, p.get("id", 0))
+                fb_patch(f"purchases/{k}", {"notified_new": 1})
+            # Отслеживаем смену статуса
             elif old_status and old_status != cur_status:
                 if cur_status == "completed" and p.get("early_closed"):
                     notify_purchase_early_closed(k, p, p.get("early_closed_by", ADMIN_ID))
@@ -1437,39 +1722,31 @@ def check_new():
                     continue
                 notify_purchase_status(k, p, old_status, cur_status)
             PURCHASE_STATUS_CACHE[k] = cur_status
+
     PO = fb_get("payouts") or {}
     if isinstance(PO, dict):
         for k, po in PO.items():
             if not isinstance(po, dict):
                 continue
-            try:
-                poid = int(po.get("id", 0))
-            except:
-                continue
             cur_status = po.get("status", "")
             old_status = PAYOUT_STATUS_CACHE.get(k)
-            if poid > last_seen_payout_id:
-                last_seen_payout_id = poid
-                if cur_status == "pending":
-                    notify_new_payout(po)
+            if cur_status == "pending" and not po.get("notified_new"):
+                notify_new_payout(po)
+                fb_patch(f"payouts/{k}", {"notified_new": 1})
             elif old_status and old_status != cur_status:
                 notify_payout_status(k, po, old_status, cur_status)
             PAYOUT_STATUS_CACHE[k] = cur_status
+
     RQ = fb_get("ref_payout_requests") or {}
     if isinstance(RQ, dict):
         for k, r in RQ.items():
             if not isinstance(r, dict):
                 continue
-            try:
-                rid = int(r.get("id", 0))
-            except:
-                continue
             cur_status = r.get("status", "")
             old_status = REF_REQUEST_STATUS_CACHE.get(k)
-            if rid > last_seen_ref_request_id:
-                last_seen_ref_request_id = rid
-                if cur_status == "pending":
-                    notify_new_ref_request(r)
+            if cur_status == "pending" and not r.get("notified_new"):
+                notify_new_ref_request(r)
+                fb_patch(f"ref_payout_requests/{k}", {"notified_new": 1})
             REF_REQUEST_STATUS_CACHE[k] = cur_status
 
 # ============================================================
@@ -1533,7 +1810,7 @@ def check_expired():
 # MAIN
 # ============================================================
 def main():
-    global last_seen_purchase_id, last_seen_payout_id, last_seen_ref_request_id, BOT_USERNAME
+    global BOT_USERNAME
     print("=" * 60)
     print("🤖 Бот @ROSTERAbot")
     print(f"👑 Админы: {ADMIN_IDS}")
@@ -1550,41 +1827,24 @@ def main():
     tg("deleteWebhook", drop_pending_updates=True)
     print("✅ Webhook удалён")
 
+    # Загружаем кэш статусов (для отслеживания смен)
     P = fb_get("purchases") or {}
-    max_pid = 0
     if isinstance(P, dict):
         for k, v in P.items():
             if isinstance(v, dict):
-                try:
-                    max_pid = max(max_pid, int(v.get("id", 0)))
-                except:
-                    pass
                 PURCHASE_STATUS_CACHE[k] = v.get("status", "")
-    last_seen_purchase_id = max_pid
 
     PO = fb_get("payouts") or {}
-    max_poid = 0
     if isinstance(PO, dict):
         for k, v in PO.items():
             if isinstance(v, dict):
-                try:
-                    max_poid = max(max_poid, int(v.get("id", 0)))
-                except:
-                    pass
                 PAYOUT_STATUS_CACHE[k] = v.get("status", "")
-    last_seen_payout_id = max_poid
 
     RQ = fb_get("ref_payout_requests") or {}
-    max_rid = 0
     if isinstance(RQ, dict):
         for k, v in RQ.items():
             if isinstance(v, dict):
-                try:
-                    max_rid = max(max_rid, int(v.get("id", 0)))
-                except:
-                    pass
                 REF_REQUEST_STATUS_CACHE[k] = v.get("status", "")
-    last_seen_ref_request_id = max_rid
 
     print(f"✅ Кэш: purchases={len(PURCHASE_STATUS_CACHE)}, "
           f"payouts={len(PAYOUT_STATUS_CACHE)}, "
@@ -1593,6 +1853,7 @@ def main():
 
     last_new = 0
     last_exp = 0
+    last_admin_check = 0
     while True:
         try:
             poll()
@@ -1603,6 +1864,11 @@ def main():
             if now - last_exp > 30:
                 check_expired()
                 last_exp = now
+            # Каждые 15 секунд проверяем админ-панель и задачи рассылки
+            if now - last_admin_check > 15:
+                bot_check_admin_panel_notifications()
+                bot_process_broadcast_tasks()
+                last_admin_check = now
         except Exception as e:
             log("MAIN", f"{e}")
         time.sleep(0.1)

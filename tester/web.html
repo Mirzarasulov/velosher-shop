@@ -108,6 +108,8 @@ h3{font-size:15px;font-weight:600}
 .modal-head{position:sticky;top:0;background:var(--card2);padding:20px;border-bottom:1px solid var(--border);
   z-index:1;display:flex;justify-content:space-between;align-items:center}
 .modal-body{padding:20px}
+.mf{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:10px}
+.mf .btn{flex:1}
 .close-x{width:34px;height:34px;border-radius:50%;background:var(--card3);border:1px solid var(--border2);
   color:var(--text2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .row{display:flex;justify-content:space-between;gap:12px;align-items:center}
@@ -294,6 +296,22 @@ a{color:var(--accent);text-decoration:none}
 }
 .req-field input:focus{border-color:var(--accent)}
 .req-field input::placeholder{color:var(--muted);opacity:.6}
+
+/* ⓘ ИНФО-КНОПКА */
+.info-btn{
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.2);
+  color:var(--text2);
+  font-size:14px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;
+  font-family:Georgia,serif;
+  line-height:1;padding:0;
+  transition:background .15s,border-color .15s,transform .1s;
+}
+.info-btn:hover{background:rgba(79,140,255,.25);border-color:var(--accent);color:#fff}
+.info-btn:active{transform:scale(.9)}
 
 /* 🏆 ТОП ЗАГЛУШКА */
 .top-hero{
@@ -518,7 +536,7 @@ var FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedata
 var BOT_USERNAME = 'ROSTERAbot';
 var ADMIN_USERNAME = 'DAMIR1500';
 var REFERRAL_PERCENT = 5;
-var MIN_WITHDRAW = 1500; /* 💸 минимальная сумма вывода (реф. бонусы и эры) */
+var MIN_WITHDRAW = 1500;
 var POLL_MS = 5000;
 var TZ_TASHKENT = 'Asia/Tashkent';
 
@@ -901,6 +919,7 @@ function renderRefHero(){
   if (nothing){
     return '<div class="ref-hero">' +
       '<div class="title"><span class="emo">💰</span> Реферальный баланс' +
+        '<button class="info-btn" onclick="event.stopPropagation();openRefRules()" title="Правила">ⓘ</button>' +
         '<span class="percent-badge">' + REFERRAL_PERCENT + '%</span></div>' +
       '<div class="last-paid" style="text-align:center">' +
         'Приглашайте друзей — получайте ' + REFERRAL_PERCENT + '% с каждой их покупки<br>' +
@@ -940,6 +959,7 @@ function renderRefHero(){
   }
   return '<div class="' + cls + '">' +
     '<div class="title"><span class="emo">' + (isFullyPaid?'✅':isFrozen?'⏳':'💰') + '</span> ' + title +
+      '<button class="info-btn" onclick="event.stopPropagation();openRefRules()" title="Правила">ⓘ</button>' +
       '<span class="percent-badge">' + REFERRAL_PERCENT + '%</span></div>' +
     '<div class="ref-balances">' +
       '<div class="ref-bal"><div class="l">К выводу</div>' +
@@ -961,7 +981,6 @@ window.requestRefPayout = function(){
     if (b.frozen > 0) return toast('⏳ Заявка уже отправлена', 'info', 4000);
     if (b.owed < MIN_WITHDRAW) return toast('Минимум ' + fmt(MIN_WITHDRAW), 'err');
 
-    /* 💳 ПРОВЕРКА РЕКВИЗИТОВ */
     var req = (ME && ME.requisites) || {};
     if (!req.fio || !req.card || !req.bank){
       var goFill = await ask('💳 Сначала заполните реквизиты для вывода\n\nНужно: Ф.И.О., карта/телефон, банк.\n\nЗаполнить сейчас?');
@@ -1053,6 +1072,7 @@ function renderReqHero(){
           '<div class="rh-title">Реквизиты для вывода</div>' +
           '<div class="rh-sub">Не заполнены</div>' +
         '</div>' +
+        '<button class="info-btn" onclick="event.stopPropagation();openReqRules()" title="Правила">ⓘ</button>' +
         '<div style="font-size:20px;color:#cfe0ff;opacity:.6">→</div>' +
       '</div>' +
       '<div style="font-size:12.5px;line-height:1.6;color:#cfe0ff;text-align:center;padding:10px 12px;background:rgba(0,0,0,.25);border-radius:10px;margin-bottom:12px">' +
@@ -1069,6 +1089,7 @@ function renderReqHero(){
         '<div class="rh-title">Реквизиты для вывода</div>' +
         '<div class="rh-sub">Заполнены</div>' +
       '</div>' +
+      '<button class="info-btn" onclick="event.stopPropagation();openReqRules()" title="Правила">ⓘ</button>' +
       '<div style="font-size:20px;color:#a8f0cc;opacity:.6">✏️</div>' +
     '</div>' +
     '<div class="rh-data">' +
@@ -1140,6 +1161,162 @@ window.saveRequisites = async function(){
   } catch(e){
     toast('❌ Ошибка сохранения: ' + e.message, 'err', 4000);
   }
+};
+
+/* ⓘ ПРАВИЛА РЕКВИЗИТОВ */
+window.openReqRules = function(){
+  showModal(
+    '<div class="modal-head">' +
+      '<div>' +
+        '<h2>💳 Правила заполнения реквизитов</h2>' +
+        '<div class="muted-sm">Заполните внимательно — ошибки задержат выплату</div>' +
+      '</div>' +
+      '<button class="close-x" onclick="closeModal()">✕</button>' +
+    '</div>' +
+    '<div class="modal-body">' +
+
+      '<div class="card2" style="background:rgba(255,92,92,.08);border-color:rgba(255,92,92,.3);margin-bottom:14px">' +
+        '<div style="font-size:13px;line-height:1.6;color:#ffb3b3">' +
+          '⚠️ <b>Важно!</b> Если реквизиты указаны с ошибкой — платёж вернётся, а выплата задержится до выяснения.' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="card2" style="margin-bottom:12px">' +
+        '<div style="font-weight:700;font-size:14px;margin-bottom:10px;color:#a8f0cc">👤 Ф.И.О. получателя</div>' +
+        '<div style="font-size:12.5px;line-height:1.9;color:var(--text2)">' +
+          '✅ <b>Правильно:</b><br>' +
+          '• Иванов Иван Иванович<br>' +
+          '• Петрова Анна Сергеевна<br><br>' +
+          '❌ <b>Неправильно:</b><br>' +
+          '• Ваня<br>' +
+          '• ivan<br>' +
+          '• Иванов И.И. <span style="color:var(--muted)">(сокращения не принимаются)</span><br><br>' +
+          '💡 Указывайте Ф.И.О. <b>точно как в банке</b> — иначе платёж может не пройти.' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="card2" style="margin-bottom:12px">' +
+        '<div style="font-weight:700;font-size:14px;margin-bottom:10px;color:#a8f0cc">💳 Номер карты / телефона</div>' +
+        '<div style="font-size:12.5px;line-height:1.9;color:var(--text2)">' +
+          '✅ <b>Правильно:</b><br>' +
+          '• 0000 0000 0000 0000 <span style="color:var(--muted)">(карта, 16 цифр)</span><br>' +
+          '• +7 999 123-45-67 <span style="color:var(--muted)">(телефон, СБП)</span><br><br>' +
+          '❌ <b>Неправильно:</b><br>' +
+          '• 0000 <span style="color:var(--muted)">(мало цифр)</span><br>' +
+          '• 8 999 123 45 67 <span style="color:var(--muted)">(пишите +7)</span><br>' +
+          '• @nickname <span style="color:var(--muted)">(карта в Telegram не работает)</span><br><br>' +
+          '💡 Карта должна быть <b>открыта для приёма переводов</b>. Для СБП — только +7.' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="card2" style="margin-bottom:12px">' +
+        '<div style="font-weight:700;font-size:14px;margin-bottom:10px;color:#a8f0cc">🏦 Название банка</div>' +
+        '<div style="font-size:12.5px;line-height:1.9;color:var(--text2)">' +
+          '✅ <b>Примеры:</b><br>' +
+          '• Сбербанк<br>' +
+          '• Тинькофф<br>' +
+          '• ВТБ<br>' +
+          '• Альфа-Банк<br><br>' +
+          '❌ <b>Неправильно:</b><br>' +
+          '• Сбер<br>' +
+          '• Т<br>' +
+          '• 0000 <span style="color:var(--muted)">(не БИК)</span><br><br>' +
+          '💡 Указывайте <b>официальное название</b> банка.' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="card2" style="background:rgba(79,140,255,.08);border-color:rgba(79,140,255,.25);margin-bottom:14px">' +
+        '<div style="font-size:12.5px;line-height:1.7;color:#cfe0ff">' +
+          '🔒 <b>Безопасность</b><br>' +
+          'Данные видны только администрации и используются исключительно для выплаты.' +
+        '</div>' +
+      '</div>' +
+
+      '<button class="btn ok" onclick="closeModal();openRequisites()">💳 Заполнить реквизиты</button>' +
+    '</div>');
+};
+
+/* ⓘ ПРАВИЛА РЕФЕРАЛОВ */
+window.openRefRules = function(){
+  showModal(
+    '<div class="modal-head">' +
+      '<div>' +
+        '<h2>💰 Реферальная программа</h2>' +
+        '<div class="muted-sm">Условия и правила</div>' +
+      '</div>' +
+      '<button class="close-x" onclick="closeModal()">✕</button>' +
+    '</div>' +
+    '<div class="modal-body">' +
+
+      '<div class="ref-hero" style="margin-bottom:14px">' +
+        '<div class="title"><span class="emo">🎁</span> Ваша награда' +
+          '<span class="percent-badge">' + REFERRAL_PERCENT + '%</span></div>' +
+        '<div class="ref-balances">' +
+          '<div class="ref-bal"><div class="l">Процент</div><div class="v approved">' + REFERRAL_PERCENT + '%</div></div>' +
+          '<div class="ref-bal"><div class="l">Минимум</div><div class="v pending">' + fmt(MIN_WITHDRAW) + '</div></div>' +
+          '<div class="ref-bal"><div class="l">Срок</div><div class="v paid">24ч</div></div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="card2" style="margin-bottom:12px">' +
+        '<div style="font-weight:700;font-size:14px;margin-bottom:10px;color:#a8f0cc">💡 Как это работает</div>' +
+        '<div style="font-size:12.5px;line-height:1.9;color:var(--text2)">' +
+          '1️⃣ Вы приглашаете друга по своей ссылке<br>' +
+          '2️⃣ Друг регистрируется и покупает эру<br>' +
+          '3️⃣ Вы получаете <b style="color:var(--ok)">' + REFERRAL_PERCENT + '%</b> от суммы его покупки<br>' +
+          '4️⃣ Бонус сразу попадает в «Начислено»<br>' +
+          '5️⃣ Когда накопится <b style="color:var(--warn)">' + fmt(MIN_WITHDRAW) + '</b> — выводите' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="card2" style="background:rgba(57,217,138,.08);border-color:rgba(57,217,138,.25);margin-bottom:12px">' +
+        '<div style="font-weight:700;font-size:14px;margin-bottom:10px;color:#a8f0cc">✅ Начисляется когда</div>' +
+        '<div style="font-size:12.5px;line-height:1.9;color:var(--text2)">' +
+          '• Друг оплатил и админ подтвердил его заявку<br>' +
+          '• У вас есть <b>активная эра</b> на момент подтверждения<br>' +
+          '• Прошла проверка на накрутку (мульти-аккаунты и т.п.)' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="card2" style="background:rgba(245,181,71,.08);border-color:rgba(245,181,71,.3);margin-bottom:12px">' +
+        '<div style="font-weight:700;font-size:14px;margin-bottom:10px;color:var(--warn)">❄️ Заморозка бонусов</div>' +
+        '<div style="font-size:12.5px;line-height:1.9;color:var(--text2)">' +
+          'Если у вас <b>нет активной эры</b> — бонусы замораживаются.<br>' +
+          'Как только купите любую эру — все замороженные бонусы <b>сразу разблокируются</b>.<br><br>' +
+          'Это защита от пустых аккаунтов без вложений.' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="card2" style="background:rgba(255,92,92,.08);border-color:rgba(255,92,92,.3);margin-bottom:12px">' +
+        '<div style="font-weight:700;font-size:14px;margin-bottom:10px;color:#ffb3b3">❌ Не начисляется когда</div>' +
+        '<div style="font-size:12.5px;line-height:1.9;color:var(--text2)">' +
+          '• Заявка друга отменена или отклонена<br>' +
+          '• Ссылка использована с фейкового аккаунта<br>' +
+          '• Обнаружена накрутка рефералов<br>' +
+          '• Реферал привязан вручную админом задним числом' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="card2" style="background:rgba(79,140,255,.08);border-color:rgba(79,140,255,.25);margin-bottom:12px">' +
+        '<div style="font-weight:700;font-size:14px;margin-bottom:10px;color:#cfe0ff">💸 Вывод бонусов</div>' +
+        '<div style="font-size:12.5px;line-height:1.9;color:var(--text2)">' +
+          '• Минимум: <b style="color:var(--warn)">' + fmt(MIN_WITHDRAW) + '</b><br>' +
+          '• Реквизиты должны быть заполнены заранее<br>' +
+          '• Срок выплаты: <b>до 24 часов</b> после одобрения<br>' +
+          '• Вывод только на свою карту/СБП<br>' +
+          '• Комиссию за перевод несёт получатель' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="card2" style="background:rgba(255,92,92,.08);border-color:rgba(255,92,92,.3);margin-bottom:14px">' +
+        '<div style="font-size:12.5px;line-height:1.7;color:#ffb3b3">' +
+          '🚫 <b>Запрещено:</b> регистрировать друзей через VPN, создавать фейковые аккаунты, ' +
+          'использовать чужие ссылки. За накрутку — блокировка без выплаты.' +
+        '</div>' +
+      '</div>' +
+
+      '<button class="btn" onclick="closeModal();copyRef()">📋 Скопировать мою ссылку</button>' +
+    '</div>');
 };
 
 window.openStatList = function(kind){
@@ -1243,7 +1420,6 @@ function statCardItem(p, kind){
 window.requestPayoutAll = function(){
   return once('payoutAll', async function(){
     if (IS_BLOCKED) return;
-    /* 💳 РЕКВИЗИТЫ */
     var req = (ME && ME.requisites) || {};
     if (!req.fio || !req.card || !req.bank){
       var goFill = await ask('💳 Сначала заполните реквизиты для вывода\n\nЗаполнить сейчас?');
@@ -1326,7 +1502,6 @@ window.buyEra = function(id){
 window.requestPayout = function(pid){
   return once('po' + pid, async function(){
     if (IS_BLOCKED) return;
-    /* 💳 ПРОВЕРКА */
     var req = (ME && ME.requisites) || {};
     if (!req.fio || !req.card || !req.bank){
       var goFill = await ask('💳 Сначала заполните реквизиты для вывода\n\nНужно: Ф.И.О., карта/телефон, банк.\n\nЗаполнить сейчас?');
@@ -1542,16 +1717,6 @@ function drawHome(){
         '<div class="label">К выводу <span class="arrow">→</span></div>' +
         '<div class="value sm ' + (available>0?'ok':'') + '">' + fmt(available) + '</div></div>' +
     '</div>' +
-    '<div class="card clickable" onclick="setTab(\'top\')" style="cursor:pointer;background:linear-gradient(135deg,#3a2d12 0%,#2a1f0a 100%);border-color:#8a6a1f;margin-bottom:12px;padding:16px">' +
-      '<div class="row">' +
-        '<div style="display:flex;align-items:center;gap:12px">' +
-          '<div style="width:44px;height:44px;border-radius:12px;background:rgba(245,181,71,.18);border:1px solid rgba(245,181,71,.4);display:flex;align-items:center;justify-content:center;font-size:22px">🏆</div>' +
-          '<div><div style="font-weight:700;color:#f5d97a;font-size:15px">Топ пользователи</div>' +
-            '<div class="muted-sm" style="color:rgba(245,217,122,.7)">Скоро откроется</div></div>' +
-        '</div>' +
-        '<div style="font-size:20px;color:#f5d97a;opacity:.6">→</div>' +
-      '</div>' +
-    '</div>' +
     renderFrozenHero() +
     renderReqHero() +
     renderRefHero() +
@@ -1732,7 +1897,6 @@ function drawProfile(){
     '<div class="card" style="padding:0 16px">' +
       item('💳', 'Реквизиты для вывода', 'openRequisites()') +
       item('👥', 'Мои рефералы', 'openMyRefs()') +
-      item('🏆', 'Топ пользователи', 'setTab(\'top\')') +
       item('💬', 'Связь с админом', 'openContact()') + '</div>' +
     '<div class="section-title"><h2>Данные</h2></div>' +
     '<div class="card" style="padding:0 16px">' +

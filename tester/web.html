@@ -295,6 +295,36 @@ a{color:var(--accent);text-decoration:none}
 .req-field input:focus{border-color:var(--accent)}
 .req-field input::placeholder{color:var(--muted);opacity:.6}
 
+/* 🏆 ТОП ЗАГЛУШКА */
+.top-hero{
+  background:linear-gradient(135deg,#3a2d12 0%,#2a1f0a 100%);
+  border:1px solid #8a6a1f;border-radius:20px;
+  padding:40px 24px;text-align:center;margin-bottom:16px;position:relative;overflow:hidden
+}
+.top-hero::before{
+  content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);
+  width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,rgba(245,181,71,.15),transparent 70%);
+  pointer-events:none;
+}
+.top-hero .th-emoji{font-size:72px;margin-bottom:14px;position:relative;z-index:1;
+  animation:top-float 3s ease-in-out infinite}
+@keyframes top-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.top-hero .th-title{font-size:26px;font-weight:900;color:#f5d97a;margin-bottom:10px;
+  letter-spacing:.5px;position:relative;z-index:1;
+  background:linear-gradient(180deg,#f5d97a 0%,#b8862d 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  text-shadow:0 2px 12px rgba(224,184,74,.3)}
+.top-hero .th-text{font-size:13.5px;color:#e8d9a8;line-height:1.6;
+  margin-bottom:20px;position:relative;z-index:1}
+.top-hero .th-list{
+  background:rgba(0,0,0,.35);border-radius:12px;padding:16px 18px;
+  text-align:left;position:relative;z-index:1;
+  font-size:12.5px;line-height:2;color:#e8d9a8;
+  border:1px solid rgba(224,184,74,.2);
+}
+.top-hero .th-list b{color:#f5d97a}
+
 /* 🚫 ЭКРАН БЛОКИРОВКИ */
 .blocked-wrap{
   min-height:100vh;display:flex;align-items:center;justify-content:center;
@@ -425,6 +455,7 @@ a{color:var(--accent);text-decoration:none}
 <nav class="nav hidden" id="nav">
   <button data-tab="home"><span class="ico">🏠</span>Главная</button>
   <button data-tab="buy"><span class="ico">🛒</span>Каталог</button>
+  <button data-tab="top"><span class="ico">🏆</span>Топ</button>
   <button data-tab="purchases"><span class="ico">📦</span>Покупки</button>
   <button data-tab="profile"><span class="ico">👤</span>Профиль</button>
 </nav>
@@ -487,6 +518,7 @@ var FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedata
 var BOT_USERNAME = 'ROSTERAbot';
 var ADMIN_USERNAME = 'DAMIR1500';
 var REFERRAL_PERCENT = 5;
+var MIN_WITHDRAW = 1500; /* 💸 минимальная сумма вывода (реф. бонусы и эры) */
 var POLL_MS = 5000;
 var TZ_TASHKENT = 'Asia/Tashkent';
 
@@ -871,7 +903,8 @@ function renderRefHero(){
       '<div class="title"><span class="emo">💰</span> Реферальный баланс' +
         '<span class="percent-badge">' + REFERRAL_PERCENT + '%</span></div>' +
       '<div class="last-paid" style="text-align:center">' +
-        'Приглашайте друзей — получайте ' + REFERRAL_PERCENT + '% с каждой их покупки' +
+        'Приглашайте друзей — получайте ' + REFERRAL_PERCENT + '% с каждой их покупки<br>' +
+        '<span class="muted-sm">Минимум для вывода: <b style="color:var(--warn)">' + fmt(MIN_WITHDRAW) + '</b></span>' +
       '</div></div>';
   }
   var cls = 'ref-hero' + (isFullyPaid ? ' paid' : '') + (isFrozen ? ' frozen' : '');
@@ -891,23 +924,26 @@ function renderRefHero(){
   var btn = '';
   if (isFrozen){
     btn = '<button class="btn warn sm" style="flex:1" disabled>⏳ Заявка на ' + fmt(b.frozen) + ' ждёт</button>';
-  } else if (b.owed >= 100){
+  } else if (b.owed >= MIN_WITHDRAW){
     btn = '<button class="btn ok sm" style="flex:1" onclick="requestRefPayout()">💸 Вывести всё (' + fmt(b.owed) + ')</button>';
   } else if (b.owed > 0){
-    btn = '<button class="btn ghost sm" style="flex:1" disabled>Минимум 100 ₽ · у вас ' + fmt(b.owed) + '</button>';
+    btn = '<button class="btn ghost sm" style="flex:1" disabled>Минимум ' + fmt(MIN_WITHDRAW) + ' · у вас ' + fmt(b.owed) + '</button>';
   }
   var note = '';
   if (isFrozen){
     note = '<div class="frozen-note">⏳ Заявка на <b>' + fmt(b.frozen) + '</b> — ждёт админа</div>';
   } else if (b.pending > 0){
     note = '<div style="text-align:center;font-size:11.5px;color:var(--warn);margin-bottom:10px">⏳ На проверке: ' + fmt(b.pending) + '</div>';
+  } else if (b.owed > 0 && b.owed < MIN_WITHDRAW){
+    note = '<div style="text-align:center;font-size:11.5px;color:var(--warn);margin-bottom:10px">' +
+      '⚠️ До минимума не хватает: <b>' + fmt(MIN_WITHDRAW - b.owed) + '</b></div>';
   }
   return '<div class="' + cls + '">' +
     '<div class="title"><span class="emo">' + (isFullyPaid?'✅':isFrozen?'⏳':'💰') + '</span> ' + title +
       '<span class="percent-badge">' + REFERRAL_PERCENT + '%</span></div>' +
     '<div class="ref-balances">' +
       '<div class="ref-bal"><div class="l">К выводу</div>' +
-        '<div class="v ' + (b.owed>0?'pending':'zero') + '">' + fmt(b.owed) + '</div></div>' +
+        '<div class="v ' + (b.owed>=MIN_WITHDRAW?'pending':'zero') + '">' + fmt(b.owed) + '</div></div>' +
       '<div class="ref-bal"><div class="l">Начислено</div>' +
         '<div class="v approved">' + fmt(b.accrued) + '</div></div>' +
       '<div class="ref-bal"><div class="l">Выплачено</div>' +
@@ -923,7 +959,7 @@ window.requestRefPayout = function(){
     if (IS_BLOCKED) return;
     var b = calcRefBalance();
     if (b.frozen > 0) return toast('⏳ Заявка уже отправлена', 'info', 4000);
-    if (b.owed < 100) return toast('Минимум 100 ₽', 'err');
+    if (b.owed < MIN_WITHDRAW) return toast('Минимум ' + fmt(MIN_WITHDRAW), 'err');
 
     /* 💳 ПРОВЕРКА РЕКВИЗИТОВ */
     var req = (ME && ME.requisites) || {};
@@ -1154,9 +1190,12 @@ window.openStatList = function(kind){
         '<div class="label">' + sumLabel + '</div>' +
         '<div class="value ' + (kind === 'available' ? 'ok' : 'accent') + '">' + fmt(totalSum) + '</div>' +
       '</div>' +
-      (kind === 'available' && list.length > 0
+      (kind === 'available' && list.length > 0 && totalSum >= MIN_WITHDRAW
         ? '<button class="btn ok" style="margin-bottom:16px" onclick="requestPayoutAll()">💸 Вывести всё (' + fmt(totalSum) + ')</button>'
-        : '') +
+        : (kind === 'available' && list.length > 0
+            ? '<div class="card2" style="margin-bottom:16px;text-align:center;color:var(--warn);font-size:12.5px">' +
+              'Минимум для вывода: ' + fmt(MIN_WITHDRAW) + ' · у вас ' + fmt(totalSum) + '</div>'
+            : '')) +
       '<div style="display:flex;flex-direction:column;gap:10px">' + cardsHtml + '</div>' +
     '</div>');
 };
@@ -1193,9 +1232,11 @@ function statCardItem(p, kind){
         '<div class="v total" style="font-size:12px">' + fmt(p.total_amount) + '</div></div>' +
     '</div>' +
     infoLine +
-    (kind === 'available' && canW
+    (kind === 'available' && canW && num(p.total_amount) >= MIN_WITHDRAW
       ? '<button class="btn ok sm" style="width:100%;margin-top:10px" onclick="requestPayout(' + JSON.stringify(p.id) + ')">💸 Вывести ' + fmt(p.total_amount) + '</button>'
-      : '') +
+      : (kind === 'available' && canW
+          ? '<div class="muted-sm" style="text-align:center;margin-top:10px;color:var(--warn)">Минимум ' + fmt(MIN_WITHDRAW) + '</div>'
+          : '')) +
   '</div>';
 }
 
@@ -1212,6 +1253,7 @@ window.requestPayoutAll = function(){
     var avail = PURCHASES.filter(function(p){ return canWithdraw(p); });
     if (!avail.length) return toast('Нет сумм для вывода', 'err');
     var total = avail.reduce(function(s,p){ return s + num(p.total_amount); }, 0);
+    if (total < MIN_WITHDRAW) return toast('Минимум ' + fmt(MIN_WITHDRAW), 'err');
     if (!await ask('Вывести все завершённые эры?\n\n💰 ' + fmt(total) +
       '\n📦 ' + avail.length + ' заявок\n\n💳 Реквизиты:\n👤 ' + req.fio + '\n💳 ' + req.card + '\n🏦 ' + req.bank)) return;
     var u = tgUser() || {};
@@ -1293,6 +1335,9 @@ window.requestPayout = function(pid){
     }
     var p = PURCHASES.filter(function(x){ return String(x.id) === String(pid); })[0];
     if (!p) return;
+    if (num(p.total_amount) < MIN_WITHDRAW){
+      return toast('Минимум ' + fmt(MIN_WITHDRAW), 'err');
+    }
     var confirmText =
       'Подать заявку на вывод?\n\n' +
       '💰 Сумма: ' + fmt(p.total_amount) + '\n\n' +
@@ -1423,7 +1468,7 @@ window.openMyRefs = function(){
         '<span class="percent-badge">' + REFERRAL_PERCENT + '%</span></div>' +
         '<div class="ref-balances">' +
           '<div class="ref-bal"><div class="l">К выводу</div>' +
-            '<div class="v ' + (b.owed>0?'pending':'zero') + '">' + fmt(b.owed) + '</div></div>' +
+            '<div class="v ' + (b.owed>=MIN_WITHDRAW?'pending':'zero') + '">' + fmt(b.owed) + '</div></div>' +
           '<div class="ref-bal"><div class="l">Начислено</div>' +
             '<div class="v approved">' + fmt(b.accrued) + '</div></div>' +
           '<div class="ref-bal"><div class="l">Выплачено</div>' +
@@ -1431,6 +1476,9 @@ window.openMyRefs = function(){
         '</div>' +
         (b.pendingActive > 0
           ? '<div class="warn-note">❄️ Заморожено <b>' + fmt(b.pendingActive) + '</b> — купите эру, чтобы разблокировать</div>'
+          : '') +
+        (b.owed > 0 && b.owed < MIN_WITHDRAW
+          ? '<div class="warn-note" style="background:rgba(245,181,71,.12);color:var(--warn)">⚠️ До минимума не хватает: <b>' + fmt(MIN_WITHDRAW - b.owed) + '</b></div>'
           : '') +
       '</div>' +
       '<div class="card2" style="margin-bottom:14px">' +
@@ -1494,6 +1542,16 @@ function drawHome(){
         '<div class="label">К выводу <span class="arrow">→</span></div>' +
         '<div class="value sm ' + (available>0?'ok':'') + '">' + fmt(available) + '</div></div>' +
     '</div>' +
+    '<div class="card clickable" onclick="setTab(\'top\')" style="cursor:pointer;background:linear-gradient(135deg,#3a2d12 0%,#2a1f0a 100%);border-color:#8a6a1f;margin-bottom:12px;padding:16px">' +
+      '<div class="row">' +
+        '<div style="display:flex;align-items:center;gap:12px">' +
+          '<div style="width:44px;height:44px;border-radius:12px;background:rgba(245,181,71,.18);border:1px solid rgba(245,181,71,.4);display:flex;align-items:center;justify-content:center;font-size:22px">🏆</div>' +
+          '<div><div style="font-weight:700;color:#f5d97a;font-size:15px">Топ пользователи</div>' +
+            '<div class="muted-sm" style="color:rgba(245,217,122,.7)">Скоро откроется</div></div>' +
+        '</div>' +
+        '<div style="font-size:20px;color:#f5d97a;opacity:.6">→</div>' +
+      '</div>' +
+    '</div>' +
     renderFrozenHero() +
     renderReqHero() +
     renderRefHero() +
@@ -1541,8 +1599,12 @@ function eraCardPurchase(p){
             '<br><span style="color:var(--warn)">Сумма начислена досрочно</span>' : '') +
       '</div>' +
     '</div>' +
-    (canW ? '<div class="actions"><button class="btn ok" onclick="requestPayout(' +
-      JSON.stringify(p.id) + ')">💸 Вывести ' + fmt(p.total_amount) + '</button></div>' : '') +
+    (canW && num(p.total_amount) >= MIN_WITHDRAW
+      ? '<div class="actions"><button class="btn ok" onclick="requestPayout(' +
+        JSON.stringify(p.id) + ')">💸 Вывести ' + fmt(p.total_amount) + '</button></div>'
+      : (canW
+          ? '<div class="actions"><button class="btn ghost" disabled>Минимум ' + fmt(MIN_WITHDRAW) + '</button></div>'
+          : '')) +
   '</div>';
 }
 
@@ -1599,6 +1661,28 @@ function eraCardShop(e){
     '</div></div>';
 }
 
+function drawTop(){
+  setApp(
+    '<div class="topbar"><div class="brand"><div class="logo">🏆</div>Топ пользователи</div>' +
+      '<div><span class="muted-sm">скоро</span></div></div>' +
+    '<div class="top-hero">' +
+      '<div class="th-emoji">🚧</div>' +
+      '<div class="th-title">Скоро откроется</div>' +
+      '<div class="th-text">' +
+        'Раздел «Топ пользователи» находится в разработке.<br>' +
+        'Здесь будет рейтинг лучших участников проекта.' +
+      '</div>' +
+      '<div class="th-list">' +
+        '🏆 <b>Топ по вложениям</b><br>' +
+        '💰 <b>Топ по прибыли</b><br>' +
+        '👥 <b>Топ по рефералам</b><br>' +
+        '⚡ <b>Скорость роста</b>' +
+      '</div>' +
+    '</div>' +
+    '<button class="btn secondary" onclick="setTab(\'home\')">← На главную</button>'
+  );
+}
+
 function drawPurchases(){
   setApp(
     '<div class="topbar"><div class="brand"><div class="logo">📦</div>Мои покупки</div>' +
@@ -1648,17 +1732,19 @@ function drawProfile(){
     '<div class="card" style="padding:0 16px">' +
       item('💳', 'Реквизиты для вывода', 'openRequisites()') +
       item('👥', 'Мои рефералы', 'openMyRefs()') +
+      item('🏆', 'Топ пользователи', 'setTab(\'top\')') +
       item('💬', 'Связь с админом', 'openContact()') + '</div>' +
     '<div class="section-title"><h2>Данные</h2></div>' +
     '<div class="card" style="padding:0 16px">' +
       '<div class="list-item"><span class="muted">Telegram ID</span><b>' + esc(me.telegram_id||u.id||'—') + '</b></div>' +
       '<div class="list-item"><span class="muted">Username</span><b>@' + esc(me.username||u.username||'—') + '</b></div>' +
       '<div class="list-item"><span class="muted">Рефералов</span><b>' + ALL_REFERRALS.length + '</b></div>' +
+      '<div class="list-item"><span class="muted">Мин. вывод</span><b style="color:var(--warn)">' + fmt(MIN_WITHDRAW) + '</b></div>' +
       '<div class="list-item"><span class="muted">Регистрация</span><b>' + fmtDT(me.registered_at) + '</b></div>' +
     '</div>');
 }
 
-var SCREENS = { home: drawHome, buy: drawBuy, purchases: drawPurchases, profile: drawProfile };
+var SCREENS = { home: drawHome, buy: drawBuy, top: drawTop, purchases: drawPurchases, profile: drawProfile };
 
 async function reload(){
   var res = await Promise.all([loadEras(), loadPurchases(), loadPayouts()]);

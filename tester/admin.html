@@ -140,7 +140,7 @@ textarea.input{resize:vertical;min-height:80px;font-family:inherit}
   justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--card);z-index:2}
 .mh h2{font-size:17px}
 .mb{padding:18px}
-.mf{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:10px}
+.mf{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:10px;position:sticky;bottom:0;background:var(--card)}
 .mf .btn{flex:1}
 .x{width:36px;height:36px;border-radius:50%;background:var(--card2);
   border:1px solid var(--border2);color:#c4ccd6;font-size:18px;cursor:pointer}
@@ -1559,7 +1559,7 @@ async function refPayoutReject(key){
   });
 }
 
-/* ═══════════ 📢 РАССЫЛКА ═══════════ */
+/* ═══════════ 📢 РАССЫЛКА (фокус НЕ теряется) ═══════════ */
 var _bcState = { target: 'all', targetId: null, text: '', photo: '' };
 
 window.openBroadcast = function(){
@@ -1591,16 +1591,7 @@ function renderBroadcastModal(){
       '</div>' +
       '<div id="bcUserResults"></div>' +
       '<div style="margin-top:12px"><button class="btn ghost" style="width:100%" ' +
-        'onclick="_bcState.target=\'all\';renderBroadcastModal()">📢 Отправить ВСЕМ</button></div>';
-  }
-
-  var previewBlock = '';
-  if (_bcState.text || _bcState.photo){
-    previewBlock = '<div style="margin-top:16px;padding:14px;background:var(--card2);border-radius:12px;border-left:3px solid var(--accent)">' +
-      '<div class="muted" style="font-size:10.5px;text-transform:uppercase;font-weight:700;margin-bottom:8px">Предпросмотр</div>' +
-      (_bcState.photo ? '<div class="muted" style="font-size:12px;margin-bottom:6px">🖼 ' + esc(_bcState.photo.slice(0, 60)) + ( _bcState.photo.length > 60 ? '…' : '') + '</div>' : '') +
-      (_bcState.text ? '<div style="white-space:pre-wrap;font-size:13.5px">' + esc(_bcState.text) + '</div>' : '<div class="muted">(без текста)</div>') +
-    '</div>';
+        'onclick="_bcState.target=\'all\';_bcState.targetId=null;renderBroadcastModal()">📢 Отправить ВСЕМ</button></div>';
   }
 
   var textBlock = '';
@@ -1609,11 +1600,14 @@ function renderBroadcastModal(){
     textBlock =
       '<div class="frow" style="margin-top:16px"><label>Текст сообщения</label>' +
         '<textarea class="input" id="bcText" rows="4" placeholder="Текст рассылки…" ' +
-          'oninput="_bcState.text=this.value;renderBroadcastModal()">' + esc(_bcState.text) + '</textarea></div>' +
+          'oninput="onBcTextInput(this.value)">' + esc(_bcState.text) + '</textarea></div>' +
       '<div class="frow"><label>URL фото (необязательно)</label>' +
         '<input class="input" id="bcPhoto" placeholder="https://…" ' +
-          'value="' + esc(_bcState.photo) + '" oninput="_bcState.photo=this.value;renderBroadcastModal()"></div>';
+          'value="' + esc(_bcState.photo) + '" oninput="onBcPhotoInput(this.value)"></div>';
   }
+
+  // Блок превью — обновляется отдельно через updateBcPreview()
+  var previewBlock = '<div id="bcPreviewBox">' + buildBcPreview() + '</div>';
 
   $('modal-root').innerHTML =
     '<div class="mbg" onclick="if(event.target===this)closeModal()">' +
@@ -1625,14 +1619,65 @@ function renderBroadcastModal(){
         '</div>' +
         '<div class="mf">' +
           '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
-          (canWrite && (_bcState.text || _bcState.photo)
-            ? '<button class="btn" onclick="doBroadcast()">📤 Отправить</button>'
-            : '<button class="btn" disabled>Заполните текст</button>') +
+          '<button class="btn" id="bcSendBtn" onclick="doBroadcast()" ' +
+            (canWrite && (_bcState.text || _bcState.photo) ? '' : 'disabled') + '>' +
+            (canWrite && (_bcState.text || _bcState.photo) ? '📤 Отправить' : 'Заполните текст') +
+          '</button>' +
         '</div>' +
       '</div>' +
     '</div>';
+
+  if (!_bcState.targetId && _bcState.target === 'one'){
+    setTimeout(function(){
+      var el = $('bcUserSearch');
+      if (el) el.focus();
+    }, 100);
+  }
 }
 
+/* Обновляет только превью и кнопку — НЕ перерисовывает окно → фокус сохраняется */
+window.onBcTextInput = function(val){
+  _bcState.text = val;
+  updateBcPreview();
+  updateBcSendBtn();
+};
+
+window.onBcPhotoInput = function(val){
+  _bcState.photo = val;
+  updateBcPreview();
+  updateBcSendBtn();
+};
+
+function buildBcPreview(){
+  if (!_bcState.text && !_bcState.photo) return '';
+  return '<div style="margin-top:16px;padding:14px;background:var(--card2);border-radius:12px;border-left:3px solid var(--accent)">' +
+    '<div class="muted" style="font-size:10.5px;text-transform:uppercase;font-weight:700;margin-bottom:8px">Предпросмотр</div>' +
+    (_bcState.photo ? '<div class="muted" style="font-size:12px;margin-bottom:6px">🖼 ' + esc(_bcState.photo.slice(0, 60)) + ( _bcState.photo.length > 60 ? '…' : '') + '</div>' : '') +
+    (_bcState.text ? '<div style="white-space:pre-wrap;font-size:13.5px">' + esc(_bcState.text) + '</div>' : '<div class="muted">(без текста)</div>') +
+  '</div>';
+}
+
+function updateBcPreview(){
+  var box = $('bcPreviewBox');
+  if (!box) return;
+  box.innerHTML = buildBcPreview();
+}
+
+function updateBcSendBtn(){
+  var btn = $('bcSendBtn');
+  if (!btn) return;
+  var canWrite = _bcState.target === 'all' || _bcState.targetId;
+  var hasContent = _bcState.text || _bcState.photo;
+  if (canWrite && hasContent){
+    btn.disabled = false;
+    btn.textContent = '📤 Отправить';
+  } else {
+    btn.disabled = true;
+    btn.textContent = 'Заполните текст';
+  }
+}
+
+/* Поиск юзера — обновляем только список, не всё окно */
 window.onBcUserSearch = function(val){
   var box = $('bcUserResults');
   if (!box) return;
@@ -3337,6 +3382,8 @@ window.unlinkReferral = unlinkReferral;
 window.resendNotification = resendNotification;
 window.openTestPanel = openTestPanel;
 window.openBroadcast = openBroadcast;
+window.onBcTextInput = onBcTextInput;
+window.onBcPhotoInput = onBcPhotoInput;
 
 render();
 </script>

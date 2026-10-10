@@ -22,8 +22,6 @@ AGREE_TEXT = "📄 Подтвердите ознакомление с услов
 WELCOME_AFTER = (
     "👋 <b>Добро пожаловать в проект «РОСТЭРА»!</b>\n\n"
     "Откройте приложение:\n\n"
-    "💬 <b>Поддержка:</b> @DAMIR1500\n"
-    "👨‍💻 <b>Создатель проекта:</b> @razrabotchik11_bot"
 )
 AGREE_CALLBACK = "user_agree_terms"
 

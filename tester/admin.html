@@ -73,6 +73,7 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .card.clickable{cursor:pointer;transition:border-color .15s,background .15s}
 .card.clickable:hover{border-color:var(--accent);background:var(--card2)}
 .card.clickable:active{transform:scale(.99)}
+.card.is-test{background:rgba(245,181,71,.04);border-color:rgba(245,181,71,.3)}
 .btn{padding:10px 16px;border-radius:9px;border:0;background:var(--accent);
   color:#fff;font-size:13px;font-weight:600;cursor:pointer;
   display:inline-flex;align-items:center;gap:6px;text-decoration:none;
@@ -110,6 +111,7 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .input{width:100%;padding:12px 14px;border-radius:9px;border:1px solid var(--border);
   background:var(--card2);color:var(--text);font-size:15px;outline:none;min-height:44px}
 .input:focus{border-color:var(--accent)}
+textarea.input{resize:vertical;min-height:80px;font-family:inherit}
 .tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{padding:9px 15px;border-radius:20px;background:var(--card2);
@@ -498,27 +500,16 @@ function userMatches(u, q){
   var unameAt = uname ? '@' + uname : '';
   var tgId = String(u.telegram_id || '');
 
-  // точное совпадение по ID
   if (tgId === nq) return true;
-
-  // ID содержит запрос
   if (nq.length >= 3 && tgId.indexOf(nq) >= 0) return true;
-
-  // username с @ и без
   if (uname && (uname.indexOf(nq) >= 0 || unameAt.indexOf(nq) >= 0)) return true;
-
-  // отдельные поля
   if (first && first.indexOf(nq) >= 0) return true;
   if (last && last.indexOf(nq) >= 0) return true;
-
-  // полное имя
   if (full && full.indexOf(nq) >= 0) return true;
 
-  // обратный порядок: "петров иван"
   var fullRev = (last + ' ' + first).trim();
   if (fullRev && fullRev.indexOf(nq) >= 0) return true;
 
-  // разбиваем запрос на слова и проверяем все
   var parts = nq.split(' ').filter(Boolean);
   if (parts.length > 1){
     return parts.every(function(p){
@@ -531,7 +522,7 @@ function userMatches(u, q){
   return false;
 }
 
-/* ═══════════ СОХРАНЕНИЕ ФОКУСА ПОИСКА ═══════════ */
+/* ═══════════ СОХРАНЕНИЕ ФОКУСА ═══════════ */
 function saveFocusState(inputId){
   var el = $(inputId);
   if (!el) return null;
@@ -648,6 +639,7 @@ function layout(content){
       nav('catalog','✨','Каталог') +
       nav('refs','🌳','Рефералы') +
       '<button class="nav" onclick="openRefSetup()"><span class="emo">🎁</span>Реф-настройка(beta)</button>' +
+      '<button class="nav" onclick="openBroadcast()"><span class="emo">📢</span>Рассылка</button>' +
       '<div class="sect">Тесты</div>' +
       '<button class="nav" onclick="openTestPanel()"><span class="emo">🧪</span>Тест-панель</button>' +
       '<div class="sect">Система</div>' +
@@ -759,6 +751,24 @@ async function renderDashboard(){
             '</div>' +
           '</div>' +
           '<div style="font-size:20px;color:#ffe0a3;opacity:.6">→</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="card clickable" onclick="openBroadcast()" ' +
+        'style="background:linear-gradient(135deg,#1b3a2a 0%,#0f2a1a 100%);' +
+        'border:1px solid rgba(57,217,138,.4);padding:18px;margin-bottom:16px">' +
+        '<div class="row">' +
+          '<div style="display:flex;align-items:center;gap:14px">' +
+            '<div style="width:48px;height:48px;border-radius:12px;' +
+              'background:rgba(57,217,138,.18);border:1px solid rgba(57,217,138,.4);' +
+              'display:flex;align-items:center;justify-content:center;font-size:22px">📢</div>' +
+            '<div>' +
+              '<div style="font-weight:700;font-size:15px;color:#a8f0cc">Рассылка</div>' +
+              '<div style="font-size:12px;color:rgba(168,240,204,.7);margin-top:2px">' +
+                'Текст + фото · одному или всем' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="font-size:20px;color:#a8f0cc;opacity:.6">→</div>' +
         '</div>' +
       '</div>' +
       '<div class="stats">' +
@@ -995,7 +1005,6 @@ function orderCard(p){
     '</div></div>';
 }
 
-/* 🔔 ПЕРЕОТПРАВИТЬ УВЕДОМЛЕНИЕ */
 async function resendNotification(collection, key){
   if (!confirm('Сбросить флаг notified_new и переотправить уведомление?')) return;
   await once('resend_' + key, async function(){
@@ -1549,6 +1558,139 @@ async function refPayoutReject(key){
     await renderRefPayouts();
   });
 }
+
+/* ═══════════ 📢 РАССЫЛКА ═══════════ */
+var _bcState = { target: 'all', targetId: null, text: '', photo: '' };
+
+window.openBroadcast = function(){
+  _bcState = { target: 'all', targetId: null, text: '', photo: '' };
+  renderBroadcastModal();
+};
+
+function renderBroadcastModal(){
+  var targetBlock = '';
+  if (_bcState.target === 'all'){
+    targetBlock = '<div class="card" style="background:rgba(79,140,255,.08);border-color:rgba(79,140,255,.3);padding:14px;margin-bottom:0">' +
+      '<div class="row">' +
+        '<div><b>📢 ВСЕМ пользователям</b>' +
+          '<div class="muted" style="font-size:11.5px;margin-top:2px">Юзеров в базе: ' + DATA.users.length + '</div></div>' +
+        '<button class="btn ghost sm" onclick="_bcState.target=\'one\';_bcState.targetId=null;renderBroadcastModal()">Изменить</button>' +
+      '</div></div>';
+  } else if (_bcState.targetId){
+    var u = findUser(DATA.users, _bcState.targetId);
+    targetBlock = '<div class="card" style="background:rgba(79,140,255,.08);border-color:rgba(79,140,255,.3);padding:14px;margin-bottom:0">' +
+      '<div class="row">' +
+        '<div><b>👤 ' + esc(u ? userName(u) : 'ID ' + _bcState.targetId) + '</b>' +
+          '<div class="muted" style="font-size:11.5px;margin-top:2px">@' + esc(u && u.username || '—') + ' · ID ' + esc(_bcState.targetId) + '</div></div>' +
+        '<button class="btn ghost sm" onclick="_bcState.targetId=null;renderBroadcastModal()">✕</button>' +
+      '</div></div>';
+  } else {
+    targetBlock = '<div class="frow">' +
+      '<label>Кому отправить?</label>' +
+      '<input class="input" id="bcUserSearch" placeholder="Имя, @ник или ID…" oninput="onBcUserSearch(this.value)" autofocus>' +
+      '</div>' +
+      '<div id="bcUserResults"></div>' +
+      '<div style="margin-top:12px"><button class="btn ghost" style="width:100%" ' +
+        'onclick="_bcState.target=\'all\';renderBroadcastModal()">📢 Отправить ВСЕМ</button></div>';
+  }
+
+  var previewBlock = '';
+  if (_bcState.text || _bcState.photo){
+    previewBlock = '<div style="margin-top:16px;padding:14px;background:var(--card2);border-radius:12px;border-left:3px solid var(--accent)">' +
+      '<div class="muted" style="font-size:10.5px;text-transform:uppercase;font-weight:700;margin-bottom:8px">Предпросмотр</div>' +
+      (_bcState.photo ? '<div class="muted" style="font-size:12px;margin-bottom:6px">🖼 ' + esc(_bcState.photo.slice(0, 60)) + ( _bcState.photo.length > 60 ? '…' : '') + '</div>' : '') +
+      (_bcState.text ? '<div style="white-space:pre-wrap;font-size:13.5px">' + esc(_bcState.text) + '</div>' : '<div class="muted">(без текста)</div>') +
+    '</div>';
+  }
+
+  var textBlock = '';
+  var canWrite = _bcState.target === 'all' || _bcState.targetId;
+  if (canWrite){
+    textBlock =
+      '<div class="frow" style="margin-top:16px"><label>Текст сообщения</label>' +
+        '<textarea class="input" id="bcText" rows="4" placeholder="Текст рассылки…" ' +
+          'oninput="_bcState.text=this.value;renderBroadcastModal()">' + esc(_bcState.text) + '</textarea></div>' +
+      '<div class="frow"><label>URL фото (необязательно)</label>' +
+        '<input class="input" id="bcPhoto" placeholder="https://…" ' +
+          'value="' + esc(_bcState.photo) + '" oninput="_bcState.photo=this.value;renderBroadcastModal()"></div>';
+  }
+
+  $('modal-root').innerHTML =
+    '<div class="mbg" onclick="if(event.target===this)closeModal()">' +
+      '<div class="modal" style="max-width:560px">' +
+        '<div class="mh"><h2>📢 Рассылка</h2>' +
+          '<button class="x" onclick="closeModal()">✕</button></div>' +
+        '<div class="mb">' +
+          targetBlock + textBlock + previewBlock +
+        '</div>' +
+        '<div class="mf">' +
+          '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
+          (canWrite && (_bcState.text || _bcState.photo)
+            ? '<button class="btn" onclick="doBroadcast()">📤 Отправить</button>'
+            : '<button class="btn" disabled>Заполните текст</button>') +
+        '</div>' +
+      '</div>' +
+    '</div>';
+}
+
+window.onBcUserSearch = function(val){
+  var box = $('bcUserResults');
+  if (!box) return;
+  var q = val.toLowerCase().trim();
+  if (!q){
+    box.innerHTML = '<div class="muted" style="text-align:center;padding:12px">Введи имя, @ник или ID</div>';
+    return;
+  }
+  var list = DATA.users.filter(function(u){ return userMatches(u, q); }).slice(0, 20);
+  if (!list.length){
+    box.innerHTML = '<div class="muted" style="text-align:center;padding:12px">Ничего не найдено</div>';
+    return;
+  }
+  box.innerHTML = list.map(function(u){
+    return '<div class="ref-setup-item" onclick="_bcState.target=\'one\';_bcState.targetId=\'' + esc(u.telegram_id) + '\';renderBroadcastModal()">' +
+      '<div>' +
+        '<div class="rsi-name">' + esc(userName(u)) + '</div>' +
+        '<div class="rsi-sub">@' + esc(u.username||'—') + ' · ID ' + esc(u.telegram_id) + '</div>' +
+      '</div>' +
+      '<span style="color:var(--accent);font-size:16px">→</span>' +
+    '</div>';
+  }).join('');
+};
+
+window.doBroadcast = async function(){
+  var target = _bcState.target;
+  var targetId = _bcState.targetId;
+  var text = _bcState.text.trim();
+  var photo = _bcState.photo.trim();
+
+  if (!text && !photo){
+    toast('Заполните текст или фото', 'err'); return;
+  }
+
+  var confirmMsg = target === 'all'
+    ? 'Отправить рассылку ВСЕМ (' + DATA.users.length + ' юзеров)?'
+    : 'Отправить рассылку ID ' + targetId + '?';
+  if (!confirm(confirmMsg)) return;
+
+  await once('broadcast', async function(){
+    var taskId = 'bc_' + Date.now();
+    var task = {
+      id: taskId,
+      target: target,
+      target_id: targetId,
+      text: text,
+      photo: photo,
+      status: 'pending',
+      created_at: new Date().toISOString(),
+      created_by: ADMIN_IDS[0],
+      sent: 0, failed: 0
+    };
+    await fbPut('broadcast_tasks/' + taskId, task);
+    pushLog('📢 Рассылка', target === 'all' ? 'ВСЕМ' : 'ID ' + targetId);
+    toast('✅ Задача создана — бот отправит в течение 15 сек', 'ok', 5000);
+    closeModal();
+  });
+};
 
 /* ═══════════ 🧪 ТЕСТ-ПАНЕЛЬ ═══════════ */
 function openTestPanel(){
@@ -3194,6 +3336,7 @@ window.doLinkReferral = doLinkReferral;
 window.unlinkReferral = unlinkReferral;
 window.resendNotification = resendNotification;
 window.openTestPanel = openTestPanel;
+window.openBroadcast = openBroadcast;
 
 render();
 </script>

@@ -22,6 +22,8 @@ AGREE_TEXT = "📄 Подтвердите ознакомление с услов
 WELCOME_AFTER = (
     "👋 <b>Добро пожаловать в проект «РОСТЭРА»!</b>\n\n"
     "Откройте приложение:\n\n"
+    "💬 <b>Поддержка:</b> @DAMIR1500\n"
+    "👨‍💻 <b>Создатель проекта:</b> @razrabotchik11_bot"
 )
 AGREE_CALLBACK = "user_agree_terms"
 
@@ -472,34 +474,24 @@ def kb_info():
         [{"text": "🔙 Назад", "callback_data": "back_to_start"}],
     ]}
 
+# ---- Кнопки для админ-уведомлений: только "Открыть админку" ----
 def kb_admin_purchase(pid, uid):
     return {"inline_keyboard": [
-        [{"text": "✅ Подтвердить", "callback_data": f"adm_approve:{pid}"},
-         {"text": "❌ Отклонить", "callback_data": f"adm_reject:{pid}"}],
-        [{"text": "💬 Написать", "url": f"tg://user?id={uid}"}],
         [{"text": "🌐 Открыть админку", "web_app": {"url": ADMIN_URL}}]
     ]}
 
 def kb_admin_payout(poid, uid):
     return {"inline_keyboard": [
-        [{"text": "💸 Выплачено", "callback_data": f"adm_paid:{poid}"},
-         {"text": "❌ Отклонить", "callback_data": f"adm_preject:{poid}"}],
-        [{"text": "💬 Написать", "url": f"tg://user?id={uid}"}]
+        [{"text": "🌐 Открыть админку", "web_app": {"url": ADMIN_URL}}]
     ]}
 
 def kb_admin_ref_payout(rid, uid):
     return {"inline_keyboard": [
-        [{"text": "✅ Выплачено", "callback_data": f"adm_refpaid:{rid}"},
-         {"text": "❌ Отклонить", "callback_data": f"adm_refreject:{rid}"}],
-        [{"text": "💬 Написать", "url": f"tg://user?id={uid}"}],
         [{"text": "🌐 Открыть админку", "web_app": {"url": ADMIN_URL}}]
     ]}
 
 def kb_admin_pending_bonus(ref_uid):
     return {"inline_keyboard": [
-        [{"text": "✅ Начислить всё", "callback_data": f"adm_actbonus:{ref_uid}"},
-         {"text": "❌ Отклонить", "callback_data": f"adm_rejbonus:{ref_uid}"}],
-        [{"text": "💬 Написать рефереру", "url": f"tg://user?id={ref_uid}"}],
         [{"text": "🌐 Открыть админку", "web_app": {"url": ADMIN_URL}}]
     ]}
 
@@ -754,7 +746,7 @@ def handle_callback(cb):
         tg_send(chat_id, WELCOME_AFTER, kb=kb_start())
         return
 
-    # ---- НОВЫЕ ИНФО-РАЗДЕЛЫ ----
+    # ---- ИНФО-РАЗДЕЛЫ ----
     if data == "info_how":
         tg_answer(cb_id, "📖")
         if msg_id:
@@ -778,7 +770,6 @@ def handle_callback(cb):
         else:
             tg_send(chat_id, WELCOME_AFTER, kb=kb_start())
         return
-    # ---------------------------
 
     if data == "withdraw_start":
         ui_withdraw(chat_id, user_tg, cb_id, msg_id); return
@@ -796,6 +787,7 @@ def handle_callback(cb):
         else: tg_send(chat_id, text, kb=kb_refs())
         return
 
+    # ---- Callback-обработчики для старых сообщений (кнопки в истории) ----
     if data.startswith("adm_approve:"):
         if not is_admin(user_tg):
             tg_answer(cb_id, "⛔️", True); return
@@ -1111,7 +1103,7 @@ def admin_set_purchase(pid, status):
                 f"❌ Причина: у реферера нет активной эры\n\n"
                 f"📊 Всего отложено у реферера: "
                 f"<b>{fmt_money(ref_bal['pending_active'])}</b>\n\n"
-                f"👇 Начислить принудительно или отклонить?",
+                f"👇 Откройте админку для управления:",
                 kb=kb_admin_pending_bonus(ref_uid)
             )
 
@@ -1244,7 +1236,7 @@ def notify_new_purchase(p, pid):
         f"🆔 <code>{uid}</code>\n"
         f"💳 {p.get('era_title', '—')}\n"
         f"💵 {fmt_money(p.get('purchase_price', 0))} → <b>{fmt_money(p.get('total_amount', 0))}</b>\n\n"
-        f"👇 Подтвердите или отклоните:",
+        f"👇 Откройте админку для обработки:",
         kb=kb_admin_purchase(pid, uid))
     buyer = fb_get(f"users/{uid}") or {}
     ref_uid = buyer.get("referrer_uid") or p.get("referrer_uid")
@@ -1268,18 +1260,19 @@ def notify_new_payout(po):
     if not req or not req.get("fio"):
         req = get_requisites(uid)
 
+    # Уведомление пользователю — БЕЗ кнопок
     tg_send(uid,
             f"📤 <b>Заявка на вывод #{poid} создана</b>\n\n"
-            f"💰 {amount}\n\n⏳ Ожидайте — админ скоро обработает.",
-            kb=kb_withdraw())
+            f"💰 {amount}\n\n⏳ Ожидайте — админ скоро обработает.")
 
+    # Уведомление админам — только кнопка "Открыть админку"
     notify_admins(
         f"📤 <b>НОВАЯ ЗАЯВКА НА ВЫВОД #{poid}</b>\n\n"
         f"👤 {po.get('user_first_name', '—')} @{po.get('user_username') or '—'}\n"
         f"🆔 <code>{uid}</code>\n"
         f"💰 <b>{amount}</b>\n\n"
         f"{fmt_requisites(req)}\n\n"
-        f"👇 Проверьте и подтвердите:",
+        f"👇 Откройте админку для обработки:",
         kb=kb_admin_payout(poid, uid))
 
 def notify_new_ref_request(r):
@@ -1291,16 +1284,18 @@ def notify_new_ref_request(r):
     if not req or not req.get("fio"):
         req = get_requisites(uid)
 
+    # Уведомление пользователю — БЕЗ кнопок
     tg_send(int(uid),
             f"✅ <b>Заявка на вывод бонуса #{rid}</b>\n\n"
-            f"💰 Сумма: <b>{amount}</b>\n\n⏳ Ожидайте подтверждения админом.",
-            kb=kb_refs())
+            f"💰 Сумма: <b>{amount}</b>\n\n⏳ Ожидайте подтверждения админом.")
+
+    # Уведомление админам — только кнопка "Открыть админку"
     notify_admins(
         f"💰 <b>НОВАЯ ЗАЯВКА НА ВЫВОД БОНУСА #{rid}</b>\n\n"
         f"👤 {r.get('user_first_name', '—')} @{r.get('user_username') or '—'}\n"
         f"🆔 <code>{uid}</code>\n"
         f"💰 Сумма: <b>{amount}</b>\n\n"
-        f"{fmt_requisites(req)}\n\n👇 Подтвердите или отклоните:",
+        f"{fmt_requisites(req)}\n\n👇 Откройте админку для обработки:",
         kb=kb_admin_ref_payout(rid, uid))
 
 def notify_purchase_status(k, p, old_status, new_status):

@@ -19,8 +19,50 @@ ADMIN_URL = "https://mirzarasulov.github.io/velosher-shop/tester/admin.html?v=4"
 PDF_FILENAME = "РОСТЭРА.pdf"
 PDF_PATH = Path(PDF_FILENAME)
 AGREE_TEXT = "📄 Подтвердите ознакомление с условиями:"
-WELCOME_AFTER = "👋 <b>Добро пожаловать в проект «РОСТЭРА»!</b>\n\nОткройте приложение:"
+WELCOME_AFTER = (
+    "👋 <b>Добро пожаловать в проект «РОСТЭРА»!</b>\n\n"
+    "Откройте приложение:\n\n"
+    "💬 <b>Поддержка:</b> @DAMIR1500\n"
+    "👨‍💻 <b>Создатель проекта:</b> @razrabotchik11_bot"
+)
 AGREE_CALLBACK = "user_agree_terms"
+
+# ============================================================
+# ТЕКСТЫ ИНФО-РАЗДЕЛОВ
+# ============================================================
+HOW_IT_WORKS = (
+    "📖 <b>Как работает РОСТЭРА?</b>\n\n"
+    "РОСТЭРА работает по модели <b>P2P</b> — от участника к участнику. "
+    "Общего фонда проекта нет: переводы проходят между участниками "
+    "по реквизитам, которые сообщает администрация.\n\n"
+    "После завершения срока Эры участник может подать заявку на выплату. "
+    "Она обрабатывается в порядке очереди, а возможность и сроки выплаты "
+    "зависят от покупок других участников."
+)
+
+RULES_TEXT = (
+    "📜 <b>Правила проекта</b>\n\n"
+    "<b>1. Уважение к участникам</b>\n"
+    "В официальной группе запрещены оскорбления, угрозы, унижение, "
+    "провокации и переходы на личности. Просим общаться корректно и уважительно.\n\n"
+    "<b>2. Проведение операций</b>\n"
+    "Заявки и операции оформляются через официальную группу и представителя "
+    "администрации. Перед переводом дождитесь реквизитов и инструкций по своей "
+    "заявке. Соблюдайте установленный порядок: его нарушение может задержать "
+    "операцию или сделать её невозможной.\n\n"
+    "<b>3. Изменение условий проекта</b>\n"
+    "Администрация может обновлять маркетинг, условия и правила проекта. "
+    "Изменения публикуются в официальной группе — перед участием ознакомьтесь "
+    "с актуальной информацией.\n\n"
+    "<b>4. Решения администрации</b>\n"
+    "При нарушении правил администрация может удалить сообщение, ограничить "
+    "возможность писать в группе или исключить участника.\n\n"
+    "<b>5. Финансовые решения</b>\n"
+    "Указанные суммы и сроки не гарантируют получение выплаты или конкретный "
+    "результат. Каждый участник самостоятельно оценивает свои финансовые "
+    "возможности и принимает решение об участии.\n\n"
+    "Желаем удачи)🤗"
+)
 
 DEFAULT_DAYS = 30
 TZ = timezone(timedelta(hours=5))
@@ -147,7 +189,7 @@ def send_blocked_msg(chat_id, reason):
             f"📝 Причина: <i>{reason}</i>\n\n"
             f"Обратитесь в поддержку для выяснения деталей.",
             kb={"inline_keyboard": [[
-                {"text": "💬 Написать в поддержку", "url": f"tg://user?id={ADMIN_ID}"}
+                {"text": "💬 Написать в поддержку", "url": "https://t.me/DAMIR1500"}
             ]]})
     log("BLOCK", f"юзер {chat_id} заблокирован — отказано")
 
@@ -393,7 +435,6 @@ def calc_user_ref_balance(uid):
 # 💳 РЕКВИЗИТЫ
 # ============================================================
 def get_requisites(uid):
-    """Возвращает dict с реквизитами юзера: fio, card, bank."""
     u = fb_get(f"users/{uid}") or {}
     r = u.get("requisites") or {}
     return {
@@ -403,7 +444,6 @@ def get_requisites(uid):
     }
 
 def fmt_requisites(req):
-    """Форматирует реквизиты для сообщения админу."""
     fio = req.get("fio") or "—"
     card = req.get("card") or "—"
     bank = req.get("bank") or "—"
@@ -423,8 +463,15 @@ def kb_agree():
 def kb_start():
     return {"inline_keyboard": [
         [{"text": "🚀 Открыть приложение", "web_app": {"url": WEB_URL}}],
+        [{"text": "📖 Как работает РОСТЭРА?", "callback_data": "info_how"}],
+        [{"text": "📜 Правила проекта", "callback_data": "info_rules"}],
         [{"text": "💸 Подать заявку на вывод", "callback_data": "withdraw_start"}],
-        [{"text": "👥 Мои рефералы", "callback_data": "my_refs"}]
+        [{"text": "👥 Мои рефералы", "callback_data": "my_refs"}],
+    ]}
+
+def kb_info():
+    return {"inline_keyboard": [
+        [{"text": "🔙 Назад", "callback_data": "back_to_start"}],
     ]}
 
 def kb_admin_purchase(pid, uid):
@@ -470,7 +517,7 @@ def kb_refs():
 def kb_unknown():
     return {"inline_keyboard": [
         [{"text": "🚀 Открыть приложение", "web_app": {"url": WEB_URL}}],
-        [{"text": "💬 Написать админу", "url": f"tg://user?id={ADMIN_ID}"}]
+        [{"text": "💬 Написать админу", "url": "https://t.me/DAMIR1500"}]
     ]}
 
 # ============================================================
@@ -708,6 +755,32 @@ def handle_callback(cb):
             fb_patch(f"users/{uid}", {"agreed_terms": 1, "agreed_at": now_iso()})
         tg_send(chat_id, WELCOME_AFTER, kb=kb_start())
         return
+
+    # ---- НОВЫЕ ИНФО-РАЗДЕЛЫ ----
+    if data == "info_how":
+        tg_answer(cb_id, "📖")
+        if msg_id:
+            tg_edit(chat_id, msg_id, HOW_IT_WORKS, kb=kb_info())
+        else:
+            tg_send(chat_id, HOW_IT_WORKS, kb=kb_info())
+        return
+
+    if data == "info_rules":
+        tg_answer(cb_id, "📜")
+        if msg_id:
+            tg_edit(chat_id, msg_id, RULES_TEXT, kb=kb_info())
+        else:
+            tg_send(chat_id, RULES_TEXT, kb=kb_info())
+        return
+
+    if data == "back_to_start":
+        tg_answer(cb_id, "🔙")
+        if msg_id:
+            tg_edit(chat_id, msg_id, WELCOME_AFTER, kb=kb_start())
+        else:
+            tg_send(chat_id, WELCOME_AFTER, kb=kb_start())
+        return
+    # ---------------------------
 
     if data == "withdraw_start":
         ui_withdraw(chat_id, user_tg, cb_id, msg_id); return
@@ -1193,7 +1266,6 @@ def notify_new_payout(po):
     poid = po.get("id")
     amount = fmt_money(po.get("amount", 0))
 
-    # 💳 Реквизиты из заявки или из профиля
     req = po.get("requisites") or {}
     if not req or not req.get("fio"):
         req = get_requisites(uid)

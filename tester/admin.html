@@ -573,13 +573,13 @@ var MIN_WITHDRAW = 1500;
 var TZ_TASHKENT = 'Asia/Tashkent';
 
 /* ═══════════ КЭШ ═══════════ */
-var CACHE_TTL = 30000;
+var CACHE_TTL = 60000; // 60 секунд (было 30)
 var CACHE = {
   purchases: { data: null, ts: 0 },
   payouts: { data: null, ts: 0 },
   users: { data: null, ts: 0 },
   eras: { data: null, ts: 0 },
-  ref_payout_requests: { data: null, ts: 0 },
+  ref_payout_requests: { data: null, ts: 0 }
 };
 
 function cacheAge(key){
@@ -690,6 +690,58 @@ var DATA = { purchases: [], payouts: [], users: [], eras: [], refPayouts: [] };
 var LOG = [];
 var BUSY = {};
 
+/* ═══════════ ФОКУС ═══════════ */
+// Глобальный стек фокуса для восстановления после перерисовок
+var FOCUS_STACK = {};
+
+function saveFocusState(inputId){
+  if (!inputId) return null;
+  var el = $(inputId);
+  if (!el) return null;
+  var active = document.activeElement === el;
+  var selStart = null, selEnd = null, val = null;
+  if (active){
+    try {
+      selStart = el.selectionStart;
+      selEnd = el.selectionEnd;
+      val = el.value;
+    } catch(e){}
+  }
+  return { id: inputId, active: active, start: selStart, end: selEnd, value: val };
+}
+function restoreFocusState(state){
+  if (!state || !state.active) return;
+  var el = $(state.id);
+  if (!el) return;
+  el.focus();
+  try {
+    if (state.start != null && el.setSelectionRange){
+      el.setSelectionRange(state.start, state.end);
+    }
+  } catch(e){}
+  // Если значение было потеряно — восстановим
+  try {
+    if (state.value != null && el.value !== state.value && el.type !== 'password'){
+      el.value = state.value;
+    }
+  } catch(e){}
+}
+
+// Обёртка: сохраняет активный инпут ПЕРЕД, восстанавливает ПОСЛЕ
+function withFocus(fn){
+  return function(){
+    var active = document.activeElement;
+    var id = active && active.id ? active.id : null;
+    var savedState = null;
+    if (id) savedState = saveFocusState(id);
+    try {
+      return fn.apply(this, arguments);
+    } finally {
+      if (savedState) setTimeout(function(){ restoreFocusState(savedState); }, 0);
+    }
+  };
+}
+
 /* ═══════════ УТИЛИТЫ ═══════════ */
 var $ = function(id){ return document.getElementById(id); };
 
@@ -779,16 +831,18 @@ function pushLog(action, info){
   if (LOG.length > 50) LOG.pop();
 }
 
-async function logAdminAction(data){
+/* ═══════════ ЛОГ ДЕЙСТВИЙ (только критичное) ═══════════ */
+// Пишем ТОЛЬКО критичные действия — чтобы не засорять Firebase
+async function logCriticalAction(data){
   try {
-    var id = 'log_' + Date.now() + '_' + Math.floor(Math.random()*10000);
+    var id = 'log_' + Date.now();
     data.created_at = new Date().toISOString();
     data.notified = 0;
     data.admin_id = data.admin_id || ADMIN_IDS[0];
     data.monitor_id = MONITOR_ADMIN_ID;
     await fbPut('admin_logs/' + id, data);
   } catch(e){
-    console.error('logAdminAction', e);
+    console.error('logCriticalAction', e);
   }
 }
 
@@ -842,25 +896,6 @@ function userMatches(u, q){
     });
   }
   return false;
-}
-
-/* ═══════════ ФОКУС ═══════════ */
-function saveFocusState(inputId){
-  var el = $(inputId);
-  if (!el) return null;
-  var active = document.activeElement === el;
-  var selStart = null, selEnd = null;
-  if (active){
-    try { selStart = el.selectionStart; selEnd = el.selectionEnd; } catch(e){}
-  }
-  return { id: inputId, active: active, start: selStart, end: selEnd, value: el.value };
-}
-function restoreFocusState(state){
-  if (!state || !state.active) return;
-  var el = $(state.id);
-  if (!el) return;
-  el.focus();
-  try { el.setSelectionRange(state.start, state.end); } catch(e){}
 }
 
 /* ═══════════ РЕКВИЗИТЫ ═══════════ */
@@ -1250,6 +1285,7 @@ function getSubStats(){
 function drawSubsList(){
   var box = $('subsListBox');
   if (!box) return;
+  // Сохраняем фокус на поиске
   var focusState = saveFocusState('subSearchInput');
   var list = getActiveSubs();
   var stats = getSubStats();
@@ -1389,7 +1425,7 @@ window.onSubSearchInput = function(){
   if (!el) return;
   subSearch = el.value;
   clearTimeout(_subSearchTimer);
-  _subSearchTimer = setTimeout(function(){ drawSubsList(); }, 200);
+  _subSearchTimer = setTimeout(function(){ drawSubsList(); }, 300);
 };
 window.clearSubSearch = function(){
   subSearch = '';
@@ -1552,7 +1588,8 @@ window.doEndSub = async function(key, variant){
 
     await fbPatch('purchases/' + key, patch);
 
-    await logAdminAction({
+    // Логируем только критичное действие (завершение подписки)
+    await logCriticalAction({
       action: 'end_sub',
       action_label: '🔌 Завершил подписку #' + p.id,
       variant: variant,
@@ -1665,7 +1702,7 @@ window.onPurchaseSearchInput = function(){
   if (!el) return;
   purchaseSearch = el.value;
   clearTimeout(_purchaseSearchTimer);
-  _purchaseSearchTimer = setTimeout(function(){ drawPurchaseList(); }, 200);
+  _purchaseSearchTimer = setTimeout(function(){ drawPurchaseList(); }, 300);
 };
 
 function orderCard(p){
@@ -1793,12 +1830,6 @@ async function resendNotification(collection, key){
   await once('resend_' + key, async function(){
     await fbPatch(collection + '/' + key, { notified_new: 0 });
     pushLog('🔔 Переотправить', collection + '/' + key);
-    await logAdminAction({
-      action: 'resend_notification',
-      action_label: '🔔 Переотправил уведомление',
-      params: [collection, key],
-      at: new Date().toISOString()
-    });
     toast('✅ Флаг сброшен', 'ok', 4000);
   });
 }
@@ -1857,16 +1888,6 @@ async function admConfirm(k){
       });
     }
 
-    await logAdminAction({
-      action: 'confirm_purchase',
-      action_label: '✅ Подтвердил заявку #' + p.id,
-      purchase_id: p.id,
-      buyer_id: String(p.user_telegram_id),
-      buyer_name: p.user_first_name || '',
-      amount: Number(p.purchase_price || 0),
-      at: now.toISOString()
-    });
-
     pushLog('✅ Подтвердил заявку', '#' + p.id);
     toast('✅ Подтверждено', 'ok');
     await renderPurchases();
@@ -1894,12 +1915,6 @@ async function admForceActivate(refUid){
       });
       total += bonus;
     }
-    await logAdminAction({
-      action: 'force_activate',
-      action_label: '❄️→✅ Разморозил бонусы',
-      params: [refUid, pendingList.length + ' шт', fmtStrict(total)],
-      at: now
-    });
     pushLog('❄️→✅ Разморозил', 'UID ' + refUid + ' · ' + fmtStrict(total));
     toast('✅ Разморожено ' + fmtStrict(total), 'ok', 5000);
     if (TAB === 'users') await renderUsers();
@@ -1916,12 +1931,6 @@ async function admCancel(k){
     var patch = { status: 'cancelled', status_changed_at: new Date().toISOString() };
     if (p && p.referrer_uid) patch.referral_status = 'rejected';
     await fbPatch('purchases/' + k, patch);
-    await logAdminAction({
-      action: 'cancel_purchase',
-      action_label: '❌ Отменил заявку #' + (p ? p.id : k),
-      purchase_id: p ? p.id : k,
-      at: new Date().toISOString()
-    });
     pushLog('❌ Отменил', '#' + (p ? p.id : k));
     toast('❌ Отменено');
     await renderPurchases();
@@ -1975,13 +1984,6 @@ async function doDeletePurchase(key){
     }
 
     await fbDelete('purchases/' + key);
-    await logAdminAction({
-      action: 'delete_purchase',
-      action_label: '🗑 Удалил заявку #' + p.id,
-      purchase_id: p.id,
-      buyer_id: String(p.user_telegram_id),
-      at: new Date().toISOString()
-    });
     pushLog('🗑 Удалил заявку', '#' + p.id);
     toast('✅ Заявка #' + p.id + ' удалена', 'ok');
     closeModal();
@@ -2086,7 +2088,7 @@ window.onPayoutSearchInput = function(){
   if (!el) return;
   payoutSearch = el.value;
   clearTimeout(_payoutSearchTimer);
-  _payoutSearchTimer = setTimeout(function(){ drawPayoutList(); }, 200);
+  _payoutSearchTimer = setTimeout(function(){ drawPayoutList(); }, 300);
 };
 function payoutCard(po){
   var k = po._key;
@@ -2127,14 +2129,6 @@ async function admPaid(k){
   await once('paid_' + k, async function(){
     var po = DATA.payouts.filter(function(x){ return x._key === k; })[0];
     await fbPatch('payouts/' + k, { status: 'paid', paid_at: new Date().toISOString() });
-    await logAdminAction({
-      action: 'mark_paid',
-      action_label: '💸 Отметил выплату #' + po.id,
-      payout_id: po.id,
-      amount: po.amount,
-      user_id: String(po.user_telegram_id),
-      at: new Date().toISOString()
-    });
     pushLog('💸 Отметил выплату', '#' + po.id);
     toast('💰 Готово', 'ok');
     await renderPayouts();
@@ -2145,13 +2139,6 @@ async function admPayoutReject(k){
   await once('rej_' + k, async function(){
     var po = DATA.payouts.filter(function(x){ return x._key === k; })[0];
     await fbPatch('payouts/' + k, { status: 'rejected', status_changed_at: new Date().toISOString() });
-    await logAdminAction({
-      action: 'reject_payout',
-      action_label: '❌ Отклонил выплату #' + po.id,
-      payout_id: po.id,
-      amount: po.amount,
-      at: new Date().toISOString()
-    });
     pushLog('❌ Отклонил выплату', '#' + po.id);
     toast('❌ Отклонено');
     await renderPayouts();
@@ -2246,7 +2233,7 @@ window.onRefPayoutSearchInput = function(){
   if (!el) return;
   refPayoutSearch = el.value;
   clearTimeout(_refPayoutSearchTimer);
-  _refPayoutSearchTimer = setTimeout(function(){ drawRefPayoutList(); }, 200);
+  _refPayoutSearchTimer = setTimeout(function(){ drawRefPayoutList(); }, 300);
 };
 function refRequestCard(r){
   var k = r._key;
@@ -2310,18 +2297,6 @@ async function refPayoutPaid(key){
     await fbPatch('ref_payout_requests/' + key, {
       status: 'paid', paid_at: now, status_changed_at: now
     });
-    await fbPost('ref_payouts_log', {
-      user_telegram_id: uid, amount: amount, request_id: r.id,
-      paid_at: now, paid_by: ADMIN_IDS[0]
-    });
-    await logAdminAction({
-      action: 'ref_payout_paid',
-      action_label: '💸 Реф. выплата #' + r.id,
-      request_id: r.id,
-      amount: amount,
-      user_id: uid,
-      at: now
-    });
     pushLog('💸 Реф. выплата', '#' + r.id + ' · ' + fmtStrict(amount));
     toast('✅ Выплачено ' + fmtStrict(amount), 'ok');
     await renderRefPayouts();
@@ -2343,13 +2318,6 @@ async function refPayoutReject(key){
     }
     await fbPatch('ref_payout_requests/' + key, {
       status: 'rejected', status_changed_at: now
-    });
-    await logAdminAction({
-      action: 'ref_payout_reject',
-      action_label: '❌ Отклонил реф. заявку #' + r.id,
-      request_id: r.id,
-      amount: r.amount,
-      at: now
     });
     pushLog('❌ Отклонил реф. заявку', '#' + r.id);
     toast('❌ Отклонено');
@@ -2520,15 +2488,6 @@ window.doBroadcast = async function(){
       sent: 0, failed: 0
     };
     await fbPut('broadcast_tasks/' + taskId, task);
-    await logAdminAction({
-      action: 'broadcast',
-      action_label: '📢 Рассылка ' + (target === 'all' ? 'ВСЕМ' : 'ID ' + targetId),
-      target: target,
-      target_id: targetId,
-      text_preview: text.slice(0, 100),
-      has_photo: photo ? 1 : 0,
-      at: new Date().toISOString()
-    });
     pushLog('📢 Рассылка', target === 'all' ? 'ВСЕМ' : 'ID ' + targetId);
     toast('✅ Задача создана — бот отправит', 'ok', 5000);
     closeModal();
@@ -2984,13 +2943,6 @@ window.doLinkReferral = function(){
     var ownerInData = findUser(DATA.users, ownerId);
     if (ownerInData) _refSetupSelectedOwner = ownerInData;
     pushLog('🎁 Привязал реферала', refName + ' → ' + ownerName);
-    await logAdminAction({
-      action: 'link_referral',
-      action_label: '🎁 Привязал реферала',
-      ref_id: refId, ref_name: refName,
-      owner_id: ownerId, owner_name: ownerName,
-      at: new Date().toISOString()
-    });
     toast('✅ ' + refName + ' → ' + ownerName, 'ok', 4000);
     closeModal();
     if (TAB === 'users') await renderUsers();
@@ -3006,12 +2958,6 @@ window.unlinkReferral = function(uid){
   return once('unlink_' + uid, async function(){
     await fbPatch('users/' + uid, { referrer_uid: null });
     pushLog('🎁 Отвязал реферала', 'ID ' + uid);
-    await logAdminAction({
-      action: 'unlink_referral',
-      action_label: '🎁 Отвязал реферала',
-      ref_id: String(uid),
-      at: new Date().toISOString()
-    });
     toast('✅ Отвязан', 'ok');
     await renderUsers();
   });
@@ -3077,13 +3023,6 @@ async function doToggleBlock(uid, block){
     }
     await fbPatch('users/' + uid, patch);
     pushLog(block ? '🚫 Заблокировал' : '🔓 Разблокировал', 'ID ' + uid);
-    await logAdminAction({
-      action: 'toggle_block',
-      action_label: block ? '🚫 Заблокировал юзера' : '🔓 Разблокировал юзера',
-      user_id: String(uid),
-      reason: reason || '',
-      at: now
-    });
     toast(block ? '🚫 Заблокирован' : '🔓 Разблокирован', 'ok');
     closeModal();
     await renderUsers();
@@ -3141,7 +3080,7 @@ window.onUserSearchInput = function(){
   if (!el) return;
   userSearch = el.value;
   clearTimeout(_userSearchTimer);
-  _userSearchTimer = setTimeout(function(){ drawUserList(); }, 200);
+  _userSearchTimer = setTimeout(function(){ drawUserList(); }, 300);
 };
 
 function userCard(u){
@@ -3407,7 +3346,7 @@ window.onEraSearchInput = function(){
   if (!el) return;
   eraSearch = el.value;
   clearTimeout(_eraSearchTimer);
-  _eraSearchTimer = setTimeout(function(){ drawEraList(); }, 200);
+  _eraSearchTimer = setTimeout(function(){ drawEraList(); }, 300);
 };
 
 async function loadErasFresh(){
@@ -3518,14 +3457,6 @@ async function saveEra(id){
         await fbPut('eras/' + newId, data);
         pushLog('➕ Создал эру', '#' + newId);
       }
-      await logAdminAction({
-        action: 'save_era',
-        action_label: '💾 ' + (id ? 'Изменил' : 'Создал') + ' эру #' + (id || data.id),
-        era_title: title,
-        era_id: id || data.id,
-        price: price, profit: profit, days: days,
-        at: new Date().toISOString()
-      });
       closeModal();
       toast('💾 Сохранено', 'ok');
       await renderEras();
@@ -3542,12 +3473,6 @@ async function toggleEra(id, active){
     var e = DATA.eras.filter(function(x){ return String(x.id) === String(id); })[0];
     if (!e) return toast('Эра не найдена', 'err');
     await fbPatch('eras/' + (e.id || e._key), { is_active: active });
-    await logAdminAction({
-      action: 'toggle_era',
-      action_label: (active ? '🟢 Включил' : '⚫ Отключил') + ' эру #' + id,
-      era_id: id, era_title: e.title, active: active,
-      at: new Date().toISOString()
-    });
     toast(active ? '🟢 Включено' : '⚫ Отключено', 'ok');
     await renderEras();
   });
@@ -3562,12 +3487,6 @@ async function deleteEra(id){
     await fbDelete('eras/' + id);
     if (String(e._key) !== String(id)) await fbDelete('eras/' + e._key);
     pushLog('🗑 Удалил эру', '#' + id);
-    await logAdminAction({
-      action: 'delete_era',
-      action_label: '🗑 Удалил эру #' + id,
-      era_id: id, era_title: e.title,
-      at: new Date().toISOString()
-    });
     toast('🗑 Удалено', 'ok');
     await renderEras();
   });
@@ -3601,12 +3520,6 @@ async function seedDefaultEras(){
       created++;
     }
     pushLog('📥 Загрузил 8 эр', 'ID ' + (maxId+1) + '…' + (maxId+8));
-    await logAdminAction({
-      action: 'seed_eras',
-      action_label: '📥 Загрузил 8 стандартных эр',
-      count: created,
-      at: new Date().toISOString()
-    });
     toast('✅ Загружено ' + created + ' эр', 'ok', 4000);
     await renderEras();
   });
@@ -3781,12 +3694,25 @@ window.onRefsSearchInput = function(){
   if (!el) return;
   refsSearch = el.value;
   clearTimeout(_refsSearchTimer);
-  _refsSearchTimer = setTimeout(function(){ drawRefsList(); }, 200);
+  _refsSearchTimer = setTimeout(function(){ drawRefsList(); }, 300);
 };
 
 /* ═══════════ RENDER ═══════════ */
 async function render(){
   if (!AUTH){ renderLogin(); return; }
+
+  // Сохраняем фокус ПЕРЕД перерисовкой
+  var activeEl = document.activeElement;
+  var focusId = activeEl && activeEl.id ? activeEl.id : null;
+  var focusSelStart = null, focusSelEnd = null, focusVal = null;
+  if (focusId){
+    try {
+      focusSelStart = activeEl.selectionStart;
+      focusSelEnd = activeEl.selectionEnd;
+      focusVal = activeEl.value;
+    } catch(e){}
+  }
+
   var tabs = {
     dashboard: renderDashboard,
     purchases: renderPurchases,
@@ -3798,11 +3724,30 @@ async function render(){
     catalog: renderCatalog,
     refs: renderRefs
   };
-  try { await (tabs[TAB] || renderDashboard)(); }
-  catch(e){
+
+  try {
+    await (tabs[TAB] || renderDashboard)();
+  } catch(e){
     $('app').innerHTML = '<div style="max-width:600px;margin:60px auto;padding:24px;background:#1c2330;' +
       'border:1px solid #ff5c5c;border-radius:12px;color:#e6edf3"><b style="color:#ff5c5c">Ошибка:</b> ' +
       esc(e.message) + '</div>';
+    return;
+  }
+
+  // Восстанавливаем фокус ПОСЛЕ перерисовки
+  if (focusId){
+    var newEl = $(focusId);
+    if (newEl){
+      try {
+        newEl.focus();
+        if (focusSelStart != null && newEl.setSelectionRange){
+          newEl.setSelectionRange(focusSelStart, focusSelEnd);
+        }
+        if (focusVal != null && newEl.value !== focusVal && newEl.type !== 'password'){
+          newEl.value = focusVal;
+        }
+      } catch(e){}
+    }
   }
 }
 

@@ -461,10 +461,7 @@ select.input{cursor:pointer}
   .side.open{transform:translateX(0)}
   .side .sect{padding:14px 12px 6px}
   .side-overlay{display:block}
-  .main{
-    padding:calc(var(--header-h) + 12px) 12px 80px;
-    margin-top:0;
-  }
+  .main{padding:calc(var(--header-h) + 12px) 12px 80px;margin-top:0}
   .main > .h1{display:none}
   .main > .sub{display:none}
   .stats{grid-template-columns:repeat(2,1fr);gap:8px}
@@ -491,8 +488,6 @@ select.input{cursor:pointer}
   .req-block .req-line{flex-direction:column;align-items:flex-start;gap:4px;padding:10px 0}
   .req-block .req-val{text-align:left;width:100%}
   .card.clickable{padding:14px}
-  .card.clickable .row{flex-direction:row;align-items:center}
-  .card.clickable .row > div:first-child{gap:10px}
   .sub-card{padding:12px}
   .sub-card .sub-metrics{grid-template-columns:repeat(2,1fr)}
   .sub-card .sub-actions{flex-direction:column}
@@ -507,7 +502,6 @@ select.input{cursor:pointer}
   .user-hero{padding:14px}
   .user-hero .uh-avatar{width:52px;height:52px;font-size:20px}
   .user-hero .uh-name{font-size:16px}
-  .user-hero .uh-sub{font-size:12px}
   .catalog-hero{padding:16px 12px 12px;border-radius:16px}
   .catalog-logo .title{font-size:22px;letter-spacing:.04em}
   .catalog-logo .sub{font-size:9px;letter-spacing:.25em}
@@ -522,7 +516,6 @@ select.input{cursor:pointer}
     max-width:calc(100% - 16px);left:8px;right:8px;transform:none}
   #content > h2{font-size:15px;margin-bottom:12px}
   .input{padding:12px 14px;font-size:16px}
-  .muted, .cell span{word-break:break-word}
   .row .flex{width:100%}
   .row .flex .btn{flex:1}
 }
@@ -534,14 +527,7 @@ select.input{cursor:pointer}
   .purchase-item .pi-metrics{grid-template-columns:1fr}
   .catalog-row{grid-template-columns:1fr 1fr;font-size:11px;
     padding:8px 6px;gap:4px}
-  .catalog-row.header{font-size:9px}
   .mobile-header .mh-title{font-size:15px}
-}
-
-@media(max-width:900px) and (orientation:landscape){
-  .side{width:240px}
-  .main{padding-top:calc(var(--header-h) + 8px)}
-  .modal{max-height:88vh}
 }
 
 @supports(padding:max(0px)){
@@ -575,6 +561,8 @@ select.input{cursor:pointer}
 
 <script>
 'use strict';
+
+/* ═══════════ КОНФИГ ═══════════ */
 var FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app';
 var ADMIN_PASSWORD = 'admin123';
 var BOT_TOKEN = '8880107122:AAFixW8sKxpKYm6dmQ5wMKALlBIjAj4zlMM';
@@ -584,6 +572,7 @@ var REF_PERCENT = 5;
 var MIN_WITHDRAW = 1500;
 var TZ_TASHKENT = 'Asia/Tashkent';
 
+/* ═══════════ КЭШ ═══════════ */
 var CACHE_TTL = 30000;
 var CACHE = {
   purchases: { data: null, ts: 0 },
@@ -597,16 +586,12 @@ function cacheAge(key){
   if (!CACHE[key] || !CACHE[key].ts) return Infinity;
   return Date.now() - CACHE[key].ts;
 }
-function isFresh(key){
-  return cacheAge(key) < CACHE_TTL;
-}
+function isFresh(key){ return cacheAge(key) < CACHE_TTL; }
 function setCache(key, data){
   if (!CACHE[key]) CACHE[key] = { data: null, ts: 0 };
   CACHE[key] = { data: data, ts: Date.now() };
 }
-function getCache(key){
-  return CACHE[key] ? CACHE[key].data : null;
-}
+function getCache(key){ return CACHE[key] ? CACHE[key].data : null; }
 function invalidateCache(key){
   if (key){
     if (!CACHE[key]) CACHE[key] = { data: null, ts: 0 };
@@ -641,12 +626,12 @@ function updateCacheIndicator(){
   }
 }
 
+/* ═══════════ FIREBASE ═══════════ */
 async function fbRaw(path, opts){
   var r = await fetch(FIREBASE + '/' + path + '.json', Object.assign({}, opts || {}));
   if (!r.ok) throw new Error('Firebase ' + r.status);
   return r.json();
 }
-
 async function fbGet(path){
   var key = path.split('/')[0];
   if (path.indexOf('/') >= 0){
@@ -660,7 +645,6 @@ async function fbGet(path){
   updateCacheIndicator();
   return data;
 }
-
 async function fbPut(path, data){
   var r = await fetch(FIREBASE + '/' + path + '.json', {
     method:'PUT', body: JSON.stringify(data), headers: {'Content-Type':'application/json'}
@@ -699,15 +683,22 @@ window.forceRefresh = function(){
   render();
 };
 
+/* ═══════════ СОСТОЯНИЕ ═══════════ */
 var AUTH = sessionStorage.getItem('admin_auth') === '1';
 var TAB = 'dashboard';
 var DATA = { purchases: [], payouts: [], users: [], eras: [], refPayouts: [] };
 var LOG = [];
 var BUSY = {};
+
+/* ═══════════ УТИЛИТЫ ═══════════ */
 var $ = function(id){ return document.getElementById(id); };
 
-function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){
-  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
 function fmt(n){
   var v = Number(n || 0);
   if (!v || v === 0) return '—';
@@ -721,8 +712,37 @@ function fmtPlus(n){
 function fmtStrict(n){
   return Number(n||0).toLocaleString('ru-RU') + ' ₽';
 }
+function fmtDate(s){
+  if (!s) return '—';
+  try {
+    return new Date(s).toLocaleString('ru-RU', {
+      day:'2-digit', month:'2-digit', year:'numeric',
+      hour:'2-digit', minute:'2-digit', timeZone:TZ_TASHKENT
+    });
+  } catch(e){ return s; }
+}
+function fmtD(s){
+  if (!s) return '—';
+  try {
+    return new Date(s).toLocaleDateString('ru-RU', {
+      day:'2-digit', month:'2-digit', year:'numeric', timeZone:TZ_TASHKENT
+    });
+  } catch(e){ return s; }
+}
+function fmtLeft(ms){
+  if (ms == null) return '—';
+  if (ms <= 0) return '⏹ Завершено';
+  var s = Math.floor(ms/1000);
+  var d = Math.floor(s/86400), h = Math.floor((s%86400)/3600),
+      m = Math.floor((s%3600)/60), sec = s%60;
+  if (d > 0) return d+'д '+h+'ч '+m+'м';
+  if (h > 0) return h+'ч '+m+'м '+sec+'с';
+  if (m > 0) return m+'м '+sec+'с';
+  return sec+'с';
+}
 function statusLabel(s){
-  return {created:'Ожидает', approved:'Активен', completed:'Завершён',
+  return {
+    created:'Ожидает', approved:'Активен', completed:'Завершён',
     paid:'Выплачен', cancelled:'Отменён', pending:'Ожидает',
     rejected:'Отклонён', frozen:'Заморожен', pending_active:'Ждёт активности',
     blocked:'Заблокирован'
@@ -788,18 +808,8 @@ function userLink(u){
   if (u.username) return '<a href="https://t.me/' + esc(u.username) + '" target="_blank">@' + esc(u.username) + '</a>';
   return '<a href="tg://user?id=' + esc(u.telegram_id) + '" target="_blank">ID ' + esc(u.telegram_id) + '</a>';
 }
-function fmtLeft(ms){
-  if (ms == null) return '—';
-  if (ms <= 0) return '⏹ Завершено';
-  var s = Math.floor(ms/1000);
-  var d = Math.floor(s/86400), h = Math.floor((s%86400)/3600),
-      m = Math.floor((s%3600)/60), sec = s%60;
-  if (d > 0) return d+'д '+h+'ч '+m+'м';
-  if (h > 0) return h+'ч '+m+'м '+sec+'с';
-  if (m > 0) return m+'м '+sec+'с';
-  return sec+'с';
-}
 
+/* ═══════════ ПОИСК ═══════════ */
 function normalizeStr(s){
   return String(s||'').toLowerCase().trim()
     .replace(/ё/g, 'е').replace(/\s+/g, ' ');
@@ -834,6 +844,7 @@ function userMatches(u, q){
   return false;
 }
 
+/* ═══════════ ФОКУС ═══════════ */
 function saveFocusState(inputId){
   var el = $(inputId);
   if (!el) return null;
@@ -852,6 +863,7 @@ function restoreFocusState(state){
   try { el.setSelectionRange(state.start, state.end); } catch(e){}
 }
 
+/* ═══════════ РЕКВИЗИТЫ ═══════════ */
 function renderReqBlock(req, opts){
   opts = opts || {};
   var hasData = req && (req.fio || req.card || req.bank);
@@ -895,6 +907,7 @@ function fallbackCopyText(text){
   ta.remove();
 }
 
+/* ═══════════ ЛОГИН ═══════════ */
 function renderLogin(){
   $('app').innerHTML =
     '<div class="login"><div class="login-box"><h1>⚡ Era Admin</h1>' +
@@ -908,16 +921,20 @@ function doLogin(){
     AUTH = true; sessionStorage.setItem('admin_auth', '1'); render();
   } else toast('Неверный пароль', 'err');
 }
-function logout(){ sessionStorage.removeItem('admin_auth'); AUTH = false; render(); }
+function logout(){
+  sessionStorage.removeItem('admin_auth');
+  AUTH = false;
+  render();
+}
 
+/* ═══════════ САЙДБАР ═══════════ */
 window.toggleSidebar = function(){
   var side = document.querySelector('.side');
   var overlay = $('side-overlay');
   if (!side || !overlay) return;
   var isOpen = side.classList.contains('open');
-  if (isOpen){
-    closeSidebar();
-  } else {
+  if (isOpen){ closeSidebar(); }
+  else {
     side.classList.add('open');
     overlay.classList.add('show');
     document.body.classList.add('no-scroll');
@@ -931,6 +948,7 @@ window.closeSidebar = function(){
   document.body.classList.remove('no-scroll');
 };
 
+/* ═══════════ LAYOUT ═══════════ */
 function layout(content){
   var newCnt = DATA.purchases.filter(function(p){ return p.status === 'created'; }).length;
   var activeCnt = DATA.purchases.filter(function(p){ return p.status === 'approved'; }).length;
@@ -983,7 +1001,7 @@ function layout(content){
       '<button class="nav" onclick="logout()" style="color:var(--err)"><span class="emo">🚪</span>Выйти</button>' +
     '</aside><main class="main">' +
       '<div class="h1">⚡ Era Admin</div>' +
-      '<div class="sub">@ROSTERAbot · реф. ' + REF_PERCENT + '% · мин. вывод ' + fmt(MIN_WITHDRAW) + '</div>' +
+      '<div class="sub">@ROSTERAbot · реф. ' + REF_PERCENT + '% · мин. вывод ' + fmtStrict(MIN_WITHDRAW) + '</div>' +
       '<div id="content">' + content + '</div>' +
     '</main></div>';
   updateCacheIndicator();
@@ -1007,6 +1025,47 @@ function openLog(){
 }
 function closeModal(){ $('modal-root').innerHTML = ''; }
 
+/* ═══════════ РАСЧЁТ РЕФ. БАЛАНСА ═══════════ */
+function calcUserRefBalance(uid){
+  var accrued=0, paid=0, pending=0, frozen=0, pendingActive=0;
+  var lastPaidAt=null, lastPaidAmount=0;
+  var myIds = {};
+  DATA.users.forEach(function(u){
+    if (String(u.referrer_uid || '') === String(uid)) myIds[String(u.telegram_id)] = 1;
+  });
+  DATA.purchases.forEach(function(p){
+    if (!myIds[String(p.user_telegram_id)]) return;
+    if (['rejected','cancelled'].indexOf(p.status) >= 0) return;
+    var b = Number(p.referral_bonus || 0)
+      || Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
+    var st = p.referral_status || 'pending';
+    if (st === 'rejected') return;
+    if (st === 'paid'){
+      accrued += b; paid += b;
+      if (p.referral_paid_at && (!lastPaidAt || p.referral_paid_at > lastPaidAt)){
+        lastPaidAt = p.referral_paid_at;
+        lastPaidAmount = Number(p.referral_paid_amount || 0) || b;
+      }
+    } else if (st === 'frozen'){
+      accrued += b;
+      frozen += Number(p.referral_frozen_amount || 0) || b;
+    } else if (st === 'approved'){
+      accrued += b;
+    } else if (st === 'pending_active'){
+      pendingActive += b;
+    } else {
+      pending += b;
+    }
+  });
+  return {
+    accrued: accrued, paid: paid, pending: pending, frozen: frozen,
+    pendingActive: pendingActive,
+    owed: Math.max(0, accrued - paid - frozen),
+    lastPaidAt: lastPaidAt, lastPaidAmount: lastPaidAmount
+  };
+}
+
+/* ═══════════ ДАШБОРД ═══════════ */
 async function renderDashboard(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -1133,6 +1192,7 @@ async function renderDashboard(){
   }
 }
 
+/* ═══════════ АКТИВНЫЕ ПОДПИСКИ ═══════════ */
 var subSearch = '';
 var subSort = 'expires';
 
@@ -1256,10 +1316,10 @@ function subCard(p){
   var refNote = '';
   if (p.referrer_uid && refStatus === 'pending_active'){
     refNote = '<div class="muted" style="font-size:11px;color:var(--warn);margin-top:4px">' +
-      '❄️ Реф-бонус заморожен (' + fmt(refBonus) + ')</div>';
+      '❄️ Реф-бонус заморожен (' + fmtStrict(refBonus) + ')</div>';
   } else if (p.referrer_uid && refStatus === 'approved'){
     refNote = '<div class="muted" style="font-size:11px;color:var(--ok);margin-top:4px">' +
-      '✅ Реф-бонус начислен (' + fmt(refBonus) + ')</div>';
+      '✅ Реф-бонус начислен (' + fmtStrict(refBonus) + ')</div>';
   }
 
   var cardCls = 'sub-card';
@@ -1288,7 +1348,7 @@ function subCard(p){
     '</div>' +
     '<div class="sub-metrics">' +
       '<div class="sub-metric"><b>💵 Вложено</b><span class="accent">' + fmt(p.purchase_price) + '</span></div>' +
-      '<div class="sub-metric"><b>💰 Прибыль</b><span class="ok">+' + fmt(p.profit_amount) + '</span></div>' +
+      '<div class="sub-metric"><b>💰 Прибыль</b><span class="ok">' + fmtPlus(p.profit_amount) + '</span></div>' +
       '<div class="sub-metric"><b>🏆 К выплате</b><span class="ok">' + fmt(p.total_amount) + '</span></div>' +
       '<div class="sub-metric"><b>⏱ Осталось</b><span class="' + cls + '">' +
         (remain != null ? (remain <= 0 ? '0с' : fmtLeft(remain)) : '—') +
@@ -1362,6 +1422,7 @@ async function renderSubscriptions(){
   }
 }
 
+/* ═══════════ ЗАВЕРШЕНИЕ ПОДПИСКИ ═══════════ */
 window.openEndSub = function(key, variant){
   var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
   if (!p) return;
@@ -1372,10 +1433,14 @@ window.openEndSub = function(key, variant){
   var profit = Number(p.profit_amount || 0);
 
   var variantInfo = {
-    'full': { title: '✅ С полной выплатой', color: 'var(--ok)', desc: 'Начислить <b>' + fmt(total) + '</b> (вложено + прибыль)', amount: total },
-    'partial': { title: '⚠️ Только вложенное', color: 'var(--warn)', desc: 'Вернуть <b>' + fmt(invested) + '</b> без прибыли', amount: invested },
-    'none': { title: '❌ Без выплаты', color: 'var(--err)', desc: 'Ничего не начислять', amount: 0 },
-    'cancel': { title: '🚫 Отмена заявки', color: 'var(--muted)', desc: 'Статус: отменена, реф-бонус отменён', amount: 0 }
+    'full': { title: '✅ С полной выплатой', color: 'var(--ok)',
+      desc: 'Начислить <b>' + fmtStrict(total) + '</b> (вложено + прибыль)', amount: total },
+    'partial': { title: '⚠️ Только вложенное', color: 'var(--warn)',
+      desc: 'Вернуть <b>' + fmtStrict(invested) + '</b> без прибыли', amount: invested },
+    'none': { title: '❌ Без выплаты', color: 'var(--err)',
+      desc: 'Ничего не начислять', amount: 0 },
+    'cancel': { title: '🚫 Отмена заявки', color: 'var(--muted)',
+      desc: 'Статус: отменена, реф-бонус отменён', amount: 0 }
   };
   var vi = variantInfo[variant];
 
@@ -1397,11 +1462,13 @@ window.openEndSub = function(key, variant){
         '<div class="card" style="background:' + vi.color + '15;border-color:' + vi.color + ';padding:14px;margin-bottom:16px">' +
           '<div style="font-weight:700;font-size:15px;color:' + vi.color + ';margin-bottom:8px">' + vi.title + '</div>' +
           '<div class="muted" style="line-height:1.6">' + vi.desc + '</div>' +
-          (vi.amount > 0 ? '<div style="margin-top:10px;font-size:20px;font-weight:800;color:' + vi.color + '">' + fmt(vi.amount) + '</div>' : '') +
+          (vi.amount > 0
+            ? '<div style="margin-top:10px;font-size:20px;font-weight:800;color:' + vi.color + '">' + fmtStrict(vi.amount) + '</div>'
+            : '<div class="muted" style="margin-top:10px;font-size:13px">Без выплаты</div>') +
         '</div>' +
         '<div class="grid" style="margin-bottom:16px">' +
           '<div class="cell"><b>💵 Вложено</b><span class="accent">' + fmt(invested) + '</span></div>' +
-          '<div class="cell"><b>💰 Прибыль</b><span class="ok">+' + fmt(profit) + '</span></div>' +
+          '<div class="cell"><b>💰 Прибыль</b><span class="ok">' + fmtPlus(profit) + '</span></div>' +
           '<div class="cell"><b>🏆 Всего</b><span class="ok">' + fmt(total) + '</span></div>' +
           '<div class="cell"><b>📅 Срок</b><span>' + Number(p.duration_days||p.days||0) + ' дн.</span></div>' +
         '</div>' +
@@ -1500,8 +1567,8 @@ window.doEndSub = async function(key, variant){
       at: now
     });
 
-    pushLog('🔌 Завершил подписку', '#' + p.id + ' · ' + variant + ' · ' + fmt(amountPaid));
-    toast('✅ Подписка завершена · ' + fmt(amountPaid), 'ok', 4000);
+    pushLog('🔌 Завершил подписку', '#' + p.id + ' · ' + variant + ' · ' + fmtStrict(amountPaid));
+    toast('✅ Подписка завершена · ' + fmtStrict(amountPaid), 'ok', 4000);
     closeModal();
 
     if (TAB === 'subscriptions') await renderSubscriptions();
@@ -1511,6 +1578,7 @@ window.doEndSub = async function(key, variant){
   });
 };
 
+/* ═══════════ ЗАЯВКИ ═══════════ */
 var purchaseFilter = 'created';
 var purchaseSearch = '';
 function filterPurchases(){
@@ -1679,7 +1747,7 @@ function orderCard(p){
       '<div class="lbl">🎁 Реферальный бонус</div>' +
       '<div class="ri"><div>Кому: <b>' + esc(refName) + '</b></div>' +
         '<div class="muted">' + REF_PERCENT + '% от покупки</div></div>' +
-      '<div class="ri"><div>Сумма: <b style="color:var(--ok)">' + fmt(bonus) + '</b></div>' +
+      '<div class="ri"><div>Сумма: <b style="color:var(--ok)">' + fmtStrict(bonus) + '</b></div>' +
         '<span class="badge ' + st + '">' + stLabel + '</span></div>' +
       refNote + '</div>';
   }
@@ -1698,7 +1766,7 @@ function orderCard(p){
       '<div class="cell"><b>🆔 TG ID</b><span>' + esc(p.user_telegram_id||'—') + '</span></div>' +
       '<div class="cell"><b>💳 Эра</b><span>' + esc(p.era_title||'—') + '</span></div>' +
       '<div class="cell"><b>💵 Номинал</b><span class="accent">' + fmt(p.purchase_price) + '</span></div>' +
-      '<div class="cell"><b>💰 Начисл.</b><span class="ok">+' + fmt(p.profit_amount) + '</span></div>' +
+      '<div class="cell"><b>💰 Начисл.</b><span class="ok">' + fmtPlus(p.profit_amount) + '</span></div>' +
       '<div class="cell"><b>🏆 Итого</b><span class="ok">' + fmt(p.total_amount) + '</span></div>' +
       '<div class="cell"><b>📅 Срок</b><span>' + Number(p.duration_days||p.days||0) + ' дн.</span></div>' +
     '</div>' +
@@ -1829,11 +1897,11 @@ async function admForceActivate(refUid){
     await logAdminAction({
       action: 'force_activate',
       action_label: '❄️→✅ Разморозил бонусы',
-      params: [refUid, pendingList.length + ' шт', fmt(total)],
+      params: [refUid, pendingList.length + ' шт', fmtStrict(total)],
       at: now
     });
-    pushLog('❄️→✅ Разморозил', 'UID ' + refUid + ' · ' + Math.round(total) + ' ₽');
-    toast('✅ Разморожено ' + Math.round(total) + ' ₽', 'ok', 5000);
+    pushLog('❄️→✅ Разморозил', 'UID ' + refUid + ' · ' + fmtStrict(total));
+    toast('✅ Разморожено ' + fmtStrict(total), 'ok', 5000);
     if (TAB === 'users') await renderUsers();
     else if (TAB === 'refs') await renderRefs();
     else if (TAB === 'purchases') await renderPurchases();
@@ -1931,6 +1999,7 @@ async function admContact(uid){
   } catch(e){ toast(e.message, 'err'); }
 }
 
+/* ═══════════ ВЫПЛАТЫ ═══════════ */
 var payoutFilter = 'pending';
 var payoutSearch = '';
 function filterPayouts(){
@@ -2089,6 +2158,7 @@ async function admPayoutReject(k){
   });
 }
 
+/* ═══════════ РЕФ ВЫПЛАТЫ ═══════════ */
 var refPayoutFilter = 'pending';
 var refPayoutSearch = '';
 function filterRefPayouts(){
@@ -2138,7 +2208,7 @@ async function renderRefPayouts(){
     DATA.refPayouts.sort(function(a,b){ return Number(b.id||0) - Number(a.id||0); });
     layout(
       '<h2 style="font-size:17px;margin-bottom:14px">💰 Реф. выплаты ' +
-        '<span class="muted" style="font-size:12px;font-weight:400">(мин. ' + fmt(MIN_WITHDRAW) + ')</span></h2>' +
+        '<span class="muted" style="font-size:12px;font-weight:400">(мин. ' + fmtStrict(MIN_WITHDRAW) + ')</span></h2>' +
       '<div class="search">' +
         '<input class="input" id="refPayoutSearchInput" placeholder="Поиск…" ' +
           'value="' + esc(refPayoutSearch) + '" oninput="onRefPayoutSearchInput()">' +
@@ -2195,7 +2265,7 @@ function refRequestCard(r){
       '<div><b style="color:#4f8cff;font-size:16px">💰 Заявка #' + esc(r.id) + '</b>' +
         (isTest ? '<span class="badge test">🧪 ТЕСТ</span>' : '') + '</div>' +
       '<div class="flex">' +
-        (belowMin ? '<span class="badge pending" style="color:var(--warn)">⚠️ &lt; ' + fmt(MIN_WITHDRAW) + '</span>' : '') +
+        (belowMin ? '<span class="badge pending" style="color:var(--warn)">⚠️ &lt; ' + fmtStrict(MIN_WITHDRAW) + '</span>' : '') +
         '<span class="badge ' + esc(r.status) + '">' + statusLabel(r.status) + '</span>' +
       '</div>' +
     '</div>' +
@@ -2252,8 +2322,8 @@ async function refPayoutPaid(key){
       user_id: uid,
       at: now
     });
-    pushLog('💸 Реф. выплата', '#' + r.id + ' · ' + fmt(amount));
-    toast('✅ Выплачено ' + fmt(amount), 'ok');
+    pushLog('💸 Реф. выплата', '#' + r.id + ' · ' + fmtStrict(amount));
+    toast('✅ Выплачено ' + fmtStrict(amount), 'ok');
     await renderRefPayouts();
   });
 }
@@ -2287,6 +2357,7 @@ async function refPayoutReject(key){
   });
 }
 
+/* ═══════════ РАССЫЛКА ═══════════ */
 var _bcState = { target: 'all', targetId: null, text: '', photo: '' };
 
 window.openBroadcast = function(){
@@ -2464,6 +2535,7 @@ window.doBroadcast = async function(){
   });
 };
 
+/* ═══════════ ТЕСТ-ПАНЕЛЬ ═══════════ */
 function openTestPanel(){
   $('modal-root').innerHTML =
     '<div class="mbg" onclick="if(event.target===this)closeModal()">' +
@@ -2723,6 +2795,7 @@ window.testCleanAll = function(){
   });
 };
 
+/* ═══════════ РЕФ-НАСТРОЙКА ═══════════ */
 var _refSetupQuery = '';
 var _refSetupSelectedRef = null;
 var _refSetupSelectedOwner = null;
@@ -2944,6 +3017,7 @@ window.unlinkReferral = function(uid){
   });
 };
 
+/* ═══════════ БЛОКИРОВКА ═══════════ */
 function openBlockUser(uid){
   var u = findUser(DATA.users, uid);
   if (!u) return;
@@ -3016,6 +3090,7 @@ async function doToggleBlock(uid, block){
   });
 }
 
+/* ═══════════ ЮЗЕРЫ ═══════════ */
 var userSearch = '';
 function filterUsers(){
   var q = userSearch.toLowerCase().trim();
@@ -3163,7 +3238,7 @@ window.openUserCard = async function(uid){
         '</div>' +
         '<div class="pi-metrics">' +
           '<div class="pi-metric"><b>Вложено</b><span class="accent">' + fmt(p.purchase_price) + '</span></div>' +
-          '<div class="pi-metric"><b>Начисл.</b><span class="ok">+' + fmt(p.profit_amount) + '</span></div>' +
+          '<div class="pi-metric"><b>Начисл.</b><span class="ok">' + fmtPlus(p.profit_amount) + '</span></div>' +
           '<div class="pi-metric"><b>Итого</b><span class="ok">' + fmt(p.total_amount) + '</span></div>' +
         '</div>' +
       '</div>';
@@ -3274,6 +3349,7 @@ window.openUserCard = async function(uid){
     '</div>';
 };
 
+/* ═══════════ ТОВАРЫ ═══════════ */
 var eraSearch = '';
 function filterEras(){
   var q = eraSearch.toLowerCase().trim();
@@ -3362,9 +3438,9 @@ function eraCard(e){
       '<span class="badge ' + (e.is_active ? 'approved' : 'cancelled') + '">' +
         (e.is_active ? '🟢 Активна' : '⚫ Отключена') + '</span></div>' +
     '<div class="grid">' +
-      '<div class="cell"><b>💵 Стоимость</b><span class="accent">' + fmt(e.price) + '</span></div>' +
-      '<div class="cell"><b>💰 Начисл.</b><span class="ok">+' + fmt(e.profit_amount) + '</span></div>' +
-      '<div class="cell"><b>🏆 Итого</b><span class="ok">' + fmt(e.total_amount) + '</span></div>' +
+      '<div class="cell"><b>💵 Стоимость</b><span class="accent">' + fmtStrict(e.price) + '</span></div>' +
+      '<div class="cell"><b>💰 Начисл.</b><span class="ok">' + fmtPlus(e.profit_amount) + '</span></div>' +
+      '<div class="cell"><b>🏆 Итого</b><span class="ok">' + fmtStrict(e.total_amount) + '</span></div>' +
       '<div class="cell"><b>📅 Срок</b><span>' + Number(e.duration_days||0) + ' дн.</span></div>' +
       '<div class="cell"><b>📈 ROI</b><span class="ok">+' + roi + '%</span></div>' +
     '</div>' +
@@ -3536,6 +3612,7 @@ async function seedDefaultEras(){
   });
 }
 
+/* ═══════════ КАТАЛОГ ═══════════ */
 async function renderCatalog(){
   layout('<div class="empty">Загрузка…</div>');
   try {
@@ -3551,10 +3628,10 @@ async function renderCatalog(){
       var days = Number(e.duration_days || 0);
       var pct = price > 0 ? (profit / price * 100) : 0;
       return '<div class="catalog-row">' +
-        '<div class="v-price">' + fmt(price) + '</div>' +
+        '<div class="v-price">' + fmtStrict(price) + '</div>' +
         '<div class="v-days">' + days + ' дн.</div>' +
-        '<div class="v-total">' + fmt(total) + '</div>' +
-        '<div class="v-profit">' + fmt(profit) + '</div>' +
+        '<div class="v-total">' + fmtStrict(total) + '</div>' +
+        '<div class="v-profit">' + fmtStrict(profit) + '</div>' +
         '<div><span class="v-pct">' + pct.toFixed(2).replace('.', ',') + '%</span></div>' +
       '</div>';
     }).join('');
@@ -3583,6 +3660,7 @@ async function renderCatalog(){
   }
 }
 
+/* ═══════════ РЕФЕРАЛЫ ═══════════ */
 var refsSearch = '';
 function filterInviters(){
   var refs = DATA.users.filter(function(u){ return u.referrer_uid; });
@@ -3706,43 +3784,7 @@ window.onRefsSearchInput = function(){
   _refsSearchTimer = setTimeout(function(){ drawRefsList(); }, 200);
 };
 
-function calcUserRefBalance(uid){
-  var accrued=0, paid=0, pending=0, frozen=0, pendingActive=0;
-  var lastPaidAt=null, lastPaidAmount=0;
-  var myIds = {};
-  DATA.users.forEach(function(u){
-    if (String(u.referrer_uid || '') === String(uid)) myIds[String(u.telegram_id)] = 1;
-  });
-  DATA.purchases.forEach(function(p){
-    if (!myIds[String(p.user_telegram_id)]) return;
-    if (['rejected','cancelled'].indexOf(p.status) >= 0) return;
-    var b = Number(p.referral_bonus || 0)
-      || Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
-    var st = p.referral_status || 'pending';
-    if (st === 'rejected') return;
-    if (st === 'paid'){
-      accrued += b; paid += b;
-      if (p.referral_paid_at && (!lastPaidAt || p.referral_paid_at > lastPaidAt)){
-        lastPaidAt = p.referral_paid_at;
-        lastPaidAmount = Number(p.referral_paid_amount || 0) || b;
-      }
-    } else if (st === 'frozen'){
-      accrued += b;
-      frozen += Number(p.referral_frozen_amount || 0) || b;
-    } else if (st === 'approved'){
-      accrued += b;
-    } else if (st === 'pending_active'){
-      pendingActive += b;
-    } else {
-      pending += b;
-    }
-  });
-  return { accrued: accrued, paid: paid, pending: pending, frozen: frozen,
-    pendingActive: pendingActive,
-    owed: Math.max(0, accrued - paid - frozen),
-    lastPaidAt: lastPaidAt, lastPaidAmount: lastPaidAmount };
-}
-
+/* ═══════════ RENDER ═══════════ */
 async function render(){
   if (!AUTH){ renderLogin(); return; }
   var tabs = {
@@ -3764,6 +3806,7 @@ async function render(){
   }
 }
 
+/* ═══════════ ЭКСПОРТ ═══════════ */
 window.doLogin = doLogin;
 window.logout = logout;
 window.setTab = setTab;

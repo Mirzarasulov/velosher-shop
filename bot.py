@@ -1,6 +1,8 @@
 import time
 import threading
 import requests
+import traceback
+import random
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -10,6 +12,11 @@ from pathlib import Path
 BOT_TOKEN = "8880107122:AAFixW8sKxpKYm6dmQ5wMKALlBIjAj4zlMM"
 ADMIN_IDS = [6040186314, 6972338698, 6544017826]
 ADMIN_ID = ADMIN_IDS[0]
+
+# Кому слать ошибки и heartbeat
+MONITOR_ADMIN_ID = 6040186314
+HEARTBEAT_MIN_SEC = 2 * 3600   # минимум 2 часа
+HEARTBEAT_MAX_SEC = 3 * 3600   # максимум 3 часа
 
 CHANNEL_ID = -1004305451466
 FIREBASE = "https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedatabase.app"
@@ -82,8 +89,64 @@ BOT_USERNAME = "ROSTERAbot"
 # Состояние диалогов рассылки (uid -> dict)
 BROADCAST_STATE = {}
 
+# Защита от спама ошибками (одинаковая ошибка не чаще 1 раза в 60 сек)
+ERROR_LOCK = threading.Lock()
+LAST_ERRORS = {}
+ERROR_DEDUP_SEC = 60
+
+# Флаг, что идёт рассылка
+BROADCAST_RUNNING = {"v": False}
+
 SESSION = requests.Session()
 SESSION.headers.update({"Connection": "keep-alive"})
+
+# ============================================================
+# 🛡 БЕЗОПАСНЫЙ ДЕКОРАТОР ДЛЯ ФУНКЦИЙ
+# ============================================================
+def safe(tag=""):
+    """Оборачивает функцию: любые исключения — в лог + админу, но не крашат бота."""
+    def deco(fn):
+        def wrapper(*args, **kwargs):
+            try:
+                return fn(*args, **kwargs)
+            except Exception as e:
+                handle_exception(e, tag or fn.__name__)
+                return None
+        wrapper.__name__ = fn.__name__
+        return wrapper
+    return deco
+
+def handle_exception(e, where="unknown"):
+    """Логирует ошибку и шлёт админу (с дедупликацией)."""
+    tb = traceback.format_exc()
+    log("ERROR", f"[{where}] {e}")
+    log("ERROR", tb[-1500:])
+
+    # Дедупликация: одинаковые ошибки не чаще 1 раза в 60 сек
+    key = f"{where}:{type(e).__name__}:{str(e)[:120]}"
+    now = time.time()
+    with ERROR_LOCK:
+        last = LAST_ERRORS.get(key, 0)
+        if now - last < ERROR_DEDUP_SEC:
+            return
+        LAST_ERRORS[key] = now
+        # чистим старые ключи
+        if len(LAST_ERRORS) > 200:
+            for k in list(LAST_ERRORS.keys()):
+                if now - LAST_ERRORS[k] > 3600:
+                    LAST_ERRORS.pop(k, None)
+
+    try:
+        tb_short = (tb or "")[-800:]
+        tg_send(MONITOR_ADMIN_ID,
+                f"🚨 <b>Ошибка в боте</b>\n\n"
+                f"📍 Где: <code>{where}</code>\n"
+                f"❗️ Тип: <code>{type(e).__name__}</code>\n"
+                f"📝 <code>{str(e)[:250]}</code>\n\n"
+                f"<b>Traceback:</b>\n<pre>{tb_short}</pre>\n\n"
+                f"✅ Бот продолжает работу.")
+    except Exception:
+        pass
 
 # ============================================================
 # FIREBASE
@@ -131,7 +194,15 @@ def tg(method, **kwargs):
         r = SESSION.post(f"{API}/{method}", json=kwargs, timeout=10)
         data = r.json()
         if not data.get("ok"):
-            log("TG", f"{method} FAIL: {data.get('description')}")
+            desc = data.get("description", "")
+            # Игнорируем безопасные ошибки — они не критичны
+            if ("message is not modified" in desc or
+                "message to edit not found" in desc or
+                "message can't be edited" in desc or
+                "query is too old" in desc or
+                "message is not modified" in desc):
+                return data
+            log("TG", f"{method} FAIL: {desc}")
         return data
     except Exception as e:
         log("TG", f"{method} EXC: {e}")
@@ -520,20 +591,23 @@ def kb_broadcast_cancel():
 # ============================================================
 def send_pdf_and_button(chat_id):
     def _run():
-        pdf_id = None
-        if PDF_PATH.exists():
-            try:
-                with open(PDF_PATH, "rb") as f:
-                    files = {"document": (PDF_FILENAME, f)}
-                    data = {"chat_id": chat_id}
-                    r = requests.post(f"{API}/sendDocument", data=data, files=files, timeout=60)
-                    if r.ok:
-                        pdf_id = r.json().get("result", {}).get("message_id")
-            except Exception as e:
-                log("PDF", f"❌ {e}")
-        time.sleep(0.2)
-        tg_send(chat_id, AGREE_TEXT, kb=kb_agree())
-        AGREE_MESSAGES[str(chat_id)] = {"pdf": pdf_id}
+        try:
+            pdf_id = None
+            if PDF_PATH.exists():
+                try:
+                    with open(PDF_PATH, "rb") as f:
+                        files = {"document": (PDF_FILENAME, f)}
+                        data = {"chat_id": chat_id}
+                        r = requests.post(f"{API}/sendDocument", data=data, files=files, timeout=60)
+                        if r.ok:
+                            pdf_id = r.json().get("result", {}).get("message_id")
+                except Exception as e:
+                    log("PDF", f"❌ {e}")
+            time.sleep(0.2)
+            tg_send(chat_id, AGREE_TEXT, kb=kb_agree())
+            AGREE_MESSAGES[str(chat_id)] = {"pdf": pdf_id}
+        except Exception as e:
+            handle_exception(e, "send_pdf_and_button")
     threading.Thread(target=_run, daemon=True).start()
 
 # ============================================================
@@ -632,10 +706,17 @@ def handle_broadcast_callback(cb, data):
 
     if data == "bc_send":
         tg_answer(cb_id, "📤 Отправляю…")
-        threading.Thread(target=do_broadcast_send, args=(chat_id, msg_id, user_tg), daemon=True).start()
+        threading.Thread(target=_safe_broadcast_send,
+                         args=(chat_id, msg_id, user_tg), daemon=True).start()
         return True
 
     return False
+
+def _safe_broadcast_send(chat_id, msg_id, admin_tg):
+    try:
+        do_broadcast_send(chat_id, msg_id, admin_tg)
+    except Exception as e:
+        handle_exception(e, "_safe_broadcast_send")
 
 def do_broadcast_send(chat_id, msg_id, admin_tg):
     st = BROADCAST_STATE.get(str(admin_tg))
@@ -691,99 +772,164 @@ def do_broadcast_send(chat_id, msg_id, admin_tg):
 # 📥 ОБРАБОТКА ЗАДАЧ РАССЫЛКИ ИЗ ВЕБ-ПАНЕЛИ
 # ============================================================
 def bot_process_broadcast_tasks():
-    T = fb_get("broadcast_tasks") or {}
-    if not isinstance(T, dict): return
-    for k, task in T.items():
-        if not isinstance(task, dict): continue
-        if task.get("status") != "pending": continue
+    if BROADCAST_RUNNING["v"]:
+        return
+    try:
+        T = fb_get("broadcast_tasks") or {}
+        if not isinstance(T, dict): return
+        pending = []
+        for k, task in T.items():
+            if isinstance(task, dict) and task.get("status") == "pending":
+                pending.append((k, task))
+        if not pending:
+            return
+        BROADCAST_RUNNING["v"] = True
+        threading.Thread(target=_broadcast_task_worker,
+                         args=(pending,), daemon=True).start()
+    except Exception as e:
+        handle_exception(e, "bot_process_broadcast_tasks")
+        BROADCAST_RUNNING["v"] = False
 
-        log("BC", f"обработка задачи {task.get('id')}")
-        fb_patch(f"broadcast_tasks/{k}", {"status": "processing"})
-
-        target = task.get("target")
-        target_id = task.get("target_id")
-        text = task.get("text") or ""
-        photo = task.get("photo") or ""
-
-        if target == "all":
-            users = fb_get("users") or {}
-            recipients = []
-            if isinstance(users, dict):
-                for u in users.values():
-                    if isinstance(u, dict) and u.get("telegram_id") and not u.get("blocked"):
-                        recipients.append(int(u["telegram_id"]))
-        elif target == "one" and target_id:
-            recipients = [int(target_id)]
-        else:
-            recipients = []
-
-        sent = 0
-        failed = 0
-        for uid in recipients:
+def _broadcast_task_worker(pending):
+    try:
+        for k, task in pending:
             try:
-                if photo:
-                    res = tg("sendPhoto", chat_id=uid, photo=photo,
-                             caption=text, parse_mode="HTML")
-                    if res and res.get("ok"):
-                        sent += 1
-                    else:
-                        if tg_send(uid, text): sent += 1
-                        else: failed += 1
-                else:
-                    if tg_send(uid, text): sent += 1
-                    else: failed += 1
-                time.sleep(0.05)
-            except Exception as e:
-                failed += 1
-                log("BC", f"{uid}: {e}")
+                log("BC", f"обработка задачи {task.get('id')}")
+                fb_patch(f"broadcast_tasks/{k}", {"status": "processing"})
 
-        fb_patch(f"broadcast_tasks/{k}", {
-            "status": "done",
-            "sent": sent,
-            "failed": failed,
-            "finished_at": now_iso()
-        })
-        log("BC", f"задача {task.get('id')} готова: {sent}/{failed}")
+                target = task.get("target")
+                target_id = task.get("target_id")
+                text = task.get("text") or ""
+                photo = task.get("photo") or ""
+
+                if target == "all":
+                    users = fb_get("users") or {}
+                    recipients = []
+                    if isinstance(users, dict):
+                        for u in users.values():
+                            if isinstance(u, dict) and u.get("telegram_id") and not u.get("blocked"):
+                                recipients.append(int(u["telegram_id"]))
+                elif target == "one" and target_id:
+                    recipients = [int(target_id)]
+                else:
+                    recipients = []
+
+                sent = 0
+                failed = 0
+                for uid in recipients:
+                    try:
+                        if photo:
+                            res = tg("sendPhoto", chat_id=uid, photo=photo,
+                                     caption=text, parse_mode="HTML")
+                            if res and res.get("ok"):
+                                sent += 1
+                            else:
+                                if tg_send(uid, text): sent += 1
+                                else: failed += 1
+                        else:
+                            if tg_send(uid, text): sent += 1
+                            else: failed += 1
+                        time.sleep(0.04)
+                    except Exception as e:
+                        failed += 1
+                        log("BC", f"{uid}: {e}")
+
+                fb_patch(f"broadcast_tasks/{k}", {
+                    "status": "done",
+                    "sent": sent,
+                    "failed": failed,
+                    "finished_at": now_iso()
+                })
+                log("BC", f"задача {task.get('id')} готова: {sent}/{failed}")
+            except Exception as e:
+                handle_exception(e, f"broadcast_task/{k}")
+                try:
+                    fb_patch(f"broadcast_tasks/{k}", {
+                        "status": "error", "error": str(e)[:250],
+                        "finished_at": now_iso()
+                    })
+                except Exception:
+                    pass
+    finally:
+        BROADCAST_RUNNING["v"] = False
 
 # ============================================================
 # 🔔 АВТО-ПРОВЕРКА АДМИН-ПАНЕЛИ НА НЕОБРАБОТАННЫЕ УВЕДОМЛЕНИЯ
 # ============================================================
 def bot_check_admin_panel_notifications():
-    """
-    Бот сам проверяет:
-    если заявка создана/в pending, но флаг notified_new не выставлен —
-    значит админка её не уведомила (была закрыта, перезапущена, ошибка).
-    Бот берёт уведомление на себя.
-    """
-    P = fb_get("purchases") or {}
-    if isinstance(P, dict):
-        for k, p in P.items():
-            if not isinstance(p, dict): continue
-            if p.get("status") != "created": continue
-            if p.get("notified_new"): continue
-            log("AUTO", f"purchase #{p.get('id')} не уведомлена админкой — отправляю")
-            notify_new_purchase(p, p.get("id", 0))
-            fb_patch(f"purchases/{k}", {"notified_new": 1})
+    try:
+        P = fb_get("purchases") or {}
+        if isinstance(P, dict):
+            for k, p in P.items():
+                if not isinstance(p, dict): continue
+                if p.get("status") != "created": continue
+                if p.get("notified_new"): continue
+                log("AUTO", f"purchase #{p.get('id')} не уведомлена админкой — отправляю")
+                notify_new_purchase(p, p.get("id", 0))
+                fb_patch(f"purchases/{k}", {"notified_new": 1})
 
-    PO = fb_get("payouts") or {}
-    if isinstance(PO, dict):
-        for k, po in PO.items():
-            if not isinstance(po, dict): continue
-            if po.get("status") != "pending": continue
-            if po.get("notified_new"): continue
-            log("AUTO", f"payout #{po.get('id')} не уведомлён — отправляю")
-            notify_new_payout(po)
-            fb_patch(f"payouts/{k}", {"notified_new": 1})
+        PO = fb_get("payouts") or {}
+        if isinstance(PO, dict):
+            for k, po in PO.items():
+                if not isinstance(po, dict): continue
+                if po.get("status") != "pending": continue
+                if po.get("notified_new"): continue
+                log("AUTO", f"payout #{po.get('id')} не уведомлён — отправляю")
+                notify_new_payout(po)
+                fb_patch(f"payouts/{k}", {"notified_new": 1})
 
-    RQ = fb_get("ref_payout_requests") or {}
-    if isinstance(RQ, dict):
-        for k, r in RQ.items():
-            if not isinstance(r, dict): continue
-            if r.get("status") != "pending": continue
-            if r.get("notified_new"): continue
-            log("AUTO", f"ref_payout #{r.get('id')} не уведомлён — отправляю")
-            notify_new_ref_request(r)
-            fb_patch(f"ref_payout_requests/{k}", {"notified_new": 1})
+        RQ = fb_get("ref_payout_requests") or {}
+        if isinstance(RQ, dict):
+            for k, r in RQ.items():
+                if not isinstance(r, dict): continue
+                if r.get("status") != "pending": continue
+                if r.get("notified_new"): continue
+                log("AUTO", f"ref_payout #{r.get('id')} не уведомлён — отправляю")
+                notify_new_ref_request(r)
+                fb_patch(f"ref_payout_requests/{k}", {"notified_new": 1})
+    except Exception as e:
+        handle_exception(e, "bot_check_admin_panel_notifications")
+
+# ============================================================
+# 💚 HEARTBEAT — бот сообщает, что он жив
+# ============================================================
+def heartbeat_worker():
+    """Раз в 2–3 часа пишет админу, что бот жив."""
+    while True:
+        try:
+            delay = random.randint(HEARTBEAT_MIN_SEC, HEARTBEAT_MAX_SEC)
+            time.sleep(delay)
+            try:
+                uptime_start = HEARTBEAT_STATE["started_at"]
+                uptime_sec = int(time.time() - uptime_start)
+                d = uptime_sec // 86400
+                h = (uptime_sec % 86400) // 3600
+                m = (uptime_sec % 3600) // 60
+                uptime_str = []
+                if d: uptime_str.append(f"{d}д")
+                if h: uptime_str.append(f"{h}ч")
+                uptime_str.append(f"{m}м")
+                uptime_str = " ".join(uptime_str) or "0м"
+
+                users_cnt = 0
+                try:
+                    users = fb_get("users") or {}
+                    if isinstance(users, dict):
+                        users_cnt = len(users)
+                except Exception:
+                    pass
+
+                tg_send(MONITOR_ADMIN_ID,
+                        f"💚 <b>Бот жив и работает</b>\n\n"
+                        f"⏱ Аптайм: <b>{uptime_str}</b>\n"
+                        f"👥 Юзеров: <b>{users_cnt}</b>\n"
+                        f"🕐 {datetime.now(TZ).strftime('%d.%m.%Y %H:%M')} (Ташкент)")
+            except Exception as e:
+                handle_exception(e, "heartbeat_send")
+        except Exception as e:
+            handle_exception(e, "heartbeat_worker")
+
+HEARTBEAT_STATE = {"started_at": time.time()}
 
 # ============================================================
 # КОМАНДЫ
@@ -822,12 +968,14 @@ def cmd_test(chat_id, user_tg):
         return
     me = tg("getMe")
     admins_str = ", ".join(f"<code>{a}</code>" for a in ADMIN_IDS)
+    uptime_sec = int(time.time() - HEARTBEAT_STATE["started_at"])
     tg_send(chat_id,
             f"🧪 <b>Самодиагностика</b>\n\n"
-            f"🤖 Бот: @{me['result']['username']}\n"
+            f"🤖 Бот: @{me['result']['username'] if me and me.get('ok') else '—'}\n"
             f"👤 Ваш ID: <code>{user_tg}</code>\n"
             f"👑 Админы: {admins_str}\n"
-            f"💰 Реф. процент: <b>{REFERRAL_PERCENT}%</b>\n\n"
+            f"💰 Реф. процент: <b>{REFERRAL_PERCENT}%</b>\n"
+            f"⏱ Аптайм: <b>{uptime_sec // 60} мин</b>\n\n"
             f"<i>Если это сообщение пришло — бот может вам писать.</i>")
 
 def cmd_test_era(chat_id, user_tg):
@@ -952,7 +1100,6 @@ def handle_callback(cb):
                 send_blocked_msg(chat_id, block_reason)
             return
 
-    # ---- РАССЫЛКА ----
     if data.startswith("bc_"):
         if handle_broadcast_callback(cb, data):
             return
@@ -1300,8 +1447,8 @@ def handle_message(msg):
 def poll():
     try:
         r = requests.post(f"{API}/getUpdates",
-                          json={"offset": offset["v"], "timeout": 10},
-                          timeout=25)
+                          json={"offset": offset["v"], "timeout": 5},
+                          timeout=15)
         data = r.json()
         if not data.get("ok"):
             return
@@ -1309,19 +1456,33 @@ def poll():
             offset["v"] = upd["update_id"] + 1
             try:
                 if "message" in upd:
-                    handle_message(upd["message"])
+                    # каждое сообщение — в отдельном потоке, чтобы не блокировать поллинг
+                    threading.Thread(target=_safe_handle_message,
+                                     args=(upd["message"],), daemon=True).start()
                 elif "callback_query" in upd:
-                    handle_callback(upd["callback_query"])
+                    threading.Thread(target=_safe_handle_callback,
+                                     args=(upd["callback_query"],), daemon=True).start()
             except Exception as e:
-                log("UPD", f"ошибка: {e}")
+                handle_exception(e, "poll_processing")
     except requests.exceptions.ReadTimeout:
         pass
     except requests.exceptions.ConnectionError as e:
         log("POLL", f"сеть: {e}")
         time.sleep(2)
     except Exception as e:
-        log("POLL", f"{e}")
-        time.sleep(1)
+        handle_exception(e, "poll")
+
+def _safe_handle_message(msg):
+    try:
+        handle_message(msg)
+    except Exception as e:
+        handle_exception(e, "handle_message")
+
+def _safe_handle_callback(cb):
+    try:
+        handle_callback(cb)
+    except Exception as e:
+        handle_exception(e, "handle_callback")
 
 # ============================================================
 # АДМИН-ДЕЙСТВИЯ
@@ -1696,115 +1857,115 @@ def notify_payout_status(k, po, old_status, new_status):
         f"💰 {amount}")
 
 # ============================================================
-# ФОНОВЫЙ МОНИТОРИНГ (новая логика через notified_new)
+# ФОНОВЫЙ МОНИТОРИНГ
 # ============================================================
 def check_new():
-    """
-    Новая логика: уведомляем по флагу notified_new, а не по last_seen_id.
-    Это значит: если заявку создали во время перезапуска бота — она всё равно будет уведомлена.
-    """
-    P = fb_get("purchases") or {}
-    if isinstance(P, dict):
-        for k, p in P.items():
-            if not isinstance(p, dict):
-                continue
-            cur_status = p.get("status", "")
-            old_status = PURCHASE_STATUS_CACHE.get(k)
-            # Уведомляем о новых заявках по флагу
-            if cur_status == "created" and not p.get("notified_new"):
-                notify_new_purchase(p, p.get("id", 0))
-                fb_patch(f"purchases/{k}", {"notified_new": 1})
-            # Отслеживаем смену статуса
-            elif old_status and old_status != cur_status:
-                if cur_status == "completed" and p.get("early_closed"):
-                    notify_purchase_early_closed(k, p, p.get("early_closed_by", ADMIN_ID))
-                    PURCHASE_STATUS_CACHE[k] = cur_status
+    try:
+        P = fb_get("purchases") or {}
+        if isinstance(P, dict):
+            for k, p in P.items():
+                if not isinstance(p, dict):
                     continue
-                notify_purchase_status(k, p, old_status, cur_status)
-            PURCHASE_STATUS_CACHE[k] = cur_status
+                cur_status = p.get("status", "")
+                old_status = PURCHASE_STATUS_CACHE.get(k)
+                if cur_status == "created" and not p.get("notified_new"):
+                    notify_new_purchase(p, p.get("id", 0))
+                    fb_patch(f"purchases/{k}", {"notified_new": 1})
+                elif old_status and old_status != cur_status:
+                    if cur_status == "completed" and p.get("early_closed"):
+                        notify_purchase_early_closed(k, p, p.get("early_closed_by", ADMIN_ID))
+                        PURCHASE_STATUS_CACHE[k] = cur_status
+                        continue
+                    notify_purchase_status(k, p, old_status, cur_status)
+                PURCHASE_STATUS_CACHE[k] = cur_status
 
-    PO = fb_get("payouts") or {}
-    if isinstance(PO, dict):
-        for k, po in PO.items():
-            if not isinstance(po, dict):
-                continue
-            cur_status = po.get("status", "")
-            old_status = PAYOUT_STATUS_CACHE.get(k)
-            if cur_status == "pending" and not po.get("notified_new"):
-                notify_new_payout(po)
-                fb_patch(f"payouts/{k}", {"notified_new": 1})
-            elif old_status and old_status != cur_status:
-                notify_payout_status(k, po, old_status, cur_status)
-            PAYOUT_STATUS_CACHE[k] = cur_status
+        PO = fb_get("payouts") or {}
+        if isinstance(PO, dict):
+            for k, po in PO.items():
+                if not isinstance(po, dict):
+                    continue
+                cur_status = po.get("status", "")
+                old_status = PAYOUT_STATUS_CACHE.get(k)
+                if cur_status == "pending" and not po.get("notified_new"):
+                    notify_new_payout(po)
+                    fb_patch(f"payouts/{k}", {"notified_new": 1})
+                elif old_status and old_status != cur_status:
+                    notify_payout_status(k, po, old_status, cur_status)
+                PAYOUT_STATUS_CACHE[k] = cur_status
 
-    RQ = fb_get("ref_payout_requests") or {}
-    if isinstance(RQ, dict):
-        for k, r in RQ.items():
-            if not isinstance(r, dict):
-                continue
-            cur_status = r.get("status", "")
-            old_status = REF_REQUEST_STATUS_CACHE.get(k)
-            if cur_status == "pending" and not r.get("notified_new"):
-                notify_new_ref_request(r)
-                fb_patch(f"ref_payout_requests/{k}", {"notified_new": 1})
-            REF_REQUEST_STATUS_CACHE[k] = cur_status
+        RQ = fb_get("ref_payout_requests") or {}
+        if isinstance(RQ, dict):
+            for k, r in RQ.items():
+                if not isinstance(r, dict):
+                    continue
+                cur_status = r.get("status", "")
+                old_status = REF_REQUEST_STATUS_CACHE.get(k)
+                if cur_status == "pending" and not r.get("notified_new"):
+                    notify_new_ref_request(r)
+                    fb_patch(f"ref_payout_requests/{k}", {"notified_new": 1})
+                REF_REQUEST_STATUS_CACHE[k] = cur_status
+    except Exception as e:
+        handle_exception(e, "check_new")
 
 # ============================================================
 # НАПОМИНАНИЯ
 # ============================================================
 def check_expired():
-    P = fb_get("purchases") or {}
-    if not isinstance(P, dict):
-        return
-    now = datetime.now(TZ)
-    for k, p in P.items():
-        if not isinstance(p, dict):
-            continue
-        if p.get("status") != "approved":
-            continue
-        exp = parse_dt(p.get("expires_at"))
-        if not exp:
-            continue
-        hours = (exp - now).total_seconds() / 3600
-        uid = p.get("user_telegram_id")
-        pid = p.get("id")
-        era = p.get("era_title", "—")
-        total = fmt_money(p.get("total_amount", 0))
-        last_d = fmt_date(p.get("last_day"))
-        exp_d = fmt_dt(p.get("expires_at"))
+    try:
+        P = fb_get("purchases") or {}
+        if not isinstance(P, dict):
+            return
+        now = datetime.now(TZ)
+        for k, p in P.items():
+            if not isinstance(p, dict):
+                continue
+            if p.get("status") != "approved":
+                continue
+            exp = parse_dt(p.get("expires_at"))
+            if not exp:
+                continue
+            hours = (exp - now).total_seconds() / 3600
+            uid = p.get("user_telegram_id")
+            pid = p.get("id")
+            era = p.get("era_title", "—")
+            total = fmt_money(p.get("total_amount", 0))
+            last_d = fmt_date(p.get("last_day"))
+            exp_d = fmt_dt(p.get("expires_at"))
 
-        if 48 < hours <= 72 and not p.get("notified_3d"):
-            tg_send(uid,
-                    f"⏰ <b>Осталось 3 дня до окончания эры «{era}»</b>\n\n"
-                    f"📩 Заявка #{pid}\n"
-                    f"⏰ Истекает: {exp_d}\n"
-                    f"🏆 К выплате: <b>{total}</b>")
-            fb_patch(f"purchases/{k}", {"notified_3d": 1})
-        elif 3 < hours <= 24 and not p.get("notified_1d"):
-            tg_send(uid,
-                    f"⏰ <b>Остался 1 день до окончания эры «{era}»</b>\n\n"
-                    f"📩 Заявка #{pid}\n"
-                    f"🏁 Последний день: {last_d}\n"
-                    f"⏰ Истекает: {exp_d}\n"
-                    f"🏆 К выплате: <b>{total}</b>")
-            fb_patch(f"purchases/{k}", {"notified_1d": 1})
-        elif 0 < hours <= 3 and not p.get("notified_3h"):
-            tg_send(uid,
-                    f"⏰ <b>Осталось 3 часа до окончания эры «{era}»</b>\n\n"
-                    f"📩 Заявка #{pid}\n"
-                    f"⏰ Истекает: {exp_d}\n"
-                    f"🏆 К выплате: <b>{total}</b>")
-            fb_patch(f"purchases/{k}", {"notified_3h": 1})
-        if now >= exp and not p.get("completed_notified"):
-            fb_patch(f"purchases/{k}", {
-                "status": "completed",
-                "completed_at": now.isoformat(),
-                "status_changed_at": now.isoformat(),
-                "completed_notified": 1,
-            })
-            old_status = p.get("status", "approved")
-            notify_purchase_status(k, {**p, "status": "completed"}, old_status, "completed")
-            PURCHASE_STATUS_CACHE[k] = "completed"
+            if 48 < hours <= 72 and not p.get("notified_3d"):
+                tg_send(uid,
+                        f"⏰ <b>Осталось 3 дня до окончания эры «{era}»</b>\n\n"
+                        f"📩 Заявка #{pid}\n"
+                        f"⏰ Истекает: {exp_d}\n"
+                        f"🏆 К выплате: <b>{total}</b>")
+                fb_patch(f"purchases/{k}", {"notified_3d": 1})
+            elif 3 < hours <= 24 and not p.get("notified_1d"):
+                tg_send(uid,
+                        f"⏰ <b>Остался 1 день до окончания эры «{era}»</b>\n\n"
+                        f"📩 Заявка #{pid}\n"
+                        f"🏁 Последний день: {last_d}\n"
+                        f"⏰ Истекает: {exp_d}\n"
+                        f"🏆 К выплате: <b>{total}</b>")
+                fb_patch(f"purchases/{k}", {"notified_1d": 1})
+            elif 0 < hours <= 3 and not p.get("notified_3h"):
+                tg_send(uid,
+                        f"⏰ <b>Осталось 3 часа до окончания эры «{era}»</b>\n\n"
+                        f"📩 Заявка #{pid}\n"
+                        f"⏰ Истекает: {exp_d}\n"
+                        f"🏆 К выплате: <b>{total}</b>")
+                fb_patch(f"purchases/{k}", {"notified_3h": 1})
+            if now >= exp and not p.get("completed_notified"):
+                fb_patch(f"purchases/{k}", {
+                    "status": "completed",
+                    "completed_at": now.isoformat(),
+                    "status_changed_at": now.isoformat(),
+                    "completed_notified": 1,
+                })
+                old_status = p.get("status", "approved")
+                notify_purchase_status(k, {**p, "status": "completed"}, old_status, "completed")
+                PURCHASE_STATUS_CACHE[k] = "completed"
+    except Exception as e:
+        handle_exception(e, "check_expired")
 
 # ============================================================
 # MAIN
@@ -1815,6 +1976,7 @@ def main():
     print("🤖 Бот @ROSTERAbot")
     print(f"👑 Админы: {ADMIN_IDS}")
     print(f"💰 Реф. процент: {REFERRAL_PERCENT}%")
+    print(f"💚 Heartbeat → {MONITOR_ADMIN_ID} раз в 2–3 часа")
     print("=" * 60)
 
     me = tg("getMe")
@@ -1827,7 +1989,7 @@ def main():
     tg("deleteWebhook", drop_pending_updates=True)
     print("✅ Webhook удалён")
 
-    # Загружаем кэш статусов (для отслеживания смен)
+    # Загружаем кэш статусов
     P = fb_get("purchases") or {}
     if isinstance(P, dict):
         for k, v in P.items():
@@ -1849,14 +2011,35 @@ def main():
     print(f"✅ Кэш: purchases={len(PURCHASE_STATUS_CACHE)}, "
           f"payouts={len(PAYOUT_STATUS_CACHE)}, "
           f"ref_requests={len(REF_REQUEST_STATUS_CACHE)}")
+
+    # Запускаем heartbeat в отдельном потоке
+    threading.Thread(target=heartbeat_worker, daemon=True).start()
+    print("💚 Heartbeat запущен")
+
     print("▶️ Готов.\n")
 
     last_new = 0
     last_exp = 0
     last_admin_check = 0
+    last_poll = time.time()
     while True:
         try:
+            # Watchdog: если poll завис > 60 сек — сброс сессии
+            if time.time() - last_poll > 60:
+                log("WATCHDOG", "poll завис > 60 сек — сброс сессии")
+                try:
+                    SESSION.close()
+                except Exception:
+                    pass
+                # пересоздаём сессию
+                global SESSION
+                SESSION = requests.Session()
+                SESSION.headers.update({"Connection": "keep-alive"})
+                last_poll = time.time()
+
             poll()
+            last_poll = time.time()
+
             now = time.time()
             if now - last_new > 2:
                 check_new()
@@ -1864,14 +2047,22 @@ def main():
             if now - last_exp > 30:
                 check_expired()
                 last_exp = now
-            # Каждые 15 секунд проверяем админ-панель и задачи рассылки
             if now - last_admin_check > 15:
                 bot_check_admin_panel_notifications()
                 bot_process_broadcast_tasks()
                 last_admin_check = now
         except Exception as e:
-            log("MAIN", f"{e}")
+            handle_exception(e, "main_loop")
         time.sleep(0.1)
 
 if __name__ == "__main__":
-    main()
+    while True:
+        try:
+            main()
+        except KeyboardInterrupt:
+            print("⏹ Остановлен вручную")
+            break
+        except Exception as e:
+            handle_exception(e, "fatal_main")
+            log("FATAL", "перезапуск через 10 сек...")
+            time.sleep(10)

@@ -1971,7 +1971,7 @@ def check_expired():
 # MAIN
 # ============================================================
 def main():
-    global BOT_USERNAME
+    global BOT_USERNAME, SESSION
     print("=" * 60)
     print("🤖 Бот @ROSTERAbot")
     print(f"👑 Админы: {ADMIN_IDS}")
@@ -2032,7 +2032,6 @@ def main():
                 except Exception:
                     pass
                 # пересоздаём сессию
-                global SESSION
                 SESSION = requests.Session()
                 SESSION.headers.update({"Connection": "keep-alive"})
                 last_poll = time.time()

@@ -53,6 +53,7 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .side .nav .emo{font-size:16px;width:20px;text-align:center}
 .side .nav .badge-n{margin-left:auto;padding:2px 8px;border-radius:10px;
   background:rgba(255,255,255,.16);font-size:11px;font-weight:700}
+.side .nav.active .badge-n{background:rgba(255,255,255,.25)}
 .side .sect{font-size:10px;color:var(--muted);text-transform:uppercase;
   font-weight:700;padding:12px 12px 4px;letter-spacing:.06em}
 .main{flex:1;min-width:0;padding:20px 24px}
@@ -74,6 +75,9 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .card.clickable:hover{border-color:var(--accent);background:var(--card2)}
 .card.clickable:active{transform:scale(.99)}
 .card.is-test{background:rgba(245,181,71,.04);border-color:rgba(245,181,71,.3)}
+.card.active-sub{border-left:3px solid var(--ok)}
+.card.active-sub.expiring{border-left-color:var(--warn);background:rgba(245,181,71,.03)}
+.card.active-sub.critical{border-left-color:var(--err);background:rgba(255,92,92,.04)}
 .btn{padding:10px 16px;border-radius:9px;border:0;background:var(--accent);
   color:#fff;font-size:13px;font-weight:600;cursor:pointer;
   display:inline-flex;align-items:center;gap:6px;text-decoration:none;
@@ -87,6 +91,7 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .btn.purple{background:var(--purple);color:#12002e}
 .btn.gold{background:linear-gradient(135deg,#f5d97a,#e0b84a,#b8862d);color:#2a1a00;font-weight:800}
 .btn.sm{padding:7px 12px;font-size:12px;min-height:34px}
+.btn.xs{padding:6px 10px;font-size:11.5px;min-height:30px}
 .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;
   border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase}
 .badge.created{background:rgba(99,169,255,.15);color:#63a9ff}
@@ -96,6 +101,8 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
 .badge.purple{background:rgba(167,139,250,.15);color:var(--purple)}
 .badge.test{background:rgba(245,181,71,.2);color:var(--warn);border:1px solid var(--warn)}
 .badge.early{background:rgba(245,181,71,.2);color:var(--warn);margin-left:6px}
+.badge.critical{background:rgba(255,92,92,.2);color:var(--err)}
+.badge.expiring{background:rgba(245,181,71,.2);color:var(--warn)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
   gap:8px;margin:10px 0}
 .cell{background:var(--card2);border-radius:9px;padding:10px 12px}
@@ -103,6 +110,7 @@ button,input,textarea,select{font-family:inherit;font-size:inherit}
   margin-bottom:3px;font-weight:600}
 .cell span{font-size:14px;font-weight:600}
 .cell span.ok{color:var(--ok)} .cell span.accent{color:var(--accent)} .cell span.warn{color:var(--warn)}
+.cell span.err{color:var(--err)}
 .row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .flex{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .frow{margin-bottom:12px}
@@ -326,23 +334,43 @@ textarea.input{resize:vertical;min-height:80px;font-family:inherit}
 .test-card:hover{border-color:var(--warn);background:rgba(245,181,71,.05)}
 .test-card .tc-title{font-weight:700;font-size:13px;margin-bottom:4px;color:var(--warn)}
 .test-card .tc-sub{font-size:11.5px;color:var(--muted);line-height:1.4}
-::-webkit-scrollbar{width:8px;height:8px}
-::-webkit-scrollbar-track{background:var(--card)}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
-::-webkit-scrollbar-thumb:hover{background:var(--muted)}
-@media(max-width:768px){
-  .layout{flex-direction:column}
-  .side{width:100%;height:auto;position:sticky;top:0;z-index:50;border-right:0;
-    border-bottom:1px solid var(--border);padding:10px;display:flex;flex-wrap:nowrap;
-    overflow-x:auto;gap:6px;scrollbar-width:none}
-  .side::-webkit-scrollbar{display:none}
-  .side .logo,.side .sect{display:none}
-  .side .nav{width:auto;flex-shrink:0;padding:9px 14px;margin-bottom:0;border:1px solid var(--border)}
-  .side .nav .badge-n{display:none}
-  .main{padding:14px 12px 60px}
-  .stats{grid-template-columns:repeat(2,1fr)}
-  .purchase-item .pi-metrics{grid-template-columns:repeat(2,1fr)}
-  .test-grid{grid-template-columns:1fr}
+
+/* Стили для активных подписок */
+.sub-card{background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:16px;margin-bottom:14px;border-left:3px solid var(--ok);transition:box-shadow .15s}
+.sub-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.sub-card.expiring{border-left-color:var(--warn);background:linear-gradient(90deg,rgba(245,181,71,.03) 0%,var(--card) 100%)}
+.sub-card.critical{border-left-color:var(--err);background:linear-gradient(90deg,rgba(255,92,92,.05) 0%,var(--card) 100%)}
+.sub-card .sub-head{display:flex;justify-content:space-between;align-items:flex-start;
+  gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.sub-card .sub-user{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+.sub-card .sub-avatar{width:48px;height:48px;border-radius:50%;
+  background:var(--card3);border:2px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:700;color:var(--accent);overflow:hidden;flex-shrink:0}
+.sub-card .sub-avatar img{width:100%;height:100%;object-fit:cover}
+.sub-card .sub-name{font-weight:700;font-size:15px;margin-bottom:2px}
+.sub-card .sub-sub{font-size:12.5px;color:var(--muted)}
+.sub-card .sub-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.sub-card .sub-metric{background:var(--card2);border-radius:9px;padding:10px 12px;text-align:center}
+.sub-card .sub-metric b{display:block;font-size:9.5px;color:var(--muted);
+  text-transform:uppercase;margin-bottom:4px;font-weight:600}
+.sub-card .sub-metric span{font-size:14px;font-weight:700}
+.sub-card .sub-metric span.ok{color:var(--ok)}
+.sub-card .sub-metric span.accent{color:var(--accent)}
+.sub-card .sub-metric span.warn{color:var(--warn)}
+.sub-card .sub-metric span.err{color:var(--err)}
+.sub-card .sub-progress{height:8px;background:var(--card2);border-radius:4px;
+  overflow:hidden;margin-bottom:14px;position:relative}
+.sub-card .sub-progress .bar{height:100%;background:linear-gradient(90deg,var(--ok),#2ea36a);
+  border-radius:4px;transition:width .3s}
+.sub-card .sub-progress .bar.warn{background:linear-gradient(90deg,var(--warn),#c48f1f)}
+.sub-card .sub-progress .bar.err{background:linear-gradient(90deg,var(--err),#c44545)}
+.sub-card .sub-actions{display:flex;gap:8px;flex-wrap:wrap}
+.sub-card .sub-actions .btn{flex:1;min-width:130px}
+@media(max-width:640px){
+  .sub-card .sub-metrics{grid-template-columns:repeat(2,1fr)}
+  .sub-card .sub-actions .btn{min-width:100%;flex:1 1 100%}
 }
 </style>
 </head>
@@ -358,6 +386,7 @@ var FIREBASE = 'https://velosher-f82b5-default-rtdb.asia-southeast1.firebasedata
 var ADMIN_PASSWORD = 'admin123';
 var BOT_TOKEN = '8880107122:AAFixW8sKxpKYm6dmQ5wMKALlBIjAj4zlMM';
 var ADMIN_IDS = ['6040186314', '6972338698', '6544017826'];
+var MONITOR_ADMIN_ID = '6040186314';  // кому слать пуши о действиях
 var REF_PERCENT = 5;
 var MIN_WITHDRAW = 1500;
 var TZ_TASHKENT = 'Asia/Tashkent';
@@ -453,6 +482,54 @@ function pushLog(action, info){
   LOG.unshift({ ts: new Date().toISOString(), action: action, info: info });
   if (LOG.length > 50) LOG.pop();
 }
+
+/* ═══════════ 🔔 ЛОГ ДЕЙСТВИЙ АДМИНА (для бота) ═══════════ */
+async function logAdminAction(data){
+  try {
+    var id = 'log_' + Date.now() + '_' + Math.floor(Math.random()*10000);
+    data.created_at = new Date().toISOString();
+    data.notified = 0;
+    data.admin_id = data.admin_id || ADMIN_IDS[0];
+    data.monitor_id = MONITOR_ADMIN_ID;
+    await fbPut('admin_logs/' + id, data);
+  } catch(e){
+    console.error('logAdminAction', e);
+  }
+}
+
+/* Обёртка для async-действий: логирует в admin_logs после выполнения */
+function wrapAsync(name, label, fn){
+  return async function(){
+    var args = Array.prototype.slice.call(arguments);
+    try {
+      var res = await fn.apply(this, args);
+      try {
+        await logAdminAction({
+          action: name,
+          action_label: label,
+          params: args.map(function(a){
+            return typeof a === 'object' ? JSON.stringify(a).slice(0, 200) : String(a);
+          }),
+          at: new Date().toISOString()
+        });
+      } catch(e){}
+      return res;
+    } catch(e){
+      console.error('wrap ' + name, e);
+      try {
+        await logAdminAction({
+          action: name + '_error',
+          action_label: '⚠️ Ошибка в ' + label,
+          error: String(e).slice(0, 300),
+          params: args.map(function(a){ return String(a).slice(0,200); }),
+          at: new Date().toISOString()
+        });
+      } catch(e2){}
+      throw e;
+    }
+  };
+}
+
 function findUser(users, tgId){
   if (!tgId) return null;
   for (var i=0;i<users.length;i++){
@@ -479,6 +556,12 @@ function fmtLeft(ms){
   if (h > 0) return h+'ч '+m+'м '+sec+'с';
   if (m > 0) return m+'м '+sec+'с';
   return sec+'с';
+}
+function plural(n, one, few, many){
+  var m10 = n % 10, m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return one;
+  if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return few;
+  return many;
 }
 
 /* ═══════════ УМНЫЙ ПОИСК ═══════════ */
@@ -614,6 +697,7 @@ function logout(){ sessionStorage.removeItem('admin_auth'); AUTH = false; render
 /* ═══════════ LAYOUT ═══════════ */
 function layout(content){
   var newCnt = DATA.purchases.filter(function(p){ return p.status === 'created'; }).length;
+  var activeCnt = DATA.purchases.filter(function(p){ return p.status === 'approved'; }).length;
   var payCnt = DATA.payouts.filter(function(p){ return p.status === 'pending'; }).length;
   var refPayCnt = (DATA.refPayouts || []).filter(function(r){ return r.status === 'pending'; }).length;
   var userCnt = DATA.users.length;
@@ -631,6 +715,7 @@ function layout(content){
       '<div class="sect">Обзор</div>' + nav('dashboard','📊','Дашборд') +
       '<div class="sect">Операции</div>' +
       nav('purchases','📩','Заявки', newCnt) +
+      nav('subscriptions','🟢','Активные подписки', activeCnt) +
       nav('payouts','💸','Выплаты', payCnt) +
       nav('refPayouts','💰','Реф. выплаты', refPayCnt) +
       '<div class="sect">Управление</div>' +
@@ -794,6 +879,447 @@ async function renderDashboard(){
     layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
   }
 }
+
+/* ═══════════ 🟢 АКТИВНЫЕ ПОДПИСКИ ═══════════ */
+var subSearch = '';
+var subSort = 'expires';  // expires | price | days | recent
+
+function getActiveSubs(){
+  var now = Date.now();
+  var list = DATA.purchases.filter(function(p){
+    return p.status === 'approved';
+  });
+  // поиск
+  var q = subSearch.toLowerCase().trim();
+  if (q){
+    list = list.filter(function(p){
+      var buyer = findUser(DATA.users, p.user_telegram_id);
+      return (buyer && userMatches(buyer, q)) ||
+        userMatches({first_name: p.user_first_name, username: p.user_username, telegram_id: p.user_telegram_id}, q) ||
+        String(p.era_title||'').toLowerCase().indexOf(q) >= 0 ||
+        String(p.id||'').indexOf(q) >= 0;
+    });
+  }
+  // сортировка
+  if (subSort === 'expires'){
+    list.sort(function(a,b){
+      var ea = a.expires_at ? new Date(a.expires_at).getTime() : 0;
+      var eb = b.expires_at ? new Date(b.expires_at).getTime() : 0;
+      return ea - eb;
+    });
+  } else if (subSort === 'price'){
+    list.sort(function(a,b){ return Number(b.total_amount||0) - Number(a.total_amount||0); });
+  } else if (subSort === 'days'){
+    list.sort(function(a,b){
+      return Number(b.duration_days||b.days||0) - Number(a.duration_days||a.days||0);
+    });
+  } else if (subSort === 'recent'){
+    list.sort(function(a,b){ return Number(b.id||0) - Number(a.id||0); });
+  }
+  return list;
+}
+
+function getSubStats(){
+  var now = Date.now();
+  var subs = DATA.purchases.filter(function(p){ return p.status === 'approved'; });
+  var total = subs.length;
+  var critical = 0, expiring = 0, normal = 0;
+  var totalInvested = 0, totalToPay = 0;
+  subs.forEach(function(p){
+    var exp = p.expires_at ? new Date(p.expires_at).getTime() : null;
+    if (exp){
+      var h = (exp - now) / 3600000;
+      if (h <= 24) critical++;
+      else if (h <= 72) expiring++;
+      else normal++;
+    } else normal++;
+    totalInvested += Number(p.purchase_price || 0);
+    totalToPay += Number(p.total_amount || 0);
+  });
+  return { total: total, critical: critical, expiring: expiring, normal: normal,
+    totalInvested: totalInvested, totalToPay: totalToPay };
+}
+
+function drawSubsList(){
+  var box = $('subsListBox');
+  if (!box) return;
+  var focusState = saveFocusState('subSearchInput');
+  var list = getActiveSubs();
+  var stats = getSubStats();
+
+  var head = '<div class="stats" style="margin-bottom:16px">' +
+    '<div class="stat"><div class="ic">🟢</div><div class="l">Всего активных</div><div class="v ok">' + stats.total + '</div></div>' +
+    '<div class="stat"><div class="ic">🔴</div><div class="l">Истекают &lt; 24ч</div><div class="v err">' + stats.critical + '</div></div>' +
+    '<div class="stat"><div class="ic">🟡</div><div class="l">Истекают &lt; 72ч</div><div class="v warn">' + stats.expiring + '</div></div>' +
+    '<div class="stat"><div class="ic">💵</div><div class="l">Вложено</div><div class="v accent">' + fmt(stats.totalInvested) + '</div></div>' +
+    '<div class="stat"><div class="ic">💰</div><div class="l">К выплате</div><div class="v ok">' + fmt(stats.totalToPay) + '</div></div>' +
+  '</div>';
+
+  var sortTabs = '<div class="tabs" style="margin-bottom:14px">' +
+    '<button class="tab ' + (subSort==='expires'?'active':'') + '" onclick="setSubSort(\'expires\')">⏰ По времени</button>' +
+    '<button class="tab ' + (subSort==='price'?'active':'') + '" onclick="setSubSort(\'price\')">💰 По сумме</button>' +
+    '<button class="tab ' + (subSort==='days'?'active':'') + '" onclick="setSubSort(\'days\')">📅 По сроку</button>' +
+    '<button class="tab ' + (subSort==='recent'?'active':'') + '" onclick="setSubSort(\'recent\')">🆕 Свежие</button>' +
+  '</div>';
+
+  box.innerHTML = head + sortTabs +
+    (list.length ? list.map(subCard).join('')
+      : '<div class="empty"><div class="ic">🟢</div><p>' +
+        (subSearch ? 'Ничего не найдено' : 'Нет активных подписок') + '</p></div>');
+
+  restoreFocusState(focusState);
+}
+
+function subCard(p){
+  var k = p._key;
+  var buyer = findUser(DATA.users, p.user_telegram_id);
+  var now = Date.now();
+  var expMs = p.expires_at ? new Date(p.expires_at).getTime() : null;
+  var remain = expMs ? expMs - now : null;
+  var remainHours = remain != null ? remain / 3600000 : 0;
+
+  // прогресс-бар
+  var startMs = p.start_date ? new Date(p.start_date).getTime() : null;
+  var progress = 0;
+  var cls = 'ok';
+  if (startMs && expMs && expMs > startMs){
+    progress = Math.max(0, Math.min(100, ((now - startMs) / (expMs - startMs)) * 100));
+  }
+  if (remainHours <= 24) cls = 'err';
+  else if (remainHours <= 72) cls = 'warn';
+
+  // имя/аватар
+  var name = userName(buyer) || p.user_first_name || 'Без имени';
+  var photo = buyer && buyer.photo_url ? buyer.photo_url : '';
+  var initial = (name[0] || '?').toUpperCase();
+
+  // бейдж
+  var badge = '';
+  if (remain != null){
+    if (remain <= 0){
+      badge = '<span class="badge cancelled">⏹ Просрочено</span>';
+    } else if (remainHours <= 24){
+      badge = '<span class="badge critical">🔴 &lt; 24ч</span>';
+    } else if (remainHours <= 72){
+      badge = '<span class="badge expiring">🟡 &lt; 72ч</span>';
+    } else {
+      badge = '<span class="badge approved">🟢 Активна</span>';
+    }
+  }
+
+  var isTest = !!p.is_test;
+  var testBadge = isTest ? '<span class="badge test">🧪 ТЕСТ</span>' : '';
+  var refInfo = p.referrer_uid
+    ? '<span class="badge purple">🎁 реф. ' + REF_PERCENT + '%</span>' : '';
+
+  // статус реф-бонуса
+  var refStatus = p.referral_status || '';
+  var refBonus = Number(p.referral_bonus || 0)
+    || Math.round(Number(p.purchase_price || 0) * REF_PERCENT / 100);
+  var refNote = '';
+  if (p.referrer_uid && refStatus === 'pending_active'){
+    refNote = '<div class="muted" style="font-size:11px;color:var(--warn);margin-top:4px">' +
+      '❄️ Реф-бонус заморожен (' + fmt(refBonus) + ') — у реферера нет активной эры</div>';
+  } else if (p.referrer_uid && refStatus === 'approved'){
+    refNote = '<div class="muted" style="font-size:11px;color:var(--ok);margin-top:4px">' +
+      '✅ Реф-бонус начислен (' + fmt(refBonus) + ')</div>';
+  }
+
+  var cardCls = 'sub-card';
+  if (remainHours <= 24 && remain > 0) cardCls += ' critical';
+  else if (remainHours <= 72 && remain > 0) cardCls += ' expiring';
+
+  return '<div class="' + cardCls + '" data-k="' + esc(k) + '">' +
+    // HEAD
+    '<div class="sub-head">' +
+      '<div class="sub-user">' +
+        '<div class="sub-avatar">' +
+          (photo ? '<img src="' + esc(photo) + '" alt="">' : esc(initial)) +
+        '</div>' +
+        '<div style="min-width:0">' +
+          '<div class="sub-name">' + esc(name) + '</div>' +
+          '<div class="sub-sub">@' + esc(p.user_username || '—') + ' · ID ' + esc(p.user_telegram_id) + '</div>' +
+          '<div class="sub-sub" style="margin-top:4px">' +
+            '<span class="badge" style="background:var(--card2);color:var(--accent);font-size:10px">' +
+              '📩 #' + esc(p.id) + ' · ' + esc(p.era_title || '—') +
+            '</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">' +
+          badge + testBadge + refInfo +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+
+    // METRICS
+    '<div class="sub-metrics">' +
+      '<div class="sub-metric"><b>💵 Вложено</b><span class="accent">' + fmt(p.purchase_price) + '</span></div>' +
+      '<div class="sub-metric"><b>💰 Прибыль</b><span class="ok">+' + fmt(p.profit_amount) + '</span></div>' +
+      '<div class="sub-metric"><b>🏆 К выплате</b><span class="ok">' + fmt(p.total_amount) + '</span></div>' +
+      '<div class="sub-metric"><b>⏱ Осталось</b><span class="' + cls + '">' +
+        (remain != null ? (remain <= 0 ? '0с' : fmtLeft(remain)) : '—') +
+      '</span></div>' +
+    '</div>' +
+
+    // PROGRESS
+    '<div class="sub-progress">' +
+      '<div class="bar ' + (cls==='ok'?'':cls) + '" style="width:' + progress.toFixed(1) + '%"></div>' +
+    '</div>' +
+
+    // DATES
+    '<div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:12px">' +
+      '<span>▶️ Старт: <b style="color:var(--text2)">' + fmtD(p.start_date) + '</b></span>' +
+      '<span>🏁 Конец: <b style="color:var(--text2)">' + fmtD(p.last_day) + '</b></span>' +
+      '<span>⏰ Истекает: <b style="color:var(--text2)">' + fmtDate(p.expires_at) + '</b></span>' +
+      '<span>📅 Срок: <b style="color:var(--text2)">' + Number(p.duration_days||p.days||0) + ' дн.</b></span>' +
+    '</div>' +
+
+    refNote +
+
+    // ACTIONS
+    '<div class="sub-actions" style="margin-top:14px">' +
+      '<button class="btn ok" onclick="openEndSub(\'' + esc(k) + '\',\'full\')">✅ Завершить с выплатой</button>' +
+      '<button class="btn warn" onclick="openEndSub(\'' + esc(k) + '\',\'partial\')">⚠️ Частично</button>' +
+      '<button class="btn danger" onclick="openEndSub(\'' + esc(k) + '\',\'none\')">❌ Без выплаты</button>' +
+      '<button class="btn ghost" onclick="openEndSub(\'' + esc(k) + '\',\'cancel\')">🚫 Отмена</button>' +
+      '<button class="btn ghost" onclick="admContact(\'' + esc(p.user_telegram_id) + '\')">💬</button>' +
+      (buyer ? '<button class="btn purple" onclick="openUserCard(\'' + esc(p.user_telegram_id) + '\')">👤</button>' : '') +
+    '</div>' +
+  '</div>';
+}
+
+window.setSubSort = function(s){
+  subSort = s;
+  var tabs = document.querySelectorAll('#content .tabs .tab');
+  var map = ['expires','price','days','recent'];
+  tabs.forEach(function(t, i){ if (i < 4) t.classList.toggle('active', map[i] === s); });
+  drawSubsList();
+};
+
+var _subSearchTimer = null;
+window.onSubSearchInput = function(){
+  var el = $('subSearchInput');
+  if (!el) return;
+  subSearch = el.value;
+  clearTimeout(_subSearchTimer);
+  _subSearchTimer = setTimeout(function(){ drawSubsList(); }, 200);
+};
+
+window.clearSubSearch = function(){
+  subSearch = '';
+  var el = $('subSearchInput');
+  if (el){ el.value = ''; el.focus(); }
+  drawSubsList();
+};
+
+async function renderSubscriptions(){
+  layout('<div class="empty">Загрузка…</div>');
+  try {
+    var res = await Promise.all([
+      fbGet('purchases').then(toList).catch(function(){ return []; }),
+      fbGet('users').then(toList).catch(function(){ return []; })
+    ]);
+    DATA.purchases = res[0]; DATA.users = res[1];
+
+    layout(
+      '<h2 style="font-size:17px;margin-bottom:14px">🟢 Активные подписки ' +
+        '<span class="muted" style="font-size:12px;font-weight:400">управление эрами в работе</span>' +
+      '</h2>' +
+      '<div class="search">' +
+        '<input class="input" id="subSearchInput" placeholder="Поиск: имя, фамилия, @ник, ID, эра, номер…" ' +
+          'value="' + esc(subSearch) + '" oninput="onSubSearchInput()">' +
+        (subSearch ? '<button class="clear-btn" onclick="clearSubSearch()">✕</button>' : '') +
+      '</div>' +
+      '<div id="subsListBox"></div>'
+    );
+    drawSubsList();
+  } catch(e){
+    layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
+  }
+}
+
+/* ═══════════ 🔌 ЗАВЕРШЕНИЕ ПОДПИСКИ ═══════════ */
+window.openEndSub = function(key, variant){
+  var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
+  if (!p) return;
+  var buyer = findUser(DATA.users, p.user_telegram_id);
+
+  var total = Number(p.total_amount || 0);
+  var invested = Number(p.purchase_price || 0);
+  var profit = Number(p.profit_amount || 0);
+
+  var variantInfo = {
+    'full': {
+      title: '✅ С полной выплатой',
+      color: 'var(--ok)',
+      desc: 'Начислить <b>' + fmt(total) + '</b> (вложено + прибыль)',
+      amount: total
+    },
+    'partial': {
+      title: '⚠️ Только вложенное',
+      color: 'var(--warn)',
+      desc: 'Вернуть <b>' + fmt(invested) + '</b> без прибыли',
+      amount: invested
+    },
+    'none': {
+      title: '❌ Без выплаты',
+      color: 'var(--err)',
+      desc: 'Ничего не начислять',
+      amount: 0
+    },
+    'cancel': {
+      title: '🚫 Отмена заявки',
+      color: 'var(--muted)',
+      desc: 'Статус: отменена, реф-бонус отменён',
+      amount: 0
+    }
+  };
+  var vi = variantInfo[variant];
+
+  $('modal-root').innerHTML =
+    '<div class="mbg" onclick="if(event.target===this)closeModal()"><div class="modal" style="max-width:520px">' +
+      '<div class="mh"><h2>🔌 Завершить подписку</h2>' +
+        '<button class="x" onclick="closeModal()">✕</button></div>' +
+      '<div class="mb">' +
+
+        '<div class="card" style="background:rgba(79,140,255,.08);border-color:rgba(79,140,255,.3);padding:14px;margin-bottom:14px">' +
+          '<div class="row">' +
+            '<div>' +
+              '<b style="font-size:15px">👤 ' + esc(userName(buyer)) + '</b>' +
+              '<div class="muted">@' + esc(p.user_username||'—') + ' · ID ' + esc(p.user_telegram_id) + '</div>' +
+              '<div class="muted" style="font-size:11px;margin-top:4px">📩 Заявка #' + esc(p.id) + ' · ' + esc(p.era_title||'—') + '</div>' +
+            '</div>' +
+            '<span class="badge approved">🟢 Активна</span>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="card" style="background:' + vi.color + '15;border-color:' + vi.color + ';padding:14px;margin-bottom:16px">' +
+          '<div style="font-weight:700;font-size:15px;color:' + vi.color + ';margin-bottom:8px">' + vi.title + '</div>' +
+          '<div class="muted" style="line-height:1.6">' + vi.desc + '</div>' +
+          (vi.amount > 0 ? '<div style="margin-top:10px;font-size:20px;font-weight:800;color:' + vi.color + '">' +
+            fmt(vi.amount) + '</div>' : '') +
+        '</div>' +
+
+        '<div class="grid" style="margin-bottom:16px">' +
+          '<div class="cell"><b>💵 Вложено</b><span class="accent">' + fmt(invested) + '</span></div>' +
+          '<div class="cell"><b>💰 Прибыль</b><span class="ok">+' + fmt(profit) + '</span></div>' +
+          '<div class="cell"><b>🏆 Всего</b><span class="ok">' + fmt(total) + '</span></div>' +
+          '<div class="cell"><b>📅 Срок</b><span>' + Number(p.duration_days||p.days||0) + ' дн.</span></div>' +
+        '</div>' +
+
+        '<div class="frow">' +
+          '<label>Уведомить пользователя в боте</label>' +
+          '<label style="display:flex;align-items:center;gap:8px;cursor:pointer">' +
+            '<input type="checkbox" id="end_notify_user" checked style="width:18px;height:18px">' +
+            '<span class="muted">Да, отправить уведомление юзеру</span>' +
+          '</label>' +
+        '</div>' +
+
+        '<div class="frow">' +
+          '<label>Пароль админа</label>' +
+          '<input class="input" id="end_pass" type="password" placeholder="Пароль" autofocus>' +
+        '</div>' +
+
+        '<div class="frow">' +
+          '<label>Причина / комментарий (видно в пуше)</label>' +
+          '<input class="input" id="end_reason" placeholder="Необязательно">' +
+        '</div>' +
+
+      '</div>' +
+      '<div class="mf">' +
+        '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
+        '<button class="btn ' + (variant === 'full' ? 'ok' : variant === 'partial' ? 'warn' : 'danger') + '" ' +
+          'onclick="doEndSub(\'' + esc(key) + '\',\'' + variant + '\')">' +
+          vi.title +
+        '</button>' +
+      '</div>' +
+    '</div></div>';
+};
+
+window.doEndSub = async function(key, variant){
+  var pass = $('end_pass');
+  var reason = $('end_reason');
+  var notifyUser = $('end_notify_user');
+
+  if (!pass || pass.value !== ADMIN_PASSWORD){
+    toast('❌ Неверный пароль', 'err');
+    if (pass){ pass.value = ''; pass.focus(); }
+    return;
+  }
+
+  await once('end_sub_' + key, async function(){
+    var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
+    if (!p) return;
+
+    var now = new Date().toISOString();
+    var total = Number(p.total_amount || 0);
+    var invested = Number(p.purchase_price || 0);
+    var profit = Number(p.profit_amount || 0);
+
+    var patch = {
+      completed_at: now,
+      status_changed_at: now,
+      completed_notified: 1,
+      early_closed: 1,
+      early_closed_at: now,
+      early_closed_by: ADMIN_IDS[0],
+      early_close_variant: variant,
+      early_close_reason: reason ? reason.value.trim() : '',
+      notified_3d: 1, notified_1d: 1, notified_3h: 1,
+      notify_user_on_close: notifyUser && notifyUser.checked ? 1 : 0
+    };
+
+    var amountPaid = 0;
+    if (variant === 'full'){
+      patch.status = 'completed';
+      amountPaid = total;
+    } else if (variant === 'partial'){
+      patch.status = 'completed';
+      patch.total_amount = invested;
+      patch.profit_amount = 0;
+      amountPaid = invested;
+    } else if (variant === 'none'){
+      patch.status = 'completed';
+      patch.total_amount = 0;
+      patch.profit_amount = 0;
+      amountPaid = 0;
+      if (p.referrer_uid) patch.referral_status = 'rejected';
+    } else if (variant === 'cancel'){
+      patch.status = 'cancelled';
+      patch.total_amount = 0;
+      amountPaid = 0;
+      if (p.referrer_uid) patch.referral_status = 'rejected';
+    }
+
+    await fbPatch('purchases/' + key, patch);
+
+    // Логируем действие для пуша админу
+    await logAdminAction({
+      action: 'end_sub',
+      action_label: '🔌 Завершил подписку #' + p.id,
+      variant: variant,
+      purchase_id: p.id,
+      era_title: p.era_title || '',
+      buyer_id: String(p.user_telegram_id),
+      buyer_name: p.user_first_name || '',
+      buyer_username: p.user_username || '',
+      amount_paid: amountPaid,
+      notify_user: notifyUser && notifyUser.checked ? 1 : 0,
+      reason: reason ? reason.value.trim() : '',
+      at: now
+    });
+
+    pushLog('🔌 Завершил подписку', '#' + p.id + ' · ' + variant + ' · ' + fmt(amountPaid));
+    toast('✅ Подписка завершена · ' + fmt(amountPaid), 'ok', 4000);
+    closeModal();
+    if (TAB === 'subscriptions') await renderSubscriptions();
+    else if (TAB === 'purchases') await renderPurchases();
+    else if (TAB === 'users') await renderUsers();
+    else if (TAB === 'dashboard') await renderDashboard();
+  });
+};
 
 /* ═══════════ ЗАЯВКИ ═══════════ */
 var purchaseFilter = 'created';
@@ -997,7 +1523,7 @@ function orderCard(p){
     '<div class="flex">' +
       (canConfirm ? '<button class="btn ok" onclick="admConfirm(\'' + esc(k) + '\')">✅ Подтвердить</button>' : '') +
       (canCancel ? '<button class="btn danger" onclick="admCancel(\'' + esc(k) + '\')">❌ Отменить</button>' : '') +
-      (isActive ? '<button class="btn warn" onclick="openEarlyClose(\'' + esc(k) + '\')">🔌 Отключить</button>' : '') +
+      (isActive ? '<button class="btn warn" onclick="openEndSub(\'' + esc(k) + '\',\'full\')">🔌 Завершить</button>' : '') +
       '<button class="btn ghost" onclick="admContact(\'' + esc(p.user_telegram_id||'') + '\')">💬</button>' +
       (buyer ? '<button class="btn purple" onclick="openUserCard(\'' + esc(p.user_telegram_id) + '\')">👤</button>' : '') +
       '<button class="btn ghost" onclick="resendNotification(\'purchases\',\'' + esc(k) + '\')" title="Переотправить уведомление">🔔</button>' +
@@ -1010,6 +1536,12 @@ async function resendNotification(collection, key){
   await once('resend_' + key, async function(){
     await fbPatch(collection + '/' + key, { notified_new: 0 });
     pushLog('🔔 Переотправить', collection + '/' + key);
+    await logAdminAction({
+      action: 'resend_notification',
+      action_label: '🔔 Переотправил уведомление',
+      params: [collection, key],
+      at: new Date().toISOString()
+    });
     toast('✅ Флаг сброшен — бот отправит при след. проверке', 'ok', 4000);
   });
 }
@@ -1100,6 +1632,7 @@ async function admForceActivate(refUid){
     if (TAB === 'users') await renderUsers();
     else if (TAB === 'refs') await renderRefs();
     else if (TAB === 'purchases') await renderPurchases();
+    else if (TAB === 'subscriptions') await renderSubscriptions();
   });
 }
 
@@ -1165,57 +1698,14 @@ async function doDeletePurchase(key){
 
     await fbDelete('purchases/' + key);
     pushLog('🗑 Удалил заявку', '#' + p.id);
-    toast('✅ Заявка #' + p.id + ' удалена', 'ok');
-    closeModal();
-    await renderPurchases();
-  });
-}
-
-function openEarlyClose(key){
-  var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
-  if (!p) return;
-
-  $('modal-root').innerHTML =
-    '<div class="mbg" onclick="if(event.target===this)closeModal()"><div class="modal">' +
-      '<div class="mh"><h2>🔌 Отключить эру</h2>' +
-        '<button class="x" onclick="closeModal()">✕</button></div>' +
-      '<div class="mb">' +
-        '<div class="card" style="background:rgba(255,92,92,.08);border-color:var(--err);margin-bottom:16px">' +
-          '<div style="font-weight:700;color:var(--err);margin-bottom:8px">⚠️ Внимание</div>' +
-          '<div class="muted" style="line-height:1.6">Эра <b>' + esc(p.era_title||'—') +
-            '</b> будет досрочно завершена. Юзеру начислится <b>' + fmt(p.total_amount) +
-            '</b>.</div>' +
-        '</div>' +
-        '<div class="frow"><label>Пароль</label>' +
-          '<input class="input" id="ec_pass" type="password" placeholder="Пароль админа" autofocus></div>' +
-      '</div>' +
-      '<div class="mf">' +
-        '<button class="btn ghost" onclick="closeModal()">Отмена</button>' +
-        '<button class="btn danger" onclick="doEarlyClose(\'' + esc(key) + '\')">🔌 Отключить</button>' +
-      '</div>' +
-    '</div></div>';
-}
-
-async function doEarlyClose(key){
-  var passEl = $('ec_pass');
-  if (!passEl) return;
-  if (passEl.value !== ADMIN_PASSWORD){
-    toast('❌ Неверный пароль', 'err');
-    passEl.value = ''; passEl.focus();
-    return;
-  }
-  await once('early_' + key, async function(){
-    var p = DATA.purchases.filter(function(x){ return x._key === key; })[0];
-    if (!p) return;
-    var now = new Date().toISOString();
-    await fbPatch('purchases/' + key, {
-      status: 'completed', completed_at: now, status_changed_at: now,
-      completed_notified: 1, early_closed: 1, early_closed_at: now,
-      early_closed_by: ADMIN_IDS[0],
-      notified_3d: 1, notified_1d: 1, notified_3h: 1
+    await logAdminAction({
+      action: 'delete_purchase',
+      action_label: '🗑 Удалил заявку #' + p.id,
+      purchase_id: p.id,
+      buyer_id: String(p.user_telegram_id),
+      at: new Date().toISOString()
     });
-    pushLog('🔌 Отключил эру', '#' + p.id);
-    toast('✅ Отключено, начислено ' + fmt(p.total_amount), 'ok', 5000);
+    toast('✅ Заявка #' + p.id + ' удалена', 'ok');
     closeModal();
     await renderPurchases();
   });
@@ -1559,7 +2049,7 @@ async function refPayoutReject(key){
   });
 }
 
-/* ═══════════ 📢 РАССЫЛКА (фокус НЕ теряется) ═══════════ */
+/* ═══════════ 📢 РАССЫЛКА ═══════════ */
 var _bcState = { target: 'all', targetId: null, text: '', photo: '' };
 
 window.openBroadcast = function(){
@@ -1606,7 +2096,6 @@ function renderBroadcastModal(){
           'value="' + esc(_bcState.photo) + '" oninput="onBcPhotoInput(this.value)"></div>';
   }
 
-  // Блок превью — обновляется отдельно через updateBcPreview()
   var previewBlock = '<div id="bcPreviewBox">' + buildBcPreview() + '</div>';
 
   $('modal-root').innerHTML =
@@ -1635,7 +2124,6 @@ function renderBroadcastModal(){
   }
 }
 
-/* Обновляет только превью и кнопку — НЕ перерисовывает окно → фокус сохраняется */
 window.onBcTextInput = function(val){
   _bcState.text = val;
   updateBcPreview();
@@ -1677,7 +2165,6 @@ function updateBcSendBtn(){
   }
 }
 
-/* Поиск юзера — обновляем только список, не всё окно */
 window.onBcUserSearch = function(val){
   var box = $('bcUserResults');
   if (!box) return;
@@ -1731,6 +2218,15 @@ window.doBroadcast = async function(){
       sent: 0, failed: 0
     };
     await fbPut('broadcast_tasks/' + taskId, task);
+    await logAdminAction({
+      action: 'broadcast',
+      action_label: '📢 Рассылка ' + (target === 'all' ? 'ВСЕМ' : 'ID ' + targetId),
+      target: target,
+      target_id: targetId,
+      text_preview: text.slice(0, 100),
+      has_photo: photo ? 1 : 0,
+      at: new Date().toISOString()
+    });
     pushLog('📢 Рассылка', target === 'all' ? 'ВСЕМ' : 'ID ' + targetId);
     toast('✅ Задача создана — бот отправит в течение 15 сек', 'ok', 5000);
     closeModal();
@@ -1917,7 +2413,8 @@ window.testCreateActivePurchase = function(uid){
     pushLog('🧪 Тест-активная', 'UID ' + uid + ' · #' + pid);
     toast('✅ Активная эра #' + pid + ' создана', 'ok', 4000);
     closeModal();
-    if (TAB === 'purchases') await renderPurchases();
+    if (TAB === 'subscriptions') await renderSubscriptions();
+    else if (TAB === 'purchases') await renderPurchases();
     else if (TAB === 'dashboard') await renderDashboard();
   });
 };
@@ -2091,6 +2588,7 @@ window.testDeleteUserTests = function(uid){
     else if (TAB === 'payouts') await renderPayouts();
     else if (TAB === 'refPayouts') await renderRefPayouts();
     else if (TAB === 'dashboard') await renderDashboard();
+    else if (TAB === 'subscriptions') await renderSubscriptions();
   });
 };
 
@@ -2388,11 +2886,21 @@ window.doLinkReferral = function(){
     if (ownerInData) _refSetupSelectedOwner = ownerInData;
 
     pushLog('🎁 Привязал реферала', refName + ' → ' + ownerName);
+    await logAdminAction({
+      action: 'link_referral',
+      action_label: '🎁 Привязал реферала',
+      ref_id: refId,
+      ref_name: refName,
+      owner_id: ownerId,
+      owner_name: ownerName,
+      at: new Date().toISOString()
+    });
     toast('✅ ' + refName + ' привязан к ' + ownerName, 'ok', 4000);
     closeModal();
     if (TAB === 'users') await renderUsers();
     else if (TAB === 'refs') await renderRefs();
     else if (TAB === 'purchases') await renderPurchases();
+    else if (TAB === 'subscriptions') await renderSubscriptions();
     else if (TAB === 'dashboard') await renderDashboard();
   });
 };
@@ -2402,6 +2910,12 @@ window.unlinkReferral = function(uid){
   return once('unlink_' + uid, async function(){
     await fbPatch('users/' + uid, { referrer_uid: null });
     pushLog('🎁 Отвязал реферала', 'ID ' + uid);
+    await logAdminAction({
+      action: 'unlink_referral',
+      action_label: '🎁 Отвязал реферала',
+      ref_id: String(uid),
+      at: new Date().toISOString()
+    });
     toast('✅ Отвязан', 'ok');
     await renderUsers();
   });
@@ -2477,6 +2991,13 @@ async function doToggleBlock(uid, block){
     }
     await fbPatch('users/' + uid, patch);
     pushLog(block ? '🚫 Заблокировал' : '🔓 Разблокировал', 'ID ' + uid);
+    await logAdminAction({
+      action: 'toggle_block',
+      action_label: block ? '🚫 Заблокировал юзера' : '🔓 Разблокировал юзера',
+      user_id: String(uid),
+      reason: reason || '',
+      at: now
+    });
     toast(block ? '🚫 Заблокирован' : '🔓 Разблокирован', 'ok');
     closeModal();
     await renderUsers();
@@ -2992,6 +3513,17 @@ async function saveEra(id){
           await fbDelete('eras/' + existing._key);
         }
         pushLog('✏️ Изменил эру', '#' + id);
+        await logAdminAction({
+          action: 'save_era',
+          action_label: '✏️ Изменил эру #' + id,
+          era_id: id,
+          era_title: title,
+          price: price,
+          profit: profit,
+          days: days,
+          active: active,
+          at: new Date().toISOString()
+        });
       } else {
         var usedIds = DATA.eras.map(function(x){ return Number(x.id||0); }).filter(Boolean);
         var newId = usedIds.length ? Math.max.apply(null, usedIds) + 1 : 1;
@@ -2999,6 +3531,16 @@ async function saveEra(id){
         data.sort_order = newId;
         await fbPut('eras/' + newId, data);
         pushLog('➕ Создал эру', '#' + newId);
+        await logAdminAction({
+          action: 'save_era',
+          action_label: '➕ Создал эру #' + newId,
+          era_id: newId,
+          era_title: title,
+          price: price,
+          profit: profit,
+          days: days,
+          at: new Date().toISOString()
+        });
       }
       closeModal();
       toast('💾 Сохранено', 'ok');
@@ -3016,6 +3558,14 @@ async function toggleEra(id, active){
     var e = DATA.eras.filter(function(x){ return String(x.id) === String(id); })[0];
     if (!e) return toast('Эра не найдена', 'err');
     await fbPatch('eras/' + (e.id || e._key), { is_active: active });
+    await logAdminAction({
+      action: 'toggle_era',
+      action_label: (active ? '🟢 Включил' : '⚫ Отключил') + ' эру #' + id,
+      era_id: id,
+      era_title: e.title,
+      active: active,
+      at: new Date().toISOString()
+    });
     toast(active ? '🟢 Включено' : '⚫ Отключено', 'ok');
     await renderEras();
   });
@@ -3030,6 +3580,13 @@ async function deleteEra(id){
     await fbDelete('eras/' + id);
     if (String(e._key) !== String(id)) await fbDelete('eras/' + e._key);
     pushLog('🗑 Удалил эру', '#' + id);
+    await logAdminAction({
+      action: 'delete_era',
+      action_label: '🗑 Удалил эру #' + id,
+      era_id: id,
+      era_title: e.title,
+      at: new Date().toISOString()
+    });
     toast('🗑 Удалено', 'ok');
     await renderEras();
   });
@@ -3071,6 +3628,12 @@ async function seedDefaultEras(){
       created++;
     }
     pushLog('📥 Загрузил 8 эр', 'ID ' + (maxId+1) + '…' + (maxId+8));
+    await logAdminAction({
+      action: 'seed_eras',
+      action_label: '📥 Загрузил 8 эр',
+      count: created,
+      at: new Date().toISOString()
+    });
     toast('✅ Загружено ' + created + ' эр', 'ok', 4000);
     await renderEras();
   });
@@ -3326,6 +3889,7 @@ async function render(){
   var tabs = {
     dashboard: renderDashboard,
     purchases: renderPurchases,
+    subscriptions: renderSubscriptions,
     payouts: renderPayouts,
     refPayouts: renderRefPayouts,
     users: renderUsers,
@@ -3348,6 +3912,7 @@ window.openLog = openLog;
 window.closeModal = closeModal;
 window.renderDashboard = renderDashboard;
 window.renderPurchases = renderPurchases;
+window.renderSubscriptions = renderSubscriptions;
 window.renderPayouts = renderPayouts;
 window.renderRefPayouts = renderRefPayouts;
 window.renderUsers = renderUsers;
@@ -3361,8 +3926,8 @@ window.admPaid = admPaid;
 window.admPayoutReject = admPayoutReject;
 window.refPayoutPaid = refPayoutPaid;
 window.refPayoutReject = refPayoutReject;
-window.openEarlyClose = openEarlyClose;
-window.doEarlyClose = doEarlyClose;
+window.openEndSub = openEndSub;
+window.doEndSub = doEndSub;
 window.openDeletePurchase = openDeletePurchase;
 window.doDeletePurchase = doDeletePurchase;
 window.openBlockUser = openBlockUser;

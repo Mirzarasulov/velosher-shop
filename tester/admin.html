@@ -573,7 +573,7 @@ var MIN_WITHDRAW = 1500;
 var TZ_TASHKENT = 'Asia/Tashkent';
 
 /* ═══════════ КЭШ ═══════════ */
-var CACHE_TTL = 60000; // 60 секунд (было 30)
+var CACHE_TTL = 60000;
 var CACHE = {
   purchases: { data: null, ts: 0 },
   payouts: { data: null, ts: 0 },
@@ -691,9 +691,6 @@ var LOG = [];
 var BUSY = {};
 
 /* ═══════════ ФОКУС ═══════════ */
-// Глобальный стек фокуса для восстановления после перерисовок
-var FOCUS_STACK = {};
-
 function saveFocusState(inputId){
   if (!inputId) return null;
   var el = $(inputId);
@@ -719,27 +716,11 @@ function restoreFocusState(state){
       el.setSelectionRange(state.start, state.end);
     }
   } catch(e){}
-  // Если значение было потеряно — восстановим
   try {
     if (state.value != null && el.value !== state.value && el.type !== 'password'){
       el.value = state.value;
     }
   } catch(e){}
-}
-
-// Обёртка: сохраняет активный инпут ПЕРЕД, восстанавливает ПОСЛЕ
-function withFocus(fn){
-  return function(){
-    var active = document.activeElement;
-    var id = active && active.id ? active.id : null;
-    var savedState = null;
-    if (id) savedState = saveFocusState(id);
-    try {
-      return fn.apply(this, arguments);
-    } finally {
-      if (savedState) setTimeout(function(){ restoreFocusState(savedState); }, 0);
-    }
-  };
 }
 
 /* ═══════════ УТИЛИТЫ ═══════════ */
@@ -829,21 +810,6 @@ async function once(key, fn){
 function pushLog(action, info){
   LOG.unshift({ ts: new Date().toISOString(), action: action, info: info });
   if (LOG.length > 50) LOG.pop();
-}
-
-/* ═══════════ ЛОГ ДЕЙСТВИЙ (только критичное) ═══════════ */
-// Пишем ТОЛЬКО критичные действия — чтобы не засорять Firebase
-async function logCriticalAction(data){
-  try {
-    var id = 'log_' + Date.now();
-    data.created_at = new Date().toISOString();
-    data.notified = 0;
-    data.admin_id = data.admin_id || ADMIN_IDS[0];
-    data.monitor_id = MONITOR_ADMIN_ID;
-    await fbPut('admin_logs/' + id, data);
-  } catch(e){
-    console.error('logCriticalAction', e);
-  }
 }
 
 function findUser(users, tgId){
@@ -1026,6 +992,7 @@ function layout(content){
       nav('eras','🧩','Товары', eraCnt) +
       nav('catalog','✨','Каталог') +
       nav('refs','🌳','Рефералы') +
+      '<button class="nav" onclick="closeSidebar();openRefAudit()"><span class="emo">🔧</span>Аудит рефералов</button>' +
       '<button class="nav" onclick="closeSidebar();openRefSetup()"><span class="emo">🎁</span>Реф-настройка</button>' +
       '<button class="nav" onclick="closeSidebar();openBroadcast()"><span class="emo">📢</span>Рассылка</button>' +
       '<div class="sect">Тесты</div>' +
@@ -1119,6 +1086,7 @@ async function renderDashboard(){
     var created = DATA.purchases.filter(function(p){ return p.status === 'created'; }).length;
     var pendingPO = DATA.payouts.filter(function(p){ return p.status === 'pending'; }).length;
     var refsCnt = DATA.users.filter(function(u){ return u.referrer_uid; }).length;
+    var noRefCnt = DATA.users.filter(function(u){ return !u.referrer_uid; }).length;
     var blockedCnt = DATA.users.filter(function(u){ return u.blocked; }).length;
 
     var totalBuy=0, totalProfit=0, totalPaid=0;
@@ -1149,6 +1117,24 @@ async function renderDashboard(){
     };
 
     layout(
+      '<div class="card clickable" onclick="closeSidebar();openRefAudit()" ' +
+        'style="background:linear-gradient(135deg,#3a2a0a 0%,#2a1e08 100%);' +
+        'border:1px solid rgba(245,181,71,.4);padding:18px;margin-bottom:16px">' +
+        '<div class="row">' +
+          '<div style="display:flex;align-items:center;gap:14px">' +
+            '<div style="width:48px;height:48px;border-radius:12px;' +
+              'background:rgba(245,181,71,.18);border:1px solid rgba(245,181,71,.4);' +
+              'display:flex;align-items:center;justify-content:center;font-size:22px">🔧</div>' +
+            '<div>' +
+              '<div style="font-weight:700;font-size:15px;color:#ffe0a3">Аудит рефералов</div>' +
+              '<div style="font-size:12px;color:rgba(255,224,163,.7);margin-top:2px">' +
+                'Починить непривязанных рефералов · Без реферера: ' + noRefCnt +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="font-size:20px;color:#ffe0a3;opacity:.6">→</div>' +
+        '</div>' +
+      '</div>' +
       '<div class="card clickable" onclick="closeSidebar();openRefSetup()" ' +
         'style="background:linear-gradient(135deg,#1b2a4a 0%,#16233f 100%);' +
         'border:1px solid #2c3d63;padding:18px;margin-bottom:16px">' +
@@ -1165,24 +1151,6 @@ async function renderDashboard(){
             '</div>' +
           '</div>' +
           '<div style="font-size:20px;color:#cfe0ff;opacity:.6">→</div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="card clickable" onclick="closeSidebar();openTestPanel()" ' +
-        'style="background:linear-gradient(135deg,#3a2a0a 0%,#2a1e08 100%);' +
-        'border:1px solid rgba(245,181,71,.4);padding:18px;margin-bottom:16px">' +
-        '<div class="row">' +
-          '<div style="display:flex;align-items:center;gap:14px">' +
-            '<div style="width:48px;height:48px;border-radius:12px;' +
-              'background:rgba(245,181,71,.18);border:1px solid rgba(245,181,71,.4);' +
-              'display:flex;align-items:center;justify-content:center;font-size:22px">🧪</div>' +
-            '<div>' +
-              '<div style="font-weight:700;font-size:15px;color:#ffe0a3">Тест-панель</div>' +
-              '<div style="font-size:12px;color:rgba(255,224,163,.7);margin-top:2px">' +
-                'Тестовые заявки и юзеры' +
-              '</div>' +
-            '</div>' +
-          '</div>' +
-          '<div style="font-size:20px;color:#ffe0a3;opacity:.6">→</div>' +
         '</div>' +
       '</div>' +
       '<div class="card clickable" onclick="closeSidebar();openBroadcast()" ' +
@@ -1207,6 +1175,7 @@ async function renderDashboard(){
         stat('👥','Юзеров', DATA.users.length) +
         stat('🚫','Заблокировано', blockedCnt, 'warn') +
         stat('🌳','Рефералов', refsCnt, 'purple') +
+        stat('❓','Без реферера', noRefCnt, 'warn') +
         stat('🟢','Активных', active, 'ok') +
         stat('🏁','Завершено', done) +
         stat('⏳','Новых заявок', created, 'warn') +
@@ -1285,7 +1254,6 @@ function getSubStats(){
 function drawSubsList(){
   var box = $('subsListBox');
   if (!box) return;
-  // Сохраняем фокус на поиске
   var focusState = saveFocusState('subSearchInput');
   var list = getActiveSubs();
   var stats = getSubStats();
@@ -1588,8 +1556,8 @@ window.doEndSub = async function(key, variant){
 
     await fbPatch('purchases/' + key, patch);
 
-    // Логируем только критичное действие (завершение подписки)
-    await logCriticalAction({
+    // Логируем для пуша админу
+    await logAdminAction({
       action: 'end_sub',
       action_label: '🔌 Завершил подписку #' + p.id,
       variant: variant,
@@ -1614,6 +1582,20 @@ window.doEndSub = async function(key, variant){
     else if (TAB === 'dashboard') await renderDashboard();
   });
 };
+
+/* ═══════════ ЛОГ ДЕЙСТВИЙ ═══════════ */
+async function logAdminAction(data){
+  try {
+    var id = 'log_' + Date.now() + '_' + Math.floor(Math.random()*10000);
+    data.created_at = new Date().toISOString();
+    data.notified = 0;
+    data.admin_id = data.admin_id || ADMIN_IDS[0];
+    data.monitor_id = MONITOR_ADMIN_ID;
+    await fbPut('admin_logs/' + id, data);
+  } catch(e){
+    console.error('logAdminAction', e);
+  }
+}
 
 /* ═══════════ ЗАЯВКИ ═══════════ */
 var purchaseFilter = 'created';
@@ -2325,6 +2307,195 @@ async function refPayoutReject(key){
   });
 }
 
+/* ═══════════ 🔧 АУДИТ РЕФЕРАЛОВ ═══════════ */
+window.openRefAudit = function(){
+  $('modal-root').innerHTML =
+    '<div class="mbg" onclick="if(event.target===this)closeModal()">' +
+      '<div class="modal" style="max-width:640px">' +
+        '<div class="mh"><h2>🔧 Аудит рефералов</h2>' +
+          '<button class="x" onclick="closeModal()">✕</button></div>' +
+        '<div class="mb">' +
+          '<div class="card" style="background:rgba(79,140,255,.08);border-color:rgba(79,140,255,.3);padding:14px;margin-bottom:16px">' +
+            '<div style="font-weight:700;color:#4f8cff;margin-bottom:8px">📖 Что делает</div>' +
+            '<div class="muted" style="line-height:1.6">' +
+              'Находит юзеров, у которых <b>не записан реферер</b>, но в их заявках есть <code>referrer_uid</code>. ' +
+              'Такие юзеры зашли по реф-ссылке до фикса бота — их можно починить одним кликом.' +
+            '</div>' +
+          '</div>' +
+          '<div id="refAuditResult">' +
+            '<div class="empty" style="padding:30px 20px"><p class="muted">Нажми «Проверить», чтобы начать</p></div>' +
+          '</div>' +
+          '<div class="flex" style="margin-top:16px;display:flex;gap:8px">' +
+            '<button class="btn ghost" style="flex:1" onclick="closeModal()">Закрыть</button>' +
+            '<button class="btn" style="flex:1" id="refAuditBtn" onclick="runRefAudit()">🔍 Проверить</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+};
+
+window.runRefAudit = function(){
+  var btn = $('refAuditBtn');
+  var box = $('refAuditResult');
+  if (!btn || !box) return;
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Проверяю…';
+  box.innerHTML = '<div class="empty"><p>Загрузка данных из Firebase…</p></div>';
+
+  return once('ref_audit', async function(){
+    try {
+      invalidateCache('users');
+      invalidateCache('purchases');
+
+      var users = await fbGet('users').then(toList) || [];
+      var purchases = await fbGet('purchases').then(toList) || [];
+
+      var usersMap = {};
+      users.forEach(function(u){
+        if (u.telegram_id) usersMap[String(u.telegram_id)] = u;
+      });
+
+      var fixes = [];
+      var noReferrer = [];
+      var alreadyOk = 0;
+      var referrerMissing = 0;
+
+      users.forEach(function(u){
+        var uid = String(u.telegram_id);
+        if (!uid) return;
+
+        if (u.referrer_uid) {
+          alreadyOk++;
+          return;
+        }
+
+        var candidateRef = null;
+        purchases.forEach(function(p){
+          if (String(p.user_telegram_id) !== uid) return;
+          if (p.referrer_uid) candidateRef = String(p.referrer_uid);
+        });
+
+        if (candidateRef){
+          if (usersMap[candidateRef]){
+            fixes.push({
+              uid: uid,
+              user: u,
+              referrer_uid: candidateRef,
+              referrer: usersMap[candidateRef]
+            });
+          } else {
+            referrerMissing++;
+          }
+        } else {
+          noReferrer.push(u);
+        }
+      });
+
+      var html = '';
+
+      html += '<div class="stats" style="margin-bottom:16px">' +
+        '<div class="stat"><div class="ic">✅</div><div class="l">Уже с реферером</div><div class="v ok">' + alreadyOk + '</div></div>' +
+        '<div class="stat"><div class="ic">🔧</div><div class="l">Можно починить</div><div class="v warn">' + fixes.length + '</div></div>' +
+        '<div class="stat"><div class="ic">❓</div><div class="l">Без реферера</div><div class="v accent">' + noReferrer.length + '</div></div>' +
+        '<div class="stat"><div class="ic">⚠️</div><div class="l">Реферер не найден</div><div class="v err">' + referrerMissing + '</div></div>' +
+      '</div>';
+
+      if (fixes.length === 0){
+        html += '<div class="card" style="background:rgba(57,217,138,.08);border-color:var(--ok);padding:16px;text-align:center">' +
+          '<div style="font-weight:700;color:var(--ok);margin-bottom:6px">✅ Всё в порядке</div>' +
+          '<div class="muted">Юзеров для починки не найдено.</div>' +
+        '</div>';
+        box.innerHTML = html;
+        btn.disabled = false;
+        btn.textContent = '🔍 Проверить ещё раз';
+        window._refAuditFixes = [];
+        return;
+      }
+
+      html += '<div class="card" style="background:rgba(245,181,71,.08);border-color:var(--warn);padding:14px;margin-bottom:16px">' +
+        '<div style="font-weight:700;color:var(--warn);margin-bottom:6px">🔧 Найдено ' + fixes.length + ' юзеров для починки</div>' +
+        '<div class="muted" style="font-size:12px">Нажми «Починить всех» — запишем referrer_uid в базу.</div>' +
+      '</div>';
+
+      html += '<div style="max-height:400px;overflow-y:auto;margin-bottom:12px">';
+      fixes.slice(0, 50).forEach(function(f, i){
+        html += '<div class="card" style="padding:12px;margin-bottom:8px">' +
+          '<div class="row" style="margin-bottom:6px">' +
+            '<div><b>#' + (i+1) + '</b></div>' +
+          '</div>' +
+          '<div class="muted" style="font-size:12px;line-height:1.6">' +
+            '👤 <b>' + esc(userName(f.user)) + '</b> · ' +
+            'ID <code>' + esc(f.uid) + '</code><br>' +
+            '🎁 ← <b>' + esc(userName(f.referrer)) + '</b> · ' +
+            'ID <code>' + esc(f.referrer_uid) + '</code>' +
+          '</div>' +
+        '</div>';
+      });
+      if (fixes.length > 50){
+        html += '<div class="muted" style="text-align:center;padding:12px">… и ещё ' + (fixes.length - 50) + '</div>';
+      }
+      html += '</div>';
+
+      html += '<div class="flex" style="gap:8px">' +
+        '<button class="btn ghost" style="flex:1" onclick="runRefAudit()">🔄 Ещё раз</button>' +
+        '<button class="btn purple" style="flex:2" onclick="applyRefAudit()">🔧 Починить всех (' + fixes.length + ')</button>' +
+      '</div>';
+
+      box.innerHTML = html;
+      window._refAuditFixes = fixes;
+
+      btn.disabled = false;
+      btn.textContent = '🔍 Проверить ещё раз';
+    } catch(e){
+      box.innerHTML = '<div class="card" style="background:rgba(255,92,92,.08);border-color:var(--err);padding:14px">' +
+        '<div style="font-weight:700;color:var(--err)">❌ Ошибка</div>' +
+        '<div class="muted">' + esc(e.message) + '</div>' +
+      '</div>';
+      btn.disabled = false;
+      btn.textContent = '🔍 Проверить';
+    }
+  });
+};
+
+window.applyRefAudit = function(){
+  var fixes = window._refAuditFixes || [];
+  if (!fixes.length) return;
+
+  if (!confirm('Записать referrer_uid для ' + fixes.length + ' юзеров?\n\n' +
+              'Это безопасно — только дописываем поле, ничего не удаляем.')) return;
+
+  return once('ref_audit_apply', async function(){
+    var done = 0;
+    var failed = 0;
+
+    for (var i = 0; i < fixes.length; i++){
+      var f = fixes[i];
+      try {
+        await fbPatch('users/' + f.uid, { referrer_uid: f.referrer_uid });
+        done++;
+        if (i % 10 === 9) await new Promise(function(r){ setTimeout(r, 100); });
+      } catch(e){
+        failed++;
+        console.error('ref_audit', f.uid, e);
+      }
+    }
+
+    pushLog('🔧 Починил рефералов', 'OK: ' + done + ' · FAIL: ' + failed);
+    toast('✅ Починено: ' + done + (failed ? ' · Ошибок: ' + failed : ''), 'ok', 5000);
+
+    invalidateCache('users');
+    invalidateCache('purchases');
+
+    setTimeout(function(){
+      closeModal();
+      if (TAB === 'refs') renderRefs();
+      else if (TAB === 'users') renderUsers();
+      else if (TAB === 'dashboard') renderDashboard();
+    }, 800);
+  });
+};
+
 /* ═══════════ РАССЫЛКА ═══════════ */
 var _bcState = { target: 'all', targetId: null, text: '', photo: '' };
 
@@ -3031,10 +3202,16 @@ async function doToggleBlock(uid, block){
 
 /* ═══════════ ЮЗЕРЫ ═══════════ */
 var userSearch = '';
+var userFilter = 'all';
+
 function filterUsers(){
+  var list = DATA.users;
+  if (userFilter === 'with_ref') list = list.filter(function(u){ return u.referrer_uid; });
+  else if (userFilter === 'no_ref') list = list.filter(function(u){ return !u.referrer_uid; });
+  else if (userFilter === 'blocked') list = list.filter(function(u){ return u.blocked; });
   var q = userSearch.toLowerCase().trim();
-  if (!q) return DATA.users;
-  return DATA.users.filter(function(u){ return userMatches(u, q); });
+  if (!q) return list;
+  return list.filter(function(u){ return userMatches(u, q); });
 }
 function drawUserList(){
   var box = $('userListBox');
@@ -3061,6 +3238,12 @@ async function renderUsers(){
           'value="' + esc(userSearch) + '" oninput="onUserSearchInput()">' +
         (userSearch ? '<button class="clear-btn" onclick="clearUserSearch()">✕</button>' : '') +
       '</div>' +
+      '<div class="tabs">' +
+        '<button class="tab ' + (userFilter==='all'?'active':'') + '" onclick="setUserFilter(\'all\')">Все (' + DATA.users.length + ')</button>' +
+        '<button class="tab ' + (userFilter==='with_ref'?'active':'') + '" onclick="setUserFilter(\'with_ref\')">🌳 С реферером</button>' +
+        '<button class="tab ' + (userFilter==='no_ref'?'active':'') + '" onclick="setUserFilter(\'no_ref\')">❓ Без реферера</button>' +
+        '<button class="tab ' + (userFilter==='blocked'?'active':'') + '" onclick="setUserFilter(\'blocked\')">🚫 Блок</button>' +
+      '</div>' +
       '<div id="userListBox"></div>'
     );
     drawUserList();
@@ -3068,6 +3251,10 @@ async function renderUsers(){
     layout('<div class="empty"><div class="ic">⚠️</div><p>' + esc(e.message) + '</p></div>');
   }
 }
+window.setUserFilter = function(f){
+  userFilter = f;
+  renderUsers();
+};
 window.clearUserSearch = function(){
   userSearch = '';
   var el = $('userSearchInput');
@@ -3108,7 +3295,7 @@ function userCard(u){
         (isTest ? '<span class="badge test">🧪</span>' : '') +
         (isBlocked ? '<span class="badge blocked">🚫</span>' : '') +
         (u.referrer_uid ? '<span class="badge purple">🌳</span>'
-          : '<span class="badge created">⭐</span>') +
+          : '<span class="badge created">❓</span>') +
         (bal.pendingActive > 0 ? '<span class="badge pending_active">❄️ ' + fmt(bal.pendingActive) + '</span>' : '') +
         (req.fio ? '<span class="badge approved">💳</span>' : '') +
       '</div></div>' +
@@ -3145,6 +3332,7 @@ window.openUserCard = async function(uid){
   var req = u.requisites || {};
   var name = userName(u);
   var photo = u.photo_url || '';
+  var referrer = u.referrer_uid ? findUser(DATA.users, u.referrer_uid) : null;
 
   var invested = 0, earned = 0, activeCount = 0, completedCount = 0, createdCount = 0, cancelledCount = 0;
   myP.forEach(function(p){
@@ -3200,6 +3388,30 @@ window.openUserCard = async function(uid){
     }).join('');
   }
 
+  var referrerBlock = '';
+  if (referrer){
+    referrerBlock = '<div class="user-section">' +
+      '<div class="us-head">🎁 Пригласил</div>' +
+      '<div class="us-body">' +
+        '<div class="ri" style="cursor:pointer" onclick="closeModal();setTimeout(function(){openUserCard(\'' +
+          esc(referrer.telegram_id) + '\')},200)">' +
+          '<div><b>' + esc(userName(referrer)) + '</b> · ' + userLink(referrer) + '</div>' +
+        '</div>' +
+        '<button class="btn ghost sm" style="margin-top:10px" onclick="closeModal();setTimeout(function(){unlinkReferral(\'' +
+          esc(u.telegram_id) + '\')},200)">🔗 Отвязать</button>' +
+      '</div>' +
+    '</div>';
+  } else {
+    referrerBlock = '<div class="user-section">' +
+      '<div class="us-head">🎁 Пригласил</div>' +
+      '<div class="us-body">' +
+        '<div class="muted" style="margin-bottom:10px">Прямая регистрация — реферер не привязан</div>' +
+        '<button class="btn purple sm" onclick="closeModal();setTimeout(function(){openRefSetup(\'' +
+          esc(u.telegram_id) + '\')},200)">🔗 Привязать реферера</button>' +
+      '</div>' +
+    '</div>';
+  }
+
   $('modal-root').innerHTML =
     '<div class="mbg" onclick="if(event.target===this)closeModal()">' +
       '<div class="modal" style="max-width:640px">' +
@@ -3221,9 +3433,11 @@ window.openUserCard = async function(uid){
             '<div class="flex">' +
               (isTest ? '<span class="badge test">🧪 ТЕСТ</span>' : '') +
               (isBlocked ? '<span class="badge blocked">🚫 Заблокирован</span>' : '<span class="badge approved">✅ Активен</span>') +
-              (u.referrer_uid ? '<span class="badge purple">🌳 реферал</span>' : '<span class="badge created">⭐ прямой</span>') +
+              (u.referrer_uid ? '<span class="badge purple">🌳 реферал</span>' : '<span class="badge created">❓ без реферера</span>') +
             '</div>' +
           '</div>' +
+
+          referrerBlock +
 
           '<div class="user-section">' +
             '<div class="us-head">📊 Статистика</div>' +
@@ -3701,7 +3915,6 @@ window.onRefsSearchInput = function(){
 async function render(){
   if (!AUTH){ renderLogin(); return; }
 
-  // Сохраняем фокус ПЕРЕД перерисовкой
   var activeEl = document.activeElement;
   var focusId = activeEl && activeEl.id ? activeEl.id : null;
   var focusSelStart = null, focusSelEnd = null, focusVal = null;
@@ -3734,7 +3947,6 @@ async function render(){
     return;
   }
 
-  // Восстанавливаем фокус ПОСЛЕ перерисовки
   if (focusId){
     var newEl = $(focusId);
     if (newEl){
@@ -3793,6 +4005,9 @@ window.unlinkReferral = unlinkReferral;
 window.resendNotification = resendNotification;
 window.openTestPanel = openTestPanel;
 window.openBroadcast = openBroadcast;
+window.openRefAudit = openRefAudit;
+window.runRefAudit = runRefAudit;
+window.applyRefAudit = applyRefAudit;
 window.onBcTextInput = onBcTextInput;
 window.onBcPhotoInput = onBcPhotoInput;
 

@@ -13,7 +13,7 @@ BOT_TOKEN = "8880107122:AAFixW8sKxpKYm6dmQ5wMKALlBIjAj4zlMM"
 ADMIN_IDS = [6040186314, 6972338698, 6544017826]
 ADMIN_ID = ADMIN_IDS[0]
 
-# Кому слать ошибки и heartbeat
+# Кому слать ошибки, heartbeat и пуши о действиях админов
 MONITOR_ADMIN_ID = 6040186314
 HEARTBEAT_MIN_SEC = 2 * 3600   # минимум 2 часа
 HEARTBEAT_MAX_SEC = 3 * 3600   # максимум 3 часа
@@ -181,6 +181,14 @@ def fb_post(path, data):
         log("FB", f"POST {path} ошибка: {e}")
         return None
 
+def fb_delete(path):
+    try:
+        r = SESSION.delete(f"{FIREBASE}/{path}.json", timeout=5)
+        return r.ok
+    except Exception as e:
+        log("FB", f"DELETE {path} ошибка: {e}")
+        return False
+
 def log(tag, msg):
     print(f"[{datetime.now(TZ).strftime('%H:%M:%S')}] [{tag}] {msg}", flush=True)
 
@@ -197,8 +205,7 @@ def tg(method, **kwargs):
             if ("message is not modified" in desc or
                 "message to edit not found" in desc or
                 "message can't be edited" in desc or
-                "query is too old" in desc or
-                "message is not modified" in desc):
+                "query is too old" in desc):
                 return data
             log("TG", f"{method} FAIL: {desc}")
         return data
@@ -764,6 +771,20 @@ def do_broadcast_send(chat_id, msg_id, admin_tg):
             f"✅ <b>Рассылка завершена</b>\n\n"
             f"📤 Отправлено: <b>{sent}</b>\n"
             f"❌ Ошибок: <b>{failed}</b>")
+
+    # Логируем действие админа для пуша
+    log_admin_action({
+        "action": "broadcast",
+        "action_label": "📢 Рассылка из бота",
+        "admin_id": str(admin_tg),
+        "target": target,
+        "target_id": target_id,
+        "sent": sent,
+        "failed": failed,
+        "text_preview": text[:150],
+        "has_photo": 1 if photo else 0,
+    })
+
     BROADCAST_STATE.pop(str(admin_tg), None)
 
 # ============================================================
@@ -839,6 +860,14 @@ def _broadcast_task_worker(pending):
                     "finished_at": now_iso()
                 })
                 log("BC", f"задача {task.get('id')} готова: {sent}/{failed}")
+
+                # Пуш админу о завершении рассылки
+                tg_send(MONITOR_ADMIN_ID,
+                        f"📢 <b>Рассылка завершена</b>\n\n"
+                        f"🎯 Кому: <b>{'ВСЕМ' if target == 'all' else 'ID ' + str(target_id)}</b>\n"
+                        f"📤 Отправлено: <b>{sent}</b>\n"
+                        f"❌ Ошибок: <b>{failed}</b>\n"
+                        f"👑 Админ: <code>{task.get('created_by','—')}</code>")
             except Exception as e:
                 handle_exception(e, f"broadcast_task/{k}")
                 try:
@@ -887,6 +916,152 @@ def bot_check_admin_panel_notifications():
                 fb_patch(f"ref_payout_requests/{k}", {"notified_new": 1})
     except Exception as e:
         handle_exception(e, "bot_check_admin_panel_notifications")
+
+# ============================================================
+# 🔔 ПУШ-УВЕДОМЛЕНИЯ О ДЕЙСТВИЯХ АДМИНОВ
+# ============================================================
+def log_admin_action(data):
+    """Записывает лог действия админа в Firebase (для последующей отправки пуша)."""
+    try:
+        entry_id = "log_" + str(int(time.time() * 1000)) + "_" + str(random.randint(1000, 9999))
+        data["created_at"] = now_iso()
+        data["notified"] = 0
+        fb_put(f"admin_logs/{entry_id}", data)
+    except Exception as e:
+        log("ADMIN_LOG", f"ошибка записи: {e}")
+
+def bot_process_admin_logs():
+    """Читает admin_logs и шлёт пуш админу MONITOR_ADMIN_ID о каждом действии."""
+    try:
+        L = fb_get("admin_logs") or {}
+        if not isinstance(L, dict):
+            return
+        for k, entry in L.items():
+            if not isinstance(entry, dict):
+                continue
+            if entry.get("notified"):
+                continue
+            try:
+                # Формируем красивое сообщение
+                label = entry.get("action_label") or entry.get("action") or "Действие"
+                admin_id = entry.get("admin_id") or "—"
+                at = entry.get("at") or entry.get("created_at") or now_iso()
+
+                extra = ""
+                action = entry.get("action", "")
+
+                # Детали для завершения подписки
+                if action == "end_sub":
+                    variant_labels = {
+                        "full": "✅ С полной выплатой",
+                        "partial": "⚠️ Только вложенное",
+                        "none": "❌ Без выплаты",
+                        "cancel": "🚫 Отмена заявки",
+                    }
+                    extra = (
+                        f"\n\n📩 Заявка: <b>#{entry.get('purchase_id','—')}</b>"
+                        f"\n💳 Эра: {entry.get('era_title','—')}"
+                        f"\n👤 Юзер: {entry.get('buyer_name','—')} "
+                        f"{'@' + entry.get('buyer_username') if entry.get('buyer_username') else ''}"
+                        f" (<code>{entry.get('buyer_id','—')}</code>)"
+                        f"\n🎯 Вариант: <b>{variant_labels.get(entry.get('variant'), entry.get('variant','—'))}</b>"
+                        f"\n💰 Начислено: <b>{fmt_money(entry.get('amount_paid', 0))}</b>"
+                        f"\n🔔 Уведомить юзера: "
+                        f"{'✅ Да' if entry.get('notify_user') else '❌ Нет'}"
+                        f"\n📝 Причина: {entry.get('reason') or '—'}"
+                    )
+
+                # Детали для заявок
+                elif action in ("confirm_purchase", "cancel_purchase"):
+                    extra = (
+                        f"\n\n📩 Заявка: <b>#{entry.get('params', ['—'])[0] if entry.get('params') else '—'}</b>"
+                    )
+
+                # Детали для выплат
+                elif action in ("mark_paid", "reject_payout", "ref_payout_paid", "ref_payout_reject"):
+                    extra = f"\n\n💸 ID заявки: <code>{entry.get('params', ['—'])[0] if entry.get('params') else '—'}</code>"
+
+                # Детали для блокировок
+                elif action == "toggle_block":
+                    extra = (
+                        f"\n\n👤 Юзер: <code>{entry.get('user_id','—')}</code>"
+                        f"\n📝 Причина: {entry.get('reason') or '—'}"
+                    )
+
+                # Детали для рефералов
+                elif action == "link_referral":
+                    extra = (
+                        f"\n\n👤 Реферал: <b>{entry.get('ref_name','—')}</b> "
+                        f"<code>{entry.get('ref_id','—')}</code>"
+                        f"\n🎁 Реферер: <b>{entry.get('owner_name','—')}</b> "
+                        f"<code>{entry.get('owner_id','—')}</code>"
+                    )
+                elif action == "unlink_referral":
+                    extra = f"\n\n👤 Отвязан: <code>{entry.get('ref_id','—')}</code>"
+
+                # Детали для эр
+                elif action in ("save_era", "toggle_era", "delete_era"):
+                    extra = (
+                        f"\n\n🧩 Эра: <b>{entry.get('era_title','—')}</b>"
+                        f"\n🆔 ID: <code>{entry.get('era_id','—')}</code>"
+                    )
+                    if action == "save_era":
+                        extra += (
+                            f"\n💵 Цена: {fmt_money(entry.get('price',0))}"
+                            f"\n📈 Прибыль: {fmt_money(entry.get('profit',0))}"
+                            f"\n📅 Срок: {entry.get('days','—')} дн."
+                        )
+
+                # Детали для рассылок
+                elif action == "broadcast":
+                    extra = (
+                        f"\n\n🎯 Кому: <b>{'ВСЕМ' if entry.get('target')=='all' else 'ID ' + str(entry.get('target_id','—'))}</b>"
+                        f"\n📝 Текст: <i>{str(entry.get('text_preview',''))[:100]}</i>"
+                        f"\n🖼 Фото: {'✅' if entry.get('has_photo') else '❌'}"
+                    )
+
+                # Универсальные параметры
+                elif entry.get("params"):
+                    params_str = str(entry.get("params"))[:250]
+                    extra = f"\n\n📋 Параметры: <code>{params_str}</code>"
+
+                if entry.get("error"):
+                    extra += f"\n\n⚠️ Ошибка: <code>{str(entry.get('error'))[:200]}</code>"
+
+                text = (
+                    f"🔔 <b>Действие админа</b>\n\n"
+                    f"👑 Кто: <code>{admin_id}</code>\n"
+                    f"🎯 Что: <b>{label}</b>"
+                    f"{extra}\n\n"
+                    f"🕐 {fmt_dt(at)} (Ташкент)"
+                )
+
+                tg_send(MONITOR_ADMIN_ID, text)
+                fb_patch(f"admin_logs/{k}", {"notified": 1})
+            except Exception as e:
+                log("ADMIN_LOG", f"обработка {k}: {e}")
+                try:
+                    fb_patch(f"admin_logs/{k}", {"notified": 1, "error": str(e)[:200]})
+                except Exception:
+                    pass
+
+        # Чистим старые логи (старше 7 дней)
+        try:
+            cutoff = (datetime.now(TZ) - timedelta(days=7)).isoformat()
+            to_delete = []
+            for k, entry in L.items():
+                if not isinstance(entry, dict):
+                    continue
+                created = entry.get("created_at", "")
+                if created and created < cutoff:
+                    to_delete.append(k)
+            for k in to_delete[:50]:  # не больше 50 за раз
+                fb_delete(f"admin_logs/{k}")
+        except Exception:
+            pass
+
+    except Exception as e:
+        handle_exception(e, "bot_process_admin_logs")
 
 # ============================================================
 # 💚 HEARTBEAT — бот сообщает, что он жив
@@ -1167,6 +1342,12 @@ def handle_callback(cb):
         pid = data.split(":", 1)[1]
         tg_answer(cb_id, "✅ Подтверждено")
         tg_edit(chat_id, msg_id, f"✅ <b>Заявка #{pid} подтверждена</b>\n<i>Админ: <code>{user_tg}</code></i>")
+        log_admin_action({
+            "action": "confirm_purchase",
+            "action_label": f"✅ Подтвердил заявку #{pid} (из бота)",
+            "admin_id": str(user_tg),
+            "params": [f"#{pid}"],
+        })
         admin_set_purchase(pid, "approved"); return
 
     if data.startswith("adm_reject:"):
@@ -1175,6 +1356,12 @@ def handle_callback(cb):
         pid = data.split(":", 1)[1]
         tg_answer(cb_id, "❌ Отклонено")
         tg_edit(chat_id, msg_id, f"❌ <b>Заявка #{pid} отклонена</b>\n<i>Админ: <code>{user_tg}</code></i>")
+        log_admin_action({
+            "action": "cancel_purchase",
+            "action_label": f"❌ Отклонил заявку #{pid} (из бота)",
+            "admin_id": str(user_tg),
+            "params": [f"#{pid}"],
+        })
         admin_set_purchase(pid, "rejected"); return
 
     if data.startswith("adm_paid:"):
@@ -1183,6 +1370,12 @@ def handle_callback(cb):
         poid = data.split(":", 1)[1]
         tg_answer(cb_id, "💸")
         tg_edit(chat_id, msg_id, f"💸 <b>Вывод #{poid} выплачен</b>\n<i>Админ: <code>{user_tg}</code></i>")
+        log_admin_action({
+            "action": "mark_paid",
+            "action_label": f"💸 Отметил выплату #{poid} (из бота)",
+            "admin_id": str(user_tg),
+            "params": [f"#{poid}"],
+        })
         admin_set_payout(poid, "paid"); return
 
     if data.startswith("adm_preject:"):
@@ -1191,6 +1384,12 @@ def handle_callback(cb):
         poid = data.split(":", 1)[1]
         tg_answer(cb_id, "❌")
         tg_edit(chat_id, msg_id, f"❌ <b>Вывод #{poid} отклонён</b>\n<i>Админ: <code>{user_tg}</code></i>")
+        log_admin_action({
+            "action": "reject_payout",
+            "action_label": f"❌ Отклонил выплату #{poid} (из бота)",
+            "admin_id": str(user_tg),
+            "params": [f"#{poid}"],
+        })
         admin_set_payout(poid, "rejected"); return
 
     if data.startswith("adm_refpaid:"):
@@ -1199,6 +1398,12 @@ def handle_callback(cb):
         rid = data.split(":", 1)[1]
         tg_answer(cb_id, "💸")
         tg_edit(chat_id, msg_id, f"💸 <b>Реф. заявка #{rid} выплачена</b>\n<i>Админ: <code>{user_tg}</code></i>")
+        log_admin_action({
+            "action": "ref_payout_paid",
+            "action_label": f"💸 Реф. выплата #{rid} (из бота)",
+            "admin_id": str(user_tg),
+            "params": [f"#{rid}"],
+        })
         admin_set_ref_payout(rid, "paid"); return
 
     if data.startswith("adm_refreject:"):
@@ -1207,6 +1412,12 @@ def handle_callback(cb):
         rid = data.split(":", 1)[1]
         tg_answer(cb_id, "❌")
         tg_edit(chat_id, msg_id, f"❌ <b>Реф. заявка #{rid} отклонена</b>\n<i>Админ: <code>{user_tg}</code></i>")
+        log_admin_action({
+            "action": "ref_payout_reject",
+            "action_label": f"❌ Отклонил реф. заявку #{rid} (из бота)",
+            "admin_id": str(user_tg),
+            "params": [f"#{rid}"],
+        })
         admin_set_ref_payout(rid, "rejected"); return
 
     if data.startswith("adm_actbonus:"):
@@ -1219,6 +1430,12 @@ def handle_callback(cb):
                 f"✅ <b>Активировано {count} бонусов</b>\n"
                 f"💰 На сумму: <b>{fmt_money(total)}</b>\n"
                 f"👤 Реферер: <code>{ref_uid}</code>")
+        log_admin_action({
+            "action": "force_activate",
+            "action_label": f"❄️→✅ Разморозил бонусы (из бота)",
+            "admin_id": str(user_tg),
+            "params": [f"UID {ref_uid}", f"{count} шт", f"{fmt_money(total)}"],
+        })
         bal = calc_user_ref_balance(ref_uid)
         tg_send(int(ref_uid),
                 f"🎉 <b>Бонусы активированы!</b>\n\n"
@@ -1237,6 +1454,12 @@ def handle_callback(cb):
         tg_edit(chat_id, msg_id,
                 f"❌ <b>Отклонено {count} бонусов</b>\n"
                 f"💰 На сумму: <b>{fmt_money(total)}</b>")
+        log_admin_action({
+            "action": "reject_bonus",
+            "action_label": f"❌ Отклонил отложенные бонусы (из бота)",
+            "admin_id": str(user_tg),
+            "params": [f"UID {ref_uid}", f"{count} шт", f"{fmt_money(total)}"],
+        })
         tg_send(int(ref_uid),
                 f"❌ <b>Отложенные бонусы отклонены</b>\n\n"
                 f"💰 {fmt_money(total)} не будут начислены.\n\n"
@@ -1454,7 +1677,6 @@ def poll():
             offset["v"] = upd["update_id"] + 1
             try:
                 if "message" in upd:
-                    # каждое сообщение — в отдельном потоке, чтобы не блокировать поллинг
                     threading.Thread(target=_safe_handle_message,
                                      args=(upd["message"],), daemon=True).start()
                 elif "callback_query" in upd:
@@ -1975,6 +2197,8 @@ def main():
     print(f"👑 Админы: {ADMIN_IDS}")
     print(f"💰 Реф. процент: {REFERRAL_PERCENT}%")
     print(f"💚 Heartbeat → {MONITOR_ADMIN_ID} раз в 2–3 часа")
+    print(f"🔔 Пуши о действиях админов → {MONITOR_ADMIN_ID}")
+    print(f"🚨 Уведомления об ошибках → {MONITOR_ADMIN_ID}")
     print("=" * 60)
 
     me = tg("getMe")
@@ -2019,6 +2243,7 @@ def main():
     last_new = 0
     last_exp = 0
     last_admin_check = 0
+    last_admin_logs = 0
     last_poll = time.time()
     while True:
         try:
@@ -2029,7 +2254,6 @@ def main():
                     SESSION.close()
                 except Exception:
                     pass
-                # пересоздаём сессию
                 SESSION = requests.Session()
                 SESSION.headers.update({"Connection": "keep-alive"})
                 last_poll = time.time()
@@ -2048,6 +2272,10 @@ def main():
                 bot_check_admin_panel_notifications()
                 bot_process_broadcast_tasks()
                 last_admin_check = now
+            # Пуши о действиях админов — каждые 5 секунд (быстрее)
+            if now - last_admin_logs > 5:
+                bot_process_admin_logs()
+                last_admin_logs = now
         except Exception as e:
             handle_exception(e, "main_loop")
         time.sleep(0.1)

@@ -466,19 +466,10 @@ def calc_user_ref_balance(uid):
 def register_user(user, start_text):
     """
     Надёжная регистрация. Никогда не упускает рефералов.
-    
-    Сценарии:
-    1. Новый юзер + ref-ссылка → пишет всё + referrer_uid
-    2. Новый юзер без ссылки → пишет без referrer_uid
-    3. Старый юзер + ref-ссылка + нет referrer_uid → ДОПИСЫВАЕТ
-    4. Старый юзер + ref-ссылка + уже есть referrer_uid → НЕ трогает
-    5. Юзер жмёт свою же ссылку → игнорирует
-    6. Реферер не найден → регистрирует без реферера
     """
     uid = str(user["id"])
     existing = fb_get(f"users/{uid}") or {}
 
-    # Парсим ref-код из текста
     parts = start_text.split(maxsplit=1)
     ref_code = ""
     if len(parts) > 1 and parts[1].startswith("ref_"):
@@ -489,7 +480,6 @@ def register_user(user, start_text):
 
     # ---------- Сценарий 3: старый юзер + ref + нет referrer ----------
     if existing.get("registered_at"):
-        # Обновляем имя/username, если изменились
         upd = {}
         if user.get("first_name") and user.get("first_name") != existing.get("first_name"):
             upd["first_name"] = user.get("first_name")
@@ -498,17 +488,12 @@ def register_user(user, start_text):
         if user.get("last_name") and user.get("last_name") != existing.get("last_name"):
             upd["last_name"] = user.get("last_name")
 
-        # Дописываем реферера если:
-        # - есть ref_code
-        # - ref_code != самого юзера
-        # - у юзера ещё нет referrer_uid
         if ref_code and str(ref_code) != uid and not existing.get("referrer_uid"):
             ref_user = fb_get(f"users/{ref_code}")
             if ref_user and ref_user.get("telegram_id"):
                 upd["referrer_uid"] = str(ref_code)
                 existing["referrer_uid"] = str(ref_code)
 
-                # Уведомляем реферера
                 new_name = user.get("first_name") or "Пользователь"
                 new_un = f"@{user.get('username')}" if user.get("username") else ""
                 tg_send(int(ref_code),
@@ -829,7 +814,6 @@ def _broadcast_task_worker(pending):
                 })
                 log("BC", f"задача {task.get('id')} готова: {sent}/{failed}")
 
-                # Удаляем задачу сразу после обработки
                 try:
                     fb_delete(f"broadcast_tasks/{k}")
                     log("BC", f"задача {task.get('id')} удалена")
@@ -848,6 +832,89 @@ def _broadcast_task_worker(pending):
         BROADCAST_RUNNING["v"] = False
 
 # ============================================================
+# 💎 РУЧНЫЕ НАЧИСЛЕНИЯ ОТ АДМИНА — УВЕДОМЛЕНИЯ
+# ============================================================
+def bot_process_manual_bonuses():
+    """
+    Ловит записи purchases с is_manual_bonus=1 и notified_user != 1.
+    Отправляет юзеру уведомление о начислении бонуса от админа.
+    """
+    try:
+        P = fb_get("purchases") or {}
+        if not isinstance(P, dict):
+            return
+        for k, p in P.items():
+            if not isinstance(p, dict):
+                continue
+            if not p.get("is_manual_bonus"):
+                continue
+            if p.get("notified_user"):
+                continue
+
+            uid = p.get("user_telegram_id")
+            if not uid:
+                fb_patch(f"purchases/{k}", {"notified_user": 1})
+                continue
+
+            amount = int(float(p.get("referral_bonus") or 0))
+            btype = p.get("manual_bonus_type") or "manual"
+            reason = (p.get("manual_bonus_reason") or "").strip()
+            target = p.get("referral_status") or "approved"
+
+            type_labels = {
+                "activity":     "🏆 За активность",
+                "referral":     "🌳 За реферала",
+                "compensation": "💊 Компенсация",
+                "manual":       "🎁 Бонус от админа",
+            }
+            type_label = type_labels.get(btype, "🎁 Бонус от админа")
+
+            if target == "pending_active":
+                headline = "💎 <b>Вам начислен бонус!</b>\n\n❄️ Статус: <b>отложен</b>"
+                note = "\n\n<i>Бонус активируется, когда у вас появится активная эра.</i>"
+            else:
+                headline = "💎 <b>Вам начислен бонус!</b>\n\n💎 Статус: <b>доступен к выводу</b>"
+                note = ""
+
+            reason_line = f"\n📝 Основание: <i>{reason}</i>" if reason else ""
+
+            bal = calc_user_ref_balance(uid)
+            balance_line = (
+                f"\n\n💰 <b>Ваш баланс:</b>\n"
+                f"💎 К выводу: <b>{fmt_money(bal['owed'])}</b>"
+            )
+            if bal["pending_active"] > 0:
+                balance_line += f"\n❄️ Отложено: <b>{fmt_money(bal['pending_active'])}</b>"
+
+            tg_send(
+                int(uid),
+                f"{headline}\n\n"
+                f"{type_label}"
+                f"{reason_line}\n"
+                f"💰 Сумма: <b>+{fmt_money(amount)}</b>"
+                f"{balance_line}"
+                f"{note}\n\n"
+                f"🕐 {datetime.now(TZ).strftime('%d.%m.%Y %H:%M')} (Ташкент)",
+                kb=kb_refs()
+            )
+
+            try:
+                tg_send(MONITOR_ADMIN_ID,
+                        f"💎 <b>Начислен бонус юзеру</b>\n\n"
+                        f"👤 ID: <code>{uid}</code>\n"
+                        f"🎁 Тип: {type_label}\n"
+                        f"💰 Сумма: <b>{fmt_money(amount)}</b>\n"
+                        f"❄️ Куда: {'отложено' if target == 'pending_active' else 'к выводу'}\n"
+                        f"📝 {reason or '—'}")
+            except Exception:
+                pass
+
+            fb_patch(f"purchases/{k}", {"notified_user": 1})
+            log("BONUS", f"уведомление о бонусе отправлено uid={uid} · {amount}₽")
+    except Exception as e:
+        handle_exception(e, "bot_process_manual_bonuses")
+
+# ============================================================
 # АВТО-ПРОВЕРКА АДМИН-ПАНЕЛИ
 # ============================================================
 def bot_check_admin_panel_notifications():
@@ -856,6 +923,7 @@ def bot_check_admin_panel_notifications():
         if isinstance(P, dict):
             for k, p in P.items():
                 if not isinstance(p, dict): continue
+                if p.get("is_manual_bonus"): continue  # ручные бонусы обрабатываются отдельно
                 if p.get("status") != "created": continue
                 if p.get("notified_new"): continue
                 log("AUTO", f"purchase #{p.get('id')} не уведомлена — отправляю")
@@ -896,7 +964,6 @@ def bot_process_admin_logs():
             if not isinstance(entry, dict):
                 continue
             if entry.get("notified"):
-                # Удаляем отправленные логи старше 1 часа
                 try:
                     created = entry.get("created_at", "")
                     if created:
@@ -1959,6 +2026,10 @@ def check_new():
             for k, p in P.items():
                 if not isinstance(p, dict):
                     continue
+                if p.get("is_manual_bonus"):
+                    # ручные бонусы обрабатываются в bot_process_manual_bonuses
+                    PURCHASE_STATUS_CACHE[k] = p.get("status", "")
+                    continue
                 cur_status = p.get("status", "")
                 old_status = PURCHASE_STATUS_CACHE.get(k)
                 if cur_status == "created" and not p.get("notified_new"):
@@ -2008,6 +2079,8 @@ def check_expired():
         now = datetime.now(TZ)
         for k, p in P.items():
             if not isinstance(p, dict):
+                continue
+            if p.get("is_manual_bonus"):
                 continue
             if p.get("status") != "approved":
                 continue
@@ -2139,6 +2212,7 @@ def main():
                 last_admin_check = now
             if now - last_admin_logs > 20:
                 bot_process_admin_logs()
+                bot_process_manual_bonuses()
                 last_admin_logs = now
         except Exception as e:
             handle_exception(e, "main_loop")

@@ -9,14 +9,18 @@
 </head>
 <body>
 
+    <!-- Контейнер для блесток -->
     <div id="sparkles-container"></div>
+    <!-- Скрытый плеер YouTube -->
     <div id="youtube-player" style="display: none;"></div>
 
+    <!-- Плавающая кнопка управления музыкой -->
     <div class="music-player" id="musicPlayer" style="display: none;">
         <button id="playBtn">▶</button>
         <div class="bars"><span></span><span></span><span></span><span></span></div>
     </div>
 
+    <!-- Модальное окно выбора карт -->
     <div id="mapModal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
@@ -33,6 +37,7 @@
         </div>
     </div>
 
+    <!-- ЭКРАН 1: КОНВЕРТ -->
     <section id="envelope-screen">
         <div class="envelope-wrapper">
             <div class="envelope" id="envelope">
@@ -49,8 +54,10 @@
         </div>
     </section>
 
+    <!-- ОСНОВНОЙ КОНТЕНТ (СВАЙПЫ) -->
     <div id="main-content" class="hidden">
         
+        <!-- СТРАНИЦА 1: ИМЕНА -->
         <section class="page fade-section">
             <div class="content-box">
                 <p class="sub-title">ALLAH ULARNING QALBLARINI BIRLASHTIRDI</p>
@@ -80,6 +87,7 @@
             </div>
         </section>
 
+        <!-- СТРАНИЦА 2: ПРИГЛАШЕНИЕ -->
         <section class="page fade-section">
             <div class="content-box">
                 <p class="sub-title">AZIZ MEHMONIMIZ</p>
@@ -95,8 +103,18 @@
                     <p class="signature">Xasan va Iroda<br>Xusan va Feruza</p>
                 </div>
             </div>
+
+            <div class="scroll-down">
+                <p>PASTGA SURING</p>
+                <span class="arrow-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#e3c29c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 5v14M19 12l-7 7-7-7"/>
+                    </svg>
+                </span>
+            </div>
         </section>
 
+        <!-- СТРАНИЦА 3: ТАЙМЕР -->
         <section class="page fade-section">
             <div class="content-box">
                 <p class="sub-title">TO'YGACHA QOLGAN VAQT</p>
@@ -125,8 +143,18 @@
                     </div>
                 </div>
             </div>
+
+            <div class="scroll-down">
+                <p>PASTGA SURING</p>
+                <span class="arrow-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#e3c29c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 5v14M19 12l-7 7-7-7"/>
+                    </svg>
+                </span>
+            </div>
         </section>
 
+        <!-- СТРАНИЦА 4: ЛОКАЦИЯ (БЕЗ СТРЕЛКИ) -->
         <section class="page fade-section">
             <div class="content-box">
                 <p class="sub-title">MANZIL</p>

@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const sparkle = document.createElement('div');
         sparkle.classList.add('sparkle');
         sparkle.style.left = Math.random() * 100 + 'vw';
-        // Размер блестки от 2 до 5px (чуть крупнее)
         const size = Math.random() * 3 + 2 + 'px'; 
         sparkle.style.width = size;
         sparkle.style.height = size;
@@ -21,7 +20,56 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(createSparkle, 500);
 
 
-    // --- 2. ОТКРЫТИЕ КОНВЕРТА ---
+    // --- 2. МУЗЫКА (YOUTUBE API) ---
+    // Загружаем API YouTube асинхронно
+    let player;
+    let isPlaying = false;
+    
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    // Эта функция вызывается автоматически, когда API загрузится
+    window.onYouTubeIframeAPIReady = function() {
+        player = new YT.Player('youtube-player', {
+            height: '0',
+            width: '0',
+            videoId: 'h6C1sava8us', // ID вашего трека
+            playerVars: {
+                'autoplay': 0, // Не включаем сразу
+                'controls': 0,
+                'loop': 1,
+                'playlist': 'h6C1sava8us' // Нужно для зацикливания
+            },
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    };
+
+    function onPlayerReady(event) {
+        // Плеер готов, но музыка еще не играет
+    }
+
+    function onPlayerStateChange(event) {
+        // Синхронизируем кнопку с состоянием плеера
+        const playBtn = document.getElementById('playBtn');
+        const musicPlayer = document.getElementById('musicPlayer');
+        
+        if (event.data == YT.PlayerState.PLAYING) {
+            playBtn.innerText = "II";
+            musicPlayer.classList.remove('paused');
+            isPlaying = true;
+        } else {
+            playBtn.innerText = "▶";
+            musicPlayer.classList.add('paused');
+            isPlaying = false;
+        }
+    }
+
+    // --- 3. ОТКРЫТИЕ КОНВЕРТА ---
     const envelope = document.getElementById('envelope');
     const envelopeScreen = document.getElementById('envelope-screen');
     const mainContent = document.getElementById('main-content');
@@ -31,20 +79,26 @@ document.addEventListener('DOMContentLoaded', () => {
     envelope.addEventListener('click', () => {
         envelope.classList.add('open');
 
+        // Включаем музыку (если плеер готов)
+        if (player && typeof player.playVideo === 'function') {
+            player.playVideo();
+        } else {
+            // Если плеер не успел загрузиться, пробуем еще раз через секунду
+            setTimeout(() => {
+                if (player && typeof player.playVideo === 'function') {
+                    player.playVideo();
+                }
+            }, 1000);
+        }
+
         setTimeout(() => {
             envelopeScreen.classList.add('hide');
             body.classList.add('opened');
             
             setTimeout(() => {
                 mainContent.classList.remove('hidden');
-                musicPlayer.style.display = 'flex';
+                musicPlayer.style.display = 'flex'; // Показываем кнопку музыки
                 
-                if(audio) {
-                    audio.play().catch(e => console.log("Аудио файл music.mp3 не найден"));
-                    playBtn.innerText = "II";
-                    isPlaying = true;
-                }
-
                 const firstPage = document.querySelectorAll('.page')[0];
                 firstPage.classList.add('visible');
 
@@ -54,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // --- 3. АНИМАЦИЯ СТРАНИЦ ---
+    // --- 4. АНИМАЦИЯ СТРАНИЦ ---
     const pages = document.querySelectorAll('.page');
     
     const observer = new IntersectionObserver((entries) => {
@@ -68,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     pages.forEach(page => observer.observe(page));
 
 
-    // --- 4. ТАЙМЕР ---
+    // --- 5. ТАЙМЕР ---
     const weddingDate = new Date("Dec 10, 2026 18:00:00").getTime();
 
     const updateTimer = setInterval(() => {
@@ -92,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000);
 
 
-    // --- 5. МОДАЛЬНОЕ ОКНО КАРТ ---
+    // --- 6. МОДАЛЬНОЕ ОКНО КАРТ ---
     const openMapBtn = document.getElementById('openMapBtn');
     const mapModal = document.getElementById('mapModal');
     const closeBtn = document.querySelector('.close-btn');
@@ -112,22 +166,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // --- 6. МУЗЫКА ---
+    // --- 7. КНОПКА ПАУЗЫ / ВОСПРОИЗВЕДЕНИЯ ---
     const playBtn = document.getElementById('playBtn');
-    let audio = new Audio('music.mp3'); 
-    let isPlaying = false;
-    audio.loop = true;
-
+    
     playBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (!isPlaying) {
-            audio.play().catch(e => console.log("Аудио не найдено"));
-            playBtn.innerText = "II";
-            isPlaying = true;
+        
+        if (!player) return;
+
+        if (isPlaying) {
+            player.pauseVideo();
         } else {
-            audio.pause();
-            playBtn.innerText = "▶";
-            isPlaying = false;
+            player.playVideo();
         }
     });
 });

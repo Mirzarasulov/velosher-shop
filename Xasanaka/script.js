@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- 2. МУЗЫКА (YOUTUBE API) ---
-    // Загружаем API YouTube асинхронно
     let player;
     let isPlaying = false;
     
@@ -30,17 +29,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    // Эта функция вызывается автоматически, когда API загрузится
     window.onYouTubeIframeAPIReady = function() {
         player = new YT.Player('youtube-player', {
             height: '0',
             width: '0',
-            videoId: 'h6C1sava8us', // ID вашего трека
+            videoId: 'h6C1sava8us',
             playerVars: {
-                'autoplay': 0, // Не включаем сразу
+                'autoplay': 0,
                 'controls': 0,
                 'loop': 1,
-                'playlist': 'h6C1sava8us' // Нужно для зацикливания
+                'playlist': 'h6C1sava8us'
             },
             events: {
                 'onReady': onPlayerReady,
@@ -49,12 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    function onPlayerReady(event) {
-        // Плеер готов, но музыка еще не играет
-    }
+    function onPlayerReady(event) { }
 
     function onPlayerStateChange(event) {
-        // Синхронизируем кнопку с состоянием плеера
         const playBtn = document.getElementById('playBtn');
         const musicPlayer = document.getElementById('musicPlayer');
         
@@ -79,11 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
     envelope.addEventListener('click', () => {
         envelope.classList.add('open');
 
-        // Включаем музыку (если плеер готов)
         if (player && typeof player.playVideo === 'function') {
             player.playVideo();
         } else {
-            // Если плеер не успел загрузиться, пробуем еще раз через секунду
             setTimeout(() => {
                 if (player && typeof player.playVideo === 'function') {
                     player.playVideo();
@@ -97,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             setTimeout(() => {
                 mainContent.classList.remove('hidden');
-                musicPlayer.style.display = 'flex'; // Показываем кнопку музыки
+                musicPlayer.style.display = 'flex';
                 
                 const firstPage = document.querySelectorAll('.page')[0];
                 firstPage.classList.add('visible');

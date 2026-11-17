@@ -1,0 +1,444 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background-color: #1a0308;
+    color: #e3c29c;
+    font-family: 'Montserrat', sans-serif;
+    overflow: hidden;
+    transition: background-color 1.5s ease;
+    height: 100vh;
+    width: 100vw;
+}
+
+body.opened {
+    background-color: #3b0a14;
+}
+
+/* --- ЯРКИЕ БЛЕСТКИ --- */
+#sparkles-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.sparkle {
+    position: absolute;
+    bottom: -10px;
+    background-color: #ffdca8; /* Яркий золотой */
+    border-radius: 50%;
+    /* Усиленное свечение */
+    box-shadow: 0 0 12px 3px rgba(255, 220, 168, 0.9), 0 0 25px 6px rgba(227, 194, 156, 0.5); 
+    opacity: 0;
+    animation: floatUp linear forwards;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0) scale(0); opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+}
+
+/* --- МОДАЛЬНОЕ ОКНО --- */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 200; 
+    left: 0; top: 0;
+    width: 100%; height: 100%; 
+    background-color: rgba(0,0,0,0.8); 
+    backdrop-filter: blur(5px);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active { display: flex; }
+
+.modal-content {
+    background: #2c060f;
+    border: 1px solid #e3c29c;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    position: relative;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: zoomIn 0.3s ease;
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px; right: 15px;
+    color: #e3c29c;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal-content h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.modal-content p {
+    font-size: 12px;
+    margin-bottom: 25px;
+    opacity: 0.8;
+}
+
+.map-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.map-choice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border: 1px solid #e3c29c;
+    color: #e3c29c;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.map-choice:hover {
+    background: #e3c29c;
+    color: #2c060f;
+}
+
+.map-choice .icon {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/* --- КОНВЕРТ --- */
+#envelope-screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: #1a0308;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1), opacity 1.2s ease;
+}
+
+#envelope-screen.hide {
+    transform: scale(4);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.envelope-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    perspective: 1000px;
+}
+
+.envelope {
+    width: 90%;
+    max-width: 500px;
+    height: 320px;
+    position: relative;
+    cursor: pointer;
+    transform-style: preserve-3d;
+}
+
+.envelope-back {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #4a0d1a;
+    border: 1px solid rgba(227, 194, 156, 0.3);
+    border-radius: 5px;
+}
+
+.letter {
+    position: absolute;
+    top: 10px; left: 5%;
+    width: 90%; height: 90%;
+    background: #e6d5c3;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+    z-index: 2;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.letter-small { font-size: 10px; letter-spacing: 3px; color: #8c6a4a; margin-bottom: 20px; }
+.letter-names { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: #3b0a14; line-height: 1.4; }
+
+.envelope-front {
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #3b0a14, #2c060f);
+    border-radius: 0 0 5px 5px;
+    clip-path: polygon(0 0, 50% 50%, 100% 0, 100% 100%, 0 100%);
+    z-index: 3;
+    border: 1px solid rgba(227, 194, 156, 0.2);
+}
+
+.envelope-flap {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #4a0d1a;
+    clip-path: polygon(0 0, 100% 0, 50% 50%);
+    z-index: 4;
+    transform-origin: top;
+    transition: transform 0.6s ease-in-out;
+    border-radius: 5px 5px 0 0;
+    border: 1px solid rgba(227, 194, 156, 0.3);
+}
+
+.envelope.open .envelope-flap { transform: rotateX(180deg); z-index: 1; }
+.envelope.open .seal { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+
+.seal {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px; height: 60px;
+    background: #e3c29c;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; color: #3b0a14;
+    z-index: 6;
+    box-shadow: 0 0 20px rgba(227, 194, 156, 0.6);
+    transition: all 0.4s ease;
+}
+
+.click-text { margin-top: 40px; font-size: 11px; letter-spacing: 3px; animation: pulse 2s infinite; }
+@keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+
+/* --- КОНТЕЙНЕР СВАЙПА --- */
+#main-content {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+}
+#main-content::-webkit-scrollbar { display: none; }
+#main-content.hidden { display: none; }
+
+.page {
+    width: 100%;
+    height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.page.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- СТИЛИ КОНТЕНТА --- */
+.content-box { max-width: 800px; width: 100%; }
+.sub-title { font-size: 11px; letter-spacing: 4px; margin-bottom: 20px; opacity: 0.8; }
+.crown { font-size: 20px; margin-bottom: 15px; }
+
+.names { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; font-weight: 400; line-height: 1.1; margin: 15px 0; }
+.groom { font-style: normal; }
+.bride { font-style: italic; }
+.amp { font-family: 'Montserrat', sans-serif; font-size: 2rem; font-style: normal; margin: 0 15px; vertical-align: middle; color: #e3c29c; }
+
+.date-text { font-size: 14px; letter-spacing: 5px; margin-top: 10px; }
+.divider { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 250px; margin: 15px auto; }
+.divider::before, .divider::after { content: ""; flex: 1; height: 1px; background-color: #e3c29c; opacity: 0.4; }
+.diamond { margin: 0 15px; font-size: 10px; }
+
+/* --- ТАЙМЕР --- */
+.cursive-title { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; font-style: italic; margin-bottom: 40px; }
+.timer-wrapper { 
+    display: flex; 
+    gap: 20px; 
+    justify-content: center; 
+    flex-wrap: wrap; 
+}
+
+.timer-card {
+    position: relative;
+    width: 100px;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(227, 194, 156, 0.3);
+}
+
+.glass-effect {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+    backdrop-filter: blur(10px);
+    z-index: -1;
+}
+
+.timer-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 10%;
+    width: 80%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #e3c29c, transparent);
+}
+
+.timer-card span {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.2rem;
+    line-height: 1;
+    margin-bottom: 10px;
+    color: #f0d5b6;
+    text-shadow: 0 0 15px rgba(227, 194, 156, 0.4);
+}
+.timer-card small { 
+    font-size: 10px; 
+    letter-spacing: 3px; 
+    opacity: 0.6;
+}
+
+/* --- ЛОКАЦИЯ --- */
+.location-card { 
+    border: 1px solid rgba(227, 194, 156, 0.4); 
+    padding: 30px 20px; 
+    background: rgba(0,0,0,0.15); 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    border-radius: 8px;
+}
+.restaurant-photo { 
+    width: 100%; 
+    max-width: 300px; 
+    height: 160px; 
+    overflow: hidden; 
+    margin-bottom: 20px; 
+    border-radius: 5px; 
+}
+.restaurant-photo img { width: 100%; height: 100%; object-fit: cover; }
+.location-card h3 { 
+    font-family: 'Cormorant Garamond', serif; 
+    font-size: 1.5rem; 
+    letter-spacing: 1px; 
+    margin-bottom: 5px; 
+}
+.location-card p { font-size: 12px; letter-spacing: 1px; }
+.location-card .line { width: 60px; height: 1px; background: #e3c29c; margin: 15px auto; opacity: 0.5; }
+
+.map-btn { 
+    display: inline-block; 
+    margin-top: 20px; 
+    padding: 12px 25px; 
+    background: transparent;
+    border: 1px solid #e3c29c; 
+    color: #e3c29c; 
+    font-size: 11px; 
+    letter-spacing: 2px; 
+    transition: all 0.3s; 
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    border-radius: 4px;
+}
+.map-btn:hover { background: #e3c29c; color: #3b0a14; }
+
+/* --- ПРИГЛАШЕНИЕ --- */
+.invite-frame { 
+    border: 1px solid rgba(227, 194, 156, 0.5); 
+    padding: 40px 20px; 
+    position: relative; 
+    font-family: 'Cormorant Garamond', serif; 
+    font-size: 1.2rem; 
+    line-height: 1.8; 
+    border-radius: 5px;
+}
+.invite-frame::before { content: "⌜"; position: absolute; top: 5px; left: 10px; font-size: 30px; }
+.invite-frame::after { content: "⌟"; position: absolute; bottom: -15px; right: 10px; font-size: 30px; }
+.invite-frame .line { width: 70%; height: 1px; background: #e3c29c; margin: 20px auto; opacity: 0.3; }
+.small-caps { font-family: 'Montserrat', sans-serif; font-size: 10px; letter-spacing: 3px; margin-bottom: 10px; opacity: 0.8; }
+/* Шрифт подписи сделан чуть меньше, чтобы две строки смотрелись аккуратно */
+.signature { font-size: 1.3rem; font-style: italic; line-height: 1.5; }
+
+/* --- МУЗЫКА --- */
+.music-player { 
+    position: fixed; 
+    bottom: 20px; 
+    right: 20px; 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    background: rgba(0,0,0,0.5); 
+    padding: 10px 15px; 
+    border-radius: 30px; 
+    border: 1px solid #e3c29c; 
+    z-index: 50; 
+}
+#playBtn { 
+    background: #e3c29c; 
+    border: none; 
+    border-radius: 50%; 
+    width: 30px; 
+    height: 30px; 
+    cursor: pointer; 
+    color: #3b0a14; 
+    font-weight: bold; 
+}
+.bars { display: flex; gap: 3px; align-items: flex-end; height: 15px; }
+.bars span { width: 3px; background: #e3c29c; animation: bounce 1s infinite alternate; }
+.bars span:nth-child(2) { animation-delay: 0.2s; height: 10px; }
+.bars span:nth-child(3) { animation-delay: 0.4s; height: 15px; }
+.bars span:nth-child(4) { animation-delay: 0.6s; height: 5px; }
+@keyframes bounce { from { height: 5px; } to { height: 15px; } }
+
+/* --- МОБИЛЬНАЯ АДАПТАЦИЯ --- */
+@media (max-width: 600px) {
+    .envelope { height: 250px; }
+    .letter-names { font-size: 1.5rem; }
+    .names { font-size: 2.5rem; margin: 10px 0; }
+    .amp { font-size: 1.5rem; margin: 0 10px; }
+    
+    .timer-wrapper { gap: 10px; }
+    .timer-card { width: 70px; height: 90px; }
+    .timer-card span { font-size: 2rem; margin-bottom: 5px; }
+    .timer-card small { font-size: 8px; letter-spacing: 1px; }
+
+    .cursive-title { font-size: 2.5rem; margin-bottom: 20px; }
+    .invite-frame { padding: 30px 15px; font-size: 1rem; }
+    .restaurant-photo { height: 140px; }
+    
+    .map-buttons { flex-direction: column; }
+}

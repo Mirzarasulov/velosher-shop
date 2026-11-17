@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>To'y Taklifnomasi</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div id="sparkles-container"></div>
+
+    <div class="music-player" id="musicPlayer" style="display: none;">
+        <button id="playBtn">II</button>
+        <div class="bars"><span></span><span></span><span></span><span></span></div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ВЫБОРА КАРТ -->
+    <div id="mapModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Xaritani tanlang</h3>
+            <p>Qaysi xaritada ochmoqchisiz?</p>
+            <div class="map-buttons">
+                <a href="https://yandex.uz/maps/-/CXSSaD9w" target="_blank" class="map-choice yandex">
+                    <span class="icon">Я</span> Yandex Maps
+                </a>
+                <a href="https://maps.app.goo.gl/FDQW1eKEHyAutqYj6" target="_blank" class="map-choice google">
+                    <span class="icon">G</span> Google Maps
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЭКРАН 1: КОНВЕРТ -->
+    <section id="envelope-screen">
+        <div class="envelope-wrapper">
+            <div class="envelope" id="envelope">
+                <div class="envelope-back"></div>
+                <div class="letter">
+                    <p class="letter-small">TAKLIFNOMA</p>
+                    <p class="letter-names">Xasan & Iroda<br>Xusan & Feruza</p>
+                </div>
+                <div class="envelope-front"></div>
+                <div class="envelope-flap" id="envelopeFlap"></div>
+                <div class="seal" id="openBtn">🤍</div>
+            </div>
+            <p class="click-text">TAKLIFNOMANI OCHISH UCHUN BOSING</p>
+        </div>
+    </section>
+
+    <!-- КОНТЕЙНЕР СВАЙПА -->
+    <div id="main-content" class="hidden">
+        
+        <!-- СТРАНИЦА 1: ИМЕНА -->
+        <section class="page fade-section">
+            <div class="content-box">
+                <p class="sub-title">ALLAH ULARNING QALBLARINI BIRLASHTIRDI</p>
+                <div class="crown">♔</div>
+                
+                <h1 class="names">
+                    <span class="groom">Xasan</span> <span class="amp">&</span> <span class="bride">Iroda</span>
+                </h1>
+
+                <div class="divider"><span class="diamond">◇</span></div>
+                
+                <h1 class="names">
+                    <span class="groom">Xusan</span> <span class="amp">&</span> <span class="bride">Feruza</span>
+                </h1>
+                
+                <div class="divider"><span class="diamond">◇</span></div>
+                <p class="date-text">10 DEKABR 2026</p>
+            </div>
+        </section>
+
+        <!-- СТРАНИЦА 2: ПРИГЛАШЕНИЕ -->
+        <section class="page fade-section">
+            <div class="content-box">
+                <p class="sub-title">AZIZ MEHMONIMIZ</p>
+                <h2 class="cursive-title">Aziz Mehmonimiz</h2>
+                <div class="divider"><span class="diamond">◇</span></div>
+                
+                <div class="invite-frame">
+                    <p>Sizni nikoh to'yimiz munosabati bilan</p>
+                    <p>bo'lib o'tadigan "Visol oqshomi"ga</p>
+                    <p>taklif etamiz</p>
+                    <div class="line"></div>
+                    <p class="small-caps">HURMAT BILAN,</p>
+                    <!-- ИСПРАВЛЕНА ПОДПИСЬ -->
+                    <p class="signature">Xasan va Iroda<br>Xusan va Feruza</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- СТРАНИЦА 3: ТАЙМЕР -->
+        <section class="page fade-section">
+            <div class="content-box">
+                <p class="sub-title">TO'YGACHA QOLGAN VAQT</p>
+                <h2 class="cursive-title">Qachon</h2>
+                
+                <div class="timer-wrapper">
+                    <div class="timer-card">
+                        <div class="glass-effect"></div>
+                        <span id="days">00</span>
+                        <small>KUN</small>
+                    </div>
+                    <div class="timer-card">
+                        <div class="glass-effect"></div>
+                        <span id="hours">00</span>
+                        <small>SOAT</small>
+                    </div>
+                    <div class="timer-card">
+                        <div class="glass-effect"></div>
+                        <span id="minutes">00</span>
+                        <small>DAQIQA</small>
+                    </div>
+                    <div class="timer-card">
+                        <div class="glass-effect"></div>
+                        <span id="seconds">00</span>
+                        <small>SONIYA</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- СТРАНИЦА 4: ЛОКАЦИЯ -->
+        <section class="page fade-section">
+            <div class="content-box">
+                <p class="sub-title">MANZIL</p>
+                <h2 class="cursive-title">Lokatsiya</h2>
+                
+                <div class="location-card">
+                    <div class="restaurant-photo">
+                        <img src="https://i.postimg.cc/xj6xPfrR/955b8997-79e1-4f20-bfd6-5d6041c2dd4f-(1).png" alt="Baxtiyor Restaurant">
+                    </div>
+                    
+                    <h3>BAXTIYOR RESTAURANT</h3>
+                    <p>Yangi Zamon ko'chasi, 37</p>
+                    <div class="line"></div>
+                    <button id="openMapBtn" class="map-btn">XARITADA KO'RISH</button>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

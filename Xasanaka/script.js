@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         player = new YT.Player('youtube-player', {
             height: '0',
             width: '0',
-            videoId: 'h6C1sava8us',
+            videoId: 'h6C1sava8us', // ID трека
             playerVars: {
                 'autoplay': 0,
                 'controls': 0,
@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     envelope.addEventListener('click', () => {
         envelope.classList.add('open');
 
+        // Включаем музыку
         if (player && typeof player.playVideo === 'function') {
             player.playVideo();
         } else {
@@ -84,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 1000);
         }
 
+        // Прячем конверт и показываем контент
         setTimeout(() => {
             envelopeScreen.classList.add('hide');
             body.classList.add('opened');
@@ -175,15 +177,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // --- 8. КЛИК ПО СТРЕЛКЕ ВНИЗ ---
-    const scrollDownBtn = document.querySelector('.scroll-down');
-    if (scrollDownBtn) {
-        scrollDownBtn.addEventListener('click', () => {
+    // --- 8. КЛИК ПО СТРЕЛКАМ ВНИЗ (на всех страницах) ---
+    const scrollDowns = document.querySelectorAll('.scroll-down');
+    scrollDowns.forEach(btn => {
+        btn.addEventListener('click', () => {
             const mainContent = document.getElementById('main-content');
             mainContent.scrollBy({
                 top: window.innerHeight,
                 behavior: 'smooth'
             });
         });
-    }
+    });
 });

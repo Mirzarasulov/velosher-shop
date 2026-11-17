@@ -1,20 +1,21 @@
+/* --- СБРОС СТИЛЕЙ --- */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
     background-color: #1a0308;
     color: #e3c29c;
     font-family: 'Montserrat', sans-serif;
-    overflow: hidden;
+    overflow: hidden; /* Отключаем стандартный скролл страницы */
     transition: background-color 1.5s ease;
     height: 100vh;
     width: 100vw;
 }
 
 body.opened {
-    background-color: #3b0a14;
+    background-color: #3b0a14; /* Цвет после открытия */
 }
 
-/* --- ЯРКИЕ БЛЕСТКИ --- */
+/* --- БЛЕСТКИ --- */
 #sparkles-container {
     position: fixed;
     top: 0; left: 0;
@@ -39,6 +40,37 @@ body.opened {
     20% { opacity: 1; }
     80% { opacity: 1; }
     100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+}
+
+/* --- СТРЕЛКА ВНИЗ --- */
+.scroll-down {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0.8;
+}
+
+.scroll-down p {
+    font-size: 10px;
+    letter-spacing: 3px;
+    margin-bottom: 5px;
+    opacity: 0.7;
+}
+
+.scroll-down .arrow {
+    font-size: 30px;
+    line-height: 1;
+    animation: bounceArrow 1.5s infinite; 
+}
+
+@keyframes bounceArrow {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(10px); }
+    60% { transform: translateY(5px); }
 }
 
 /* --- МОДАЛЬНОЕ ОКНО --- */
@@ -83,46 +115,16 @@ body.opened {
     cursor: pointer;
 }
 
-.modal-content h3 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2rem;
-    margin-bottom: 10px;
-}
-
-.modal-content p {
-    font-size: 12px;
-    margin-bottom: 25px;
-    opacity: 0.8;
-}
-
-.map-buttons {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-}
-
+.modal-content h3 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin-bottom: 10px; }
+.modal-content p { font-size: 12px; margin-bottom: 25px; opacity: 0.8; }
+.map-buttons { display: flex; gap: 15px; justify-content: center; }
 .map-choice {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 20px;
-    border: 1px solid #e3c29c;
-    color: #e3c29c;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: all 0.3s;
-    font-size: 14px;
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 20px; border: 1px solid #e3c29c; color: #e3c29c;
+    text-decoration: none; border-radius: 5px; transition: all 0.3s; font-size: 14px;
 }
-
-.map-choice:hover {
-    background: #e3c29c;
-    color: #2c060f;
-}
-
-.map-choice .icon {
-    font-weight: bold;
-    font-size: 18px;
-}
+.map-choice:hover { background: #e3c29c; color: #2c060f; }
+.map-choice .icon { font-weight: bold; font-size: 18px; }
 
 /* --- КОНВЕРТ --- */
 #envelope-screen {
@@ -235,9 +237,9 @@ body.opened {
     overflow-y: scroll;
     scroll-snap-type: y mandatory;
     scroll-behavior: smooth;
-    scrollbar-width: none;
+    scrollbar-width: none; /* Скрываем скроллбар (Firefox) */
 }
-#main-content::-webkit-scrollbar { display: none; }
+#main-content::-webkit-scrollbar { display: none; } /* Скрываем скроллбар (Chrome/Safari) */
 #main-content.hidden { display: none; }
 
 .page {
@@ -279,12 +281,7 @@ body.opened {
 
 /* --- ТАЙМЕР --- */
 .cursive-title { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; font-style: italic; margin-bottom: 40px; }
-.timer-wrapper { 
-    display: flex; 
-    gap: 20px; 
-    justify-content: center; 
-    flex-wrap: wrap; 
-}
+.timer-wrapper { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
 
 .timer-card {
     position: relative;
@@ -325,66 +322,25 @@ body.opened {
     color: #f0d5b6;
     text-shadow: 0 0 15px rgba(227, 194, 156, 0.4);
 }
-.timer-card small { 
-    font-size: 10px; 
-    letter-spacing: 3px; 
-    opacity: 0.6;
-}
+.timer-card small { font-size: 10px; letter-spacing: 3px; opacity: 0.6; }
 
 /* --- ЛОКАЦИЯ --- */
-.location-card { 
-    border: 1px solid rgba(227, 194, 156, 0.4); 
-    padding: 30px 20px; 
-    background: rgba(0,0,0,0.15); 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    border-radius: 8px;
-}
-.restaurant-photo { 
-    width: 100%; 
-    max-width: 300px; 
-    height: 160px; 
-    overflow: hidden; 
-    margin-bottom: 20px; 
-    border-radius: 5px; 
-}
+.location-card { border: 1px solid rgba(227, 194, 156, 0.4); padding: 30px 20px; background: rgba(0,0,0,0.15); display: flex; flex-direction: column; align-items: center; border-radius: 8px; }
+.restaurant-photo { width: 100%; max-width: 300px; height: 160px; overflow: hidden; margin-bottom: 20px; border-radius: 5px; }
 .restaurant-photo img { width: 100%; height: 100%; object-fit: cover; }
-.location-card h3 { 
-    font-family: 'Cormorant Garamond', serif; 
-    font-size: 1.5rem; 
-    letter-spacing: 1px; 
-    margin-bottom: 5px; 
-}
+.location-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; letter-spacing: 1px; margin-bottom: 5px; }
 .location-card p { font-size: 12px; letter-spacing: 1px; }
 .location-card .line { width: 60px; height: 1px; background: #e3c29c; margin: 15px auto; opacity: 0.5; }
 
-.map-btn { 
-    display: inline-block; 
-    margin-top: 20px; 
-    padding: 12px 25px; 
-    background: transparent;
-    border: 1px solid #e3c29c; 
-    color: #e3c29c; 
-    font-size: 11px; 
-    letter-spacing: 2px; 
-    transition: all 0.3s; 
-    cursor: pointer;
-    font-family: 'Montserrat', sans-serif;
-    border-radius: 4px;
+.map-btn {
+    display: inline-block; margin-top: 20px; padding: 12px 25px; background: transparent;
+    border: 1px solid #e3c29c; color: #e3c29c; font-size: 11px; letter-spacing: 2px;
+    transition: all 0.3s; cursor: pointer; font-family: 'Montserrat', sans-serif; border-radius: 4px;
 }
 .map-btn:hover { background: #e3c29c; color: #3b0a14; }
 
 /* --- ПРИГЛАШЕНИЕ --- */
-.invite-frame { 
-    border: 1px solid rgba(227, 194, 156, 0.5); 
-    padding: 40px 20px; 
-    position: relative; 
-    font-family: 'Cormorant Garamond', serif; 
-    font-size: 1.2rem; 
-    line-height: 1.8; 
-    border-radius: 5px;
-}
+.invite-frame { border: 1px solid rgba(227, 194, 156, 0.5); padding: 40px 20px; position: relative; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; line-height: 1.8; border-radius: 5px; }
 .invite-frame::before { content: "⌜"; position: absolute; top: 5px; left: 10px; font-size: 30px; }
 .invite-frame::after { content: "⌟"; position: absolute; bottom: -15px; right: 10px; font-size: 30px; }
 .invite-frame .line { width: 70%; height: 1px; background: #e3c29c; margin: 20px auto; opacity: 0.3; }
@@ -392,40 +348,20 @@ body.opened {
 .signature { font-size: 1.3rem; font-style: italic; line-height: 1.5; }
 
 /* --- МУЗЫКА --- */
-.music-player { 
-    position: fixed; 
-    bottom: 20px; 
-    right: 20px; 
-    display: flex; 
-    align-items: center; 
-    gap: 10px; 
-    background: rgba(0,0,0,0.6); 
-    padding: 10px 15px; 
-    border-radius: 30px; 
-    border: 1px solid #e3c29c; 
-    z-index: 50;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+.music-player {
+    position: fixed; bottom: 20px; right: 20px;
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(0,0,0,0.6); padding: 10px 15px;
+    border-radius: 30px; border: 1px solid #e3c29c;
+    z-index: 50; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
-#playBtn { 
-    background: #e3c29c; 
-    border: none; 
-    border-radius: 50%; 
-    width: 32px; 
-    height: 32px; 
-    cursor: pointer; 
-    color: #3b0a14; 
-    font-weight: bold; 
-    font-size: 14px;
-    display: flex; align-items: center; justify-content: center;
-}
+#playBtn { background: #e3c29c; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; color: #3b0a14; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; }
 .bars { display: flex; gap: 3px; align-items: flex-end; height: 15px; }
 .bars span { width: 3px; background: #e3c29c; animation: bounce 1s infinite alternate; }
 .bars span:nth-child(2) { animation-delay: 0.2s; height: 10px; }
 .bars span:nth-child(3) { animation-delay: 0.4s; height: 15px; }
 .bars span:nth-child(4) { animation-delay: 0.6s; height: 5px; }
 @keyframes bounce { from { height: 5px; } to { height: 15px; } }
-
-/* Пауза для анимации полосок */
 .music-player.paused .bars span { animation-play-state: paused; height: 3px; }
 
 /* --- МОБИЛЬНАЯ АДАПТАЦИЯ --- */
@@ -445,4 +381,5 @@ body.opened {
     .restaurant-photo { height: 140px; }
     
     .map-buttons { flex-direction: column; }
+    .scroll-down { bottom: 25px; }
 }

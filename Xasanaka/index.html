@@ -10,17 +10,13 @@
 <body>
 
     <div id="sparkles-container"></div>
-
-    <!-- Скрытый YouTube iframe для музыки -->
     <div id="youtube-player" style="display: none;"></div>
 
-    <!-- Кнопка музыки внизу -->
     <div class="music-player" id="musicPlayer" style="display: none;">
         <button id="playBtn">▶</button>
         <div class="bars"><span></span><span></span><span></span><span></span></div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ВЫБОРА КАРТ -->
     <div id="mapModal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
@@ -37,7 +33,6 @@
         </div>
     </div>
 
-    <!-- ЭКРАН 1: КОНВЕРТ -->
     <section id="envelope-screen">
         <div class="envelope-wrapper">
             <div class="envelope" id="envelope">
@@ -54,10 +49,9 @@
         </div>
     </section>
 
-    <!-- КОНТЕЙНЕР СВАЙПА -->
     <div id="main-content" class="hidden">
         
-        <!-- СТРАНИЦА 1: ИМЕНА -->
+        <!-- СТРАНИЦА 1: ИМЕНА + СТРЕЛКА ВНИЗ -->
         <section class="page fade-section">
             <div class="content-box">
                 <p class="sub-title">ALLAH ULARNING QALBLARINI BIRLASHTIRDI</p>
@@ -76,9 +70,14 @@
                 <div class="divider"><span class="diamond">◇</span></div>
                 <p class="date-text">10 DEKABR 2026</p>
             </div>
+            
+            <!-- СТРЕЛКА ВНИЗ -->
+            <div class="scroll-down">
+                <p>PASTGA SURING</p>
+                <span class="arrow">⌄</span>
+            </div>
         </section>
 
-        <!-- СТРАНИЦА 2: ПРИГЛАШЕНИЕ -->
         <section class="page fade-section">
             <div class="content-box">
                 <p class="sub-title">AZIZ MEHMONIMIZ</p>
@@ -96,7 +95,6 @@
             </div>
         </section>
 
-        <!-- СТРАНИЦА 3: ТАЙМЕР -->
         <section class="page fade-section">
             <div class="content-box">
                 <p class="sub-title">TO'YGACHA QOLGAN VAQT</p>
@@ -127,7 +125,6 @@
             </div>
         </section>
 
-        <!-- СТРАНИЦА 4: ЛОКАЦИЯ -->
         <section class="page fade-section">
             <div class="content-box">
                 <p class="sub-title">MANZIL</p>

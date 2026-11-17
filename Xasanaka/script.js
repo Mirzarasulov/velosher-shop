@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // --- 4. АНИМАЦИЯ СТРАНИЦ ---
+    // --- 4. АНИМАЦИЯ СТРАНИЦ ПРИ СВАЙПЕ ---
     const pages = document.querySelectorAll('.page');
     
     const observer = new IntersectionObserver((entries) => {
@@ -173,4 +173,17 @@ document.addEventListener('DOMContentLoaded', () => {
             player.playVideo();
         }
     });
+
+
+    // --- 8. КЛИК ПО СТРЕЛКЕ ВНИЗ ---
+    const scrollDownBtn = document.querySelector('.scroll-down');
+    if (scrollDownBtn) {
+        scrollDownBtn.addEventListener('click', () => {
+            const mainContent = document.getElementById('main-content');
+            mainContent.scrollBy({
+                top: window.innerHeight,
+                behavior: 'smooth'
+            });
+        });
+    }
 });

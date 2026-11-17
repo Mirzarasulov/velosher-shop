@@ -42,7 +42,7 @@ body.opened {
     100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
 }
 
-/* --- СТРЕЛКА ВНИЗ (РЕАЛИСТИЧНАЯ) --- */
+/* --- СТРЕЛКА ВНИЗ --- */
 .scroll-down {
     position: absolute;
     bottom: 35px;

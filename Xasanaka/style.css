@@ -27,9 +27,8 @@ body.opened {
 .sparkle {
     position: absolute;
     bottom: -10px;
-    background-color: #ffdca8; /* Яркий золотой */
+    background-color: #ffdca8;
     border-radius: 50%;
-    /* Усиленное свечение */
     box-shadow: 0 0 12px 3px rgba(255, 220, 168, 0.9), 0 0 25px 6px rgba(227, 194, 156, 0.5); 
     opacity: 0;
     animation: floatUp linear forwards;
@@ -390,7 +389,6 @@ body.opened {
 .invite-frame::after { content: "⌟"; position: absolute; bottom: -15px; right: 10px; font-size: 30px; }
 .invite-frame .line { width: 70%; height: 1px; background: #e3c29c; margin: 20px auto; opacity: 0.3; }
 .small-caps { font-family: 'Montserrat', sans-serif; font-size: 10px; letter-spacing: 3px; margin-bottom: 10px; opacity: 0.8; }
-/* Шрифт подписи сделан чуть меньше, чтобы две строки смотрелись аккуратно */
 .signature { font-size: 1.3rem; font-style: italic; line-height: 1.5; }
 
 /* --- МУЗЫКА --- */
@@ -401,21 +399,24 @@ body.opened {
     display: flex; 
     align-items: center; 
     gap: 10px; 
-    background: rgba(0,0,0,0.5); 
+    background: rgba(0,0,0,0.6); 
     padding: 10px 15px; 
     border-radius: 30px; 
     border: 1px solid #e3c29c; 
-    z-index: 50; 
+    z-index: 50;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 #playBtn { 
     background: #e3c29c; 
     border: none; 
     border-radius: 50%; 
-    width: 30px; 
-    height: 30px; 
+    width: 32px; 
+    height: 32px; 
     cursor: pointer; 
     color: #3b0a14; 
     font-weight: bold; 
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
 }
 .bars { display: flex; gap: 3px; align-items: flex-end; height: 15px; }
 .bars span { width: 3px; background: #e3c29c; animation: bounce 1s infinite alternate; }
@@ -423,6 +424,9 @@ body.opened {
 .bars span:nth-child(3) { animation-delay: 0.4s; height: 15px; }
 .bars span:nth-child(4) { animation-delay: 0.6s; height: 5px; }
 @keyframes bounce { from { height: 5px; } to { height: 15px; } }
+
+/* Пауза для анимации полосок */
+.music-player.paused .bars span { animation-play-state: paused; height: 3px; }
 
 /* --- МОБИЛЬНАЯ АДАПТАЦИЯ --- */
 @media (max-width: 600px) {

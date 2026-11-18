@@ -3,34 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>To'y Taklifnomasi</title>
+    <title>Xasan & Iroda — To'y Taklifnomasi</title>
+
+    <!-- МЕТА-ТЕГИ ДЛЯ TELEGRAM (OPEN GRAPH) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Xasan & Iroda — To'y Taklifnomasi">
+    <meta property="og:description" content="Xasan va Iroda, Xusan va Feruzaning to'y taklifnomasi. 2026-yil 10-dekabr kuni soat 18:00 da Baxtiyor Restaurant (Yangi Zamon ko'chasi, 37) da sizni kutamiz.">
+    <meta property="og:image" content="https://i.postimg.cc/8PvMyVcL/914439.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <!-- Замените ссылку ниже на реальный адрес вашего сайта, когда загрузите его на хостинг -->
+    <meta property="og:url" content="https://ВАШ_САЙТ.uz">
+
+    <!-- ТЕГИ ДЛЯ TWITTER / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Xasan & Iroda — To'y Taklifnomasi">
+    <meta name="twitter:description" content="Xasan va Iroda, Xusan va Feruzaning to'y taklifnomasi. 2026-yil 10-dekabr kuni soat 18:00 da Baxtiyor Restaurant da sizni kutamiz.">
+    <meta name="twitter:image" content="https://i.postimg.cc/8PvMyVcL/914439.jpg">
+
+    <!-- ШРИФТЫ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- СТИЛИ -->
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <!-- Контейнер для блесток -->
     <div id="sparkles-container"></div>
-    <!-- Скрытый плеер YouTube -->
-    <div id="youtube-player" style="display: none;"></div>
+
+    <!-- ЛОКАЛЬНАЯ МУЗЫКА (файл music.mp3 должен лежать в одной папке с index.html) -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- Плавающая кнопка управления музыкой -->
     <div class="music-player" id="musicPlayer" style="display: none;">
-        <button id="playBtn">▶</button>
+        <button id="playBtn" aria-label="Play/Pause">▶</button>
         <div class="bars"><span></span><span></span><span></span><span></span></div>
     </div>
 
     <!-- Модальное окно выбора карт -->
-    <div id="mapModal" class="modal">
+    <div id="mapModal" class="modal" aria-hidden="true">
         <div class="modal-content">
-            <span class="close-btn">&times;</span>
+            <button class="close-btn" aria-label="Close">&times;</button>
             <h3>Xaritani tanlang</h3>
             <p>Qaysi xaritada ochmoqchisiz?</p>
             <div class="map-buttons">
-                <a href="https://yandex.uz/maps/-/CXSSaD9w" target="_blank" class="map-choice yandex">
+                <a href="https://yandex.uz/maps/-/CXSSaD9w" target="_blank" rel="noopener" class="map-choice yandex">
                     <span class="icon">Я</span> Yandex Maps
                 </a>
-                <a href="https://maps.app.goo.gl/FDQW1eKEHyAutqYj6" target="_blank" class="map-choice google">
+                <a href="https://maps.app.goo.gl/FDQW1eKEHyAutqYj6" target="_blank" rel="noopener" class="map-choice google">
                     <span class="icon">G</span> Google Maps
                 </a>
             </div>
@@ -40,7 +65,7 @@
     <!-- ЭКРАН 1: КОНВЕРТ -->
     <section id="envelope-screen">
         <div class="envelope-wrapper">
-            <div class="envelope" id="envelope">
+            <div class="envelope" id="envelope" tabindex="0" role="button">
                 <div class="envelope-back"></div>
                 <div class="letter">
                     <p class="letter-small">TAKLIFNOMA</p>
@@ -66,25 +91,22 @@
                 <h1 class="names">
                     <span class="groom">Xasan</span> <span class="amp">&</span> <span class="bride">Iroda</span>
                 </h1>
-
                 <div class="divider"><span class="diamond">◇</span></div>
-                
                 <h1 class="names">
                     <span class="groom">Xusan</span> <span class="amp">&</span> <span class="bride">Feruza</span>
                 </h1>
-                
                 <div class="divider"><span class="diamond">◇</span></div>
                 <p class="date-text">10 DEKABR 2026</p>
             </div>
             
-            <div class="scroll-down">
+            <button class="scroll-down" aria-label="Scroll down">
                 <p>PASTGA SURING</p>
                 <span class="arrow-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#e3c29c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 5v14M19 12l-7 7-7-7"/>
                     </svg>
                 </span>
-            </div>
+            </button>
         </section>
 
         <!-- СТРАНИЦА 2: ПРИГЛАШЕНИЕ -->
@@ -104,14 +126,14 @@
                 </div>
             </div>
 
-            <div class="scroll-down">
+            <button class="scroll-down" aria-label="Scroll down">
                 <p>PASTGA SURING</p>
                 <span class="arrow-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#e3c29c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 5v14M19 12l-7 7-7-7"/>
                     </svg>
                 </span>
-            </div>
+            </button>
         </section>
 
         <!-- СТРАНИЦА 3: ТАЙМЕР -->
@@ -121,40 +143,24 @@
                 <h2 class="cursive-title">Qachon</h2>
                 
                 <div class="timer-wrapper">
-                    <div class="timer-card">
-                        <div class="glass-effect"></div>
-                        <span id="days">00</span>
-                        <small>KUN</small>
-                    </div>
-                    <div class="timer-card">
-                        <div class="glass-effect"></div>
-                        <span id="hours">00</span>
-                        <small>SOAT</small>
-                    </div>
-                    <div class="timer-card">
-                        <div class="glass-effect"></div>
-                        <span id="minutes">00</span>
-                        <small>DAQIQA</small>
-                    </div>
-                    <div class="timer-card">
-                        <div class="glass-effect"></div>
-                        <span id="seconds">00</span>
-                        <small>SONIYA</small>
-                    </div>
+                    <div class="timer-card"><span id="days">00</span><small>KUN</small></div>
+                    <div class="timer-card"><span id="hours">00</span><small>SOAT</small></div>
+                    <div class="timer-card"><span id="minutes">00</span><small>DAQIQA</small></div>
+                    <div class="timer-card"><span id="seconds">00</span><small>SONIYA</small></div>
                 </div>
             </div>
 
-            <div class="scroll-down">
+            <button class="scroll-down" aria-label="Scroll down">
                 <p>PASTGA SURING</p>
                 <span class="arrow-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#e3c29c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 5v14M19 12l-7 7-7-7"/>
                     </svg>
                 </span>
-            </div>
+            </button>
         </section>
 
-        <!-- СТРАНИЦА 4: ЛОКАЦИЯ (БЕЗ СТРЕЛКИ) -->
+        <!-- СТРАНИЦА 4: ЛОКАЦИЯ -->
         <section class="page fade-section">
             <div class="content-box">
                 <p class="sub-title">MANZIL</p>
@@ -162,9 +168,8 @@
                 
                 <div class="location-card">
                     <div class="restaurant-photo">
-                        <img src="https://i.postimg.cc/xj6xPfrR/955b8997-79e1-4f20-bfd6-5d6041c2dd4f-(1).png" alt="Baxtiyor Restaurant">
+                        <img src="https://i.postimg.cc/xj6xPfrR/955b8997-79e1-4f20-bfd6-5d6041c2dd4f-(1).png" alt="Baxtiyor Restaurant" loading="lazy">
                     </div>
-                    
                     <h3>BAXTIYOR RESTAURANT</h3>
                     <p>Yangi Zamon ko'chasi, 37</p>
                     <div class="line"></div>

@@ -15,31 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     setInterval(createSparkle, 500);
 
-    // --- 2. МУЗЫКА (МАКСИМАЛЬНЫЙ ОБХОД) ---
+    // --- 2. МУЗЫКА ---
     const bgMusic = document.getElementById('bg-music');
     const playBtn = document.getElementById('playBtn');
     const musicPlayer = document.getElementById('musicPlayer');
-    
-    // Функция разблокировки аудио (Web Audio API)
-    function unlockAudio() {
-        if (bgMusic && bgMusic.paused) {
-            bgMusic.play().then(() => {
-                // Если заиграло - отключаем слушатели
-                document.removeEventListener('click', unlockAudio);
-                document.removeEventListener('touchstart', unlockAudio);
-                document.removeEventListener('keydown', unlockAudio);
-            }).catch(e => {
-                console.log("Ждем взаимодействия...");
-            });
-        }
-    }
 
-    // Вешаем слушатели на первый клик/тап в любом месте страницы
-    document.addEventListener('click', unlockAudio);
-    document.addEventListener('touchstart', unlockAudio);
-    document.addEventListener('keydown', unlockAudio);
-
-    // Обновление UI кнопки
     function updateMusicUI() {
         if (bgMusic.paused) {
             playBtn.innerText = '▶';
@@ -49,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
             musicPlayer.classList.remove('paused');
         }
     }
+
     bgMusic.addEventListener('play', updateMusicUI);
     bgMusic.addEventListener('pause', updateMusicUI);
 
@@ -66,10 +47,15 @@ document.addEventListener('DOMContentLoaded', () => {
         envelope.classList.add('open');
         body.classList.add('opened');
 
-        // Стартуем музыку
-        bgMusic.volume = 0.7;
+        bgMusic.volume = 0.8;
         bgMusic.play().catch(() => {
-            console.log("Браузер заблокировал автоплей, ждем тапа");
+            const unlock = () => {
+                bgMusic.play();
+                document.removeEventListener('click', unlock);
+                document.removeEventListener('touchstart', unlock);
+            };
+            document.addEventListener('click', unlock);
+            document.addEventListener('touchstart', unlock);
         });
 
         musicPlayer.style.display = 'flex';
@@ -141,4 +127,16 @@ document.addEventListener('DOMContentLoaded', () => {
             mainContent.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
         });
     });
+
+    // --- 9. КЛАВИАТУРА (ВВЕРХ/ВНИЗ) ---
+    document.addEventListener('keydown', (e) => {
+        if (!opened) return;
+        if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+            mainContent.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+        }
+        if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+            mainContent.scrollBy({ top: -window.innerHeight, behavior: 'smooth' });
+        }
+    });
+
 });

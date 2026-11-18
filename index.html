@@ -5,47 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Xasan & Iroda — To'y Taklifnomasi</title>
 
-    <!-- МЕТА-ТЕГИ ДЛЯ TELEGRAM (OPEN GRAPH) -->
+    <!-- МЕТА-ТЕГИ ДЛЯ TELEGRAM (ОТКРЫТКА С ФОТО И ТЕКСТОМ) -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Xasan & Iroda — To'y Taklifnomasi">
     <meta property="og:description" content="Xasan va Iroda, Xusan va Feruzaning to'y taklifnomasi. 2026-yil 10-dekabr kuni soat 18:00 da Baxtiyor Restaurant (Yangi Zamon ko'chasi, 37) da sizni kutamiz.">
     <meta property="og:image" content="https://i.postimg.cc/8PvMyVcL/914439.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <!-- Замените ссылку ниже на реальный адрес вашего сайта, когда загрузите его на хостинг -->
+    <!-- СЮДА ВСТАВЬТЕ ВАШУ ССЫЛКУ, КОГДА ЗАГРУЗИТЕ САЙТ НА ХОСТИНГ -->
     <meta property="og:url" content="https://ВАШ_САЙТ.uz">
-
-    <!-- ТЕГИ ДЛЯ TWITTER / X -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Xasan & Iroda — To'y Taklifnomasi">
-    <meta name="twitter:description" content="Xasan va Iroda, Xusan va Feruzaning to'y taklifnomasi. 2026-yil 10-dekabr kuni soat 18:00 da Baxtiyor Restaurant da sizni kutamiz.">
-    <meta name="twitter:image" content="https://i.postimg.cc/8PvMyVcL/914439.jpg">
 
     <!-- ШРИФТЫ -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
     
-    <!-- СТИЛИ -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Контейнер для блесток -->
     <div id="sparkles-container"></div>
 
-    <!-- ЛОКАЛЬНАЯ МУЗЫКА (файл music.mp3 должен лежать в одной папке с index.html) -->
+    <!-- МУЗЫКА (файл music.mp3 должен лежать в одной папке) -->
     <audio id="bg-music" loop preload="auto">
         <source src="music.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- Плавающая кнопка управления музыкой -->
+    <!-- Кнопка музыки -->
     <div class="music-player" id="musicPlayer" style="display: none;">
         <button id="playBtn" aria-label="Play/Pause">▶</button>
         <div class="bars"><span></span><span></span><span></span><span></span></div>
     </div>
 
-    <!-- Модальное окно выбора карт -->
+    <!-- Модальное окно карт -->
     <div id="mapModal" class="modal" aria-hidden="true">
         <div class="modal-content">
             <button class="close-btn" aria-label="Close">&times;</button>
@@ -79,7 +71,7 @@
         </div>
     </section>
 
-    <!-- ОСНОВНОЙ КОНТЕНТ (СВАЙПЫ) -->
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
     <div id="main-content" class="hidden">
         
         <!-- СТРАНИЦА 1: ИМЕНА -->
@@ -87,7 +79,6 @@
             <div class="content-box">
                 <p class="sub-title">ALLAH ULARNING QALBLARINI BIRLASHTIRDI</p>
                 <div class="crown">♔</div>
-                
                 <h1 class="names">
                     <span class="groom">Xasan</span> <span class="amp">&</span> <span class="bride">Iroda</span>
                 </h1>
@@ -115,7 +106,6 @@
                 <p class="sub-title">AZIZ MEHMONIMIZ</p>
                 <h2 class="cursive-title">Aziz Mehmonimiz</h2>
                 <div class="divider"><span class="diamond">◇</span></div>
-                
                 <div class="invite-frame">
                     <p>Sizni nikoh to'yimiz munosabati bilan</p>
                     <p>bo'lib o'tadigan "Visol oqshomi"ga</p>
@@ -141,12 +131,11 @@
             <div class="content-box">
                 <p class="sub-title">TO'YGACHA QOLGAN VAQT</p>
                 <h2 class="cursive-title">Qachon</h2>
-                
                 <div class="timer-wrapper">
-                    <div class="timer-card"><span id="days">00</span><small>KUN</small></div>
-                    <div class="timer-card"><span id="hours">00</span><small>SOAT</small></div>
-                    <div class="timer-card"><span id="minutes">00</span><small>DAQIQA</small></div>
-                    <div class="timer-card"><span id="seconds">00</span><small>SONIYA</small></div>
+                    <div class="timer-card"><div class="glass-effect"></div><span id="days">00</span><small>KUN</small></div>
+                    <div class="timer-card"><div class="glass-effect"></div><span id="hours">00</span><small>SOAT</small></div>
+                    <div class="timer-card"><div class="glass-effect"></div><span id="minutes">00</span><small>DAQIQA</small></div>
+                    <div class="timer-card"><div class="glass-effect"></div><span id="seconds">00</span><small>SONIYA</small></div>
                 </div>
             </div>
 
@@ -165,7 +154,6 @@
             <div class="content-box">
                 <p class="sub-title">MANZIL</p>
                 <h2 class="cursive-title">Lokatsiya</h2>
-                
                 <div class="location-card">
                     <div class="restaurant-photo">
                         <img src="https://i.postimg.cc/xj6xPfrR/955b8997-79e1-4f20-bfd6-5d6041c2dd4f-(1).png" alt="Baxtiyor Restaurant" loading="lazy">

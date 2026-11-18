@@ -11,9 +11,7 @@ body {
     width: 100vw;
 }
 
-body.opened {
-    background-color: #3b0a14;
-}
+body.opened { background-color: #3b0a14; }
 
 /* --- БЛЕСТКИ --- */
 #sparkles-container {
@@ -53,6 +51,11 @@ body.opened {
     align-items: center;
     opacity: 0.9;
     cursor: pointer;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0;
+    color: #e3c29c;
 }
 
 .scroll-down p {
@@ -127,6 +130,7 @@ body.opened {
     position: absolute;
     top: 10px; right: 15px;
     color: #e3c29c;
+    background: none; border: none;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
